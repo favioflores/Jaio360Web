@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 21/10/2014 08:38:38 PM by Hibernate Tools 3.2.1.GA -->
+<hibernate-mapping>
+    <class name="com.jaio360.orm.Elemento" table="elemento" catalog="jaio">
+        <id name="elIdElementoPk" type="java.lang.Integer">
+            <column name="EL_ID_ELEMENTO_PK" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="definicionTabla" class="com.jaio360.orm.DefinicionTabla" fetch="select">
+            <column name="DT_ID_DEFINICION_FK" not-null="true" />
+        </many-to-one>
+        <property name="elInActivo" type="int">
+            <column name="EL_IN_ACTIVO" not-null="true">
+                <comment>ASUME EL VALOR DE 0 O 1 SI EL ELEMENTO ESTA DISPONIBLE</comment>
+            </column>
+        </property>
+        <property name="elNuOrden" type="int">
+            <column name="EL_NU_ORDEN" not-null="true">
+                <comment>ESTABLECE EL ORDEN DE LOS ELEMENTOS RESPECTO A LA DEFINICION</comment>
+            </column>
+        </property>
+        <property name="elTxDescripcion" type="string">
+            <column name="EL_TX_DESCRIPCION" length="65535" not-null="true" />
+        </property>
+        <property name="elInUsaEscala" type="java.lang.Integer">
+            <column name="EL_IN_USA_ESCALA">
+                <comment>CREADO PARA ESTABLECER EL COMPORTAMIENTO DE LA ESCALA</comment>
+            </column>
+        </property>
+        <property name="elTxValor1" type="string">
+            <column name="EL_TX_VALOR1" length="100" />
+        </property>
+        <property name="elCadena" type="binary">
+            <column name="EL_CADENA" />
+        </property>
+    </class>
+</hibernate-mapping>

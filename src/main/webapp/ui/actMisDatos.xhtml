@@ -1,0 +1,170 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui" 
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                template="principalMantenimiento.xhtml" >
+    
+<ui:define name="htmlMantenimiento">
+    <h:form>
+        
+        <h1>Actualizar datos personales</h1>
+        
+        <p:separator/>
+        
+        <p:growl id="growl" showDetail="true" />
+        
+        <h:panelGrid id="pnlIniciarProyecto" border="0" style="max-width: 900px;" columns="1" >  
+
+            <p:row/>
+            <p:outputLabel value="Personaliza los comunicados que apareceran durante el proyecto. Recuerda que debes redactar la convocatoria, las instrucciones y el agradecimiento." />
+            <p:row/>
+            
+            <h3>Mis datos personales</h3>
+            <h:form id="frmPersonales">
+                
+                <p:panel id="panel1">
+                    <p:growl showDetail="true" life="4000" sticky="false" />
+                    <h:panelGrid columns="3" cellpadding="5" >
+
+                        <p:outputLabel  value="Correo electronico :"/>
+                        <p:inputText id="idCorreo" value="#{actualizaDatosView.strCorreo}" label="Correo" size="50" required="true" requiredMessage="Valor requerido" disabled="true" >
+                            <f:validator validatorId="validarCorreo" /> 
+                        </p:inputText>
+                        <p:message for="idCorreo" />
+
+                        <p:outputLabel value="Nombre para mostrar :"/>
+                        <p:inputText id="idNombre" value="#{actualizaDatosView.strNombre}" label="Nombre" size="50" required="true" requiredMessage="Valor requerido" >
+                            <f:validator validatorId="validaNombreCompleto" /> 
+                        </p:inputText>
+                        <p:message for="idNombre" />
+                        
+                        <p:outputLabel value="Pais :"/>
+                        <p:selectOneMenu id="idPais" value="#{actualizaDatosView.pais}" label="Pais" required="true" requiredMessage="Valor requerido"  >
+                            <f:selectItem itemLabel="Selecciona un pais" itemValue="" />
+                            <f:selectItems value="#{actualizaDatosView.lstPaises}"  var="pais" itemLabel="#{pais.ubTxDescripcion}" itemValue="#{pais.ubIdUbigeoPk}" />
+                            <p:ajax update="panel1" listener="#{actualizaDatosView.cargaCiudades}"/>
+                        </p:selectOneMenu>
+                        <p:message for="idPais" />
+
+                        <p:outputLabel value="Ciudad :"/>
+                        <p:selectOneMenu id="idCiudad" value="#{actualizaDatosView.ciudad}" label="Ciudad" required="true" disabled="#{actualizaDatosView.pais==null?true:false}" requiredMessage="Valor requerido" >
+                            <f:selectItem itemLabel="Selecciona una ciudad" itemValue="" />
+                            <f:selectItems value="#{actualizaDatosView.lstCiudades}"  var="ciudad" itemLabel="#{ciudad.ubTxDescripcion}" itemValue="#{ciudad.ubIdUbigeoPk}" />
+                        </p:selectOneMenu>
+                        <p:message for="idCiudad" /> 
+                        
+                        <!--
+                        <p:outputLabel value="Tema :"/>
+                        <p:themeSwitcher id="idTema" value="#{actualizaDatosView.cmbTema}" >
+                            <f:selectItem itemLabel="Elige tema" itemValue="" />
+                            <f:selectItems value="#{actualizaDatosView.lstTemas}" var="tema" itemLabel="#{tema.strNombre}" itemValue="#{tema.strImagen}" />
+                                <p:ajax  update="panel1" listener="#{actualizaDatosView.actualizaTema}"/> 
+                        </p:themeSwitcher>
+                        -->
+                        
+                    </h:panelGrid>
+
+                    <f:facet name="footer">
+                        <p:commandButton process="frmPersonales" update="panel1" actionListener="#{actualizaDatosView.actualizaPersonales}" value="Actualizar datos" />
+                    </f:facet>
+
+                </p:panel>
+            </h:form>
+            <h3>Cambiar contraseña</h3>
+            <h:form id="frmContrasenia">
+                
+                <p:panel id="panel2">
+                    <p:growl showDetail="true" life="4000" sticky="false" />
+                    <h:panelGrid columns="1" cellpadding="5" >
+                        <p:outputLabel value="La contraseña ingresada debe contener de 6 a 20 dígitos, una letra mayuscula, una letra minuscula y un caracter especial (“@#$.%”)." />
+                    </h:panelGrid>
+                    <h:panelGrid columns="3" cellpadding="5" >
+                        <p:outputLabel value="Contraseña actual :"/>
+                        <p:password id="strPassActual" value="#{actualizaDatosView.strContrasenia}" label="Contraseña actual" size="20" maxlength="20" required="true" requiredMessage="Valor requerido" />
+                        <p:message for="strPassActual" />
+                        <p:outputLabel value="Nueva contraseña :"/> 
+                        <p:password id="strPassNuevo" value="#{actualizaDatosView.strContraseniaNueva}" label="Contraseña nueva" size="20" maxlength="20" required="true" requiredMessage="Valor requerido" >
+                            <f:validator validatorId="validaContrasenia"/>
+                        </p:password>
+                        <p:message for="strPassNuevo" />
+                        <p:outputLabel value="Repetir nueva contraseña :"/>
+                        <p:password id="strPassReNuevo" value="#{actualizaDatosView.strContraseniaReNueva}" label="Repetir contraseña" size="20" maxlength="20" required="true" requiredMessage="Valor requerido" >
+                            <f:validator validatorId="validaContrasenia"/>
+                        </p:password>
+                        <p:message for="strPassReNuevo" />
+                    </h:panelGrid>
+
+                    <f:facet name="footer">
+                        <p:commandButton process="frmContrasenia" update="panel2" actionListener="#{actualizaDatosView.actualizaContraseña}" value="Cambiar contraseña" />
+                    </f:facet> 
+
+                </p:panel>
+            </h:form>         
+            <h3>Mi empresa</h3>
+            <h:form id="frmEmpresa" >  
+                <p:panel id="panel3">
+                    <p:growl showDetail="true" life="4000" sticky="false" />
+                    <h:panelGrid columns="3" cellpadding="5">
+
+                        <p:outputLabel value="Razon social :"/>
+                        <p:inputText id="idRazon" value="#{actualizaDatosView.strRazonSocial}" label="Razon social" size="50" required="true" requiredMessage="Valor requerido" >
+                            <f:validator validatorId="validaTextoIngresado" />
+                        </p:inputText>
+                        <p:message for="idRazon" />
+
+                        <p:outputLabel value="Tipo documento :"/>
+                        <p:selectOneMenu id="idTipoDocumento" value="#{actualizaDatosView.intIdTipoDocumento}" label="Tipo documento" required="true" requiredMessage="Valor requerido" >
+                            <f:selectItem itemLabel="Selecciona tipo de documento" itemValue="" />
+                            <f:selectItems value="#{actualizaDatosView.lstTipoDocumento}"  var="docum" itemLabel="#{docum.strDescDocumento}" itemValue="#{docum.idTipoDocumento}" />
+                        </p:selectOneMenu>
+                        <p:message for="idTipoDocumento" />
+            
+                        <p:outputLabel value="Documento triburatio :"/>
+                        <p:inputText id="idDocumento" value="#{actualizaDatosView.strDocumento}" label="Documento triburatio" size="25" maxlength="20" required="true" requiredMessage="Valor requerido" >
+                            <f:validator validatorId="validaDocumento" />
+                        </p:inputText>
+                        <p:message for="idDocumento" />
+
+                    </h:panelGrid>
+
+                    <f:facet name="footer">
+                        <p:commandButton process="frmEmpresa" validateClient="true" update="panel3" actionListener="#{actualizaDatosView.actualizaEmpresa}"  value="Actualizar datos" />
+                    </f:facet> 
+ 
+                </p:panel> 
+            </h:form>  
+            <h3>Logo de la empresa</h3>
+            <h:form id="frmLogo" enctype="multipart/form-data" >  
+                <p:panel id="panel4">
+                    <p:growl showDetail="true" life="4000" sticky="false" />
+                    <h:panelGrid columns="1" border="0" cellpadding="5" style="width: 100%" >
+                        <p:outputLabel value="Brindanos el logo de la empresa para utilizarlo en los reportes y comunicados. Recuerda que los formatos permitidos son (GIF, JPEG y PNG) y la imagen debe tener un maximo de 3MB" />
+                        <p:fileUpload fileUploadListener="#{actualizaDatosView.handleFileUpload}" 
+                                      mode="advanced" 
+                                      dragDropSupport="true"
+                                      sizeLimit="3145728"  
+                                      previewWidth="80"
+                                      fileLimit="1" 
+                                      auto="false"
+                                      label="Subir"
+                                      update="frmLogo"
+                                      allowTypes="/(\.|\/)(gif|jpe?g|png)$/"/>
+                        <h:panelGrid columns="3" cellpadding="0" cellspacing="0" >
+                            <p:panelGrid columns="1">
+                                <f:facet name="header">Logo actual</f:facet>
+                                <h:graphicImage alt="Sin imagen" url="/DisplayImage?idUsuario=#{actualizaDatosView.idUsuario}" height="200" width="200" />
+                            </p:panelGrid>
+
+                        </h:panelGrid>
+
+                    </h:panelGrid>
+
+                </p:panel>
+            </h:form>
+        </h:panelGrid>   
+        
+    </h:form>
+</ui:define>
+</ui:composition>

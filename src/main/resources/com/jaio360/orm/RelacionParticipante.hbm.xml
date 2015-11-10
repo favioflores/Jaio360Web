@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 21/10/2014 08:38:38 PM by Hibernate Tools 3.2.1.GA -->
+<hibernate-mapping>
+    <class name="com.jaio360.orm.RelacionParticipante" table="relacion_participante" catalog="jaio">
+        <composite-id name="id" class="com.jaio360.orm.RelacionParticipanteId">
+            <key-property name="reIdRelacionFk" type="int">
+                <column name="RE_ID_RELACION_FK" />
+            </key-property>
+            <key-property name="reIdParticipanteFk" type="int">
+                <column name="RE_ID_PARTICIPANTE_FK" />
+            </key-property>
+            <key-property name="paIdParticipanteFk" type="int">
+                <column name="PA_ID_PARTICIPANTE_FK" />
+            </key-property>
+        </composite-id>
+        <many-to-one name="relacion" class="com.jaio360.orm.Relacion" update="false" insert="false" fetch="select">
+            <column name="RE_ID_RELACION_FK" not-null="true" />
+        </many-to-one>
+        <many-to-one name="participante" class="com.jaio360.orm.Participante" update="false" insert="false" fetch="select">
+            <column name="PA_ID_PARTICIPANTE_FK" not-null="true" />
+        </many-to-one>
+        <many-to-one name="redEvaluacion" class="com.jaio360.orm.RedEvaluacion" update="false" insert="false" fetch="select">
+            <column name="RE_ID_PARTICIPANTE_FK" not-null="true" />
+        </many-to-one>
+        <property name="rpIdEstado" type="java.lang.Integer">
+            <column name="RP_ID_ESTADO" />
+        </property>
+        <set name="resultados" inverse="true">
+            <key>
+                <column name="RE_ID_RELACION_FK" not-null="true" />
+                <column name="RE_ID_PARTICIPANTE_FK" not-null="true" />
+                <column name="PA_ID_PARTICIPANTE_FK" not-null="true" />
+            </key>
+            <one-to-many class="com.jaio360.orm.Resultado" />
+        </set>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,35 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui" 
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                template="principalProyecto.xhtml" >
+    
+<ui:define name="htmlPaso">
+    <h:form id="formResumenProyecto">
+        
+        <h1>Resumen del proyecto</h1>
+        
+        <p:separator/>
+        
+        <br/>
+        
+        <h:panelGrid columns="2" >
+            <p:outputLabel style="font-weight: bold;" value="Nombre del Proyecto : "/>
+            <p:outputLabel value="#{resumenProyectoView.objProyectoInfo.strDescNombre}"/>
+            <p:outputLabel style="font-weight: bold;" value="Metodologia : "/>
+            <p:outputLabel value="#{resumenProyectoView.objProyectoInfo.strDescMetodologia}"/>
+            <p:outputLabel style="font-weight: bold;" value="Fecha de registro : "/>
+            <p:outputLabel value="#{resumenProyectoView.objProyectoInfo.dtFechaCreacion}"/>
+            <p:outputLabel style="font-weight: bold;" value="Fecha de ejecución : "/>
+            <p:outputLabel value="#{resumenProyectoView.objProyectoInfo.dtFechaEjecucion}"/>
+            <p:outputLabel style="font-weight: bold;" value="Estado del proyecto : "/>
+            <p:outputLabel value="#{resumenProyectoView.objProyectoInfo.strDescEstado}"/>
+            <p:outputLabel style="font-weight: bold;" value="Motivo : "/>
+            <p:outputLabel value="#{resumenProyectoView.objProyectoInfo.strMotivo}"/>
+        </h:panelGrid>
+
+    </h:form>
+</ui:define>
+</ui:composition>

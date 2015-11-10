@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 21/10/2014 08:38:38 PM by Hibernate Tools 3.2.1.GA -->
+<hibernate-mapping>
+    <class name="com.jaio360.orm.DetalleMetrica" table="detalle_metrica" catalog="jaio">
+        <id name="deIdDetalleEscalaPk" type="java.lang.Integer">
+            <column name="DE_ID_DETALLE_ESCALA_PK" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="metrica" class="com.jaio360.orm.Metrica" fetch="select">
+            <column name="ME_ID_METRICA_FK" not-null="true" />
+        </many-to-one>
+        <property name="deNuOrden" type="java.lang.Integer">
+            <column name="DE_NU_ORDEN" not-null="true" />
+        </property>
+        <property name="deTxValor" type="string">
+            <column name="DE_TX_VALOR" length="3000" not-null="true" />
+        </property>
+        <set name="resultados" inverse="true">
+            <key>
+                <column name="DE_ID_DETALLE_ESCALA_FK" />
+            </key>
+            <one-to-many class="com.jaio360.orm.Resultado" />
+        </set>
+    </class>
+</hibernate-mapping>

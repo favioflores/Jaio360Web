@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 21/10/2014 08:38:38 PM by Hibernate Tools 3.2.1.GA -->
+<hibernate-mapping>
+    <class name="com.jaio360.orm.Notificaciones" table="notificaciones" catalog="jaio">
+        <id name="noIdNotificacionPk" type="java.lang.Integer">
+            <column name="NO_ID_NOTIFICACION_PK" />
+            <generator class="identity" />
+        </id>
+        <property name="noIdRefProceso" type="int">
+            <column name="NO_ID_REF_PROCESO" not-null="true" />
+        </property>
+        <property name="noIdTipoProceso" type="int">
+            <column name="NO_ID_TIPO_PROCESO" not-null="true" />
+        </property>
+        <property name="noFeCreacion" type="timestamp">
+            <column name="NO_FE_CREACION" length="19" not-null="true" />
+        </property>
+        <property name="noFeEnvio" type="timestamp">
+            <column name="NO_FE_ENVIO" length="19" />
+        </property>
+        <property name="noIdEstado" type="int">
+            <column name="NO_ID_ESTADO" not-null="true" />
+        </property>
+        <property name="noTxAsunto" type="string">
+            <column name="NO_TX_ASUNTO" length="3000" not-null="true" />
+        </property>
+        <property name="noTxMensaje" type="binary">
+            <column name="NO_TX_MENSAJE" not-null="true" />
+        </property>
+        <property name="noAdjunto" type="string">
+            <column name="NO_ADJUNTO" length="100" />
+        </property>
+        <set name="destinatarioses" inverse="true">
+            <key>
+                <column name="NO_ID_NOTIFICACION_FK" not-null="true" />
+            </key>
+            <one-to-many class="com.jaio360.orm.Destinatarios" />
+        </set>
+    </class>
+</hibernate-mapping>

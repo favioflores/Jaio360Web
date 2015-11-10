@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache name="Jaio360Cache">
+    <defaultCache 
+        maxElementsInMemory="1000"
+        eternal="true"
+        timeToIdleSeconds="120"
+        timeToLiveSeconds="120"
+        overflowToDisk="false"
+        memoryStoreEvictionPolicy="LRU"
+    />
+    <cache 
+        name="elementosCache"
+        maxElementsInMemory="1000"
+        eternal="true"
+        timeToIdleSeconds="20000"
+        timeToLiveSeconds="60000"
+        overflowToDisk="false"
+        memoryStoreEvictionPolicy="LRU"
+    />
+</ehcache>

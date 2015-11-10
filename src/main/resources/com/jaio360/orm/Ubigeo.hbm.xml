@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 21/10/2014 08:38:38 PM by Hibernate Tools 3.2.1.GA -->
+<hibernate-mapping>
+    <class name="com.jaio360.orm.Ubigeo" table="ubigeo" catalog="jaio">
+        <id name="ubIdUbigeoPk" type="int">
+            <column name="UB_ID_UBIGEO_PK" />
+            <generator class="assigned" />
+        </id>
+        <many-to-one name="ubigeo" lazy="false" class="com.jaio360.orm.Ubigeo" fetch="select">
+            <column name="UB_ID_UBIGEO_FK" />
+        </many-to-one>
+        <property name="ubTxDescripcion" type="string">
+            <column name="UB_TX_DESCRIPCION" length="100" not-null="true" />
+        </property>
+        <property name="ubIdTipoUbigeo" type="int">
+            <column name="UB_ID_TIPO_UBIGEO" not-null="true" />
+        </property>
+        <set name="ubigeos" inverse="true">
+            <key>
+                <column name="UB_ID_UBIGEO_FK" />
+            </key>
+            <one-to-many class="com.jaio360.orm.Ubigeo" />
+        </set>
+        <set name="usuarios" inverse="true">
+            <key>
+                <column name="UB_ID_UBIGEO_FK" not-null="true" />
+            </key>
+            <one-to-many class="com.jaio360.orm.Usuario" />
+        </set>
+    </class>
+</hibernate-mapping>

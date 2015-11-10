@@ -1,0 +1,247 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui" 
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+<h:body>
+    <h:form id="frmListados">
+        
+        <p:growl id="growl" showDetail="true" autoUpdate="true" />
+        <p:accordionPanel id="listados" >
+        <c:if test="#{(menuPrincipal.usuarioInfo.boEsAdministrador == true ||
+                       menuPrincipal.usuarioInfo.boEsUsuarioMaestro == true) and
+                       listasPrincipalView.cantidadLstProyectos>=0}">
+            <p:tab id="lstPendientes" title="#{msg['pendientes.proyectos.titulo']}" >
+            <h:panelGrid columns="1" cellpadding="5" border="0" style="width: 100%;"  >
+                <h:outputText value="#{msg['pendientes.proyectos.parrafo']}" />
+                <!-- <p:commandButton value="#{msg['pendientes.proyectos.btn.nuevo']}" immediate="true"  onclick="PF('dlg5').show();" /> -->
+                <p:commandButton value="#{msg['pendientes.proyectos.btn.nuevo']}" actionListener="#{crearProyecto.abrirPanel}" > 
+                    <p:ajax event="dialogReturn" listener="#{crearProyecto.proyectoCreado()}" update="listados" />
+                    <p:ajax event="dialogReturn" listener="#{listasPrincipalView.init()}" update="listados" />
+                </p:commandButton>
+
+                <p:dataTable 
+                            id="idProyectos"
+                            var="pro"
+                            value="#{listasPrincipalView.lstProyectos}" 
+                            rows="15"
+                            paginator="true" 
+                            paginatorPosition="bottom"
+                            paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                            rowsPerPageTemplate="5,10,15" 
+                            filteredValue="#{listasPrincipalView.filtroProyectos}"
+                            widgetVar="proyectosTabla"
+                            emptyMessage="#{msg['pendientes.proy.lst.sin']}" 
+                            rowKey="#{pro.intIdProyecto}"
+                            style="height: 100%;"
+                            editable="true" >    
+
+                    <p:ajax event="rowEdit" listener="#{listasPrincipalView.actualizarProyecto}" update=":frmListados:listados:idProyectos" />
+
+                    <f:facet name="header">
+                        <p:outputPanel style="text-align: left;">
+                            <p:inputText id="globalFilter" onkeyup="PF('proyectosTabla').filter();" style="width:200px" placeholder="#{msg['pendientes.proy.lst.buscar']}"/>
+                        </p:outputPanel>
+                    </f:facet>
+                    <f:facet name="footer">
+                        En total tienes #{listasPrincipalView.lstProyectos.size()} proyecto(s).
+                    </f:facet>
+                    
+
+                    <p:column filterBy="#{pro.strDescNombre}" filterMatchMode="contains" headerText="Nombre"  >
+                        <f:facet name="filter">
+                            <h:outputText value="#{pro.strDescNombre}" />
+                        </f:facet>
+                        <p:cellEditor>
+                            <f:facet name="output"><h:outputText value="#{pro.strDescNombre}" /></f:facet>
+                            <f:facet name="input"><p:inputText value="#{pro.strDescNombre}" style="width: 100%;" /></f:facet>
+                        </p:cellEditor>
+                    </p:column>
+
+                    <p:column filterBy="#{pro.strDescMetodologia}" filterMatchMode="contains" headerText="#{msg['pendientes.proy.lst.met']}">
+                        <f:facet name="filter">
+                            <h:outputText value="#{pro.strDescMetodologia}" />
+                        </f:facet>
+                        <p:cellEditor>
+                            <f:facet name="output"><h:outputText value="#{pro.strDescMetodologia}" /></f:facet>
+                            <f:facet name="input">
+                                <h:selectOneMenu value="#{pro.intIdMetodologia}" style="width: 100%;" >
+                                    <f:selectItems value="#{crearProyecto.lstMetodologias}" var="met" itemLabel="#{label}" itemValue="#{value}" />
+                                </h:selectOneMenu> 
+                            </f:facet>
+                       
+                        </p:cellEditor>
+                    </p:column>
+                    
+                    <p:column filterBy="#{pro.strMotivo}" filterMatchMode="contains" headerText="Descripción">
+                        <f:facet name="filter">
+                            <h:outputText value="#{pro.strMotivo}" />
+                        </f:facet>
+                        <p:cellEditor>
+                            <f:facet name="output"><h:outputText value="#{pro.strMotivo}" /></f:facet>
+                            <f:facet name="input"><p:inputText value="#{pro.strMotivo}" style="width: 100%;" /></f:facet>
+                        </p:cellEditor>
+                    </p:column>
+                    
+                    <p:column filterBy="#{pro.strDescEstado}" filterMatchMode="contains" headerText="#{msg['pendientes.proy.lst.est']}" style="text-align: center;">
+                        <f:facet name="filter">
+                            <h:outputText value="#{pro.strDescEstado}" />
+                        </f:facet>
+                        <h:outputText value="#{pro.strDescEstado}" />
+                    </p:column>
+                    
+                    <p:column filterBy="#{pro.dtFechaCreacion}" filterMatchMode="contains" headerText="#{msg['pendientes.proy.lst.fecOpe']}" style="text-align: center;">                                   
+                        <f:facet name="filter">
+                            <h:outputText value="#{pro.dtFechaCreacion}" />
+                        </f:facet>
+                         <h:outputText value="#{pro.dtFechaCreacion}" />
+                    </p:column>
+
+                    <p:column filterBy="#{pro.dtFechaEjecucion}" filterMatchMode="contains" headerText="Fecha ejecución" style="text-align: center;">                                   
+                        <f:facet name="filter">
+                            <h:outputText value="#{pro.dtFechaEjecucion}" />
+                        </f:facet>
+                         <h:outputText value="#{pro.dtFechaEjecucion}" />
+                    </p:column>
+
+                    <p:column style="width:50px; text-align: center;" headerText="Editar">
+                        
+                        <p:rowEditor rendered="#{pro.intIdEstado==32}" />
+
+                    </p:column>
+
+                    <p:column headerText="Navegar" style="width:50px;text-align: center;">
+                        <p:commandButton actionListener="#{listasPrincipalView.cargarProyecto(pro)}" immediate="true" icon="ui-icon-pencil" />
+                    </p:column>
+                    
+                    <p:column headerText="Eliminar" style="width:50px;text-align: center;">
+                        <p:commandButton icon="ui-icon-trash" update=":frmListados:" immediate="true" actionListener="#{listasPrincipalView.borrarProyecto(pro.intIdProyecto)}" disabled="#{pro.intIdEstado==34 or pro.intIdEstado==37?true:false}" >
+                            <p:confirm header="Confirmacion" message="¿Estás seguro que deseas borrar este proyecto? Recuerda que el contenido, la información y los posibles avances no podrán recuperarse." icon="ui-icon-alert" />
+                        </p:commandButton>
+                    </p:column>
+
+
+                </p:dataTable>
+            </h:panelGrid>
+        </p:tab>
+        </c:if>
+        <c:if test="#{(menuPrincipal.usuarioInfo.boEsAdministrador == true ||
+                       menuPrincipal.usuarioInfo.boEsUsuarioMaestro == true ||
+                       menuPrincipal.usuarioInfo.boEsUsuarioEvaluado == true ||
+                       menuPrincipal.usuarioInfo.boEsUsuarioEvaluador == true) and
+                       listasPrincipalView.cantidadLstEvaluaciones>0}">
+            <p:tab title="#{msg['pendientes.evaluaciones.titulo']}" >
+                <h:panelGrid columns="1" cellpadding="10">
+                    <h:outputText value="#{msg['pendientes.evaluaciones.parrafo']}" />
+                    <p:dataTable 
+                            id="idEvaluaciones"
+                            var="pro"
+                            value="#{listasPrincipalView.lstEvaluaciones}" 
+                            rows="15"
+                            paginator="true" 
+                            paginatorPosition="bottom"
+                            paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                            rowsPerPageTemplate="5,10,15" 
+                            widgetVar="evaluacionesTabla"
+                            emptyMessage="#{msg['pendientes.eva.lst.sin']}" 
+                            rowKey="#{pro.intIdProyecto}"
+                            resizableColumns="true"
+                            style="height: 100%;" >
+
+                        <f:facet name="header">
+                            <h:outputText value="Evaluaciones pendientes" />
+                        </f:facet>
+                        <f:facet name="footer">
+                            En total tienes #{listasPrincipalView.lstEvaluaciones.size()} evaluacion(es) por resolver.
+                        </f:facet>
+                        <p:column headerText="#{msg['pendientes.eva.lst.eva']}" >
+                            <h:outputText value="#{pro.strDescNombre}" />
+                        </p:column>
+                        <p:column headerText="#{msg['pendientes.eva.lst.nom']}" >
+                            <h:outputText value="#{pro.strDescEvaluado}" />
+                        </p:column>
+                        <p:column headerText="Resolver" style="text-align: center;" >
+                            <p:commandButton value="Resolver" actionListener="#{listasPrincipalView.irEvaluacion(pro)}" />
+                        </p:column>
+                    </p:dataTable>
+                </h:panelGrid>
+            </p:tab>
+        </c:if>
+        <c:if test="#{(menuPrincipal.usuarioInfo.boEsAdministrador == true ||
+                       menuPrincipal.usuarioInfo.boEsUsuarioMaestro == true ||
+                       menuPrincipal.usuarioInfo.boEsUsuarioEvaluado == true ||
+                       menuPrincipal.usuarioInfo.boEsUsuarioEvaluador == true) and
+                       listasPrincipalView.cantidadLstRedes>0}">
+            <p:tab title="#{msg['pendientes.redes.titulo']}">
+                <h:panelGrid columns="1" cellpadding="10">
+                    <h:outputText value="#{msg['pendientes.redes.parrafo']}" />
+
+                    <p:dataTable 
+                            id="idRedes"
+                            var="pro"
+                            value="#{listasPrincipalView.lstRedes}" 
+                            rows="15"
+                            paginator="true" 
+                            paginatorPosition="bottom"
+                            paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                            rowsPerPageTemplate="5,10,15" 
+                            widgetVar="redesTabla"
+                            emptyMessage="#{msg['pendientes.red.lst.sin']}" 
+                            rowKey="#{pro.intIdProyecto}"
+                            resizableColumns="true"
+                            style="height: 100%;" >
+
+                        <f:facet name="footer">
+                            En total tienes #{listasPrincipalView.lstRedes.size()} red(es) pendientes por configurar.
+                        </f:facet>
+                        
+                        <p:column headerText="#{msg['pendientes.red.lst.red']}" >
+                            <h:outputText value="#{pro.strDescNombre}" />
+                        </p:column>
+
+                        <p:column headerText="Navegar" style="width:50px;text-align: center;">
+                            <p:commandButton actionListener="#{listasPrincipalView.irRed(pro)}" immediate="true" icon="ui-icon-pencil" />
+                        </p:column>
+
+                        
+                    </p:dataTable>
+
+                </h:panelGrid>
+            </p:tab>
+        </c:if>
+    </p:accordionPanel>
+
+    <c:if test="#{(menuPrincipal.usuarioInfo.boEsAdministrador == false and
+                  menuPrincipal.usuarioInfo.boEsUsuarioMaestro == false) and
+                  listasPrincipalView.cantidadLstProyectos==0 and 
+                  listasPrincipalView.cantidadLstEvaluaciones==0 and 
+                  listasPrincipalView.cantidadLstRedes==0}">
+        <h:panelGrid columns="1" style="width: 100%; height: 100%;" border="0" class="ui-align-center" >
+            <h:outputLabel class="ui-amigable-1">
+                <br/>
+                <br/>
+                #{msg['pendientes.labor.cumplida1']} <br/>
+                #{msg['pendientes.labor.cumplida2']} <br/>
+                #{msg['pendientes.labor.cumplida3']} <br/>
+                <h:outputLabel class="ui-amigable-2" value=":)"/>
+            </h:outputLabel>
+        </h:panelGrid>
+    </c:if>
+
+</h:form>
+
+    
+    
+    <script type="text/javascript">
+        function handleCrearProyectoRequest(xhr, status, args) {
+            if(!args.validationFailed) {
+                PF('dlg5').hide();
+            }
+        }
+    </script>
+    
+</h:body>
+</html>

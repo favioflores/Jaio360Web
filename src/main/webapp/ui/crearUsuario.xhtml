@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui">
+     
+<h:head>
+    <title>Mantenimiento de usuario</title>
+    <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+    <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/syntaxhighlighter/syntaxhighlighter.css" />
+</h:head>
+     
+    <h:body>
+        <h:form id="crearUsuario">
+        <p:panel id="panel">
+            
+            <p:growl sticky="false" showDetail="true" autoUpdate="true" life="4000" />
+            <h:panelGrid id="grid" columns="3" cellpadding="5" border="0" style="width: 100%;">
+                
+                <p:outputLabel value="Ubigeo : "  />
+                <p:selectOneMenu id="idPais" value="#{crearUsuario.pais}" label="Pais" required="true" requiredMessage="Valor requerido"  >
+                    <f:selectItem itemLabel="Selecciona un pais" itemValue="" />
+                    <f:selectItems value="#{crearUsuario.lstPaises}"  var="pais" itemLabel="#{pais.ubTxDescripcion}" itemValue="#{pais.ubIdUbigeoPk}" />
+                    <p:ajax update="idCiudad" listener="#{crearUsuario.cargaCiudades}"/>
+                </p:selectOneMenu>
+                <p:message for="idPais" display="icon" />
+                
+                <p:outputLabel value="Ciudad :"/>
+                <p:selectOneMenu id="idCiudad" value="#{crearUsuario.usuarioForm.ubigeo.ubIdUbigeoPk}" label="Ciudad" required="true" disabled="#{crearUsuario.pais==null?true:false}" requiredMessage="Valor requerido" >
+                    <f:selectItem itemLabel="Selecciona una ciudad" itemValue="" />
+                    <f:selectItems value="#{crearUsuario.lstCiudades}"  var="ciudad" itemLabel="#{ciudad.ubTxDescripcion}" itemValue="#{ciudad.ubIdUbigeoPk}" />
+                </p:selectOneMenu>
+                <p:message for="idCiudad" /> 
+                
+                <h:outputLabel value="Usuario : " />
+                <p:inputText id="idMail" value="#{crearUsuario.usuarioForm.usIdMail}" required="true" size="50" maxlength="100" >
+                    <f:validator validatorId="validarCorreo" />
+                </p:inputText>
+                <p:message for="idMail" display="icon" />
+                
+                <h:outputLabel value="Clave : " />
+                <p:inputText type="password" id="idClave" value="#{crearUsuario.usuarioForm.usTxContrasenia}" required="true" size="50" maxlength="100" >
+                    <f:validator validatorId="validaTextoIngresado" /> <!--validaContrasenia" /-->
+                </p:inputText>
+                <p:message for="idClave" display="icon" />
+                
+                <h:outputLabel value="Estado : " />
+                <p:selectOneMenu id="idEstado" value="#{crearUsuario.usuarioForm.usIdEstado}"  label="Estado" required="true" >
+                    <f:selectItem itemLabel="Selecciona un estado" itemValue="" />
+                    <f:selectItems value="#{crearUsuario.lstEstados}" var="esta" itemLabel="#{esta.elIdElementoPk}" itemValue="#{esta.elTxDescripcion}" />
+                    <!--p:ajax update="idEvaluados" /-->
+                </p:selectOneMenu>
+                <p:message for="idEstado" display="icon" />
+                
+                <h:outputLabel value="Tipo cuenta : " />
+                <p:selectOneMenu id="idTipoCuenta" value="#{crearUsuario.usuarioForm.usIdTipoCuenta}" label="TipoCuenta" required="true" requiredMessage="Valor requerido"  >
+                    <f:selectItem itemLabel="Selecciona un tipo de cuenta" itemValue="" />
+                    <f:selectItems value="#{crearUsuario.lstTipoCuenta}" var="esta" itemLabel="#{esta.elIdElementoPk}" itemValue="#{esta.elTxDescripcion}" />
+                    <!--p:ajax update="idEvaluados" /-->
+                </p:selectOneMenu>
+                <p:message for="idTipoCuenta" display="icon" />
+                
+                <h:outputLabel value="Razón social : " />
+                <p:inputText id="strRazonSocial" value="#{crearUsuario.usuarioForm.usTxNombreRazonsocial}" required="true" size="50" maxlength="100" >
+                    <f:validator validatorId="validaTextoIngresado" />
+                </p:inputText>
+                <p:message for="strRazonSocial" display="icon" />
+                
+                <h:outputLabel value="Descrip. empresa : " />
+                <p:inputText id="strDescEmpresa" value="#{crearUsuario.usuarioForm.usTxDescripcionEmpresa}" required="true" size="50" maxlength="100" >
+                    <f:validator validatorId="validaTextoIngresado" />
+                </p:inputText>
+                <p:message for="strDescEmpresa" display="icon" />
+                
+                <h:outputLabel value="Fecha nacimiento : " />
+                <p:calendar id="strFeNacimiento" value="#{crearUsuario.usuarioForm.usFeNacimiento}" pattern="MM/dd/yyyy" effect="fold" />
+                <p:message for="strFeNacimiento" display="icon" />
+                
+                <h:outputLabel value="Tipo documento : " />                
+                <p:selectOneMenu id="idTipoDoc" value="#{crearUsuario.usuarioForm.usIdTipoDocumento}"  >
+                    <f:selectItem itemLabel="Selecciona un tipo de documento" itemValue="" />
+                    <f:selectItems value="#{crearUsuario.lstTipoDocumento}" var="esta" itemLabel="#{esta.elIdElementoPk}" itemValue="#{esta.elTxDescripcion}" />
+                    <!--p:ajax update="idEvaluados" /-->
+                </p:selectOneMenu>
+                <p:message for="idTipoDoc" display="icon" />
+                                
+                <h:outputLabel value="Número documento : " />
+                <p:inputText id="strDoc" value="#{crearUsuario.usuarioForm.usTxDocumento}" required="true" size="50" maxlength="100" >
+                    <f:validator validatorId="validaDocumento" />
+                </p:inputText>
+                <p:message for="strDoc" display="icon" />
+                
+                <h:outputLabel value="Fecha registro : " />
+                <p:calendar id="strFecRegistro" value="#{crearUsuario.usuarioForm.usFeRegistro}" pattern="MM/dd/yyyy" effect="fold" />
+                <p:message for="strFecRegistro" display="icon" />
+                
+            </h:panelGrid>
+            
+            <h:panelGrid cellpadding="5" columns="2" border="0">
+                <p:commandButton value="Guardar" update="grid" process="@form" actionListener="#{crearUsuario.guardarUsuario}" />
+                <p:commandButton value="Limpiar" >
+                    <p:ajax update="panel" resetValues="true" />
+                </p:commandButton>
+            </h:panelGrid>
+            
+
+        </p:panel>
+        
+    </h:form>
+    </h:body>
+     
+</html>

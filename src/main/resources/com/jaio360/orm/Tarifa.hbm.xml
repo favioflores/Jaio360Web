@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 21/10/2014 08:38:38 PM by Hibernate Tools 3.2.1.GA -->
+<hibernate-mapping>
+    <class name="com.jaio360.orm.Tarifa" table="tarifa" catalog="jaio">
+        <id name="taIdTarifaPk" type="java.lang.Integer">
+            <column name="TA_ID_TARIFA_PK" />
+            <generator class="identity" />
+        </id>
+        <property name="taTxDescripcion" type="string">
+            <column name="TA_TX_DESCRIPCION" length="200" not-null="true" />
+        </property>
+        <property name="taDePrecio" type="big_decimal">
+            <column name="TA_DE_PRECIO" precision="15" scale="10" not-null="true" />
+        </property>
+        <property name="taFeCreacion" type="timestamp">
+            <column name="TA_FE_CREACION" length="19" not-null="true" />
+        </property>
+        <property name="taIdEstado" type="int">
+            <column name="TA_ID_ESTADO" not-null="true" />
+        </property>
+        <set name="contratos" inverse="true">
+            <key>
+                <column name="TA_ID_TARIFA_FK" not-null="true" />
+            </key>
+            <one-to-many class="com.jaio360.orm.Contrato" />
+        </set>
+    </class>
+</hibernate-mapping>

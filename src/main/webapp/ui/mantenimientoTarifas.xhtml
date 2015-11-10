@@ -1,0 +1,141 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui" >
+<h:head/>
+<h:body>
+    <ui:composition>
+        <h:form id="formMnttarifa">
+        
+            <h1>Mantenimiento tarifas</h1>
+            <p:separator/>
+            <h:panelGrid border="0" columns="1" >  
+
+                <p:growl id="growlMntCuenta" showDetail="true" autoUpdate="true" life="4000" />
+                <p:commandButton value="Crear nueva tarifa" immediate="true" onclick="PF('dlg').show();" > 
+                    <!-- <p:ajax event="dialogReturn" listener="#{mantenimientoTarifaView.tarifaCreada}" update="lstTarifas" /> -->
+                </p:commandButton>
+
+                <p:dataTable 
+                                id="lstTarifas"
+                                var="tar"
+                                value="#{mantenimientoTarifaView.lstTarifas}" 
+                                rows="10"
+                                paginator="true" 
+                                paginatorPosition="bottom"
+                                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                rowsPerPageTemplate="5,10,15"                                 
+                                widgetVar="lstTarifas"
+                                editable="true"
+                                emptyMessage="No hay tarifas" 
+                                rowKey="#{tar.taIdTarifaPk}"
+                                style="height: 100%;">    
+
+                        <p:ajax event="rowEdit" listener="#{mantenimientoTarifaView.editarTarifa}" update="lstTarifas" />
+
+                        <p:column  headerText="Id" >
+                            <h:outputText value="#{tar.taIdTarifaPk}" />
+                        </p:column>
+
+                        <p:column headerText="Descripcion" >
+                            <p:cellEditor>
+                                <f:facet name="output"><h:outputText value="#{tar.taTxDescripcion}" /></f:facet>
+                                <f:facet name="input"><p:inputText value="#{tar.taTxDescripcion}" style="width:100%"/></f:facet>
+                            </p:cellEditor>
+                        </p:column>
+
+                        <p:column headerText="Precio" >
+                            <p:cellEditor>
+                                <f:facet name="output"><h:outputText value="#{tar.taDePrecio}" /></f:facet>
+                                <f:facet name="input"><p:inputText value="#{tar.taDePrecio}" style="width:100%"/></f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        
+                        <p:column headerText="Fecha de creacion" >
+                            <h:outputText value="#{tar.taFeCreacion}" />
+                        </p:column>
+
+                        <p:column headerText="Estado" >
+                            <h:outputText value="#{tar.taTxEstado}" />
+                        </p:column>
+                        
+                        <p:column headerText="Nro. Contratos total" >
+                            <h:outputText value="#{tar.taNroContratoTotal}" />
+                        </p:column>
+                        
+                        <p:column headerText="Nro. Contratos en uso" >
+                            <h:outputText value="#{tar.taNroContratoUso}" />
+                        </p:column>
+                        
+                        <p:column headerText="Editar">
+                            <p:rowEditor rendered="#{tar.taNroContratoUso>=0?true:false}" />
+                        </p:column>
+
+                        <p:column headerText="Confirmar" >
+                            <p:commandButton icon="ui-icon-circle-check" update="lstTarifas" actionListener="#{mantenimientoTarifaView.confirmaTarifa(tar.taIdTarifaPk)}" disabled="#{tar.taIdEstado==25?false:true}" immediate="true" />
+                        </p:column>
+
+                        <p:column headerText="Expirar" >
+                            <p:commandButton icon="ui-icon-circle-check" update="lstTarifas" actionListener="#{mantenimientoTarifaView.expirarTarifa(tar.taIdTarifaPk)}" disabled="#{tar.taIdEstado!=27?false:true}" immediate="true" />
+                        </p:column>
+
+                        <p:column headerText="Borrar" >
+                            <p:commandButton icon="ui-icon-trash" update="lstTarifas" actionListener="#{mantenimientoTarifaView.borrarTarifa(tar.taIdTarifaPk)}" disabled="#{tar.taNroContratoUso>=0?false:true}" immediate="true" />
+                        </p:column>
+
+                    </p:dataTable>
+
+            </h:panelGrid>
+
+        
+            <p:dialog header="Crear tarifa" id="idTarifa" widgetVar="dlg" resizable="false" closeOnEscape="true" showEffect="fade" hideEffect="fade" >
+                <p:panel id="pnlCrearTarifa">
+                    
+                    <p:messages id="msgCreaTarifa" showDetail="true" showSummary="false" />
+                    
+                    <p:growl sticky="false" showDetail="true" autoUpdate="true" life="4000" />
+                    <h:panelGrid id="grid" columns="3" cellpadding="5" border="0" style="width: 100%;">
+
+                        <h:outputLabel value="Descripcion : " />
+                        <p:inputText id="strDescripcion" value="#{mantenimientoTarifaView.strDescripcion}" required="true" size="50" maxlength="100" >
+                            <f:validator validatorId="validaTextoIngresado" />
+                        </p:inputText>
+                        <p:message for="strDescripcion" display="icon" />
+
+                        <h:outputLabel value="Precio : " />
+                        <p:inputText id="strPrecio" value="#{mantenimientoTarifaView.bdPrecio}" required="true" size="50" maxlength="100" >
+                            <f:validateDoubleRange minimum="0" maximum="9999" />
+                        </p:inputText>
+                        <p:message for="strPrecio" display="icon" />
+
+                    </h:panelGrid>
+
+                    <h:panelGrid cellpadding="5" columns="2" border="0">
+                        <p:commandButton value="Añadir" validateClient="true" actionListener="#{mantenimientoTarifaView.guardarTarifa}" icon="ui-icon-check" process="pnlCrearTarifa"  update="msgCreaTarifa,pnlCrearTarifa,:formMnttarifa:lstTarifas" /> 
+                    </h:panelGrid>
+
+                    <p:ajax event="close" update=":formMnttarifa:lstTarifas" />
+                    
+                </p:panel>
+            </p:dialog>
+        
+        
+        </h:form>
+        
+    </ui:composition>
+        <h:form prependId="false">
+            <p:idleMonitor timeout="3600000" >
+                <p:ajax event="idle" listener="#{usuarioSesion.timeout()}" oncomplete="PF('timeoutDlg').show();"/>
+            </p:idleMonitor>
+            <p:dialog header="Aviso de cierre de sesión" widgetVar="timeoutDlg" width="300" closable="false" maximizable="false" resizable="false" draggable="false" closeOnEscape="false" modal="true" >
+                <h:panelGrid border="0" columns="1" >
+                <h:outputText value="Por seguridad su sesión fue cerrada tras 60 minutos de inactividad." />
+                <p:button outcome="iniciar" value="Ok" /> 
+                </h:panelGrid>
+            </p:dialog> 
+        </h:form>
+</h:body>
+</html>

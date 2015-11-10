@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<f:view contentType="text/html">
+
+	<h:head>
+        <f:facet name="first">
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <title>Jaio 360 - Principal mantenimiento de tarifas</title>
+            <link rel="shortcut icon" type="image/png" href="#{request.contextPath}/images/favicon.png" />
+        </f:facet>
+        
+        <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+        <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/syntaxhighlighter/syntaxhighlighter.css" />
+
+        <script type="text/javascript">
+            $(function() {$('.sidebar a').hover(function() {$(this).toggleClass('ui-state-hover');})});
+        </script>
+        
+        <script type="text/javascript">
+            var _gaq = _gaq || [];
+            _gaq.push(['_setAccount', 'UA-12200033-3']);
+            _gaq.push(['_trackPageview']);
+
+            (function() {
+              var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+              ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+              var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+            })();
+
+        </script> 
+        
+	</h:head>
+
+    <h:body>
+        
+        <p:layout fullPage="true" style="min-height: 900px;" >
+
+            <p:layoutUnit position="north" resizable="false" style="min-height: 30px;" >
+                <ui:include src="cabecera.xhtml" />
+            </p:layoutUnit>
+
+            <p:layoutUnit position="center" resizable="false" header="Opciones de mantenimiento">
+                <h:panelGrid cellpadding="20">
+                    <ui:include src="mantenimientoTarifas.xhtml" />
+                </h:panelGrid>
+            </p:layoutUnit>
+
+        </p:layout>                               
+
+        <p:ajaxStatus onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" />
+ 
+        <p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false">
+            <p:graphicImage value="/images/ajax-loader.gif" />
+        </p:dialog>
+       
+        <h:form prependId="false">
+            <p:idleMonitor timeout="3600000" >
+                <p:ajax event="idle" listener="#{usuarioSesion.timeout()}" oncomplete="PF('timeoutDlg').show();"/>
+            </p:idleMonitor>
+            <p:dialog header="Aviso de cierre de sesión" widgetVar="timeoutDlg" width="300" closable="false" maximizable="false" resizable="false" draggable="false" closeOnEscape="false" modal="true" >
+                <h:panelGrid border="0" columns="1" >
+                <h:outputText value="Por seguridad su sesión fue cerrada tras 60 minutos de inactividad." />
+                <p:button outcome="iniciar" value="Ok" /> 
+                </h:panelGrid>
+            </p:dialog> 
+        </h:form>
+
+    </h:body>
+</f:view>
+</html>

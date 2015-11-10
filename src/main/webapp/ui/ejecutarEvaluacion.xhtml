@@ -1,0 +1,63 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui" 
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                template="principalEvaluacion.xhtml" >
+    
+<ui:define name="htmlEvaluacion">
+
+            
+            
+    <h:form id="formEjecutarEvaluacion" >
+
+        
+                <h2>#{ejecutarEvaluacionView.strDescCuestionario}</h2>
+                
+                <h3>#{ejecutarEvaluacionView.strDescEvaluado}</h3>
+
+                <h3>Instrucciones básicas</h3>  
+                <p:outputLabel value="Para ver todas las preguntas desplázate hacia abajo y culmina la evaluación presionando el botón 'Terminar'. En caso no tengas una respuesta, no dudes en continuar y completar la evaluación." />
+                
+                <!--
+                <h:inputHidden id="txt2" value="#{ejecutarEvaluacionView.number2}" />
+                <p:slider for="txt2" step="1" onSlide=""  maxValue="6"  >
+                    <p:ajax event="slideEnd" />
+                </p:slider>
+-->                
+                <div style="height:10px" />
+                <p:outputPanel binding="#{ejecutarEvaluacionView.objOutputPanelCerrada}" />
+                <div style="height:20px" />
+<c:if test="#{ejecutarEvaluacionView.lstComponenteAbierta.size()>0}">
+                <h3>Preguntas abiertas</h3>  
+                <p:outputLabel value="Da tu opinión sobre estos puntos:" /> 
+                <div style="height:30px" />
+                <p:outputPanel binding="#{ejecutarEvaluacionView.objOutputPanelAbierta}" />
+</c:if>                
+                <h:panelGrid style="width: 100%; text-align: center;" border="0" columns="1" >
+                    <p:commandButton id="btnGuardar" value="Terminar evaluación" oncomplete="PF('dlg').show();" class="ExageraBoton" />  
+                </h:panelGrid>
+        
+        <p:dialog header="Instrucciones personales"  visible="true" width="280" height="300" position="left,bottom" widgetVar="dlgInstrucciones" minimizable="true" closable="false" maximizable="true">
+            <h:outputText value="#{ejecutarEvaluacionView.strInstrucciones}" escape="false" />
+        </p:dialog>    
+</h:form>
+        <p:dialog header="Te agradecemos tu tiempo" modal="true" fitViewport="true" appendTo="@(body)" widgetVar="dlg" resizable="false" style="max-width: 700px;" >
+            <h:panelGrid id="panel" columns="1" border="0" cellpadding="5" style="width: 100%;">
+                <h:outputText value="#{ejecutarEvaluacionView.strAgradecimiento}" escape="false" />
+                <f:facet name="header">
+                    <center>
+                        <p>¿Quieres terminar tu evaluación?</p>
+                        <p:commandButton value="Si" actionListener="#{ejecutarEvaluacionView.guardarResultado()}" />
+                        <p:commandButton value="No" oncomplete="PF('dlg').hide();" />
+                    </center>
+                </f:facet>  
+            </h:panelGrid>
+        </p:dialog>
+
+    
+    <p:growl sticky="true" showDetail="true" showSummary="true" autoUpdate="false" />
+
+</ui:define>
+</ui:composition>

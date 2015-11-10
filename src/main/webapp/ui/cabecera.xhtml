@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui" >
+<h:head/>
+<body>
+    <ui:composition>
+        <h:form id="cabecera">
+            
+        <p:growl id="mensajeGrowl" showDetail="true" />
+        <h:panelGrid columns="5" border="0" width="99%" >
+            <p:outputPanel style="text-align: left; width: 100%;">
+                <p:graphicImage style="border: 1px;" value="../images/logoJaio360.jpg" width="140" height="50" />
+            </p:outputPanel>
+            
+            <p:panel style="text-align: center;">
+                <p:outputLabel value="#{msg['cabecera.usuario']}">#{menuPrincipal.usuarioInfo.strEmail}</p:outputLabel>
+            </p:panel>
+            <p:panel style="text-align: center;">
+                <p:outputLabel value="#{msg['cabecera.tipo']}">#{menuPrincipal.usuarioInfo.strTipoUsuario}</p:outputLabel>
+            </p:panel>
+            
+            <p:panel style="text-align: center;">
+                <p:outputLabel value="#{msg['cabecera.ultima.conexion']}">#{menuPrincipal.usuarioInfo.strUltimaConexion}</p:outputLabel>
+            </p:panel>
+            <!--
+            <p:panel style="text-align: center;">
+                <p:outputLabel value="#{msg['cabecera.fallidos']}">#{menuPrincipal.usuarioInfo.strIntentosErrados}</p:outputLabel>
+            </p:panel>
+            -->
+            <p:outputPanel style="text-align: right; width: 100%;">
+                <p:commandButton id="menuRaiz" value="≡" type="button"  >
+                    <p:menu model="#{menuPrincipal.model}" style="min-width: 230px;" trigger="menuRaiz" overlay="true"  my="right top" at="right bottom" />
+                </p:commandButton>
+            </p:outputPanel>
+        </h:panelGrid>
+
+        <p:commandButton id="btcerrarSesion" widgetVar="btcerrarSesion" actionListener="#{usuarioSesion.cerrarSesion}" style="display: none;" >
+            <p:confirm header="#{msg['cabecera.logout.confirmacion.title']}" message="#{msg['cabecera.logout.confirmacion.mensaje']}" icon="ui-icon-alert" /> 
+        </p:commandButton>
+        <p:confirmDialog global="true" >
+            <p:commandButton type="button" value="#{msg['cabecera.logout.confirmacion.si']}" styleClass="ui-confirmdialog-yes" />
+            <p:commandButton type="button" value="#{msg['cabecera.logout.confirmacion.no']}" styleClass="ui-confirmdialog-no"  />
+        </p:confirmDialog>
+
+    <script>
+          function triggerHiddenEvent(button) {
+            var a = document.getElementById("cabecera:"+ button);
+            a.click();
+          }
+    </script>
+    </h:form>
+    </ui:composition>
+
+</body>
+</html>

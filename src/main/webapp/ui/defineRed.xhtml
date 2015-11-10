@@ -1,0 +1,113 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui" 
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                template="principalRed.xhtml" >
+    
+<ui:define name="htmlRed">
+    <h:form id="formDefineCuestionarioEvaluado">
+         
+        <p:growl id="growl" showDetail="true" />
+        
+<c:if test="#{defineRedView.lstRed.size()>0 or defineRedView.isArtificio==true}">
+        
+        <h1>Define tu red de evaluación</h1>
+        
+        <p:separator/>
+        
+        <h:panelGrid columns="1" border="0" >
+
+            <p>Define con quienes estas relacionado en tu entorno de trabajo.</p>
+            
+            <!-- <h3></h3> -->
+
+            <p:dataTable 
+                        id="idRed"
+                        var="red" 
+                        widgetVar="idRed"
+                        value="#{defineRedView.lstRed}" 
+                        rows="50"
+                        paginator="true" 
+                        paginatorPosition="bottom"
+                        paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                        rowsPerPageTemplate="5,10,15,20" 
+                        resizableColumns="true"
+                        filteredValue="#{defineRedView.filtroRed}"
+                        emptyMessage="#{msg['pendientes.proy.lst.sin']}" 
+                        rowKey="#{red.intIdEvaluador}"
+                        style="width: 100%; min-width: 600px;"
+                        rowStyleClass="${red.intIdRelacion>0?'filaSeleccionada':null}" >  
+
+                <f:facet name="header">
+                    <p:outputPanel style="text-align: left;">
+                        <p:inputText id="globalFilter" onkeyup="PF('idRed').filter();" style="width: 34px; min-width: 340px;" placeholder="Ingresar algún texto para buscar a tus compañeros" />
+                    </p:outputPanel>
+                </f:facet>
+                
+                <p:column filterBy="#{red.strDescNombre}" filterMatchMode="contains" headerText="Nombre completo" >
+                    <f:facet name="filter">
+                        <h:outputText value="#{red.strDescNombre}" />
+                    </f:facet>
+                    <h:outputText value="#{red.strDescNombre}" />
+                </p:column>
+                
+                <p:column filterBy="#{red.strCorreo}" filterMatchMode="contains" headerText="Correo electronico" >
+                    <f:facet name="filter">
+                        <h:outputText value="#{red.strCorreo}" />
+                    </f:facet>
+                    <h:outputText value="#{red.strCorreo}" />
+                </p:column>
+
+                <p:column filterBy="#{red.strCargo}" filterMatchMode="contains" headerText="Cargo" >
+                    <f:facet name="filter">
+                        <h:outputText value="#{red.strCargo}" />
+                    </f:facet>
+                    <h:outputText value="#{red.strCargo}" />
+                </p:column>
+
+                <p:column headerText="Relacion que tiene con usted">
+                    <h:selectOneMenu value="#{red.intIdRelacion}" style="width:100%" >
+                       <f:selectItems value="#{defineRedView.lstRelaciones}" var="rel" itemLabel="#{rel.reTxNombre}" itemValue="#{rel.reIdRelacionPk}" />
+                       <p:ajax update="idRed" />
+                   </h:selectOneMenu>
+                </p:column>
+                
+            </p:dataTable>
+            
+            <br/>
+            
+            <center>
+                <p:column>
+                <p:commandButton value="Grabar red de evaluacion" update=":formDefineCuestionarioEvaluado:" actionListener="#{defineRedView.guardarRedSeleccionada}" />
+                <c:if test="#{defineRedView.isArtificio==false}" >
+                    <p:commandButton value="Terminar carga" update="formDefineCuestionarioEvaluado" actionListener="#{defineRedView.terminarCargaDeRed}" />
+                </c:if>
+                <!--
+                <c:if test="#{defineRedView.isArtificio==true}" >
+                    <p:commandButton value="Regresar a control de redes" actionListener="#{defineRedView.regresarControlRedes}" />
+                </c:if>
+                -->
+                </p:column>
+            </center>
+        </h:panelGrid>
+</c:if>
+
+<c:if test="#{defineRedView.lstRed.size()==0 and defineRedView.isArtificio==false}">
+            <h:panelGrid columns="1" style="width: 100%; height: 100%;" border="0" class="ui-align-center" >
+                <h:outputLabel class="ui-amigable-1">
+                    <br/>
+                    ¡Gracias por tu gran apoyo!<br/>
+                    <h:outputLabel class="ui-amigable-2" value=":)"/>
+                    <br/><br/>Revisa si tienes otros pendientes
+                </h:outputLabel>
+                <br/>
+                <p:commandButton value="Ir a mi bandeja" immediate="true" actionListener="#{defineRedView.regresarBienvenida()}"  /> 
+            </h:panelGrid>
+</c:if>
+            
+        
+    </h:form>
+</ui:define>
+</ui:composition>

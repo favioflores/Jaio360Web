@@ -1,0 +1,515 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui" 
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                template="principalProyecto.xhtml" >
+    
+    
+<ui:define name="htmlPaso">
+    
+    <h:form id="form10" > 
+    
+        <h1>3. Crear cuestionarios</h1>
+         
+        <p:separator style="width: 100%"/>
+       
+        <p:growl life="4000" showDetail="true" autoUpdate="true" sticky="false" />
+        
+        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" >
+            <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+        </p:confirmDialog>
+        
+        <h:panelGrid columns="1" border="0" style="width: 100%;">
+            
+            <p:row/>
+            <p:outputLabel value="Define la escala, los  cuestionarios y sus respectivas preguntas." />
+            <p:row/>
+
+            <br/>
+            <p:panel id="pnlMetricas" header="Metricas" toggleable="true" >
+                <p:messages id="msgMetrica" showDetail="true" />
+                <h:panelGrid border="0" cellpadding="0" cellspacing="0" columns="1">
+
+<c:if test="#{crearCuestionarioView.objProyectoInfo.intIdMetodologia==31}">
+    <p>Recuerda que por cada categoria es necesario colocar el numero de descriptores.</p>
+</c:if>
+<c:if test="#{crearCuestionarioView.objProyectoInfo.intIdMetodologia!=31}">
+    <p>Seleccione el rango y las respuestas.</p>
+</c:if>
+                
+                    <h:panelGrid columns="3" border="0" >
+                    
+                    <c:if test="#{crearCuestionarioView.objProyectoInfo.intIdMetodologia==30}">
+                        <h:outputLabel for="rangos" value="N° Rango : " />
+                    </c:if>
+                    <c:if test="#{crearCuestionarioView.objProyectoInfo.intIdMetodologia==31}">
+                        <h:outputLabel for="rangos" value="N° Descriptores : " />
+                    </c:if>
+                    <p:spinner  id="rangos" value="#{crearCuestionarioView.intRangos}" max="#{crearCuestionarioView.intRangoMax}" min="#{crearCuestionarioView.intRangoMin}" disabled="#{crearCuestionarioView.intCantidadEjecutados>0?true:false}" >
+                        <c:if test="#{crearCuestionarioView.objProyectoInfo.intIdMetodologia==30}">
+                            <p:ajax process="@this" listener="#{crearCuestionarioView.guardarEscala}" update=":form10:lstMetricas,:form10:rangos" /> 
+                        </c:if>
+                        <c:if test="#{crearCuestionarioView.objProyectoInfo.intIdMetodologia!=30}">
+                            <p:ajax process="@this" listener="#{crearCuestionarioView.guardarEscala}" update=":form10:rangos" /> 
+                        </c:if>
+                    </p:spinner>
+
+                </h:panelGrid>
+                <br/>
+
+<c:if test="#{crearCuestionarioView.objProyectoInfo.intIdMetodologia==30}">
+                <h:panelGrid columns="1" cellpadding="0" cellspacing="0">
+                    <p:dataTable id="lstMetricas" widgetVar="lstMetricas" var="detMetrica" value="#{crearCuestionarioView.lstDetalleMetrica}" emptyMessage="No se encontraron datos :(" >
+                        
+                        <f:facet name="header">
+                            <p:outputPanel style="text-align: left;" >
+                                <p:commandButton type="button" id="buttonAddRango" disabled="#{crearCuestionarioView.intCantidadEjecutados>0?true:false}" value="Agregar respuesta" onclick="PF('dlg5').show();" icon="ui-icon-plusthick" >
+                                    <f:attribute name="numeroRango" value="#{crearCuestionarioView.intRangos}" />
+                                </p:commandButton>       
+                            </p:outputPanel>
+                        </f:facet>
+                        
+                        <p:column headerText="Descripcion">
+                            <h:outputText value="#{detMetrica.deTxValor}" />
+                        </p:column>
+                        <p:column headerText="Orden">
+                            <p:rating value="#{detMetrica.deNuOrden + 1}" stars="#{crearCuestionarioView.lstDetalleMetrica.size()}" disabled="true" />
+                        </p:column>
+                        <p:column headerText="Subir/Bajar" style="text-align: center;" >
+                            <p:commandButton id="iconSubir" actionListener="#{crearCuestionarioView.subirMetrica(detMetrica)}" immediate="true" icon="ui-icon-circle-triangle-n" update="lstMetricas" disabled="#{crearCuestionarioView.intCantidadEjecutados>0?true:false}" />
+                            <p:commandButton id="iconBajar" actionListener="#{crearCuestionarioView.bajarMetrica(detMetrica)}" immediate="true" icon="ui-icon-circle-triangle-s" update="lstMetricas" disabled="#{crearCuestionarioView.intCantidadEjecutados>0?true:false}" />
+                            <!-- <p:commandButton id="withIconSubirSub" immediate="true" actionListener="#{crearCuestionarioView.subirSubCuestionario(cuest,subComp)}" update=":form1:" icon="ui-icon-circle-triangle-n" disabled="#{crearCuestionarioView.objCuestionario.cuIdEstado==43?false:true}" />
+                            <p:commandButton id="withIconBajarSub" immediate="true" actionListener="#{crearCuestionarioView.bajarSubCuestionario(cuest,subComp)}" update=":form1:" icon="ui-icon-circle-triangle-s" disabled="#{crearCuestionarioView.objCuestionario.cuIdEstado==43?false:true}" /> -->
+                        </p:column>
+
+                        <p:column headerText="Eliminar" style="width: 80px; text-align: center;" >
+                            <p:commandButton actionListener="#{crearCuestionarioView.eliminarMetrica(detMetrica)}" disabled="#{crearCuestionarioView.intCantidadEjecutados>0?true:false}" icon="ui-icon-trash" update=":form10:,:form1:tableCuestionario,:form1:idBtnImportar" />
+                        </p:column>
+                    </p:dataTable>
+
+                </h:panelGrid>
+                <br/>
+</c:if>
+                </h:panelGrid>
+            </p:panel>   
+        </h:panelGrid>
+    </h:form>
+    <h:form id="form1">  
+        
+        <h:panelGrid columns="1" border="0" style="width: 100%;">
+            <p:panel header="Lista de cuestionarios" toggleable="true" >
+                
+                <p:messages id="msgCuestionario" showDetail="true" />
+                
+                <h:panelGrid columns="1" >
+                    <p>Crea los cuestionarios que se utilizarán en este proyecto</p>
+
+                    <p:commandButton id="idBtnImportar" value="Importar cuestionarios"  disabled="#{crearCuestionarioView.lstDetalleMetrica.size()>0?crearCuestionarioView.intIdEstadoProyecto==37?true:false:true}" actionListener="#{crearCuestionarioView.irImportarCuestionario(cuestionario.cuIdCuestionarioPk)}" icon="ui-icon-arrowthickstop-1-n" immediate="true" />
+                    
+                    <p:dataTable id="tableCuestionario" var="cuestionario" value="#{crearCuestionarioView.lstCuetionario}" editable="true" emptyMessage="No se encontraron datos :(" >
+
+                        <p:ajax event="rowEdit" listener="#{crearCuestionarioView.onRowEditCuestionario}" update="tableCuestionario" />
+                        
+                        <f:facet name="header">
+                            <p:outputPanel style="text-align: left;" >
+                                <p:commandButton id="idBtnGuardarCuetionario" icon="ui-icon-plusthick" value="Crear cuestionario" immediate="true" process="@this" disabled="#{crearCuestionarioView.lstDetalleMetrica.size()>0?crearCuestionarioView.intIdEstadoProyecto==37?true:false:true}"  oncomplete="PF('dlg0').show();" />
+                            </p:outputPanel> 
+                        </f:facet>
+                        <p:column headerText="Descripcion">
+                            <p:cellEditor>
+                                <f:facet name="output"><h:outputText value="#{cuestionario.cuTxDescripcion}" /></f:facet>
+                                <f:facet name="input"><p:inputText id="modelInput" value="#{cuestionario.cuTxDescripcion}" style="width:100%"/></f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        
+                        <p:column headerText="Estado" style="text-align: center;" >
+                            <h:outputText value="#{cuestionario.cuDescEstado}" /> 
+                        </p:column>
+                        <p:column headerText="Revisar" style="width: 80px; text-align: center;">
+                            <p:commandButton actionListener="#{crearCuestionarioView.confirmaCuestionario(cuestionario)}" immediate="true" update=":form1:tableCuestionario,:form1:msgCuestionario,:form1:tableCategoria,:form1:tableCategoriaSub,:form1:tableComentarios,:form1:tableAbiertas" value="#{cuestionario.cuIdEstado==43?'Confirmar':'Revertir'}" rendered="#{cuestionario.cuIdEstado==43}" disabled="#{cuestionario.cuIdEstado!=77?false:true}">
+                                <p:confirm header="Confirmación" message="Esta seguro que desea confirmar este cuestionario?" icon="ui-icon-alert" />
+                            </p:commandButton> 
+                            <p:commandButton actionListener="#{crearCuestionarioView.confirmaCuestionario(cuestionario)}" immediate="true" update=":form1:tableCuestionario,:form1:msgCuestionario,:form1:tableCategoria,:form1:tableCategoriaSub,:form1:tableComentarios,:form1:tableAbiertas" value="#{cuestionario.cuIdEstado==43?'Confirmar':'Revertir'}" rendered="#{cuestionario.cuIdEstado!=43}" disabled="#{cuestionario.cuIdEstado!=77?false:true}">
+                                <p:confirm header="Revertir" message="Esta seguro que desea revertir este cuestionario?" icon="ui-icon-alert" />
+                            </p:commandButton> 
+
+                        </p:column>
+                        <p:column headerText="Ver" style="width: 80px; text-align: center;">
+                            <p:commandButton actionListener="#{crearCuestionarioView.loadCuestionario(cuestionario.cuIdCuestionarioPk)}" immediate="true" process="@this" icon="ui-icon-search" update=":form1" > 
+                            </p:commandButton>
+                        </p:column>
+                        <p:column headerText="Eliminar" style="width: 80px; text-align: center;" > 
+                            <p:commandButton actionListener="#{crearCuestionarioView.eliminarCuestionario(cuestionario.cuIdCuestionarioPk)}" disabled="#{cuestionario.cuIdEstado==43?false:true}" icon="ui-icon-trash" update=":form1:tableCuestionario,:form1:tableCategoria,:form1:tableCategoriaSub,:form1:tableComentarios,:form1:tableAbiertas,:form1:msgCuestionario" immediate="true" >
+                                <p:confirm header="Confirmación" message="Esta seguro que desea borrar este cuestionario?. Es posible que este asignado a un evaluado" icon="ui-icon-alert" />
+                            </p:commandButton>
+                        </p:column>
+                        <p:column headerText="Editar" style="width:80px;text-align: center" rendered="#{crearCuestionarioView.intIdEstadoProyecto!=37}" >
+                            <!-- p:rowEditor rendered="#{cuestionario.cuIdEstado==77?false:true}" -->
+                            <p:rowEditor />
+                        </p:column>
+                        
+                    </p:dataTable>
+
+                </h:panelGrid> 
+            </p:panel>
+            
+            <br/>
+            
+            <!-- <p:panel id="pnlComp" header="Componentes del cuestionarios" toggleable="true" rendered="#{crearCuestionarioView.objCuestionario.cuIdCuestionarioPk!=null}" > -->
+            <p:panel id="pnlComp" >
+                
+                <f:facet name="header">
+                    <p:outputLabel style="color: black;" value="Componentes del cuestionario - " />
+                    <c:if test="#{crearCuestionarioView.objCuestionario.cuIdCuestionarioPk!=null}">
+                        <p:outputLabel style="color: red;" value="#{crearCuestionarioView.objCuestionario.cuTxDescripcion}" />
+                    </c:if>
+                    <c:if test="#{crearCuestionarioView.objCuestionario.cuIdCuestionarioPk==null}">
+                        <p:outputLabel style="color: red;" value="Debe seleccionar un cuestionario" />
+                    </c:if>
+
+                </f:facet>
+                
+                <p:messages id="msgComponentes" showDetail="true" />
+                
+                <h:panelGrid columns="2" style="width: 100%;">
+                    
+                    <p:outputPanel style="text-align: left; width: 100%;">
+                        <!-- <h1>Nombre : #{crearCuestionarioView.objCuestionario.cuTxDescripcion}</h1> -->
+                        
+                    </p:outputPanel>
+                    <!--
+                    <p:outputPanel style="text-align: right; width: 100%;">
+                        <p:commandButton id="btnGuardarCuestionario" widgetVar="btnGuardarCuestionario" update="msgComponentes" process="@this" value="Guardar este cuestionario" immediate="true" disabled="#{crearCuestionarioView.objCuestionario.cuIdEstado==43?false:true}" actionListener="#{crearCuestionarioView.guardarFormulario}" icon="ui-icon-disk"/> 
+                    </p:outputPanel>
+                    -->
+                </h:panelGrid>
+                
+                <h:panelGrid columns="1">
+                    
+                    <h3>Lista de categorias</h3>
+                
+                    <p:dataTable id="tableCategoria" var="comp" value="#{crearCuestionarioView.lstCategoria}" editable="true" emptyMessage="No se encontraron datos :(" >
+
+                        <f:facet name="header">
+                            <p:outputPanel style="text-align: left;" >
+                                <p:commandButton type="button" value="Agregar categoria" disabled="#{crearCuestionarioView.objCuestionario.cuIdEstado==43?crearCuestionarioView.intIdEstadoProyecto==37?true:false:true}" onclick="PF('dlg1').show();" icon="ui-icon-plusthick" />
+                            </p:outputPanel>
+                        </f:facet>
+
+                        <p:ajax event="rowEdit" update=":form1:tableCategoria,:form1:tableCategoriaSub" />
+                        <p:ajax event="rowEditCancel" update=":form1:tableCategoria,:form1:tableCategoriaSub" />
+                        <!-- <p:ajax event="rowReorder" listener="#{crearCuestionarioView.reOrderRowCategoria}" update=":form1:tableCategoria,:form1:tableCategoriaSub" /> -->
+                        
+                        <p:column headerText="Descripcion">
+                            <p:cellEditor>
+                                <f:facet name="output"><h:outputText value="#{comp.coTxDescripcion}" /></f:facet>
+                                <f:facet name="input"><p:inputText id="modelInput" value="#{comp.coTxDescripcion}" style="width:100%"/></f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        
+                        <p:column headerText="Cant. Preguntas" style="text-align: center;">
+                            <p:outputLabel value="#{comp.strcomponentes.size()}" />
+                        </p:column>
+                        
+                        <c:if test="#{crearCuestionarioView.objProyectoInfo.intIdMetodologia==30}">
+                            <p:column headerText="Agregar pregunta" style="text-align: center;">
+                                <p:commandButton id="withIconMas" disabled="#{crearCuestionarioView.objCuestionario.cuIdEstado==43?crearCuestionarioView.intIdEstadoProyecto==37?true:false:true}" immediate="true" onclick="PF('dlg2').show();"  icon="ui-icon-plus">
+                                    <f:setPropertyActionListener value="#{comp}" target="#{crearCuestionarioView.compCategoria}" />
+                                </p:commandButton>
+                            </p:column> 
+                        </c:if>
+                        <c:if test="#{crearCuestionarioView.objProyectoInfo.intIdMetodologia==31}">
+                            <p:column headerText="Agregar definicion" style="text-align: center;">
+                                <p:commandButton id="withIconMas" disabled="#{crearCuestionarioView.objCuestionario.cuIdEstado==43?comp.strcomponentes.size()!=crearCuestionarioView.intRangos?false:true:true}" immediate="true" onclick="PF('dlg2').show();" icon="ui-icon-plus">
+                                    <f:setPropertyActionListener value="#{comp}" target="#{crearCuestionarioView.compCategoria}" />
+                                </p:commandButton>
+                            </p:column> 
+                        </c:if>
+
+                        <p:column headerText="Subir/Bajar" style="text-align: center;" >
+                            <p:commandButton  id="withIconSubir" immediate="true" update="tableCategoria,:form1:tableCategoriaSub" icon="ui-icon-circle-triangle-n" actionListener="#{crearCuestionarioView.subirCategoria(comp)}" disabled="#{crearCuestionarioView.objCuestionario.cuIdEstado==43?false:true}" />
+                            <p:commandButton id="withIconBajar" immediate="true" update="tableCategoria,:form1:tableCategoriaSub" icon="ui-icon-circle-triangle-s" actionListener="#{crearCuestionarioView.bajarCategoria(comp)}" disabled="#{crearCuestionarioView.objCuestionario.cuIdEstado==43?false:true}" />
+                        </p:column>
+
+                        <p:column headerText="Eliminar" style="text-align: center;" >
+                            <p:commandButton  id="withIconMenos" disabled="#{crearCuestionarioView.objCuestionario.cuIdEstado==43?false:true}" immediate="true" update=":form1:msgComponentes,:form1:tableCategoria,:form1:tableCategoriaSub" actionListener="#{crearCuestionarioView.eliminarCategoria(comp)}" icon="ui-icon-trash" >
+                                <p:confirm header="Confirmación" message="Esta seguro que desea borrar esta categoria y su contenido?" icon="ui-icon-alert" />
+                            </p:commandButton>
+                        </p:column> 
+                        <!--
+                        <c:if test="#{crearCuestionarioView.objCuestionario.cuIdEstado==43}">
+                        <p:column headerText="Editar" style="text-align: center;">
+                            <p:rowEditor />
+                        </p:column>
+                        </c:if>
+                        -->
+                        <p:column headerText="Editar" style="text-align: center;"> 
+                            <p:commandButton update=":form1:tableCategoria,:form1:tableCategoriaSub" immediate="true" icon="ui-icon-pencil" oncomplete="PF('dlgActu').show();" disabled="#{crearCuestionarioView.intIdEstadoProyecto==37}" actionListener="#{crearCuestionarioView.cargaItem(comp)}" />
+                        </p:column>
+
+                    </p:dataTable>
+
+                    <h3>Lista de preguntas cerradas</h3>
+                
+                    <p:dataTable id="tableCategoriaSub" var="cuest" value="#{crearCuestionarioView.lstCategoria}" editable="true" emptyMessage="No se encontraron datos :(" >
+                        <f:facet name="header">
+                                Preguntas cerradas
+                        </f:facet>
+                        
+                        <!-- <p:ajax event="rowReorder" listener="#{crearCuestionarioView.reOrderRowPregunta}" update=":form1:tableCategoria,:form1:tableCategoriaSub" /> -->
+
+                        <p:columnGroup type="header">
+                            <p:row>
+                                <p:column rowspan="1" headerText="Categorias" />
+                                <p:column colspan="1" headerText="Subir/Bajar" />
+                                <p:column colspan="1" headerText="Eliminar" />
+                                <p:column colspan="1" headerText="Editar" />
+                            </p:row>
+                        </p:columnGroup>
+                        
+                        <p:subTable  id="subtata" var="subComp" value="#{cuest.strcomponentes}" >
+                            <f:facet name="header">
+                                <h:outputText value="#{cuest.coTxDescripcion}" />
+                            </f:facet>
+
+                            <p:column headerText="Descripcion">
+                                <h:outputText value="#{subComp.coTxDescripcion}" />
+                            
+                            </p:column>
+                            <p:column style="text-align: center;"> 
+                                <p:commandButton id="withIconSubirSub" immediate="true" actionListener="#{crearCuestionarioView.subirSubCuestionario(cuest,subComp)}" update=":form1:" icon="ui-icon-circle-triangle-n" disabled="#{crearCuestionarioView.objCuestionario.cuIdEstado==43?false:true}" />
+                                <p:commandButton id="withIconBajarSub" immediate="true" actionListener="#{crearCuestionarioView.bajarSubCuestionario(cuest,subComp)}" update=":form1:" icon="ui-icon-circle-triangle-s" disabled="#{crearCuestionarioView.objCuestionario.cuIdEstado==43?false:true}" />
+                            </p:column>
+                            <p:column style="text-align: center;"> 
+                                <p:commandButton update=":form1:tableCategoria,:form1:tableCategoriaSub" immediate="true" disabled="#{crearCuestionarioView.objCuestionario.cuIdEstado==43?false:true}" icon="ui-icon-trash" actionListener="#{crearCuestionarioView.eliminarCuestionarioSub(cuest,subComp)}" />
+                            </p:column>
+                            <p:column style="text-align: center;"> 
+                                <p:commandButton update=":form1:tableCategoria,:form1:tableCategoriaSub" disabled="#{crearCuestionarioView.intIdEstadoProyecto==37}" immediate="true" icon="ui-icon-pencil" oncomplete="PF('dlgActu').show();"  actionListener="#{crearCuestionarioView.cargaItem(subComp)}" />
+                            </p:column>
+                            
+                         </p:subTable>
+                    </p:dataTable>                         
+                
+                    <h3>Lista de comentarios</h3>
+
+                    <p:dataTable id="tableComentarios" var="comp" value="#{crearCuestionarioView.lstCompComentarios}" draggableRows="#{crearCuestionarioView.objCuestionario.cuIdEstado==43?true:false}" emptyMessage="No se encontraron datos :(" >
+
+                        <f:facet name="header">
+                            <p:outputPanel style="text-align: left;" >
+                                <p:commandButton type="button" value="Agrega un comentario" disabled="#{crearCuestionarioView.objCuestionario.cuIdEstado==43?crearCuestionarioView.intIdEstadoProyecto==37?true:false:true}" onclick="PF('dlg3').show();" icon="ui-icon-plusthick" />
+                            </p:outputPanel>
+                        </f:facet>
+
+                        <!--
+                        <p:ajax event="rowEdit" update="tableComentarios" />
+                        <p:ajax event="rowEditCancel" update="tableComentarios" />
+-->
+                        <p:column headerText="Descripcion" >
+                            <p:cellEditor>
+                                <f:facet name="output"><h:outputText value="#{comp.coTxDescripcion}" /></f:facet>
+                                <f:facet name="input"><p:inputText id="modelInput" value="#{comp.coTxDescripcion}" style="width:100%" /></f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        
+                        <p:column headerText="Subir/Bajar"  style="text-align: center">
+                            <p:commandButton  id="withIconSubirSubComent" immediate="true" update="tableComentarios" icon="ui-icon-circle-triangle-n" actionListener="#{crearCuestionarioView.subirComentario(comp)}" disabled="#{crearCuestionarioView.objCuestionario.cuIdEstado==43?false:true}" />
+                            <p:commandButton id="withIconBajarSubComent" immediate="true" update="tableComentarios" icon="ui-icon-circle-triangle-s" actionListener="#{crearCuestionarioView.bajarComentario(comp)}" disabled="#{crearCuestionarioView.objCuestionario.cuIdEstado==43?false:true}" />
+                        </p:column>
+                        
+                        <p:column headerText="Eliminar"  style="text-align: center">
+                            <p:commandButton  id="withIconMenos" immediate="true" disabled="#{crearCuestionarioView.objCuestionario.cuIdEstado==43?false:true}" update="tableComentarios" actionListener="#{crearCuestionarioView.eliminarComentario(comp)}" icon="ui-icon-trash" />
+                        </p:column> 
+                        <!--    
+                        <c:if test="#{crearCuestionarioView.objCuestionario.cuIdEstado==43}">
+                        <p:column headerText="Editar" style="text-align: center">
+                            <p:rowEditor />
+                        </p:column>
+                        </c:if>
+                        -->
+                        <p:column headerText="Editar" style="text-align: center;"> 
+                            <p:commandButton update=":form1:tableCategoria,:form1:tableCategoriaSub" disabled="#{crearCuestionarioView.intIdEstadoProyecto==37}" immediate="true" icon="ui-icon-pencil" oncomplete="PF('dlgActu').show();"  actionListener="#{crearCuestionarioView.cargaItem(comp)}" />
+                        </p:column>
+
+                    </p:dataTable>       
+
+                    <h3>Lista de preguntas abiertas</h3>
+
+                    <p:dataTable id="tableAbiertas" var="comp" value="#{crearCuestionarioView.lstCompAbiertas}" editable="true" emptyMessage="No se encontraron datos :(" >
+                        
+                        <f:facet name="header">
+                            <p:outputPanel style="text-align: left;" >
+                                    <p:commandButton type="button" value="Agrega una pregunta abierta" disabled="#{crearCuestionarioView.objCuestionario.cuIdEstado==43?crearCuestionarioView.intIdEstadoProyecto==37?true:false:true}" onclick="PF('dlg4').show();" icon="ui-icon-plusthick" />
+                            </p:outputPanel>
+                        </f:facet>
+                        
+                        <p:ajax event="rowEdit" update="tableAbiertas" />
+                        <p:ajax event="rowEditCancel" update="tableAbiertas" />
+
+                        <p:column headerText="Descripcion" >
+                            <p:cellEditor>
+                                <f:facet name="output"><h:outputText value="#{comp.coTxDescripcion}" /></f:facet>
+                                <f:facet name="input"><p:inputText id="modelInput" value="#{comp.coTxDescripcion}" style="width:100%"/></f:facet>
+                            </p:cellEditor>
+                        </p:column>
+
+                        <p:column headerText="Subir/Bajar"  style="text-align: center">
+                            <p:commandButton  id="withIconSubirSubABiertas" immediate="true" update="tableAbiertas" icon="ui-icon-circle-triangle-n" actionListener="#{crearCuestionarioView.subirAbiertas(comp)}" disabled="#{crearCuestionarioView.objCuestionario.cuIdEstado==43?false:true}" />   
+                            <p:commandButton id="withIconBajarSubAbiertas" immediate="true" update="tableAbiertas" icon="ui-icon-circle-triangle-s" actionListener="#{crearCuestionarioView.bajarAbiertas(comp)}" disabled="#{crearCuestionarioView.objCuestionario.cuIdEstado==43?false:true}" />
+                        </p:column>
+                        <p:column headerText="Eliminar"  style="text-align: center">
+                            <p:commandButton id="withIconMenos" immediate="true" disabled="#{crearCuestionarioView.objCuestionario.cuIdEstado==43?false:true}" update="tableAbiertas" actionListener="#{crearCuestionarioView.eliminarAbierta(comp)}" icon="ui-icon-trash" />
+                        </p:column> 
+                        <!--
+                        <c:if test="#{crearCuestionarioView.objCuestionario.cuIdEstado==43}" >
+                        <p:column headerText="Editar" style="text-align: center">
+                            <p:rowEditor />
+                        </p:column>
+                        </c:if>
+                        -->
+                        <p:column headerText="Editar" style="text-align: center;"> 
+                            <p:commandButton update=":form1:tableCategoria,:form1:tableCategoriaSub,:frmActuaElemento" immediate="true" icon="ui-icon-pencil" oncomplete="PF('dlgActu').show();" disabled="#{crearCuestionarioView.intIdEstadoProyecto==37}" actionListener="#{crearCuestionarioView.cargaItem(comp)}" />
+                        </p:column>
+
+                    </p:dataTable> 
+                    
+                </h:panelGrid>
+
+            </p:panel>
+            
+        </h:panelGrid>
+    </h:form>     
+
+    <p:dialog header="Crear categoria" id="idDialogCategoria" widgetVar="dlg1" focus=":frmCategoria:idCategoriaText" modal="true" appendTo="@(body)" closeOnEscape="true" resizable="false" showEffect="fade" hideEffect="fade"  >
+        <p:ajax event="close" update="idDialogCategoria" resetValues="true" />
+        <h:form id="frmCategoria">
+            <p:hotkey bind="enter" actionListener="#{crearCuestionarioView.addCategoria}" process="pnlCreaCategoria" update="msgCreaCategoria,pnlCreaCategoria,:form1:tableCategoria,:form1:tableCategoriaSub" />
+             <p:panel id="pnlCreaCategoria">
+                <p:messages id="msgCreaCategoria" showDetail="true" showSummary="false" />
+                <h:panelGrid columns="2" cellpadding="5" >
+                    <p:outputLabel for="idCategoriaText" value="Categoria : " />
+                    <p:inputText id="idCategoriaText" value="#{crearCuestionarioView.strCategoriaSelec}" label="Categoria">
+                        <f:validator validatorId="validaTextoIngresado" />
+                    </p:inputText>
+                </h:panelGrid>
+                <p:commandButton id="btnAñadirCategoria" value="Añadir" actionListener="#{crearCuestionarioView.addCategoria}" icon="ui-icon-check" process="pnlCreaCategoria" update="msgCreaCategoria,pnlCreaCategoria,:form1:tableCategoria,:form1:tableCategoriaSub" />
+            </p:panel>
+        </h:form>
+    </p:dialog>
+
+    <p:dialog header="Crear cuestionario" id="idDialogCuestionario" widgetVar="dlg0" focus=":frmCuestionario:idCuestionarioText" modal="true" appendTo="@(body)" closeOnEscape="true" resizable="false" showEffect="fade" hideEffect="fade" >
+        <p:ajax event="close" update="idDialogCuestionario" resetValues="true" />
+        <h:form id="frmCuestionario">
+            <p:hotkey bind="enter" actionListener="#{crearCuestionarioView.addCuestionario}" process="pnlCreaCuestionario" update="msgCreaCuestionario,pnlCreaCuestionario,:form1:tableCuestionario" />
+            <p:panel id="pnlCreaCuestionario">
+                <p:messages id="msgCreaCuestionario" showDetail="true" showSummary="false" />
+                <h:panelGrid columns="2" cellpadding="5" >
+                    <p:outputLabel for="idCuestionarioText" value="Cuestinario : " />
+                    <p:inputText id="idCuestionarioText" value="#{crearCuestionarioView.strCuestionarioSelec}" label="Cuestionario">
+                        <f:validator validatorId="validaTextoIngresado" />
+                    </p:inputText>
+                </h:panelGrid>
+                <p:commandButton id="btnAñadirCuestionario" value="Añadir" actionListener="#{crearCuestionarioView.addCuestionario}" icon="ui-icon-check" process="pnlCreaCuestionario" update="msgCreaCuestionario,pnlCreaCuestionario,:form1:tableCuestionario" />
+            </p:panel>
+        </h:form>
+    </p:dialog>
+
+        
+    <p:dialog header="Crear pregunta" id="idDialogPregunta" widgetVar="dlg2" focus=":frmPregunta:idPreguntaText" modal="true" appendTo="@(body)" closeOnEscape="true" resizable="false" showEffect="fade" hideEffect="fade" >
+        <p:ajax event="close" update="idDialogPregunta" listener="#{crearCuestionarioView.clearDialog}" />
+        <h:form id="frmPregunta">
+            <p:hotkey bind="enter" actionListener="#{crearCuestionarioView.addPregunta}" process="pnlCreaPregunta" update="msgCreaPregunta,pnlCreaPregunta,:form10:lstMetricas:,:form1:tableCuestionario" />
+            <p:panel id="pnlCreaPregunta">
+                <p:messages id="msgCreaPregunta" showDetail="true" showSummary="false" />
+                <h:panelGrid columns="2" cellpadding="5" >
+                    <p:outputLabel for="idPreguntaText" value="Pregunta : " />
+                    <p:inputText id="idPreguntaText" value="#{crearCuestionarioView.strPreguntaSelec}" label="Pregunta">
+                        <f:validator validatorId="validaTextoIngresado" />
+                    </p:inputText>
+                </h:panelGrid>
+                <p:commandButton id="btnAñadirPregunta" value="Añadir" validateClient="true" actionListener="#{crearCuestionarioView.addPregunta}" icon="ui-icon-check" process="pnlCreaPregunta" update="msgCreaPregunta,pnlCreaPregunta,:form1:tableCategoria,:form1:tableCategoriaSub" />
+            </p:panel>            
+        </h:form>
+    </p:dialog>
+    
+    <p:dialog header="Crear comentario" id="idDialogComentario" widgetVar="dlg3" focus=":frmComentario:idComentarioText" modal="true" appendTo="@(body)" closeOnEscape="true" resizable="false" showEffect="fade" hideEffect="fade" >
+        <p:ajax event="close" update="idDialogComentario" listener="#{crearCuestionarioView.clearDialog}" />
+        <h:form id="frmComentario">
+            <p:hotkey bind="enter" actionListener="#{crearCuestionarioView.addComentario}" process="pnlCreaComentario" update="msgCreaComentario,pnlCreaComentario,:form10:lstMetricas:,:form1:tableCuestionario" />
+            <p:panel id="pnlCreaComentario">
+                <p:messages id="msgCreaComentario" showDetail="true" showSummary="false" />
+                <h:panelGrid columns="2" cellpadding="5" >
+                    <p:outputLabel for="idComentarioText" value="Comentario : " />
+                    <p:inputText id="idComentarioText" value="#{crearCuestionarioView.strComentarioSelec}" label="Comentario">
+                        <f:validator validatorId="validaTextoIngresado" />
+                    </p:inputText>
+                </h:panelGrid>
+                <p:commandButton id="btnAñadirComentario" value="Añadir" actionListener="#{crearCuestionarioView.addComentario}" icon="ui-icon-check" process="pnlCreaComentario" update="msgCreaComentario,pnlCreaComentario,:form1:tableComentarios" />
+            </p:panel>
+        </h:form>
+    </p:dialog>
+    
+    <p:dialog header="Crear pregunta abierta" id="idDialogAbierta" widgetVar="dlg4" focus=":frmPreAbierta:idAbiertaText" modal="true" appendTo="@(body)" closeOnEscape="true" resizable="false" showEffect="fade" hideEffect="fade" >
+        <p:ajax event="close" update="idDialogAbierta" listener="#{crearCuestionarioView.clearDialog}" />
+        <h:form id="frmPreAbierta">
+            <p:hotkey bind="enter" actionListener="#{crearCuestionarioView.addPreguntaAbierta}" process="pnlCreaAbierta" update="msgCreaAbierta,pnlCreaAbierta,:form10:lstMetricas:,:form1:tableCuestionario" />
+            <p:panel id="pnlCreaAbierta">
+                <p:messages id="msgCreaAbierta" showDetail="true" showSummary="false" />
+                <h:panelGrid columns="2" cellpadding="5" >
+                    <p:outputLabel for="idAbiertaText" value="Pregunta : " />
+                    <p:inputText id="idAbiertaText" value="#{crearCuestionarioView.strAbiertaSelec}" label="Pregunta abierta">
+                        <f:validator validatorId="validaTextoIngresado" />
+                    </p:inputText>
+                </h:panelGrid>
+                <p:commandButton id="btnAñadirAbierta" value="Añadir" actionListener="#{crearCuestionarioView.addPreguntaAbierta}" icon="ui-icon-check" process="pnlCreaAbierta" update="msgCreaAbierta,pnlCreaAbierta,:form1:tableAbiertas" />
+            </p:panel>
+        </h:form>
+    </p:dialog>
+        
+    <p:dialog header="Actualiza elemento" id="idDialogActu" widgetVar="dlgActu" focus="frmActuaElemento:idTextNuevo" modal="true" appendTo="@(body)" closeOnEscape="true" resizable="false" showEffect="fade" hideEffect="fade" >
+        <p:ajax event="close" update="idDialogActu" listener="#{crearCuestionarioView.clearDialog}" />
+        <h:form id="frmActuaElemento">
+            <p:hotkey bind="enter" actionListener="#{crearCuestionarioView.actualizaItem}" process="pnlActu" update="msg,pnlActu,:form10:lstMetricas:,:form1:tableCuestionario" />
+            <p:panel id="pnlActu">
+                <p:messages id="msg" showDetail="true" showSummary="false" />
+                <h:panelGrid columns="2" cellpadding="5" >
+                    <p:outputLabel for="idTextAnterior" value="Descripcion anterior : " />
+                    <p:inputTextarea id="idTextAnterior" value="#{crearCuestionarioView.strAnteriorDescripcion}" readonly="true" disabled="true" autoResize="true" style="width:300px; height: 30px;" />
+                    <p:outputLabel for="idTextNuevo" value="Descripcion nueva : " />
+                    <p:inputText id="idTextNuevo" value="#{crearCuestionarioView.strNuevaDescripcion}" style="width:300px;" size="50" label="Descripcion nueva">
+                        <f:validator validatorId="validaTextoIngresado" />
+                    </p:inputText>
+                </h:panelGrid>
+                <p:commandButton id="btnActualizaItem" value="Actualizar"  actionListener="#{crearCuestionarioView.actualizaItem}" icon="ui-icon-check" process="pnlActu" update=":frmActuaElemento,:form1" />
+            </p:panel>
+        </h:form>
+    </p:dialog>
+    
+<c:if test="#{crearCuestionarioView.objProyectoInfo.intIdMetodologia==30}">
+    <p:dialog header="Crear rango" id="idRango" widgetVar="dlg5" resizable="false" focus=":frmCreaRango:idRangoText" modal="true" appendTo="@(body)" closeOnEscape="true"  showEffect="fade" hideEffect="fade" >
+        <p:ajax event="close" update="idRango"  resetValues="true" />
+        <h:form id="frmCreaRango">
+            <p:hotkey bind="enter" actionListener="#{crearCuestionarioView.addMetrica}" process="pnlCrearRango" update="msgCreaRango,pnlCrearRango,:form10:lstMetricas:,:form1:tableCuestionario,:form1:idBtnImportar" />
+            <p:hotkey bind="esc" immediate="true" oncomplete="PF('dlg5').hide();" />
+            <p:panel id="pnlCrearRango">
+                <p:messages id="msgCreaRango"  showDetail="true" showSummary="false" />
+                <h:panelGrid columns="2" cellpadding="5" >
+                    <p:outputLabel for="idRangoText" value="Rango : " />
+                    <p:inputText id="idRangoText" value="#{crearCuestionarioView.strRangoSelec}" label="Rango">
+                        <f:validator validatorId="validaTextoIngresado" />
+                    </p:inputText>
+                </h:panelGrid>
+                <p:commandButton id="btnAñadirRango" value="Añadir" validateClient="true" actionListener="#{crearCuestionarioView.addMetrica}" icon="ui-icon-check" process="pnlCrearRango"  update="msgCreaRango,pnlCrearRango,:form10:lstMetricas:,:form1:tableCuestionario,:form1:idBtnImportar" /> 
+            </p:panel>
+        </h:form>
+    </p:dialog>
+</c:if>
+        
+    
+
+
+    
+</ui:define>
+</ui:composition>

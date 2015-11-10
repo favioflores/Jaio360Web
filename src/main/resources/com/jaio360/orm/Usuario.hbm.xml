@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 21/10/2014 08:38:38 PM by Hibernate Tools 3.2.1.GA -->
+<hibernate-mapping>
+    <class name="com.jaio360.orm.Usuario" table="usuario" catalog="jaio">
+        <id name="usIdCuentaPk" type="java.lang.Integer">
+            <column name="US_ID_CUENTA_PK" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="ubigeo" lazy="false" class="com.jaio360.orm.Ubigeo" fetch="select">
+            <column name="UB_ID_UBIGEO_FK" not-null="true" />
+        </many-to-one>
+        <property name="usIdMail" type="string">
+            <column name="US_ID_MAIL" length="3000" not-null="true" unique="true" />
+        </property>
+        <property name="usTxContrasenia" type="string">
+            <column name="US_TX_CONTRASENIA" length="100" not-null="true" />
+        </property>
+        <property name="usIdEstado" type="java.lang.Integer">
+            <column name="US_ID_ESTADO" not-null="true" />
+        </property>
+        <property name="usIdTipoCuenta" type="java.lang.Integer">
+            <column name="US_ID_TIPO_CUENTA" not-null="true" />
+        </property>
+        <property name="usBlImagenEmpresa" type="binary">
+            <column name="US_BL_IMAGEN_EMPRESA" />
+        </property>
+        <property name="usTxNombreRazonsocial" type="string">
+            <column name="US_TX_NOMBRE_RAZONSOCIAL" length="3000" not-null="true" />
+        </property>
+        <property name="usTxDescripcionEmpresa" type="string">
+            <column name="US_TX_DESCRIPCION_EMPRESA" length="3000" not-null="true" />
+        </property>
+        <property name="usFeNacimiento" type="date">
+            <column name="US_FE_NACIMIENTO" length="10" not-null="false" />
+        </property>
+        <property name="usIdTipoDocumento" type="java.lang.Integer">
+            <column name="US_ID_TIPO_DOCUMENTO" not-null="false" />
+        </property>
+        <property name="usTxDocumento" type="string">
+            <column name="US_TX_DOCUMENTO" length="45" not-null="false" />
+        </property>
+        <property name="usFeRegistro" type="date">
+            <column name="US_FE_REGISTRO" length="10" not-null="true" />
+        </property>
+        <set name="contratos" inverse="true">
+            <key>
+                <column name="US_ID_CUENTA_FK" not-null="true" />
+            </key>
+            <one-to-many class="com.jaio360.orm.Contrato" />
+        </set>
+        <set name="historialAccesos" inverse="true">
+            <key>
+                <column name="US_ID_CUENTA_FK" not-null="true" />
+            </key>
+            <one-to-many class="com.jaio360.orm.HistorialAcceso" />
+        </set>
+        <set name="proyectos" inverse="true">
+            <key>
+                <column name="US_ID_CUENTA_FK" not-null="true" />
+            </key>
+            <one-to-many class="com.jaio360.orm.Proyecto" />
+        </set>
+    </class>
+</hibernate-mapping>

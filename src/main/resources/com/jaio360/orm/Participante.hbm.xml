@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 21/10/2014 08:38:38 PM by Hibernate Tools 3.2.1.GA -->
+<hibernate-mapping>
+    <class name="com.jaio360.orm.Participante" table="participante" catalog="jaio">
+        <id name="paIdParticipantePk" type="java.lang.Integer">
+            <column name="PA_ID_PARTICIPANTE_PK" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="proyecto" class="com.jaio360.orm.Proyecto" fetch="select">
+            <column name="PO_ID_PROYECTO_FK" not-null="true" />
+        </many-to-one>
+        <property name="paTxDescripcion" type="string">
+            <column name="PA_TX_DESCRIPCION" length="3000" not-null="true" />
+        </property>
+        <property name="paTxCorreo" type="string">
+            <column name="PA_TX_CORREO" length="3000" not-null="true" />
+        </property>
+        <property name="paTxNombreCargo" type="string">
+            <column name="PA_TX_NOMBRE_CARGO" length="3000" not-null="true" />
+        </property>
+        <property name="paInRedCargada" type="java.lang.Boolean">
+            <column name="PA_IN_RED_CARGADA">
+                <comment>CAMPO NOT NULL SOLO PARA EVALUADOS</comment>
+            </column>
+        </property>
+        <property name="paInRedVerificada" type="java.lang.Boolean">
+            <column name="PA_IN_RED_VERIFICADA">
+                <comment>CAMPO NOT NULL SOLO PARA EVALUADOS</comment>
+            </column>
+        </property>
+        <property name="paIdTipoParticipante" type="java.lang.Integer">
+            <column name="PA_ID_TIPO_PARTICIPANTE" not-null="true" />
+        </property>
+        <property name="paInAutoevaluar" type="java.lang.Boolean">
+            <column name="PA_IN_AUTOEVALUAR">
+                <comment>SOLO PARA EVALUADOS.</comment>
+            </column>
+        </property>
+        <property name="paIdEstado" type="java.lang.Integer">
+            <column name="PA_ID_ESTADO" not-null="true" />
+        </property>
+        
+        <property name="paTxSexo" type="string">
+            <column name="PA_TX_SEXO" length="100" not-null="true" />
+        </property>
+        <property name="paNrEdad" type="java.lang.Integer">
+            <column name="PA_NR_EDAD" not-null="true" />
+        </property>
+        <property name="paNrTiempoTrabajo" type="java.lang.Integer">
+            <column name="PA_NR_TIEMPO_TRABAJO" not-null="true" />
+        </property>
+        <property name="paTxOcupacion" type="string">
+            <column name="PA_TX_OCUPACION" length="200" not-null="true" />
+        </property>
+        <property name="paTxAreaNegocio" type="string">
+            <column name="PA_TX_AREA_NEGOCIO" length="200" not-null="true" />
+        </property>
+        
+        <set name="relacionParticipantes" inverse="true">
+            <key>
+                <column name="PA_ID_PARTICIPANTE_FK" not-null="true" />
+            </key>
+            <one-to-many class="com.jaio360.orm.RelacionParticipante" />
+        </set>
+        <set name="cuestionarioEvaluados" inverse="true">
+            <key>
+                <column name="PA_ID_PARTICIPANTE_FK" not-null="true" />
+            </key>
+            <one-to-many class="com.jaio360.orm.CuestionarioEvaluado" />
+        </set>
+    </class>
+</hibernate-mapping>

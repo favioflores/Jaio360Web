@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 21/10/2014 08:38:38 PM by Hibernate Tools 3.2.1.GA -->
+<hibernate-mapping>
+    <class name="com.jaio360.orm.HistorialAcceso" table="historial_acceso" catalog="jaio">
+        <id name="haIdHistorialPk" type="java.lang.Integer">
+            <column name="HA_ID_HISTORIAL_PK" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="usuario" class="com.jaio360.orm.Usuario" fetch="select">
+            <column name="US_ID_CUENTA_FK" not-null="true" />
+        </many-to-one>
+        <property name="haFeIngreso" type="timestamp">
+            <column name="HA_FE_INGRESO" length="19" not-null="true" />
+        </property>
+        <property name="haFeSalida" type="timestamp">
+            <column name="HA_FE_SALIDA" length="19" />
+        </property>
+        <property name="haInEstado" type="boolean">
+            <column name="HA_IN_ESTADO" not-null="true">
+                <comment>ESTE INDICADOR ES UTILIZADO PARA VALIDAR LA UNICA SESSION DE USUARIO, ES DECIR, NO ES POSIBLE QUE EL USUARIO TENGA DOS SESIONES ABIERTAS, EN CASO SE
+                LOGUEE DE LUGARES DIFERENTES LA ACTUAL SESION MATA A LA ANTERIOR.</comment>
+            </column>
+        </property>
+    </class>
+</hibernate-mapping>

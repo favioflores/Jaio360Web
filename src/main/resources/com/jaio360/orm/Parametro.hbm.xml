@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 21/10/2014 08:38:38 PM by Hibernate Tools 3.2.1.GA -->
+<hibernate-mapping>
+    <class name="com.jaio360.orm.Parametro" table="parametro" catalog="jaio">
+        <id name="paIdParametroPk" type="java.lang.Integer">
+            <column name="PA_ID_PARAMETRO_PK" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="proyecto" class="com.jaio360.orm.Proyecto" fetch="select">
+            <column name="PO_ID_PROYECTO_FK" not-null="true" />
+        </many-to-one>
+        <property name="paIdTipoParametro" type="int">
+            <column name="PA_ID_TIPO_PARAMETRO" not-null="true" />
+        </property>
+        <property name="paTxPatron" type="binary">
+            <column name="PA_TX_PATRON" />
+        </property>
+    </class>
+</hibernate-mapping>

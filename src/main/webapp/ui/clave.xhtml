@@ -1,0 +1,61 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:customJSF="http://himanshu/jsf-custom-components/"
+                template="../templates/templateLogin.xhtml">    
+    
+    <ui:define name="head"> 
+        <script src='https://www.google.com/recaptcha/api.js'></script>
+        <style>
+            .mytable {width: 100%; min-height: 100%; position: fixed; background-size: cover;}
+        </style>
+    </ui:define>
+    <ui:define name="content-login">
+        
+        <table>
+            <tr style="height: 50px;" >
+                <td>
+                    <h:panelGrid border="0" style="width: 100%;" bgcolor="white" columns="2" cellpadding="0" cellspacing="0" >
+                        <p:graphicImage value="../images/logoJaio360.jpg" width="140" height="50" />
+                    </h:panelGrid>
+                </td>
+            </tr>
+        </table>
+        <table class="mytable" background="../images/fondos/fondo1.jpg" ><tr><td></td></tr></table>
+        
+        <h:panelGrid border="0" style="width: 100%;" columns="2" >
+            <p:dialog id="dlgLogin" widgetVar="dlgLogin" header="Recuperar contraseña" visible="true" position="80,150" modal="false" closable="false" showEffect="drop" resizable="false" style="opacity: 1.0;">
+                <h:form id="loginForm">
+                    <p:panel>
+                        <p:growl id="growl" sticky="false" showDetail="true" autoUpdate="true" life="4000" />
+                        <p:messages autoUpdate="true" showDetail="true" />
+                        <h:panelGrid id="datosLogin" border="0" columns="2" cellpadding="5" style="width: 300px;" >
+                            <h:outputLabel for="usuario" value="#{msg['iniciar.input.usuario']}" />
+                            <p:inputText id="usuario" value="#{usuarioSesion.usuario}" maxlength="50" size="30" label="#{msg['iniciar.input.usuario']}" placeholder="#{msg['iniciar.input.msg.usuario']}" >
+                                <f:validator validatorId="validarCorreo" /> 
+                            </p:inputText>
+                        </h:panelGrid>    
+
+                        <h:panelGrid border="0" columns="1" cellpadding="5"  style="width: 300px;" >
+
+                            <div id="captcha1" class="g-recaptcha" data-sitekey="6LeGgf4SAAAAAOxdlPnTNQht-IU5UTHQAVdBwvN8"></div>
+                            
+                        </h:panelGrid>
+                        <h:panelGrid border="0" columns="2" cellpadding="5" >
+                            <p:outputPanel> 
+                                <p:commandButton id="iniciar" update="datosLogin" value="Enviarmelo al correo" ajax="false" actionListener="#{usuarioSesion.enviarClaveCorreo()}" />
+                                <p:commandButton id="salir" action="iniciar.xhtml?faces-redirect=true" immediate="true" value="Regresar" />
+                            </p:outputPanel>
+                        </h:panelGrid>
+
+                    </p:panel>
+                    <p:blockUI block="loginForm" trigger="iniciar"/>
+                </h:form>                
+            </p:dialog>
+            
+        </h:panelGrid>
+        
+    </ui:define>
+</ui:composition>

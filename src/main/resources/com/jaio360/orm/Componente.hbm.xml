@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 21/10/2014 08:38:38 PM by Hibernate Tools 3.2.1.GA -->
+<hibernate-mapping>
+    <class name="com.jaio360.orm.Componente" table="componente" catalog="jaio">
+        <id name="coIdComponentePk" type="java.lang.Integer" access="property">
+            <column name="CO_ID_COMPONENTE_PK" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="cuestionario" class="com.jaio360.orm.Cuestionario" fetch="select">
+            <column name="CU_ID_CUESTIONARIO_FK" not-null="true" />
+        </many-to-one>
+        <many-to-one name="componente" class="com.jaio360.orm.Componente" fetch="select">
+            <column name="CO_ID_COMPONENTE_REF_FK">
+                <comment>REFERENCIA A LA DEPENDENCIA DE UNA CATEGORIA</comment>
+            </column>
+        </many-to-one>
+        <property name="coIdTipoComponente" type="int">
+            <column name="CO_ID_TIPO_COMPONENTE" not-null="true">
+                <comment>SI ES UNA PREGUNTA O CATEGORIA</comment>
+            </column>
+        </property>
+        <property name="coTxDescripcion" type="string">
+            <column name="CO_TX_DESCRIPCION" length="3000" not-null="true" />
+        </property>
+        <set name="componentes" inverse="true">
+            <key>
+                <column name="CO_ID_COMPONENTE_REF_FK">
+                    <comment>REFERENCIA A LA DEPENDENCIA DE UNA CATEGORIA</comment>
+                </column>
+            </key>
+            <one-to-many class="com.jaio360.orm.Componente" />
+        </set>
+        <set name="resultados" inverse="true">
+            <key>
+                <column name="CO_ID_COMPONENTE_FK" not-null="true" />
+            </key>
+            <one-to-many class="com.jaio360.orm.Resultado" />
+        </set>
+    </class>
+</hibernate-mapping>

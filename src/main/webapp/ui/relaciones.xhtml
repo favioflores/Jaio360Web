@@ -1,0 +1,901 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui" 
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                template="principalProyecto.xhtml" >
+
+<ui:define name="htmlPaso">
+            
+    <h:form id="formParametros"  >
+    
+        <h1>1. Registra los parametros, relaciones y participantes</h1>
+
+        <p:separator/>
+            
+            <h3>Parametros opcionales</h3>
+            <p:row/>
+            <p:outputLabel value="Activa los datos adicionales que quieras incluir en tus redes de evaluación." />
+            <p:row/>
+        <h:panelGrid border="0" columns="1" >  
+
+            
+            
+            <p:panel id="panel" widgetVar="panel" >  
+                
+                <h:panelGrid  id="pnlParam" columns="5" cellpadding="5" border="0">
+   
+                    <h:outputText value="Sexo" />
+                    <p:inputSwitch value="#{parametrosView.blSexo}" disabled="#{evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}">
+                        <p:ajax listener="#{parametrosView.activarParametro(82)}" update="panel" />
+                        <p:ajax listener="#{evaluadosView.init}" update=":tvModoConfiguracion:tvEval,:tvModoConfiguracion:formModoAvanzado"/>
+                    </p:inputSwitch>
+                    <p:inputText disabled="true" placeholder="MASCULINO,FEMENINO" />
+                    <h:outputText value="" />
+                    <h:outputText value="" />
+                    
+                    <h:outputText value="Edad" />
+                    <p:inputSwitch value="#{parametrosView.blRangoEdad}" disabled="#{evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}" >
+                        <p:ajax listener="#{parametrosView.activarParametro(83)}" update="panel" />
+                        <p:ajax listener="#{evaluadosView.init}" update=":tvModoConfiguracion:tvEval,:tvModoConfiguracion:formModoAvanzado"/>
+                    </p:inputSwitch>
+                    <p:inputText id="strRangoEdad" value="#{parametrosView.strRangoEdad}" maxlength="500" size="45" placeholder="20,30,40,50,60,70,80,90" disabled="#{!parametrosView.blRangoEdad or evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}" required="true" >
+                        <f:validator validatorId="validarRango" />
+                    </p:inputText>
+                    <p:message for="strRangoEdad" display="text" />
+                    <p:commandButton icon="ui-icon-disk" disabled="#{!parametrosView.blRangoEdad or evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}" process="@this,strRangoEdad" oncomplete="rbtnRE1();rbtnRE2();" />
+
+                    <h:outputText value="Tiempo en la empresa" />
+                    <p:inputSwitch value="#{parametrosView.blTiempoEmpresa}" disabled="#{evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}" >
+                        <p:ajax listener="#{parametrosView.activarParametro(84)}" update="panel" />
+                        <p:ajax listener="#{evaluadosView.init}" update=":tvModoConfiguracion:tvEval,:tvModoConfiguracion:formModoAvanzado"/>
+                    </p:inputSwitch>
+                    <p:inputText id="strRangoTiempo" label="Tiempo en la empresa" value="#{parametrosView.strRangoTiempo}" maxlength="500" size="45" placeholder="1,3,5,10,20,50" disabled="#{!parametrosView.blTiempoEmpresa or evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}" required="true" >
+                        <f:validator validatorId="validarRango" />
+                    </p:inputText>
+                    <p:message for="strRangoTiempo" display="text" />
+                    <p:commandButton icon="ui-icon-disk" disabled="#{!parametrosView.blTiempoEmpresa or evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}" process="@this,strRangoTiempo" oncomplete="rbtnRT1();rbtnRT2();"/>
+
+                    <h:outputText value="Nivel ocupacional" />
+                    <p:inputSwitch value="#{parametrosView.blNivelOcupacional}" disabled="#{evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}" >
+                        <p:ajax listener="#{parametrosView.activarParametro(85)}" update="panel" />
+                        <p:ajax listener="#{evaluadosView.init}" update=":tvModoConfiguracion:tvEval,:tvModoConfiguracion:formModoAvanzado"/>
+                    </p:inputSwitch>
+                    <p:selectCheckboxMenu id="lstJob" value="#{parametrosView.selectedJob}" label="Nivel ocupacional" required="true"
+                                            panelStyle="width:250px" disabled="#{!parametrosView.blNivelOcupacional or evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}">
+                        <f:selectItems value="#{parametrosView.job}" />
+                    </p:selectCheckboxMenu>
+                    <p:message for="lstJob" display="text" />
+                    <p:commandButton icon="ui-icon-disk" disabled="#{!parametrosView.blNivelOcupacional or evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}" process="@this,lstJob" oncomplete="rbtnNO1();rbtnNO2();"/>
+
+                    <h:outputText value="Area de negocio" />
+                    <p:inputSwitch value="#{parametrosView.blAreaNegocio}" disabled="#{evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}" >
+                        <p:ajax listener="#{parametrosView.activarParametro(86)}" update="panel" />
+                        <p:ajax listener="#{evaluadosView.init}" update=":tvModoConfiguracion:tvEval,:tvModoConfiguracion:formModoAvanzado"/>
+                    </p:inputSwitch>
+                    <p:selectCheckboxMenu id="lstAreaNegocioP" value="#{parametrosView.selectedAreaNegocio}" label="Area de negocio" required="true"
+                                          panelStyle="width:250px" disabled="#{!parametrosView.blAreaNegocio or evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}">
+                        <f:selectItems value="#{parametrosView.area}" />
+                    </p:selectCheckboxMenu>
+                    <p:message for="lstAreaNegocioP" display="text" />
+                    <p:commandButton icon="ui-icon-disk" disabled="#{!parametrosView.blAreaNegocio or evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}" process="@this,lstAreaNegocioP" oncomplete="rbtnAN1();rbtnAN2();" />
+                    
+                    
+                </h:panelGrid>
+
+            </p:panel>
+        </h:panelGrid>
+    </h:form>
+    <h:panelGrid border="0" columns="1"  >  
+
+<h3>Configuracion de redes (Básica/Avanzada)</h3>
+
+<p:row/>
+<p:outputLabel value="Puedes elegir el modo de configuración de la red en general. Si eliges la avanzada puedes cargar toda tu información con tal solo un Excel." />
+<p:row/>
+
+
+
+<p:tabView id="tvModoConfiguracion">
+    <p:ajax event="tabChange" listener="#{evaluadosView.onTabChange}" update=":tvModoConfiguracion:formModoAvanzado"/>
+<p:tab id="tabModoBasico" title="Modo básico">
+    
+        
+    <h:form id="formRelacion">
+        
+        <h:panelGrid border="0" columns="1" >  
+            
+            <h3>Lista de relaciones</h3>
+            <p:row/>
+            <p:outputLabel value="Verifica el avance del proceso de carga de redes. Recuerda que tu mismo podras realizar la selección en caso el evaluado no pueda concretar su carga." />
+            <p:row/>
+
+            <p:confirmDialog global="true" >
+                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+            </p:confirmDialog>
+            
+            <p:panel id="panel" widgetVar="panel" >  
+                
+                <h:panelGrid  id="pnlReg" columns="3" cellpadding="5" border="0">
+                    <h:outputLabel for="strNombre" value="Nombre : " />
+                    <p:inputText id="strNombre" label="Nombre" value="#{relacionesView.strNombre}" required="true" size="50" maxlength="50" >
+                        <f:validator validatorId="validaTextoIngresado" for="strDescripcion" />
+                    </p:inputText>
+                    <p:message for="strNombre" display="text" />
+                    
+                    <h:outputLabel for="strDescripcion" value="Descripción : " />
+                    <p:inputText id="strDescripcion" label="Descripcion" value="#{relacionesView.strDescripcion}" required="true" size="50" maxlength="150" > 
+                        <f:validator validatorId="validaTextoIngresado" for="strDescripcion" />
+                    </p:inputText>
+                    <p:message for="strDescripcion" display="text" />
+
+                    <h:outputLabel for="strAbreviatura" value="Abreviatura : " />
+                    <p:inputText id="strAbreviatura" label="Abreviatura" value="#{relacionesView.strAbreviatura}" required="true" size="50" maxlength="5" >
+                        <f:validator validatorId="validaTextoIngresado" for="strDescripcion" />
+                    </p:inputText>
+                    <p:message for="strAbreviatura" display="text" /> 
+                    
+                    <h:outputLabel for="strColor" value="Color : " />
+                    <p:colorPicker id="strColor" required="true" value="#{relacionesView.strColor}"  /> 
+                    <p:message for="strColor" display="icon" />
+                </h:panelGrid>
+
+                <f:facet name="footer">
+                    <p:commandButton id="fafo1" value="Añadir" update="panel,tbl" actionListener="#{relacionesView.guardarRelacion}" icon="ui-icon-plusthick" disabled="#{relacionesView.intIdEstadoProyecto==37}" />
+                    <p:commandButton id="fafo2" value="Limpiar" update="panel" actionListener="#{relacionesView.resetFail}" process="@this" icon="ui-icon-trash" disabled="#{relacionesView.intIdEstadoProyecto==37}" > 
+                        <p:resetInput target="panel" />
+                    </p:commandButton>
+                </f:facet>
+            </p:panel>
+            
+            <p:dataTable 
+                        id="tbl"
+                        var="reg"
+                        widgetVar="tbl"
+                        value="#{relacionesView.lstRelacionBean}"   
+                        emptyMessage="No se encontró ningun elemento :("
+                        rowKey="#{reg.idRelacionPk}"
+                        style="width: 100%">
+                
+                <f:facet name="footer">
+                    En total tienes #{relacionesView.lstRelacionBean.size()} relacion(es).
+                </f:facet>
+                
+                <p:column headerText="Nombre" >
+                    <h:outputText value="#{reg.strNombre}" />
+                </p:column>
+                <p:column headerText="Descripcion" >
+                    <h:outputText value="#{reg.strDescripcion}" />
+                </p:column>
+                <p:column headerText="Abreviatura" >
+                    <h:outputText value="#{reg.strAbreviatura}" />
+                </p:column>
+                <p:column style="text-align: center" headerText="Color" >
+                    <p:inputText size="2" readonly="true" style="background-color: ##{reg.strColor};" />
+                </p:column>
+                <p:column style="text-align: center" headerText="En uso" >
+                    <h:outputText value="#{reg.intCantidadUso}" />
+                </p:column>
+                <p:column style="width:50px;text-align: center;" headerText="Eliminar" >
+                    <p:commandButton rendered="#{reg.intCantidadUso==0?true:false}" immediate="true" update="tbl" actionListener="#{relacionesView.eliminarLista(reg)}" icon="ui-icon-closethick" />
+                    <p:commandButton rendered="#{reg.intCantidadUso>0?true:false}" disabled="#{reg.intCantidadUso==0?false:(relacionesView.intIdEstadoProyecto==34 or relacionesView.intIdEstadoProyecto==37)?true:false}" immediate="true" update="tbl" actionListener="#{relacionesView.eliminarLista(reg)}" icon="ui-icon-closethick" >
+                        <p:confirm header="Confirmación" message="Esta seguro que desea borrar esta relación? Actualmente esta en uso" icon="ui-icon-alert" />
+                    </p:commandButton>
+                </p:column>    
+
+            </p:dataTable>
+                              
+        </h:panelGrid>
+        
+     </h:form>
+    
+    <h:panelGrid id="gridPanelEvaluados" border="0" columns="1" >  
+        
+        <h3>Lista de participantes</h3>
+
+        <p:row/>
+        <p:outputLabel value="Realiza la carga de la red completa de evaluados y evaluadores (Participantes del proyecto)." />
+        <p:row/>
+
+        <p:tabView id="tvEval">
+
+            <p:tab id="tabEvaluados" title="Evaluados">
+            
+            <h:form id="formEvaluados" >
+                <h:panelGrid border="0" columns="1" >
+                    <h:panelGrid border="0" columns="2" >
+                        <p:outputLabel value="Acción" for="accionEvaluado" />
+                        <p:selectOneMenu id="accionEvaluado" value="#{evaluadosView.modo}" disabled="#{relacionesView.intIdEstadoProyecto==37?true:false}" >
+                            <f:selectItem itemLabel="Solo consulta" />
+                            <f:selectItem itemLabel="Carga individual" itemValue="1" />
+                            <f:selectItem itemLabel="Carga masiva" itemValue="2" />
+                            <p:ajax update="actuEvaluado" listener="#{evaluadosView.resetFail()}" />
+                        </p:selectOneMenu>            
+                    </h:panelGrid>
+            
+<p:fragment id="actuEvaluado" autoUpdate="false" >
+    <c:if test="#{evaluadosView.modo==1?true:false}">
+        <p:panel id="pnlCarga" header="Carga individual de evaluados" >
+            <p:messages id="msgIndEdo" autoUpdate="false" showDetail="true" /> 
+            <h:panelGrid  id="pnlDos" columns="3" cellpadding="5" >                     
+                 <h:outputLabel for="strDescripcion" value="Nombre completo : " />
+                 <p:inputText id="strDescripcion" value="#{evaluadosView.strDescripcion}" label="Descripcion" requiredMessage="#{msg['valor.requerido']}" required="true" size="60" maxlength="100" >
+                     <f:validator validatorId="validaTextoIngresado" for="strDescripcion" />
+                 </p:inputText>
+                 <p:message for="strDescripcion" display="text" /> 
+
+                 <h:outputLabel for="strCargo" value="Cargo (Opcional) : " />
+                 <p:inputText id="strCargo" value="#{evaluadosView.strCargo}" label="Cargo" size="60" maxlength="100" >
+                     <f:validator validatorId="validaTextoIngresadoOpcional" for="strCargo" />
+                 </p:inputText>
+                 <p:message for="strCargo" display="text" /> 
+
+                 <h:outputLabel for="strCorreo" value="Correo : " />
+                 <p:inputText id="strCorreo" value="#{evaluadosView.strCorreo}" label="Correo" requiredMessage="#{msg['valor.requerido']}" required="true" size="60" maxlength="100" >
+                     <f:validator validatorId="validarCorreo" for="strCorreo" /> 
+                 </p:inputText>
+                 <p:message for="strCorreo" display="text" /> 
+                 
+                 
+                 <h:outputLabel for="strSexoDO" value="Sexo : " rendered="#{evaluadosView.blHabilitarSexo}" />
+                 <p:selectOneMenu id="strSexoDO" value="#{evaluadosView.strSexo}" rendered="#{evaluadosView.blHabilitarSexo}" requiredMessage="#{msg['valor.requerido']}" >
+                    <f:selectItem itemLabel="Femenino" itemValue="Femenino" />
+                    <f:selectItem itemLabel="Masculino" itemValue="Masculino" />
+                </p:selectOneMenu>            
+                 <p:message for="strSexoDO" display="text" rendered="#{evaluadosView.blHabilitarSexo}" /> 
+                 
+                 <h:outputLabel for="strEdadDO" value="Edad : " rendered="#{evaluadosView.blHabilitarEdad}" />
+                 <p:inputText id="strEdadDO" label="Edad" value="#{evaluadosView.intEdad}" required="true" size="20" requiredMessage="#{msg['valor.requerido']}" maxlength="2" rendered="#{evaluadosView.blHabilitarEdad}" >
+                     <f:validator validatorId="validarNro" for="strEdadDO" /> 
+                 </p:inputText>
+                 <p:message for="strEdadDO" display="text" rendered="#{evaluadosView.blHabilitarEdad}" /> 
+                 
+                 <h:outputLabel for="strTiempoDO" value="Tiempo en la empresa (Años) : " rendered="#{evaluadosView.blHabilitarTiempoEmpresa}" />
+                 <p:inputText id="strTiempoDO" label="Tiempo en la empresa (Años)" value="#{evaluadosView.intTiempoEmpresa}" requiredMessage="#{msg['valor.requerido']}" required="true" size="20" maxlength="2" rendered="#{evaluadosView.blHabilitarTiempoEmpresa}" >
+                     <f:validator validatorId="validarNro" for="strTiempoDO" /> 
+                 </p:inputText>
+                 <p:message for="strTiempoDO" display="text" rendered="#{evaluadosView.blHabilitarTiempoEmpresa}" /> 
+                 
+                 <h:outputLabel for="strNivelOcupacionalDO" value="Nivel ocupacional : " rendered="#{evaluadosView.blHabilitarNivelOcupacional}" />
+                 <p:selectOneMenu id="strNivelOcupacionalDO" label="Nivel ocupacional" value="#{evaluadosView.strOcupacion}" requiredMessage="#{msg['valor.requerido']}" required="true" rendered="#{evaluadosView.blHabilitarNivelOcupacional}" >
+                    <f:selectItem itemLabel="Selecciona un nivel" itemValue="" />
+                    <f:selectItems value="#{evaluadosView.lstNivelOcupacional}"  var="nivel" itemLabel="#{nivel.label}" itemValue="#{nivel.value}" />
+                 </p:selectOneMenu>
+                 <p:message for="strNivelOcupacionalDO" display="text" rendered="#{evaluadosView.blHabilitarNivelOcupacional}" /> 
+                 
+                 <h:outputLabel for="strAreaNegocioDO" value="Area del negocio : " rendered="#{evaluadosView.blHabilitarAreaNegocio}" />
+                 <p:selectOneMenu id="strAreaNegocioDO" label="Area del negocio" value="#{evaluadosView.strAreaNegocio}" requiredMessage="#{msg['valor.requerido']}" required="true" rendered="#{evaluadosView.blHabilitarAreaNegocio}" >
+                    <f:selectItem itemLabel="Selecciona un area" itemValue="" />
+                    <f:selectItems value="#{evaluadosView.lstAreaNegocio}"  var="area" itemLabel="#{nivel.label}" itemValue="#{nivel.value}" />
+                 </p:selectOneMenu>
+                 <p:message for="strAreaNegocioDO" display="text" rendered="#{evaluadosView.blHabilitarAreaNegocio}" />                  
+                 
+                 <h:outputLabel for="strAutoevaluar" value="Autoevaluar : " />
+                 <p:selectBooleanCheckbox id="strAutoevaluar" value="#{evaluadosView.paInAutoevaluar}" />
+                 
+            </h:panelGrid>
+            <p:commandButton value="Agregar evaluado" update="pnlCarga,tblDos,:tvModoConfiguracion:tvEval:formEvaluadores:tblRes,:formParametros" actionListener="#{evaluadosView.agregarEvaluado}" icon="ui-icon-plusthick" disabled="#{evaluadosView.idParticipantePk==null?false:true}"  /> 
+            <p:commandButton value="Modificar evaluado" update="pnlCarga,tblDos,:tvModoConfiguracion:tvEval:formEvaluadores:tblRes,:formParametros" actionListener="#{evaluadosView.actualizarEvaluado}" icon="ui-icon-plusthick" disabled="#{evaluadosView.idParticipantePk==null?true:false}" />
+            <p:commandButton value="Limpiar" update="pnlCarga" process="@this" immediate="true" icon="ui-icon-trash" actionListener="#{evaluadosView.resetFail}" > 
+                <p:resetInput target="pnlCarga" /> 
+            </p:commandButton>
+            
+        </p:panel>
+    </c:if>
+    <c:if test="#{evaluadosView.modo==2?true:false}">
+        <p:panel id="pnlCargaMasivaEvaluado" header="Carga masiva de evaluados" >
+            <p:messages id="msgMasEdo" autoUpdate="false" showDetail="true" />
+            <h:panelGrid columns="1" cellpadding="5" >                     
+
+                <p:outputLabel value="Carga y procesa tu archivo excel. No olvides de verificar si existe algún error en los registros." />
+                <p:commandButton value="Descargar lista actual" actionListener="#{evaluadosView.generaExcel()}" immediate="true" ajax="false" icon="ui-icon-arrowthickstop-1-s"  >
+                    <p:fileDownload value="#{evaluadosView.xlsContent}" />
+                </p:commandButton>
+                
+                <p:fileUpload widgetVar="archivoMasivoEvaluado" value="#{evaluadosView.file}" mode="advanced" dragDropSupport="fale" multiple="false" sizeLimit="2000000" allowTypes="/(\.|\/)(xls)$/"
+                              cancelLabel="Cancelar" uploadLabel="Subir" label="Buscar" update="pnlCargaMasivaEvaluado" auto="true"
+                              fileUploadListener="#{evaluadosView.leeExcel}" immediate="true" />
+
+                <p:dataTable 
+                        id="tblResultadoMasivoEvaluado"
+                        widgetVar="tblResultadoMasivoEvaluado"
+                        rows="10"
+                        paginator="true" 
+                        var="eva"
+                        value="#{evaluadosView.lstCargaMasiva}"
+                        paginatorPosition="bottom"
+                        resizableColumns="true"
+                        paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                        emptyMessage="No se encontró ningun registro :(" >
+
+                    <f:facet name="header">
+                        <p:outputPanel style="text-align: right; width: 100%" rendered="#{evaluadosView.lstCargaMasiva.size()>0}">
+                            <p:commandButton id="toggler" type="button" value="Filtrar columnas" style="text-align: right;" icon="ui-icon-calculator" />
+                            <p:columnToggler datasource="tblResultadoMasivoEvaluado" trigger="toggler" />
+                        </p:outputPanel>
+
+                        <p:outputLabel value="Resultado de la carga " style="text-align: left;" />
+                    </f:facet>
+                    <f:facet name="footer">
+                        En total tienes #{evaluadosView.lstCargaMasiva.size()} registro(s).
+                    </f:facet>
+                    <p:column style="text-align: left;" headerText="Descripción" >
+                        <h:outputText value="#{eva.paTxDescripcion}"/>
+                    </p:column> 
+                    <p:column style="text-align: left;" headerText="Cargo" >
+                        <h:outputText value="#{eva.paTxNombreCargo}"/>
+                    </p:column> 
+                    <p:column style="text-align: left;" headerText="Correo">
+                        <h:outputText value="#{eva.paTxCorreo}"/>
+                    </p:column> 
+
+                    <p:column headerText="Sexo" rendered="#{evaluadosView.blHabilitarSexo}">
+                        <h:outputText value="#{eva.paTxSexo}" />
+                    </p:column>
+                    <p:column headerText="Edad" rendered="#{evaluadosView.blHabilitarEdad}">
+                        <h:outputText value="#{eva.paNrEdad}" />
+                    </p:column>
+                    <p:column headerText="Tiempo en empresa" rendered="#{evaluadosView.blHabilitarTiempoEmpresa}">
+                        <h:outputText value="#{eva.paNrTiempoTrabajo}" />
+                    </p:column>
+                    <p:column headerText="Nivel ocupacional" rendered="#{evaluadosView.blHabilitarNivelOcupacional}">
+                        <h:outputText value="#{eva.paTxOcupacion}" />
+                    </p:column>
+                    <p:column headerText="Area de negocio" rendered="#{evaluadosView.blHabilitarAreaNegocio}">
+                        <h:outputText value="#{eva.paTxAreaNegocio}" />
+                    </p:column>
+                    
+                    <p:column style="text-align: center;" headerText="Autoevaluar" >
+                        <p:selectBooleanCheckbox value="#{eva.paInAutoevaluar}" disabled="true" />
+                    </p:column>
+                    <p:column style="text-align: center;" headerText="Valida" exportable="false" >
+                        <p:graphicImage value="../images/validation/#{eva.strCorrectoMasivo}.png" width="15"/>
+                    </p:column> 
+                    <p:column headerText="Mensaje" >
+                        <h:outputText value="#{eva.strObservacionMasivo}"/>
+                    </p:column> 
+
+                </p:dataTable>
+
+                <p:commandButton value="Agregar correctos a la lista" update="tblResultadoMasivoEvaluado,tblDos,msgMasEdo,pnlCargaMasivaEvaluado,:tvModoConfiguracion:tvEval:formEvaluadores:tblRes,:formParametros" actionListener="#{evaluadosView.cargarListaEvaluados}" disabled="#{evaluadosView.intCantTempCorrect>0?false:true}" icon="ui-icon-plusthick" /> 
+                <p:commandButton value="Descargar resultado" actionListener="#{evaluadosView.generaExcelRespuesta()}" immediate="true" ajax="false" icon="ui-icon-arrowthickstop-1-s" disabled="#{evaluadosView.lstCargaMasiva.size()>0?false:true}"  >
+                    <p:fileDownload value="#{evaluadosView.xlsContent}" />
+                </p:commandButton>
+
+            </h:panelGrid>
+        </p:panel>
+    </c:if>
+</p:fragment>
+                
+                <p:dataTable 
+                            id="tblDos"
+                            var="reg"
+                            widgetVar="tblDos"
+                            value="#{evaluadosView.lstEvaluado}" 
+                            rows="50"
+                            paginator="true" 
+                            resizableColumns="true"
+                            paginatorPosition="bottom"
+                            paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+                            emptyMessage="No se encontró ningun elemento :("
+                            rowKey="#{reg.paIdParticipantePk}">                 
+                    
+                    <f:facet name="header">
+                        <p:outputPanel style="text-align: right; width: 100%" rendered="#{evaluadosView.lstEvaluado.size()>0}">
+                            <p:commandButton id="toggler" type="button" value="Filtrar columnas" style="text-align: right;" icon="ui-icon-calculator" />
+                            <p:columnToggler datasource="tblDos" trigger="toggler" />
+                        </p:outputPanel>
+
+                        <p:outputLabel value="Lista de evaluados " style="text-align: left;" />
+                    </f:facet>  
+                    
+                    <f:facet name="footer">
+                        En total tienes #{evaluadosView.lstEvaluado.size()} evaluado(s).
+                    </f:facet>
+                    
+                    <p:column headerText="Descripción" sortBy="#{reg.paTxDescripcion}" >
+                        <h:outputText value="#{reg.paTxDescripcion}" />
+                    </p:column>
+                    <p:column headerText="Cargo" sortBy="#{reg.paTxNombreCargo}" >
+                        <h:outputText value="#{reg.paTxNombreCargo}" />
+                    </p:column>                                 
+                    <p:column headerText="Correo" sortBy="#{reg.paTxCorreo}" >
+                        <h:outputText value="#{reg.paTxCorreo}" />
+                    </p:column>
+                    
+                    <p:column headerText="Sexo" sortBy="#{reg.paTxSexo}" rendered="#{evaluadosView.blHabilitarSexo}">
+                        <h:outputText value="#{reg.paTxSexo}" />
+                    </p:column>
+                    <p:column headerText="Edad" sortBy="#{reg.paNrEdad}" rendered="#{evaluadosView.blHabilitarEdad}">
+                        <h:outputText value="#{reg.paNrEdad}" />
+                    </p:column>
+                    <p:column headerText="Tiempo en empresa" sortBy="#{reg.paNrTiempoTrabajo}" rendered="#{evaluadosView.blHabilitarTiempoEmpresa}">
+                        <h:outputText value="#{reg.paNrTiempoTrabajo}" />
+                    </p:column>
+                    <p:column headerText="Nivel ocupacional"  sortBy="#{reg.paTxOcupacion}" rendered="#{evaluadosView.blHabilitarNivelOcupacional}">
+                        <h:outputText value="#{reg.paTxOcupacion}" />
+                    </p:column>
+                    <p:column headerText="Area de negocio" sortBy="#{reg.paTxAreaNegocio}" rendered="#{evaluadosView.blHabilitarAreaNegocio}">
+                        <h:outputText value="#{reg.paTxAreaNegocio}" />
+                    </p:column>
+                    <p:column style="text-align: center;" sortBy="#{reg.paInAutoevaluar}" headerText="Autoevaluar">
+                        <p:selectBooleanCheckbox value="#{reg.paInAutoevaluar}" disabled="true" />
+                    </p:column>
+                    <p:column style="text-align: center;" sortBy="#{reg.paStrEstado}"  headerText="Estado" >
+                        <h:outputText value="#{reg.paStrEstado}" />
+                    </p:column> 
+                    <p:column headerText="Eliminar" style="width:50px;text-align: center">
+                        <p:commandButton disabled="#{reg.paIdEstado==68?false:true}" update=":tvModoConfiguracion:tvEval:formEvaluados:tblDos,:formParametros" immediate="true"  actionListener="#{evaluadosView.eliminarLista(reg)}"  icon="ui-icon ui-icon-closethick" /> 
+                    </p:column>  
+                    <p:column headerText="Modificar" style="width:50px;text-align: center">
+                        <p:commandButton disabled="#{reg.paIdEstado==73?true:false}" update=":tvModoConfiguracion:tvEval:formEvaluados:actuEvaluado" process="@this" immediate="true" actionListener="#{evaluadosView.modificarEvaluado(reg)}"  icon="ui-icon-pencil" > 
+                            <p:ajax update=":tvModoConfiguracion:tvEval:formEvaluados:actuEvaluado" />
+                        </p:commandButton>
+                    </p:column>
+
+                </p:dataTable>
+
+                    </h:panelGrid>
+                </h:form>
+
+            </p:tab>
+            
+            <p:tab id="tabEvaluadores" title="Evaluadores">
+
+                <h:form id="formEvaluadores">
+                    <h:panelGrid border="0" columns="1" >
+                        <h:panelGrid border="0" columns="2" >
+                            <p:outputLabel value="Acción" for="accionEvaluador" />
+                            <p:selectOneMenu id="accionEvaluador" value="#{evaluadosView.modoEvaluadores}" disabled="#{relacionesView.intIdEstadoProyecto==37?true:false}" >
+                                <f:selectItem itemLabel="Solo consulta" />
+                                <f:selectItem itemLabel="Carga individual" itemValue="1" />
+                                <f:selectItem itemLabel="Carga masiva" itemValue="2" />
+                                <p:ajax update="actuEvaluadores" listener="#{evaluadosView.resetFailEvaluadores()}"/>
+                            </p:selectOneMenu>            
+                        </h:panelGrid>
+
+<p:fragment id="actuEvaluadores" autoUpdate="false" >
+    <c:if test="#{evaluadosView.modoEvaluadores==1}">
+        <p:panel id="panelEvaluadores" header="Carga individual de evaluadores">
+            <p:messages id="msgIndiEdor" autoUpdate="false" showDetail="true" />
+            <h:panelGrid  id="pnlEvaluadores" columns="3" cellpadding="5" >                
+                <h:outputLabel for="strDescripcionRes" value="Nombre completo : " />
+                <p:inputText id="strDescripcionRes" value="#{evaluadosView.strDescripcionEvaluadores}" required="false" size="60" maxlength="100" >
+                    <f:validator validatorId="validaTextoIngresado" /> 
+                </p:inputText>
+                <p:message for="strDescripcionRes" display="icon" /> 
+
+                <h:outputLabel for="strCargoRes" value="Cargo (Opcional): " />
+                <p:inputText id="strCargoRes" value="#{evaluadosView.strCargoEvaluadores}" label="Cargo" size="60" maxlength="100" >
+                    <f:validator validatorId="validaTextoIngresadoOpcional" for="strCargoRes" />
+                </p:inputText>
+                <p:message for="strCargoRes" display="icon" /> 
+                 
+                <h:outputLabel for="strCorreoRes" value="Correo : " />
+                <p:inputText id="strCorreoRes" value="#{evaluadosView.strCorreoEvaluadores}" required="false" size="60" maxlength="100" >
+                    <f:validator validatorId="validarCorreo" /> 
+                </p:inputText>
+                <p:message for="strCorreoRes" display="icon" /> 
+
+                <h:outputLabel for="strSexoDORes" value="Sexo : " rendered="#{evaluadosView.blHabilitarSexo}" />
+                <p:selectOneMenu id="strSexoDORes" value="#{evaluadosView.strSexoEvaluadores}"  rendered="#{evaluadosView.blHabilitarSexo}" >
+                    <f:selectItem itemLabel="Femenino" itemValue="Femenino" />
+                    <f:selectItem itemLabel="Masculino" itemValue="Masculino" />
+                </p:selectOneMenu>            
+                 <p:message for="strSexoDORes" display="icon" rendered="#{evaluadosView.blHabilitarSexo}" /> 
+                 
+                 <h:outputLabel for="strEdadDORes" value="Edad : " rendered="#{evaluadosView.blHabilitarEdad}" />
+                 <p:inputText id="strEdadDORes" label="Edad" required="true" value="#{evaluadosView.intEdadEvaluadores}" size="20" maxlength="2" rendered="#{evaluadosView.blHabilitarEdad}" >
+                     <f:validator validatorId="validarNro" for="strEdadDORes" /> 
+                 </p:inputText>
+                 <p:message for="strEdadDORes" display="icon" rendered="#{evaluadosView.blHabilitarEdad}" /> 
+                 
+                 <h:outputLabel for="strTiempoDORes" value="Tiempo en la empresa (Años) : " rendered="#{evaluadosView.blHabilitarTiempoEmpresa}" />
+                 <p:inputText id="strTiempoDORes" label="Tiempo en la empresa (Años)" value="#{evaluadosView.intTiempoEmpresaEvaluadores}" required="true" size="20" maxlength="2" rendered="#{evaluadosView.blHabilitarTiempoEmpresa}" >
+                     <f:validator validatorId="validarNro" for="strTiempoDORes" /> 
+                 </p:inputText>
+                 <p:message for="strTiempoDORes" display="icon" rendered="#{evaluadosView.blHabilitarTiempoEmpresa}" /> 
+                 
+                 <h:outputLabel for="strNivelOcupacionalDORes" value="Nivel ocupacional : " rendered="#{evaluadosView.blHabilitarNivelOcupacional}" />
+                 <p:selectOneMenu id="strNivelOcupacionalDORes" label="Nivel ocupacional" value="#{evaluadosView.strOcupacionEvaluadores}" required="true" rendered="#{evaluadosView.blHabilitarNivelOcupacional}" >
+                    <f:selectItem itemLabel="Selecciona un nivel" itemValue="" />
+                    <f:selectItems value="#{evaluadosView.lstNivelOcupacional}"  var="nivel" itemLabel="#{nivel.label}" itemValue="#{nivel.value}" />
+                 </p:selectOneMenu>
+                 <p:message for="strNivelOcupacionalDORes" display="icon" rendered="#{evaluadosView.blHabilitarNivelOcupacional}" /> 
+                 
+                 <h:outputLabel for="strAreaNegocioDORes" value="Area del negocio : " rendered="#{evaluadosView.blHabilitarAreaNegocio}" />
+                 <p:selectOneMenu id="strAreaNegocioDORes" label="Area del negocio" value="#{evaluadosView.strAreaNegocioEvaluadores}" required="true" rendered="#{evaluadosView.blHabilitarAreaNegocio}" >
+                    <f:selectItem itemLabel="Selecciona un area" itemValue="" />
+                    <f:selectItems value="#{evaluadosView.lstAreaNegocio}"  var="area" itemLabel="#{nivel.label}" itemValue="#{nivel.value}" />
+                 </p:selectOneMenu>
+                 <p:message for="strAreaNegocioDORes" display="icon" rendered="#{evaluadosView.blHabilitarAreaNegocio}" />                  
+
+                 
+            </h:panelGrid>
+                                                              
+            <p:commandButton value="Añadir evaluador" update="panelEvaluadores,tblRes,:formParametros" actionListener="#{evaluadosView.agregarEvaluadores(false)}" icon="ui-icon-plusthick" disabled="#{evaluadosView.reIdParticipantePk==null?false:true}" />
+            <p:commandButton value="Modificar evaluador" update="panelEvaluadores,tblRes" actionListener="#{evaluadosView.actualizarEvaluadores}" icon="ui-icon-plusthick" disabled="#{evaluadosView.reIdParticipantePk==null?true:false}" />
+            <p:commandButton value="Limpiar" update="panelEvaluadores" process="@this" immediate="true" actionListener="#{evaluadosView.resetFailEvaluadores  }" icon="ui-icon-trash" > 
+                <p:resetInput target="panelEvaluadores" />
+            </p:commandButton>
+
+        </p:panel>
+
+    </c:if>
+    <c:if test="#{evaluadosView.modoEvaluadores==2}">
+        <p:panel id="pnlCargaMasivaEvaluador" header="Carga masiva de evaluadores" >
+            <p:messages id="msgMasivoEdor" autoUpdate="false" showDetail="true" />
+            <h:panelGrid columns="1" cellpadding="5" >                     
+                <p:outputLabel value="Carga y procesa tu archivo excel. No olvides de verificar si existe algún error en los registros." />
+                <p:commandButton value="Descargar lista actual" actionListener="#{evaluadosView.generaExcelEvaluadores()}" immediate="true" ajax="false" icon="ui-icon-arrowthickstop-1-s"  >
+                    <p:fileDownload value="#{evaluadosView.xlsContentEvaluadores}" />
+                </p:commandButton>
+                
+                <p:fileUpload widgetVar="archivoMasivoEvaluador" value="#{evaluadosView.fileEvaluadores}" mode="advanced" dragDropSupport="fale" multiple="false" sizeLimit="2000000" allowTypes="/(\.|\/)(xls)$/"
+                              cancelLabel="Cancelar" uploadLabel="Subir" label="Buscar" update="pnlCargaMasivaEvaluador" auto="true"
+                              fileUploadListener="#{evaluadosView.leeExcelEvaluadores}" immediate="true" />
+
+                <p:dataTable 
+                        id="tblResultadoMasivoEvaluadores"
+                        widgetVar="tblResultadoMasivoEvaluadores"
+                        rows="10"
+                        resizableColumns="true"
+                        paginator="true" 
+                        var="eva"
+                        value="#{evaluadosView.lstCargaMasivaEvaluadores}"
+                        paginatorPosition="bottom"
+                        paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                        emptyMessage="No se encontró ningun registro :(" >
+
+                    <f:facet name="header">
+                        <p:outputPanel style="text-align: right; width: 100%" rendered="#{evaluadosView.lstCargaMasivaEvaluadores.size()>0}">
+                            <p:commandButton id="toggler" type="button" value="Filtrar columnas" style="text-align: right;" icon="ui-icon-calculator" />
+                            <p:columnToggler datasource="tblResultadoMasivoEvaluadores" trigger="toggler" />
+                        </p:outputPanel>
+
+                        <p:outputLabel value="Resultado de la carga " style="text-align: left;" />
+                    </f:facet>
+                    <f:facet name="footer">
+                        En total tienes #{evaluadosView.lstCargaMasivaEvaluadores.size()} registro(s).
+                    </f:facet>
+                    <p:column style="text-align: left;" headerText="Descripción" >
+                        <h:outputText value="#{eva.reTxDescripcion}"/>
+                    </p:column> 
+                    <p:column headerText="Cargo" >
+                        <h:outputText value="#{eva.reTxNombreCargo}" />
+                    </p:column>
+                    <p:column style="text-align: left;" headerText="Correo" >
+                        <h:outputText value="#{eva.reTxCorreo}"/>
+                    </p:column>
+                    <p:column headerText="Sexo" rendered="#{evaluadosView.blHabilitarSexo}">
+                        <h:outputText value="#{eva.reTxSexo}" />
+                    </p:column>
+                    <p:column headerText="Edad" rendered="#{evaluadosView.blHabilitarEdad}">
+                        <h:outputText value="#{eva.reNrEdad}" />
+                    </p:column>
+                    <p:column headerText="Tiempo en empresa" rendered="#{evaluadosView.blHabilitarTiempoEmpresa}">
+                        <h:outputText value="#{eva.reNrTiempoTrabajo}" />
+                    </p:column>
+                    <p:column headerText="Nivel ocupacional" rendered="#{evaluadosView.blHabilitarNivelOcupacional}">
+                        <h:outputText value="#{eva.reTxOcupacion}" />
+                    </p:column>
+                    <p:column headerText="Area de negocio" rendered="#{evaluadosView.blHabilitarAreaNegocio}">
+                        <h:outputText value="#{eva.reTxAreaNegocio}" />
+                    </p:column>
+                    <p:column style="text-align: center;" headerText="Valida" exportable="false" >
+                        <p:graphicImage value="../images/validation/#{eva.strCorrectoMasivo}.png" width="15"/>
+                    </p:column> 
+                    <p:column headerText="Mensaje" >
+                        <h:outputText value="#{eva.strObservacionMasivo}"/>
+                    </p:column> 
+
+                </p:dataTable>
+
+                <p:commandButton value="Agregar correctos a la lista" update="tblResultadoMasivoEvaluadores,tblRes,msgMasivoEdor,pnlCargaMasivaEvaluador,:formParametros" actionListener="#{evaluadosView.cargarListaEvaluadores}" disabled="#{evaluadosView.intCantTempCorrectEvaluadores>0?false:true}" icon="ui-icon-plusthick" /> 
+                <p:commandButton value="Descargar resultado" actionListener="#{evaluadosView.generaExcelRespuestaEvaluadores()}" immediate="true" ajax="false" icon="ui-icon-arrowthickstop-1-s" disabled="#{evaluadosView.lstCargaMasivaEvaluadores.size()>0?false:true}"  >
+                    <p:fileDownload value="#{evaluadosView.xlsContentEvaluadores}" />
+                </p:commandButton>
+
+            </h:panelGrid>
+        </p:panel>
+    </c:if>
+</p:fragment>
+
+                        <p:dataTable 
+                                    id="tblRes"
+                                    var="reg"
+                                    widgetVar="tblRes"
+                                    value="#{evaluadosView.lstEvaluadores}" 
+                                    rows="50"
+                                    resizableColumns="true"
+                                    paginator="true" 
+                                    paginatorPosition="bottom"
+                                    paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+                                    emptyMessage="No se encontró ningun elemento :("
+                                    rowKey="#{reg.intCorrelativo}">
+
+                            <f:facet name="header">
+                                <p:outputPanel style="text-align: right; width: 100%" rendered="#{evaluadosView.lstEvaluado.size()>0}">
+                                    <p:commandButton id="toggler" type="button" value="Filtrar columnas" style="text-align: right;" icon="ui-icon-calculator" />
+                                    <p:columnToggler datasource="tblRes" trigger="toggler" />
+                                </p:outputPanel>
+
+                                <p:outputLabel value="Lista de evaluadores " style="text-align: left;" />
+                            </f:facet>  
+                            <f:facet name="footer">
+                                En total tienes #{evaluadosView.lstEvaluadores.size()} evaluador(es).
+                            </f:facet>
+                            <p:column headerText="Descripción" sortBy="#{reg.reTxDescripcion}">
+                                <h:outputText value="#{reg.reTxDescripcion}" />
+                            </p:column>                               
+                            <p:column headerText="Cargo" sortBy="#{reg.reTxNombreCargo}">
+                                <h:outputText value="#{reg.reTxNombreCargo}" />
+                            </p:column>
+                            <p:column headerText="Correo" sortBy="#{reg.reTxCorreo}">
+                                <h:outputText value="#{reg.reTxCorreo}" />
+                            </p:column>
+                            <p:column headerText="Sexo" sortBy="#{reg.reTxSexo}" rendered="#{evaluadosView.blHabilitarSexo}">
+                                <h:outputText value="#{reg.reTxSexo}" />
+                            </p:column>
+                            <p:column headerText="Edad" sortBy="#{reg.reNrEdad}" rendered="#{evaluadosView.blHabilitarEdad}">
+                                <h:outputText value="#{reg.reNrEdad}" />
+                            </p:column>
+                            <p:column headerText="Tiempo en empresa" sortBy="#{reg.reNrTiempoTrabajo}" rendered="#{evaluadosView.blHabilitarTiempoEmpresa}">
+                                <h:outputText value="#{reg.reNrTiempoTrabajo}" />
+                            </p:column>
+                            <p:column headerText="Nivel ocupacional" sortBy="#{reg.reTxOcupacion}" rendered="#{evaluadosView.blHabilitarNivelOcupacional}">
+                                <h:outputText value="#{reg.reTxOcupacion}" />
+                            </p:column>
+                            <p:column headerText="Area de negocio" sortBy="#{reg.reTxAreaNegocio}" rendered="#{evaluadosView.blHabilitarAreaNegocio}">
+                                <h:outputText value="#{reg.reTxAreaNegocio}" />
+                            </p:column>
+                            
+                            <p:column style="text-align: center;" sortBy="#{reg.reStrEstado}" headerText="Estado" >
+                                <h:outputText value="#{reg.reStrEstado}" />
+                            </p:column> 
+                            <p:column headerText="Eliminar" style="width:50px;text-align: center;">
+                                <p:commandButton disabled="#{reg.reIdEstado==70?false:true}" actionListener="#{evaluadosView.eliminarListaEvaluadores(reg)}" update="tblRes,:formParametros,:formParametros" icon="ui-icon-closethick" /> 
+                            </p:column>  
+                            <p:column headerText="Modificar" style="width:50px;text-align: center;">
+                                <p:commandButton disabled="#{reg.reIdEstado==76?true:false}" actionListener="#{evaluadosView.modificarEvaluador(reg)}" process="@this" immediate="true" update=":tvModoConfiguracion:tvEval:formEvaluadores"  icon="ui-icon-pencil" > 
+                                    <p:ajax update=":tvModoConfiguracion:tvEval:formEvaluadores:actuEvaluadores" />
+                                </p:commandButton>
+                            </p:column> 
+                            <p:column headerText="Revertir" style="width:50px;text-align: center;">
+                                <p:commandButton disabled="#{reg.reIdEstado==75?false:true}" actionListener="#{evaluadosView.revertirEvaluadorEvaluadores(reg)}" update="tblRes" icon="ui-icon-arrowreturnthick-1-w" /> 
+                            </p:column> 
+                            
+                        </p:dataTable>
+                    </h:panelGrid>
+                </h:form> 
+                
+            </p:tab>
+        </p:tabView>
+
+    </h:panelGrid>
+        
+    
+</p:tab>
+    
+    
+<p:tab id="tabModoAvanzado" title="Modo avanzado">
+    
+    <h:form id="formModoAvanzado">
+        <h:panelGrid id="gridPanelEvaluados" border="0" columns="1" > 
+            <h3>Configuración completa de la red</h3>
+            <p:row/>
+            <p:outputLabel value="Descarga el modelo, ingresa los datos en los tres libros y cargalos al sistema. Recuerda revisar los datos que están ingresando para minimizar errores." />
+            <p:outputLabel value="Una vez cargado satisfactoriamente la configuración este módulo será deshabilitado para evitar que tu información se distorsione. Por favor revisar muy bien tu información." style="color: red;" />
+            <p:row/>
+            
+            <p:messages id="msgConfAvan" autoUpdate="false" showDetail="true" />
+            <h:panelGrid columns="1" cellpadding="0" >                     
+
+                <p:commandButton value="Descargar modelo" actionListener="#{evaluadosView.generaModeloAzanvado()}" immediate="true" ajax="false" icon="ui-icon-arrowthickstop-1-s"  >
+                    <p:fileDownload value="#{evaluadosView.xlsContentAvanzado}" />
+                </p:commandButton>
+                
+                <p:fileUpload widgetVar="archivoMasivoEvaluado" value="#{evaluadosView.fileAvanzado}" mode="advanced" dragDropSupport="fale" multiple="false" sizeLimit="2000000" allowTypes="/(\.|\/)(xls)$/"
+                              cancelLabel="Cancelar" uploadLabel="Subir" update="formModoAvanzado" label="Buscar" auto="true"
+                              fileUploadListener="#{evaluadosView.leeExcelAvanzado}" immediate="true" disabled="#{relacionesView.lstRelacionBean.size()>0 or evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0}" />
+                
+                <p:dataTable 
+                        id="tblErrorAvan"
+                        widgetVar="tblErrorAvan"
+                        rows="10"
+                        paginator="true" 
+                        var="err"
+                        value="#{evaluadosView.lstErrorAvan}"
+                        paginatorPosition="bottom"
+                        paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                        emptyMessage="No se encontró ningun registro :("
+                        rendered="#{evaluadosView.lstErrorAvan.size()>0}">
+
+                    <f:facet name="header">
+                        <p:outputPanel style="text-align: right; width: 100%" rendered="#{evaluadosView.lstErrorAvan.size()>0}">
+                            <p:commandButton id="toggler" type="button" value="Filtrar columnas" style="text-align: right;" icon="ui-icon-calculator" />
+                            <p:columnToggler datasource="tblErrorAvan" trigger="toggler" />
+                        </p:outputPanel>
+
+                        <p:outputLabel value="Errores encontrados " style="text-align: left;" />
+                    </f:facet>  
+
+                    <f:facet name="footer">
+                        En total tienes #{evaluadosView.lstErrorAvan.size()} error(res).
+                    </f:facet>
+                    
+                    <p:column headerText="Nro." style="width: 60px; text-align: center;">
+                        <h:outputText value="#{err.intNum}" />
+                    </p:column>
+                    <p:column headerText="Error">
+                        <h:outputText value="#{err.strDesc}" />
+                    </p:column>                      
+
+                </p:dataTable>
+                
+                <p:dataTable 
+                        id="tblResultadoAvanzadoRelacion"
+                        widgetVar="tblResultadoAvanzadoRelacion"
+                        rows="10"
+                        paginator="true" 
+                        var="rel"
+                        value="#{evaluadosView.lstAvanRelacion}"
+                        paginatorPosition="bottom"
+                        resizableColumns="true"
+                        paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                        emptyMessage="No se encontró ningun registro :(" 
+                        rendered="#{evaluadosView.lstAvanRelacion.size()>0}" >
+
+                    <f:facet name="header">
+                        <p:outputPanel style="text-align: right; width: 100%" rendered="#{evaluadosView.lstAvanRelacion.size()>0}">
+                            <p:commandButton id="toggler" type="button" value="Filtrar columnas" style="text-align: right;" icon="ui-icon-calculator" />
+                            <p:columnToggler datasource="tblResultadoAvanzadoRelacion" trigger="toggler" />
+                        </p:outputPanel>
+
+                        <p:outputLabel value="Relaciones encontradas " style="text-align: left;" />
+                    </f:facet>
+
+                    <p:column headerText="Nombre">
+                        <h:outputText value="#{rel.strNombre}" />
+                    </p:column>
+                    <p:column headerText="Abreviatura">
+                        <h:outputText value="#{rel.strAbreviatura}" />
+                    </p:column>
+                    <p:column style="text-align: center" headerText="Color" >
+                        <p:inputText size="2" readonly="true" style="background-color: ##{rel.strColor};" />
+                    </p:column>
+
+                </p:dataTable>
+                
+                <p:dataTable 
+                        id="tblResultadoAvanzadoPersonas"
+                        widgetVar="tblResultadoAvanzadoPersonas"
+                        rows="20"
+                        paginator="true" 
+                        var="reg"
+                        value="#{evaluadosView.lstAvanPersonas}"
+                        paginatorPosition="bottom"
+                        resizableColumns="true"
+                        paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                        emptyMessage="No se encontró ningun registro :(" 
+                        rendered="#{evaluadosView.lstAvanPersonas.size()>0}" >
+
+                    <f:facet name="header">
+                        <p:outputPanel style="text-align: right; width: 100%" rendered="#{evaluadosView.lstAvanPersonas.size()>0}">
+                            <p:commandButton id="toggler" type="button" value="Filtrar columnas" style="text-align: right;" icon="ui-icon-calculator" />
+                            <p:columnToggler datasource="tblResultadoAvanzadoPersonas" trigger="toggler" />
+                        </p:outputPanel>
+
+                        <p:outputLabel value="Personas encontradas " style="text-align: left;" />
+                    </f:facet>
+                    <f:facet name="footer">
+                        En total tienes #{evaluadosView.lstAvanPersonas.size()} persona(s).
+                    </f:facet>
+
+                    <p:column headerText="Descripción">
+                        <h:outputText value="#{reg.paTxDescripcion}" />
+                    </p:column>
+                    <p:column headerText="Cargo">
+                        <h:outputText value="#{reg.paTxNombreCargo}" />
+                    </p:column>                                 
+                    <p:column headerText="Correo">
+                        <h:outputText value="#{reg.paTxCorreo}" />
+                    </p:column>
+                    <p:column headerText="Sexo" rendered="#{evaluadosView.blHabilitarSexo}">
+                        <h:outputText value="#{reg.paTxSexo}" />
+                    </p:column>
+                    <p:column headerText="Edad" rendered="#{evaluadosView.blHabilitarEdad}">
+                        <h:outputText value="#{reg.paNrEdad}" />
+                    </p:column>
+                    <p:column headerText="Tiempo en empresa" rendered="#{evaluadosView.blHabilitarTiempoEmpresa}">
+                        <h:outputText value="#{reg.paNrTiempoTrabajo}" />
+                    </p:column>
+                    <p:column headerText="Nivel ocupacional" rendered="#{evaluadosView.blHabilitarNivelOcupacional}">
+                        <h:outputText value="#{reg.paTxOcupacion}" />
+                    </p:column>
+                    <p:column headerText="Area de negocio" rendered="#{evaluadosView.blHabilitarAreaNegocio}">
+                        <h:outputText value="#{reg.paTxAreaNegocio}" />
+                    </p:column>
+                    <p:column style="text-align: center;" headerText="Autoevaluar">
+                        <p:selectBooleanCheckbox value="#{reg.paInAutoevaluar}" disabled="true" />
+                    </p:column>
+
+                </p:dataTable>
+                
+                
+                
+                <p:dataTable 
+                        id="tblRelacionAvanzadas"
+                        widgetVar="tblRelacionAvanzadas"
+                        rows="20"
+                        paginator="true" 
+                        var="red"
+                        value="#{evaluadosView.lstRelacionAvanzadas}"
+                        paginatorPosition="bottom"
+                        resizableColumns="true"
+                        paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                        emptyMessage="No se encontró ningun registro :(" 
+                        rendered="#{evaluadosView.lstRelacionAvanzadas.size()>0}" >
+
+                    <f:facet name="header">
+                        <p:outputPanel style="text-align: right; width: 100%" rendered="#{evaluadosView.lstRelacionAvanzadas.size()>0}">
+                            <p:commandButton id="toggler" type="button" value="Filtrar columnas" style="text-align: right;" icon="ui-icon-calculator" />
+                            <p:columnToggler datasource="tblRelacionAvanzadas" trigger="toggler" />
+                        </p:outputPanel>
+
+                        <p:outputLabel value="Redes de evaluación encontradas " style="text-align: left;" />
+                    </f:facet>
+                    
+                    <f:facet name="footer">
+                        En total tienes #{evaluadosView.lstRelacionAvanzadas.size()} relacion(es).
+                    </f:facet>
+
+                    <p:column headerText="Evaluado">
+                        <h:outputText value="#{red.strEvaluado}" />
+                    </p:column>
+                    <p:column headerText="Relación">
+                        <h:outputText value="#{red.strRelacion}" />
+                    </p:column>                                 
+                    <p:column headerText="Evaluador">
+                        <h:outputText value="#{red.strEvaluador}" />
+                    </p:column>
+
+                </p:dataTable>
+
+                <p:commandButton value="Cargar configuración" disabled="#{evaluadosView.blCargarCorrectoAvan==false}" onclick="cargaAvan();load();updRel();" process="@this" icon="ui-icon-plusthick" /> 
+
+                <p:remoteCommand name="cargaAvan" actionListener="#{evaluadosView.cargarListaAvanzado}" />
+                <p:remoteCommand name="updRel" actionListener="#{relacionesView.init}" update=":tvModoConfiguracion" />
+                <p:remoteCommand name="load" actionListener="#{evaluadosView.init}" update=":tvModoConfiguracion" />
+    
+            </h:panelGrid>
+        </h:panelGrid>
+    </h:form>
+
+
+</p:tab>    
+    
+</p:tabView>
+    
+</h:panelGrid>
+    
+<h:form id="frmRemotos">
+
+    <p:remoteCommand name="rbtnRE1" actionListener="#{parametrosView.guardarPreferencia(83)}" update=":formParametros:panel" />
+    <p:remoteCommand name="rbtnRE2" actionListener="#{evaluadosView.init}" update=":tvModoConfiguracion:tvEval,:tvModoConfiguracion:formModoAvanzado" />
+
+    <p:remoteCommand name="rbtnRT1" actionListener="#{parametrosView.guardarPreferencia(84)}" update=":formParametros:panel" />
+    <p:remoteCommand name="rbtnRT2" actionListener="#{evaluadosView.init}" update=":tvModoConfiguracion:tvEval,:tvModoConfiguracion:formModoAvanzado" />
+
+    <p:remoteCommand name="rbtnNO1" actionListener="#{parametrosView.guardarPreferencia(85)}" update=":formParametros:panel" />
+    <p:remoteCommand name="rbtnNO2" actionListener="#{evaluadosView.init}" update=":tvModoConfiguracion:tvEval,:tvModoConfiguracion:formModoAvanzado" />
+
+    <p:remoteCommand name="rbtnAN1" actionListener="#{parametrosView.guardarPreferencia(86)}" update=":formParametros:panel" />
+    <p:remoteCommand name="rbtnAN2" actionListener="#{evaluadosView.init}" update=":tvModoConfiguracion:tvEval,:tvModoConfiguracion:formModoAvanzado" />
+</h:form>
+    
+    
+</ui:define>
+</ui:composition> 

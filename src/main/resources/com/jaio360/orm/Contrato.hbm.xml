@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 21/10/2014 08:38:38 PM by Hibernate Tools 3.2.1.GA -->
+<hibernate-mapping>
+    <class name="com.jaio360.orm.Contrato" table="contrato" catalog="jaio">
+        <id name="coIdContratoPk" type="java.lang.Integer">
+            <column name="CO_ID_CONTRATO_PK" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="usuario" lazy="false" class="com.jaio360.orm.Usuario" fetch="select">
+            <column name="US_ID_CUENTA_FK" not-null="true" />
+        </many-to-one>
+        <many-to-one name="tarifa" lazy="false" class="com.jaio360.orm.Tarifa" fetch="select">
+            <column name="TA_ID_TARIFA_FK" not-null="true" />
+        </many-to-one>
+        <property name="coIdTipoContrato" type="string">
+            <column name="CO_ID_TIPO_CONTRATO" length="45" not-null="true" />
+        </property>
+        <property name="coFeCreacion" type="timestamp">
+            <column name="CO_FE_CREACION" length="19" not-null="true" />
+        </property>
+        <property name="coNuLicenciaTotal" type="java.lang.Integer">
+            <column name="CO_NU_LICENCIA_TOTAL" not-null="true" />
+        </property>
+        <property name="coNuLicenciaDisponible" type="java.lang.Integer">
+            <column name="CO_NU_LICENCIA_DISPONIBLE" not-null="true" />
+        </property>
+        <property name="coFeCulminacion" type="timestamp">
+            <column name="CO_FE_CULMINACION" length="19">
+                <comment>LA FECHA DE CULMINACION SOLO ES SETEADA SI EL CONTRATO REGISTRADO ES EL UNICO VIGENTE, CASO CONTRARIO UNA VEZ QUE EL CONTRATO VIGENTE CADUQUE ESE MISMO
+                MOMENTO, MEDIANTE UN JOB PROGRAMADO, INICIARA EL SIGUIENTE CONTRATO CALCULANDOSE LA FECHA DE CULMINACION DESDE ESE MOMENTO.</comment>
+            </column>
+        </property>
+        <property name="coIdEstado" type="java.lang.Integer">
+            <column name="CO_ID_ESTADO" not-null="true" />
+        </property>
+    </class>
+</hibernate-mapping>

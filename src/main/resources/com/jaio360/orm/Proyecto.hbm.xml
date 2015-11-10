@@ -1,0 +1,81 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 21/10/2014 08:38:38 PM by Hibernate Tools 3.2.1.GA -->
+<hibernate-mapping>
+    <class name="com.jaio360.orm.Proyecto" table="proyecto" catalog="jaio">
+        <id name="poIdProyectoPk" type="java.lang.Integer">
+            <column name="PO_ID_PROYECTO_PK" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="usuario" class="com.jaio360.orm.Usuario" fetch="select">
+            <column name="US_ID_CUENTA_FK" not-null="true" />
+        </many-to-one>
+        <property name="poTxDescripcion" type="string">
+            <column name="PO_TX_DESCRIPCION" length="200" not-null="true" />
+        </property>
+        <property name="poIdEstado" type="int">
+            <column name="PO_ID_ESTADO" not-null="true" />
+        </property>
+        <property name="poFeRegistro" type="date">
+            <column name="PO_FE_REGISTRO" length="10" not-null="true" />
+        </property>
+        <property name="poFeEjecucion" type="date">
+            <column name="PO_FE_EJECUCION" length="10" />
+        </property>
+        <property name="poIdMetodologia" type="java.lang.Integer">
+            <column name="PO_ID_METODOLOGIA" />
+        </property>
+        <property name="poTxMotivo" type="string">
+            <column name="PO_TX_MOTIVO" length="2000" />
+        </property>
+        <set name="redEvaluacions" inverse="true">
+            <key>
+                <column name="PO_ID_PROYECTO_FK" not-null="true" />
+            </key>
+            <one-to-many class="com.jaio360.orm.RedEvaluacion" />
+        </set>
+        <set name="relacions" inverse="true">
+            <key>
+                <column name="PO_ID_PROYECTO_FK" not-null="true" />
+            </key>
+            <one-to-many class="com.jaio360.orm.Relacion" />
+        </set>
+        <set name="metricas" inverse="true">
+            <key>
+                <column name="PO_ID_PROYECTO_FK" not-null="true" />
+            </key>
+            <one-to-many class="com.jaio360.orm.Metrica" />
+        </set>
+        <set name="cuestionarios" inverse="true">
+            <key>
+                <column name="PO_ID_PROYECTO_FK" not-null="true" />
+            </key>
+            <one-to-many class="com.jaio360.orm.Cuestionario" />
+        </set>
+        <set name="cuestionarioEvaluados" inverse="true">
+            <key>
+                <column name="PO_ID_PROYECTO_FK" not-null="true" />
+            </key>
+            <one-to-many class="com.jaio360.orm.CuestionarioEvaluado" />
+        </set>
+        <set name="resultados" inverse="true">
+            <key>
+                <column name="PO_ID_PROYECTO_FK" not-null="true" />
+            </key>
+            <one-to-many class="com.jaio360.orm.Resultado" />
+        </set>
+        <set name="participantes" inverse="true">
+            <key>
+                <column name="PO_ID_PROYECTO_FK" not-null="true" />
+            </key>
+            <one-to-many class="com.jaio360.orm.Participante" />
+        </set>
+        <set name="mensajes" inverse="true">
+            <key>
+                <column name="PO_ID_PROYECTO_FK" not-null="true" />
+            </key>
+            <one-to-many class="com.jaio360.orm.Mensaje" />
+        </set>
+    </class>
+</hibernate-mapping>

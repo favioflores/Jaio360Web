@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+  <session-factory>
+    <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+    <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+   
+    <property name="hibernate.connection.url">jdbc:mysql://localhost:3309/jaio</property>
+    <property name="hibernate.connection.username">root</property>
+    <property name="hibernate.connection.password">frozen4play</property>
+    <property name="hibernate.show_sql">true</property>
+
+     <!--
+    <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/jaio</property>
+    <property name="hibernate.connection.username">root</property>
+    <property name="hibernate.connection.password">Frozen4play</property>
+    <property name="hibernate.show_sql">false</property>
+   --> 
+    <property name="hibernate.connection.autocommit">false</property>
+    <mapping resource="com/jaio360/orm/Usuario.hbm.xml"/>
+    <mapping resource="com/jaio360/orm/Elemento.hbm.xml"/>
+    <mapping resource="com/jaio360/orm/DefinicionTabla.hbm.xml"/>
+    <mapping resource="com/jaio360/orm/Contrato.hbm.xml"/>
+    <mapping resource="com/jaio360/orm/Metrica.hbm.xml"/>
+    <mapping resource="com/jaio360/orm/Componente.hbm.xml"/>
+    <mapping resource="com/jaio360/orm/Proyecto.hbm.xml"/>
+    <mapping resource="com/jaio360/orm/HistorialAcceso.hbm.xml"/>
+    <mapping resource="com/jaio360/orm/Relacion.hbm.xml"/>
+    <mapping resource="com/jaio360/orm/Participante.hbm.xml"/>
+    <mapping resource="com/jaio360/orm/Cuestionario.hbm.xml"/>
+    <mapping resource="com/jaio360/orm/DetalleMetrica.hbm.xml"/>
+    <mapping resource="com/jaio360/orm/RedEvaluacion.hbm.xml"/>
+    <mapping resource="com/jaio360/orm/Resultado.hbm.xml"/>
+    <mapping resource="com/jaio360/orm/Mensaje.hbm.xml"/>
+    <mapping resource="com/jaio360/orm/Notificaciones.hbm.xml"/>
+    <mapping resource="com/jaio360/orm/Tarifa.hbm.xml"/>
+    <mapping resource="com/jaio360/orm/RelacionParticipante.hbm.xml"/>
+    <mapping resource="com/jaio360/orm/Ubigeo.hbm.xml"/>
+    <mapping resource="com/jaio360/orm/Destinatarios.hbm.xml"/>
+    <mapping resource="com/jaio360/orm/CuestionarioEvaluado.hbm.xml"/>
+    <mapping resource="com/jaio360/orm/Parametro.hbm.xml"/>
+  </session-factory>
+</hibernate-configuration>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<f:view contentType="text/html">
+
+	<h:head>
+        <f:facet name="first">
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <title>Jaio 360</title>
+            <link rel="shortcut icon" type="image/png" href="#{request.contextPath}/images/favicon.png" />
+        </f:facet>
+        
+        <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+        <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/syntaxhighlighter/syntaxhighlighter.css" />
+
+        <script type="text/javascript">
+            $(function() {$('.sidebar a').hover(function() {$(this).toggleClass('ui-state-hover');})});
+        </script>
+        
+        <script type="text/javascript">
+            var _gaq = _gaq || [];
+            _gaq.push(['_setAccount', 'UA-12200033-3']);
+            _gaq.push(['_trackPageview']);
+
+            (function() {
+              var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+              ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+              var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+            })();
+
+        </script> 
+        <ui:insert name="head"></ui:insert>
+	</h:head>
+
+    <h:body>
+        
+        <p:growl id="growl" showDetail="true" /> 
+        
+        <p:layout fullPage="true" style="min-height: 900px;" >
+
+            <p:layoutUnit position="north" resizable="false" style="min-height: 30px;" >
+                <ui:include src="cabecera.xhtml" />
+            </p:layoutUnit>
+
+            <p:layoutUnit position="west" resizable="false" collapsible="false" header="Pasos" minSize="82" style="border: 0px; padding-left: 0px; padding-right: 0px; padding-top: 0px; " >
+                <p:fragment autoUpdate="true">
+                    <ui:include src="pasosProyecto.xhtml" />
+                </p:fragment>
+            </p:layoutUnit>
+
+            <p:layoutUnit position="center" resizable="false">
+                <f:facet name="header">
+                    <p:outputLabel value="Proyecto - #{resumenProyectoView.objProyectoInfo.strDescNombre} " />
+                    <p:link value="(Ver resumen)" outcome="resumenProyecto.jsf" />
+                </f:facet>
+                <h:panelGrid cellpadding="20">
+                    <ui:insert name="htmlPaso">Error al cargar la información del proyecto</ui:insert>
+                    <br/>
+                </h:panelGrid>
+            </p:layoutUnit>
+
+            <!--
+            <p:layoutUnit position="south" resizable="false" >
+                <ui:insert name="Pie"></ui:insert>
+            </p:layoutUnit>
+            -->
+        </p:layout>                               
+
+        <p:ajaxStatus onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" />
+ 
+        <p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false">
+            <p:graphicImage value="/images/ajax-loader.gif" />
+        </p:dialog>
+
+        <h:form prependId="false">
+            <p:idleMonitor timeout="3600000" >
+                <p:ajax event="idle" listener="#{usuarioSesion.timeout()}" oncomplete="PF('timeoutDlg').show();"/>
+            </p:idleMonitor>
+            <p:dialog header="Aviso de cierre de sesión" widgetVar="timeoutDlg" width="300" closable="false" maximizable="false" resizable="false" draggable="false" closeOnEscape="false" modal="true" >
+                <h:panelGrid border="0" columns="1" >
+                <h:outputText value="Por seguridad su sesión fue cerrada tras 60 minutos de inactividad." />
+                <p:button outcome="iniciar" value="Ok" /> 
+                </h:panelGrid>
+            </p:dialog> 
+        </h:form>
+
+        
+    </h:body>
+</f:view>
+</html>

@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 21/10/2014 08:38:38 PM by Hibernate Tools 3.2.1.GA -->
+<hibernate-mapping>
+    <class name="com.jaio360.orm.Cuestionario" table="cuestionario" catalog="jaio">
+        <id name="cuIdCuestionarioPk" type="java.lang.Integer">
+            <column name="CU_ID_CUESTIONARIO_PK" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="proyecto" class="com.jaio360.orm.Proyecto" fetch="select">
+            <column name="PO_ID_PROYECTO_FK" not-null="true" />
+        </many-to-one>
+        <property name="cuTxDescripcion" type="string">
+            <column name="CU_TX_DESCRIPCION" length="3000" not-null="true" />
+        </property>
+        <property name="cuFeRegistro" type="timestamp">
+            <column name="CU_FE_REGISTRO" length="19" not-null="true" />
+        </property>
+        <property name="cuIdEstado" type="int">
+            <column name="CU_ID_ESTADO" not-null="true" />
+        </property>
+        <set name="cuestionarioEvaluados" inverse="true">
+            <key>
+                <column name="CU_ID_CUESTIONARIO_FK" not-null="true" />
+            </key>
+            <one-to-many class="com.jaio360.orm.CuestionarioEvaluado" />
+        </set>
+        <set name="componentes" inverse="true">
+            <key>
+                <column name="CU_ID_CUESTIONARIO_FK" not-null="true" />
+            </key>
+            <one-to-many class="com.jaio360.orm.Componente" />
+        </set>
+    </class>
+</hibernate-mapping>

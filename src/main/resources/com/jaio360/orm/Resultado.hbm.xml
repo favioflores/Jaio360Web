@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 21/10/2014 08:38:38 PM by Hibernate Tools 3.2.1.GA -->
+<hibernate-mapping>
+    <class name="com.jaio360.orm.Resultado" table="resultado" catalog="jaio">
+        <id name="reIdResultadoPk" type="java.lang.Integer">
+            <column name="RE_ID_RESULTADO_PK" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="componente" class="com.jaio360.orm.Componente" fetch="select">
+            <column name="CO_ID_COMPONENTE_FK" not-null="true" />
+        </many-to-one>
+        <many-to-one name="detalleMetrica" class="com.jaio360.orm.DetalleMetrica" fetch="select">
+            <column name="DE_ID_DETALLE_ESCALA_FK" />
+        </many-to-one>
+        <many-to-one name="proyecto" class="com.jaio360.orm.Proyecto" fetch="select">
+            <column name="PO_ID_PROYECTO_FK" not-null="true" />
+        </many-to-one>
+        <property name="reTxComentario" type="string">
+            <column name="RE_TX_COMENTARIO" length="500">
+                <comment>GUARDA LOS TEXTOS INGRESADOS DE LOS COMPONENTES DEL CUESTIONARIO</comment>
+            </column>
+        </property>
+        <property name="reIdRelacionFk" type="java.lang.Integer">
+            <column name="RE_ID_RELACION_FK" />
+        </property>
+        <property name="reIdParticipanteFk" type="java.lang.Integer">
+            <column name="RE_ID_PARTICIPANTE_FK" />
+        </property>
+        <property name="paIdParticipanteFk" type="java.lang.Integer">
+            <column name="PA_ID_PARTICIPANTE_FK" />
+        </property>
+        
+        <property name="coIdComponenteRefFk" type="java.lang.Integer">
+            <column name="CO_ID_COMPONENTE_REF_FK" />
+        </property>
+
+    </class>
+</hibernate-mapping>

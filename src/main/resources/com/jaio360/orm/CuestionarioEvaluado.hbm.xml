@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 21/10/2014 08:38:38 PM by Hibernate Tools 3.2.1.GA -->
+<hibernate-mapping>
+    <class name="com.jaio360.orm.CuestionarioEvaluado" table="cuestionario_evaluado" catalog="jaio">
+        <composite-id name="id" class="com.jaio360.orm.CuestionarioEvaluadoId">
+            <key-property name="cuIdCuestionarioFk" type="java.lang.Integer">
+                <column name="CU_ID_CUESTIONARIO_FK" />
+            </key-property>
+            <key-property name="paIdParticipanteFk" type="java.lang.Integer">
+                <column name="PA_ID_PARTICIPANTE_FK" />
+            </key-property>
+            <key-property name="poIdProyectoFk" type="java.lang.Integer">
+                <column name="PO_ID_PROYECTO_FK" />
+            </key-property>
+        </composite-id>
+        <property name="ceIdEstado" type="java.lang.Integer">
+            <column name="CE_ID_ESTADO" />
+        </property>
+        <many-to-one name="cuestionario" class="com.jaio360.orm.Cuestionario" update="false" insert="false" fetch="select">
+            <column name="CU_ID_CUESTIONARIO_FK" not-null="true" />
+        </many-to-one>
+        <many-to-one name="participante" class="com.jaio360.orm.Participante" update="false" insert="false" fetch="select">
+            <column name="PA_ID_PARTICIPANTE_FK" not-null="true" />
+        </many-to-one>
+        <many-to-one name="proyecto" class="com.jaio360.orm.Proyecto" update="false" insert="false" fetch="select">
+            <column name="PO_ID_PROYECTO_FK" not-null="true" />
+        </many-to-one>
+    </class>
+</hibernate-mapping>

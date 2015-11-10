@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 21/10/2014 08:38:38 PM by Hibernate Tools 3.2.1.GA -->
+<hibernate-mapping>
+    <class name="com.jaio360.orm.RedEvaluacion" table="red_evaluacion" catalog="jaio">
+        <id name="reIdParticipantePk" type="java.lang.Integer">
+            <column name="RE_ID_PARTICIPANTE_PK" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="proyecto" class="com.jaio360.orm.Proyecto" fetch="select">
+            <column name="PO_ID_PROYECTO_FK" not-null="true" />
+        </many-to-one>
+        <property name="reTxDescripcion" type="string">
+            <column name="RE_TX_DESCRIPCION" length="3000" not-null="true" />
+        </property>
+        <property name="reTxCorreo" type="string">
+            <column name="RE_TX_CORREO" length="3000" not-null="true" />
+        </property>
+        <property name="reIdTipoParticipante" type="java.lang.Integer">
+            <column name="RE_ID_TIPO_PARTICIPANTE" not-null="true" />
+        </property>
+        <property name="reIdEstado" type="java.lang.Integer">
+            <column name="RE_ID_ESTADO" not-null="true" />
+        </property>
+        <property name="reTxNombreCargo" type="string">
+            <column name="RE_TX_NOMBRE_CARGO" length="100" not-null="true" />
+        </property>
+
+        <property name="reTxSexo" type="string">
+            <column name="RE_TX_SEXO" length="100" not-null="true" />
+        </property>
+        <property name="reNrEdad" type="java.lang.Integer">
+            <column name="RE_NR_EDAD" not-null="true" />
+        </property>
+        <property name="reNrTiempoTrabajo" type="java.lang.Integer">
+            <column name="RE_NR_TIEMPO_TRABAJO" not-null="true" />
+        </property>
+        <property name="reTxOcupacion" type="string">
+            <column name="RE_TX_OCUPACION" length="200" not-null="true" />
+        </property>
+        <property name="reTxAreaNegocio" type="string">
+            <column name="RE_TX_AREA_NEGOCIO" length="200" not-null="true" />
+        </property>
+        
+                
+        <set name="relacionParticipantes" inverse="true">
+            <key>
+                <column name="RE_ID_PARTICIPANTE_FK" not-null="true" />
+            </key>
+            <one-to-many class="com.jaio360.orm.RelacionParticipante" />
+        </set>
+    </class>
+</hibernate-mapping>

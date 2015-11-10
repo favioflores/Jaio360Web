@@ -1,0 +1,220 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui" 
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                template="principalProyecto.xhtml" >
+    
+<ui:define name="htmlPaso">
+    <h:form id="formSeguimientoRed">
+
+        <h1>2. Monitoreo de carga de redes</h1>
+
+        <p:separator/>
+
+        <p:growl id="growl" showDetail="true" />
+        
+        <h:panelGrid id="pnlRedEvaluados" border="0" style="width: 100%;" columns="1" >  
+            
+            <p:row/>
+            <p:outputLabel value="Inicia y verifica el avance del proceso de carga de redes. Recuerda que tu mismo podras realizar la selección en caso el evaluado no pueda concretar su carga." />
+            <p:row/>
+
+            <h3>Iniciar proceso de carga de redes</h3>
+            <p:panel id="pnlResumenRelacion"> 
+                <p:panelGrid  columns="3"  >
+                    <f:facet name="header">
+                        <p:outputLabel value="Resumen" />
+                    </f:facet>
+                    <p:outputLabel value="1" />
+                    <p:outputLabel value="Evaluados ingresados recientemente" />
+                    <p:outputLabel value="#{seguimientoRedView.intNumEvadoReg}" />
+                    <p:outputLabel value="2" />
+                    <p:outputLabel value="Evaluados con red de evaluación pendiente" />
+                    <p:outputLabel value="#{seguimientoRedView.intNumEvadoPam}" />
+                    <p:outputLabel value="3" />
+                    <p:outputLabel value="Evaluados en proceso de respuesta de la evaluación" />
+                    <p:outputLabel value="#{seguimientoRedView.intNumEvadoEje}" />
+                    <p:outputLabel value="4" />
+                    <p:outputLabel value="Evaluadores ingresados recientemente" />
+                    <p:outputLabel value="#{seguimientoRedView.intNumEvadorReg}" />
+                    <p:outputLabel value="5" />
+                    <p:outputLabel value="Evaluadores por asignar" />
+                    <p:outputLabel value="#{seguimientoRedView.intNumEvadorPam}" />
+                    <p:outputLabel value="6" />
+                    <p:outputLabel value="Evaluadores en proceso de respuesta de la evaluación" />
+                    <p:outputLabel value="#{seguimientoRedView.intNumEvadorEje}" />
+                </p:panelGrid> 
+                <h:panelGrid columns="1" cellpadding="0" cellspacing="0" >
+                    <p>Recuerda que al dar inicio empezarás a registrar las redes de evaluación.</p>
+                    <p:row>
+                        <!-- <p:commandButton actionListener="#{redactarMensajesView.abrirPanel(81,0)}" disabled="#{seguimientoRedView.intIdEstadoProyecto==37?true:((seguimientoRedView.intNumEvadoReg>0 or seguimientoRedView.intNumEvadorReg>0) and seguimientoRedView.lstRelaciones.size()>0)?false:true}" value="Enviar redes" > -->
+                        <p:commandButton actionListener="#{seguimientoRedView.iniciarRed()}" disabled="#{seguimientoRedView.intIdEstadoProyecto==37?true:((seguimientoRedView.intNumEvadoReg>0 or seguimientoRedView.intNumEvadorReg>0) and seguimientoRedView.lstRelaciones.size()>0)?false:true}" value="Iniciar el registro de redes" update="formSeguimientoRed" >
+                            <!-- <p:ajax event="dialogReturn" listener="#{seguimientoRedView.init()}" update="formSeguimientoRed" /> -->
+                        </p:commandButton> 
+                        <p:commandButton update="formSeguimientoRed" actionListener="#{seguimientoRedView.refrescarIndicadores}" value="Refrescar indicadores" disabled="#{seguimientoRedView.intIdEstadoProyecto==37?true:false}" />
+                    </p:row>
+                </h:panelGrid>
+            </p:panel>
+            
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" >
+                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+            </p:confirmDialog>
+
+            <h3>Listado de evaluados</h3>
+
+            <p:panel>  
+
+                <h:panelGrid  columns="2" cellpadding="5" border="0" cellspacing="0" >
+                    <h:outputText value="Porcentaje de recepción de Redes : " />
+                    <p:progressBar value="#{seguimientoRedView.intRedCargada}" labelTemplate="#{seguimientoRedView.intRedCargada}%" displayOnly="true" style="width:200px"/>
+                    <h:outputText value="Porcentaje de revisión de Redes : " />
+                    <p:progressBar value="#{seguimientoRedView.intRedRevisada}" labelTemplate="#{seguimientoRedView.intRedRevisada}%" displayOnly="true" style="width:200px"/>
+                </h:panelGrid> 
+
+                <h:panelGrid  columns="1" cellpadding="5" border="0" cellspacing="0" >
+                    <p:dataTable 
+                                id="tblRedDos"
+                                var="reg"
+                                widgetVar="tblRedDos"
+                                value="#{seguimientoRedView.lstParticipantesCargados}" 
+                                rows="30"
+                                paginatorPosition="bottom"
+                                paginator="true" 
+                                resizableColumns="true"
+                                paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+                                emptyMessage="No se encontró ningun elemento :("
+                                selectionMode="single" 
+                                rowKey="#{reg.paIdParticipantePk}">
+
+                        <c:if test="#{seguimientoRedView.lstParticipantesCargados.size()>0}">
+                            <f:facet name="header">
+                                <p:outputPanel style="text-align: right; width: 100%">
+                                <p:commandButton id="toggler" type="button" value="Filtrar columnas" style="text-align: right;" icon="ui-icon-calculator" />
+                                <p:columnToggler datasource="tblRedDos" trigger="toggler" />
+                                </p:outputPanel>
+                            </f:facet>
+                            <f:facet name="footer">
+                                En total tienes #{seguimientoRedView.lstParticipantesCargados.size()} evaluado(s).
+                            </f:facet>
+                        </c:if>
+
+                        <p:ajax event="rowSelect" listener="#{seguimientoRedView.onRowSelect}" update=":formSeguimientoRed:idRed"/>
+                        <p:column headerText="Descripción" sortBy="#{reg.paTxDescripcion}" >
+                            <h:outputText value="#{reg.paTxDescripcion}" />
+                        </p:column>                              
+                        <p:column headerText="Correo" sortBy="#{reg.paTxCorreo}" >
+                            <h:outputText value="#{reg.paTxCorreo}" />
+                        </p:column>
+                        <p:column headerText="Estado evaluado" sortBy="#{reg.paStrEstado}" style="text-align:center" >
+                            <h:outputText value="#{reg.paStrEstado}" />
+                        </p:column>
+                        <p:column headerText="Red Cargada" sortBy="#{reg.paInRedCargada}" style="text-align:center" >
+                            <p:selectBooleanCheckbox value="#{reg.paInRedCargada}" disabled="#{reg.paIdEstado!=69 and reg.paIdEstado!=73?false:true}" >
+                                <p:ajax update=":formSeguimientoRed:" />
+                                <p:ajax listener="#{seguimientoRedView.colocaRedVerificada(reg)}" />
+                            </p:selectBooleanCheckbox>
+                        </p:column> 
+                        <p:column headerText="Red Verificada" sortBy="#{reg.paInRedVerificada}" style="text-align:center" >
+                            <p:selectBooleanCheckbox value="#{reg.paInRedVerificada}"  disabled="#{reg.paInRedCargada==true and (reg.paIdEstado!=69 and reg.paIdEstado!=73)?false:true}" >
+                                <p:ajax update=":formSeguimientoRed:" listener="#{seguimientoRedView.actContCheckVerificado}" />
+                                <p:ajax listener="#{seguimientoRedView.grabarLista()}" />
+                            </p:selectBooleanCheckbox>
+                        </p:column>
+                        <p:column headerText="Cant. Red" sortBy="#{reg.intCantidadRed}" style="text-align:center" >
+                            <h:outputText value="#{reg.intCantidadRed}" />
+                        </p:column>
+                        <p:column headerText="Editar Red" style="width:50px;text-align: center;" >
+                            <p:commandButton actionListener="#{seguimientoRedView.irRed(reg)}" icon="ui-icon-pencil" disabled="#{reg.paInRedVerificada==true?true:(reg.paIdEstado!=69 and reg.paIdEstado!=73)?false:true}" />
+                        </p:column> 
+                        <p:column headerText="Revertir" style="width:50px;text-align: center;" >
+                            <p:commandButton icon="ui-icon-arrowreturnthick-1-w" disabled="#{reg.paIdEstado!=69 and reg.paIdEstado!=73?false:true}" update=":formSeguimientoRed" actionListener="#{seguimientoRedView.revertirEvaluado(reg)}" >
+                                <p:confirm header="Confirmation" message="Estas seguro retirar al evaluado? La red se perderá al aceptar." icon="ui-icon-alert" />
+                            </p:commandButton>
+                        </p:column> 
+                        <p:column headerText="Comunicar" style="width:50px;text-align: center;" >
+                            <p:selectBooleanCheckbox value="#{reg.blEnvioCorreo}" disabled="#{reg.paIdEstado!=69 and reg.paIdEstado!=73?reg.paInRedCargada==true?true:false:true}" >
+                                <p:ajax update=":formSeguimientoRed:" listener="#{seguimientoRedView.actCheckCorreo(reg)}" />
+                            </p:selectBooleanCheckbox>
+                        </p:column> 
+                    </p:dataTable>
+                    
+                    <p:commandButton value="Enviar comunicado a los seleccionados" update="growl" icon="ui-icon-mail-closed" immediate="true" actionListener="#{seguimientoRedView.abrirPanel(81,1)}" disabled="#{seguimientoRedView.cantRedCargada==seguimientoRedView.lstParticipantesCargados.size()}" />
+                    
+
+                </h:panelGrid>
+
+                <!--
+                <f:facet name="footer">
+                    <p:commandButton value="Guardar verificacion" actionListener="#{seguimientoRedView.grabarLista}" update=":formSeguimientoRed:" disabled="#{seguimientoRedView.intIdEstadoProyecto==37?true:(seguimientoRedView.intCantidadVerificados>0)?false:true}" />
+                </f:facet>
+                -->
+                
+            </p:panel>
+
+        </h:panelGrid>
+
+
+        <h3>Red del evaluado</h3>
+        <h3 value="Red de Evaluación:" />
+
+        <p:dataTable 
+                    id="idRed"
+                    var="red" 
+                    widgetVar="idRed"
+                    resizableColumns="true"
+                    value="#{seguimientoRedView.lstRed}" 
+                    emptyMessage="No se seleccionó un evaluado" 
+                    rowKey="#{red.intIdEvaluador}"
+                    style="width: 100%; min-width: 600px;">  
+
+            <c:if test="#{seguimientoRedView.lstRed.size()>0}">
+                
+            <f:facet name="footer" >
+                <h:commandLink>
+                    <p:graphicImage value="/images/excel.png" width="24"/>
+                    <p:dataExporter type="xls" target="idRed" fileName="ListaRed" />
+                </h:commandLink>
+
+                <h:commandLink>
+                    <p:graphicImage value="/images/pdf.png" width="24"/>
+                    <p:dataExporter type="pdf" target="idRed" fileName="ListaRed" />
+                </h:commandLink>
+
+                <h:commandLink>
+                    <p:graphicImage value="/images/csv.png" width="24"/>
+                    <p:dataExporter type="csv" target="idRed" fileName="ListaRed" />
+                </h:commandLink>
+
+                <h:commandLink>
+                    <p:graphicImage value="/images/xml.png" width="24"/>
+                    <p:dataExporter type="xml" target="idRed" fileName="ListaRed" />
+                </h:commandLink>
+
+            </f:facet>
+                
+            <f:facet name="footer">
+                En total tienes #{seguimientoRedView.lstRed.size()} evaluador(es).
+            </f:facet>
+            </c:if>
+            
+            <p:column headerText="Relacion" sortBy="#{red.strDescRelacion}" >
+                <h:outputText value="#{red.strDescRelacion}" />
+            </p:column>    
+
+            <p:column headerText="Nombre completo" sortBy="#{red.strDescNombre}" >
+                <h:outputText value="#{red.strDescNombre}" />
+            </p:column>
+
+            <p:column headerText="Correo electronico" sortBy="#{red.strCorreo}" >
+                <h:outputText value="#{red.strCorreo}" />
+            </p:column>
+
+        </p:dataTable>
+                
+     </h:form>
+
+</ui:define>
+</ui:composition>

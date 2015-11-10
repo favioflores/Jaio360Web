@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<f:view contentType="text/html">
+
+	<h:head>
+        <f:facet name="first">
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <title>Jaio 360</title>
+            <link rel="shortcut icon" type="image/png" href="#{request.contextPath}/images/favicon.png" />
+        </f:facet>
+        
+        <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
+        <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/syntaxhighlighter/syntaxhighlighter.css" />
+
+        
+        <ui:insert name="head"></ui:insert>
+      
+	</h:head>
+
+    <h:body>
+        <ui:insert name="content-login">...</ui:insert>
+        
+        <h:form prependId="false">
+            <p:idleMonitor timeout="3600000" >
+                <p:ajax event="idle" listener="#{usuarioSesion.timeout()}" oncomplete="PF('timeoutDlg').show();"/>
+            </p:idleMonitor>
+            <p:dialog header="Aviso de cierre de sesión" widgetVar="timeoutDlg" width="300" closable="false" maximizable="false" resizable="false" draggable="false" closeOnEscape="false" modal="true" >
+                <h:panelGrid border="0" columns="1" >
+                <h:outputText value="Por seguridad su sesión fue cerrada tras 60 minutos de inactividad." />
+                <p:button outcome="iniciar" value="Ok" /> 
+                </h:panelGrid>
+            </p:dialog> 
+        </h:form>
+
+    </h:body>
+
+	
+</f:view>
+</html>
