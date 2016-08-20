@@ -29,6 +29,9 @@
         <property name="poTxMotivo" type="string">
             <column name="PO_TX_MOTIVO" length="2000" />
         </property>
+        <property name="poInOculto" type="java.lang.Boolean">
+            <column name="PO_IN_OCULTO" />
+        </property>
         <set name="redEvaluacions" inverse="true">
             <key>
                 <column name="PO_ID_PROYECTO_FK" not-null="true" />
