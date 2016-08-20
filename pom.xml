@@ -9,7 +9,8 @@
     <name>Jaio360Web</name>
 
     <properties> 
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>        
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <netbeans.hint.deploy.server>Tomcat</netbeans.hint.deploy.server>
     </properties>
 
     <build>

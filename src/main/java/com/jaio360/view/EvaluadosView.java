@@ -685,7 +685,7 @@ public class EvaluadosView implements Serializable{
 
         evaluado.setPaTxDescripcion(this.strDescripcion.trim());
         evaluado.setPaTxNombreCargo(this.strCargo.trim());
-        evaluado.setPaTxCorreo(this.strCorreo.trim());
+        evaluado.setPaTxCorreo(this.strCorreo.trim().toLowerCase());
         evaluado.setPaTxSexo(this.strSexo);
         evaluado.setPaNrEdad(this.intEdad);
         evaluado.setPaNrTiempoTrabajo(this.intTiempoEmpresa);
@@ -1560,7 +1560,7 @@ public class EvaluadosView implements Serializable{
     }
 
     public void actualizarEvaluado(){
-        
+        strCorreo = strCorreo.toLowerCase();
         Integer error = buscarListaModifica(idParticipantePk, strDescripcion, strCargo, strCorreo, paInAutoevaluar, false);
         FacesContext context = FacesContext.getCurrentInstance();
         String correoAnterior;
@@ -1570,7 +1570,7 @@ public class EvaluadosView implements Serializable{
 
             Participante objParticipante = objParticipanteDAO.obtenParticipante(this.idParticipantePk);
 
-            correoAnterior = objParticipante.getPaTxCorreo();
+            correoAnterior = objParticipante.getPaTxCorreo().toLowerCase();
             
             objParticipante.setPaTxDescripcion(this.strDescripcion);
             objParticipante.setPaTxNombreCargo(this.strCargo);
@@ -1611,13 +1611,13 @@ public class EvaluadosView implements Serializable{
             
             for(Evaluador objEvaluador : lstEvaluadores){
             
-                if(objEvaluador.getReTxCorreo().equals(correoAnterior)){
+                if(objEvaluador.getReTxCorreo().toLowerCase().equals(correoAnterior)){
                     
                     RedEvaluacionDAO objRedEvaluacionDAO = new RedEvaluacionDAO();
 
                     RedEvaluacion objRedEvaluacion = objRedEvaluacionDAO.obtenRedEvaluacion(objEvaluador.getReIdParticipantePk());
                     
-                    if(!this.strCorreo.equals(objRedEvaluacion.getReTxCorreo())){
+                    if(!this.strCorreo.equals(objRedEvaluacion.getReTxCorreo().toLowerCase())){
                         objRedEvaluacion.setReIdEstado(Constantes.INT_ET_ESTADO_EVALUADOR_REGISTRADO);
                     }
                         
@@ -1671,14 +1671,14 @@ public class EvaluadosView implements Serializable{
         FacesContext context = FacesContext.getCurrentInstance();
         Evaluador evaluador;
             
-        Integer error = buscarListaEvaluadores(this.strDescripcionEvaluadores, this.strCargoEvaluadores, this.strCorreoEvaluadores, false);
+        Integer error = buscarListaEvaluadores(this.strDescripcionEvaluadores, this.strCargoEvaluadores, this.strCorreoEvaluadores.toLowerCase(), false);
 
         evaluador = new Evaluador();
 
         evaluador.setIntCorrelativo(this.lstEvaluadores.size());
         evaluador.setReTxDescripcion(this.strDescripcionEvaluadores.trim());
         evaluador.setReTxNombreCargo(this.strCargoEvaluadores.trim());
-        evaluador.setReTxCorreo(this.strCorreoEvaluadores.trim());
+        evaluador.setReTxCorreo(this.strCorreoEvaluadores.trim().toLowerCase());
         evaluador.setReTxSexo(this.strSexoEvaluadores.trim());
         evaluador.setReNrEdad(this.intEdadEvaluadores);
         evaluador.setReNrTiempoTrabajo(this.intTiempoEmpresaEvaluadores);
@@ -1714,12 +1714,42 @@ public class EvaluadosView implements Serializable{
     }
         
     
+    public Integer buscarListaEvaluadores(Integer idRedEvaluacion, String strDescripcion,String strCargo, String strCorreo, Boolean Masivo ){
+         
+        String strDesc = Utilitarios.retirarEspacios(strDescripcion);
+        String strCorr = Utilitarios.retirarEspacios(strCorreo);
+        
+        for (Evaluador obj:lstEvaluadores){  
+            if(!idRedEvaluacion.equals(obj.getReIdParticipantePk())){
+                
+                if(Utilitarios.retirarEspacios(obj.getReTxDescripcion()).toUpperCase().equals(strDesc.toUpperCase())){
+                    return 1; //"El evaluado ingresado ya se encuentra agregado";
+                }
+                if(Utilitarios.retirarEspacios(obj.getReTxCorreo()).toUpperCase().equals(strCorr.toUpperCase())){
+                    if(Masivo){
+                        if(obj.getReIdEstado().equals(Constantes.INT_ET_ESTADO_EVALUADOR_REGISTRADO)){
+                            return 2;//"Registro ya existe y será actualizado"
+                        }else{
+                            return 3;//"El correo ingresado esta siendo usado por " + obj.getPaTxDescripcion();
+                        }
+                    }else{
+                        return 5; //"El correo ingresado esta siendo usado por " + obj.getPaTxDescripcion();
+                    }
+                }
+            }
+        }  
+                       
+        return null;
+    }
+    
+    
     public Integer buscarListaEvaluadores(String strDescripcion,String strCargo, String strCorreo, Boolean Masivo ){
          
         String strDesc = Utilitarios.retirarEspacios(strDescripcion);
         String strCorr = Utilitarios.retirarEspacios(strCorreo);
         
         for (Evaluador obj:lstEvaluadores){  
+                
             if(Utilitarios.retirarEspacios(obj.getReTxDescripcion()).toUpperCase().equals(strDesc.toUpperCase())){
                 return 1; //"El evaluado ingresado ya se encuentra agregado";
             }
@@ -1734,6 +1764,7 @@ public class EvaluadosView implements Serializable{
                     return 5; //"El correo ingresado esta siendo usado por " + obj.getPaTxDescripcion();
                 }
             }
+
         }  
                        
         return null;
@@ -2375,7 +2406,7 @@ public class EvaluadosView implements Serializable{
         //objParticipante.setPaInAutoevaluar(objEvaluador.isPaInAutoevaluar());
         //objParticipante.setPaInRedCargada(objEvaluador.isPaInRedCargada());
         //objParticipante.setPaInRedVerificada(objEvaluador.isPaInRedVerificada());
-        objRedEvaluacion.setReTxCorreo(objEvaluador.getReTxCorreo());
+        objRedEvaluacion.setReTxCorreo(objEvaluador.getReTxCorreo().toLowerCase());
         objRedEvaluacion.setReTxNombreCargo(objEvaluador.getReTxNombreCargo());
         objRedEvaluacion.setReTxDescripcion(objEvaluador.getReTxDescripcion());
         
@@ -2395,8 +2426,8 @@ public class EvaluadosView implements Serializable{
     }
 
     public void actualizarEvaluadores(){
-        
-        Integer error = buscarListaEvaluadores(strDescripcionEvaluadores, strCargoEvaluadores, strCorreoEvaluadores, false);
+        strCorreoEvaluadores = strCorreoEvaluadores.toLowerCase();
+        Integer error = buscarListaEvaluadores(this.reIdParticipantePk, strDescripcionEvaluadores, strCargoEvaluadores, strCorreoEvaluadores, false);
         
         if(error==null){
             RedEvaluacionDAO objRedEvaluacionDAO = new RedEvaluacionDAO();
@@ -2449,7 +2480,7 @@ public class EvaluadosView implements Serializable{
     private boolean incluirComoEvaluador(String paTxDescripcion, String strCargoEvaluadores, String paTxCorreo, String paTxSexo, Integer paNrEdad, Integer paNrTiempoTrabajo, String paTxOcupacion, String paTxAreaNegocio, boolean esMasivoEvaluado) {
         this.strDescripcionEvaluadores = paTxDescripcion;
         this.strCargoEvaluadores = strCargoEvaluadores;
-        this.strCorreoEvaluadores = paTxCorreo;
+        this.strCorreoEvaluadores = paTxCorreo.toLowerCase();
         this.strSexoEvaluadores = paTxSexo;
         this.intEdadEvaluadores = paNrEdad;
         this.intTiempoEmpresaEvaluadores = paNrTiempoTrabajo;
@@ -2490,7 +2521,7 @@ public class EvaluadosView implements Serializable{
                     objSelectItem.setValue(strDatos[i]);
                     objSelectItem.setLabel(strDatos[i]);
                     lstAreaNegocio.add(objSelectItem);
-                    hAN.put(strDatos[i].toUpperCase(), strDatos[i].toUpperCase());
+                    hAN.put(strDatos[i].toUpperCase(), strDatos[i]);
                     i++;
                 }
             }else if(objParametro.getPaIdTipoParametro().equals(Constantes.INT_ET_TIPO_PARAMETRO_NIVEL)){
@@ -2505,7 +2536,7 @@ public class EvaluadosView implements Serializable{
                     objSelectItem.setValue(strDatos[i]);
                     objSelectItem.setLabel(strDatos[i]);
                     lstNivelOcupacional.add(objSelectItem);
-                    hNO.put(strDatos[i].toUpperCase(), strDatos[i].toUpperCase());
+                    hNO.put(strDatos[i].toUpperCase(), strDatos[i]);
                     i++;
                 }
             }else if(objParametro.getPaIdTipoParametro().equals(Constantes.INT_ET_TIPO_PARAMETRO_SEXO)){
@@ -2910,7 +2941,7 @@ public class EvaluadosView implements Serializable{
                 strTemp = Utilitarios.obtieneDatoCelda(row,c);
                 String strError = objvalidaTextoIngresado.validar(strTemp);
                 if(Utilitarios.esNuloOVacio(strError)){
-                    strDescripcion = strTemp;
+                    strDescripcion = strTemp.trim();
                 }else{
                     blRegistroOK = false;
                     lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Fila "+(row.getRowNum()+1)+" del libro \"Personas\" tiene el campo \"Descripción\" " + strError));
@@ -2935,7 +2966,7 @@ public class EvaluadosView implements Serializable{
                 if(Utilitarios.noEsNuloOVacio(strTemp)){
                     String strError = objvalidaTextoIngresado.validar(strTemp);
                     if(Utilitarios.esNuloOVacio(strError)){
-                        strCargo = Utilitarios.limpiarTexto(strTemp);
+                        strCargo = Utilitarios.limpiarTexto(strTemp).trim();
                     }else{
                         blRegistroOK = false;
                         lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Fila "+(row.getRowNum()+1)+" del libro \"Personas\" tiene el campo \"Cargo\" " + strError));
@@ -2961,7 +2992,7 @@ public class EvaluadosView implements Serializable{
                 strTemp = Utilitarios.obtieneDatoCelda(row,c);
                 String strError = objvalidaCorreo.validate(strTemp);
                 if(Utilitarios.esNuloOVacio(strError)){
-                    strCorreo = strTemp;
+                    strCorreo = strTemp.trim().toLowerCase();
                 }else{
                     blRegistroOK = false;
                     lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Fila "+(row.getRowNum()+1)+" del libro \"Personas\" tiene el campo \"Correo\" " + strError));
@@ -2986,7 +3017,7 @@ public class EvaluadosView implements Serializable{
                     if(Utilitarios.noEsNuloOVacio(strTemp)){
                         strTemp = Utilitarios.limpiarTexto(strTemp);
                         if(strTemp.equals("MASCULINO") || strTemp.equals("FEMENINO")){
-                            strSexo = strTemp;
+                            strSexo = strTemp.trim();
                         }else{
                             blRegistroOK = false;
                             lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Fila "+(row.getRowNum()+1)+" del libro \"Personas\" tiene el campo \"Sexo\" con un dato diferente de \"Masculino\" o \"Femenino\""));
@@ -3046,7 +3077,7 @@ public class EvaluadosView implements Serializable{
                 if(row.getCell(c).getCellType() == Cell.CELL_TYPE_NUMERIC || row.getCell(c).getCellType() == Cell.CELL_TYPE_BLANK || row.getCell(c).getCellType() == Cell.CELL_TYPE_STRING){
                     strTemp = Utilitarios.obtieneDatoCelda(row,c);
                     if(Utilitarios.isNumber(strTemp, false)){
-                        BigDecimal bd = new BigDecimal(strTemp);
+                        BigDecimal bd = new BigDecimal(strTemp.trim());
                         if(bd.intValue()>0){
                             intTiempoEmpresa = bd.intValue();
                         }else{
@@ -3077,11 +3108,11 @@ public class EvaluadosView implements Serializable{
                     strTemp = Utilitarios.obtieneDatoCelda(row,c);
                     if(Utilitarios.noEsNuloOVacio(strTemp)){
                         strTemp = Utilitarios.limpiarTexto(strTemp);
-                        if(!hNO.containsKey(strTemp)){
+                        if(!hNO.containsKey(strTemp.trim())){
                             blRegistroOK = false;
                             lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Fila "+(row.getRowNum()+1)+" del libro \"Personas\" tiene el campo \"Nivel ocupacional\" con un valor no definido para el proyecto"));
                         }else{
-                            strOcupacion = strTemp;
+                            strOcupacion = hNO.get(strTemp.trim()).toString();
                         }
                     }else{
                         blRegistroOK = false;
@@ -3107,11 +3138,11 @@ public class EvaluadosView implements Serializable{
                     strTemp = Utilitarios.obtieneDatoCelda(row,c);
                     if(Utilitarios.noEsNuloOVacio(strTemp)){
                         strTemp = Utilitarios.limpiarTexto(strTemp);
-                        if(!hAN.containsKey(strTemp)){
+                        if(!hAN.containsKey(strTemp.trim())){
                             blRegistroOK = false;
                             lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Fila "+(row.getRowNum()+1)+" del libro \"Personas\" tiene el campo \"Area del negocio\" con un valor no definido para el proyecto"));
                         }else{
-                            strAreaNegocio = strTemp;
+                            strAreaNegocio = hAN.get(strTemp.trim()).toString();
                         }
                     }else{
                         blRegistroOK = false;
@@ -3215,7 +3246,7 @@ public class EvaluadosView implements Serializable{
                 String strError = objvalidaCorreo.validate(strTemp);
                 if(Utilitarios.esNuloOVacio(strError)){
                     if(mapPersonasAvanzado.containsKey(Utilitarios.limpiarTexto(strTemp))){
-                        strCorreoEvaluado = strTemp;
+                        strCorreoEvaluado = strTemp.trim().toLowerCase();
                     }else{
                         blRegistroOK = false;
                         lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Fila "+(row.getRowNum()+1)+" del libro \"Red de Evaluación\" tiene el campo \"Evaluado\" tiene un correo que no existe en la lista de personas"));
@@ -3243,7 +3274,7 @@ public class EvaluadosView implements Serializable{
                 String strError = objvalidaCorreo.validate(strTemp);
                 if(Utilitarios.esNuloOVacio(strError)){
                     if(mapPersonasAvanzado.containsKey(Utilitarios.limpiarTexto(strTemp))){
-                        strCorreoEvaluador = strTemp;
+                        strCorreoEvaluador = strTemp.trim().toLowerCase();
                     }else{
                         blRegistroOK = false;
                         lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Fila "+(row.getRowNum()+1)+" del libro \"Red de Evaluación\" tiene el campo \"Evaluador\" un correo que no existe en la lista de personas"));

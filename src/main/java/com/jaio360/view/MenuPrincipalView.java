@@ -81,23 +81,23 @@ public class MenuPrincipalView implements Serializable{
         DefaultMenuItem item2 = new DefaultMenuItem("Biblioteca de personas");
         //DefaultMenuItem item3 = new DefaultMenuItem("Buscar Proyectos");
         DefaultMenuItem item4 = new DefaultMenuItem("Biblioteca de Preguntas");
-        DefaultMenuItem item6 = new DefaultMenuItem("Facturación");
+        //DefaultMenuItem item6 = new DefaultMenuItem("Facturación");
         
         item5.setUrl("principal.jsf");
         
         //item2.setOnclick("triggerHiddenEvent('crearProyecto','#{crearProyecto.abrirPanel}'); return false;");
         item2.setUrl("#");
         item4.setUrl("principalBiblioteca.jsf");
-        item6.setUrl("facturas.jsf");
+        //item6.setUrl("facturas.jsf");
         
         item5.setIcon("ui-icon-home");
         
         item2.setIcon("ui-icon-person");
         //item3.setIcon("ui-icon-search");
         item4.setIcon("ui-icon-note");
-        item6.setIcon("ui-icon-cart");
+        //item6.setIcon("ui-icon-cart");
         
-        item6.setDisabled(true);
+        //item6.setDisabled(true);
         item2.setDisabled(true);
         
         smUsuario.addElement(item5);
@@ -105,7 +105,7 @@ public class MenuPrincipalView implements Serializable{
         smUsuario.addElement(item2);
         //smUsuario.addElement(item3);
         smUsuario.addElement(item4);
-        smUsuario.addElement(item6);
+        //smUsuario.addElement(item6);
         
     }
         

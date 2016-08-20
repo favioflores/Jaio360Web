@@ -9,9 +9,12 @@ import com.jaio360.dao.ProyectoDAO;
 import com.jaio360.domain.ProyectoInfo;
 import com.jaio360.domain.UsuarioInfo;
 import com.jaio360.orm.Proyecto;
+import com.jaio360.utils.Constantes;
+import com.jaio360.utils.Utilitarios;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -19,6 +22,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpSession;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -44,6 +48,9 @@ public class ListasPrincipalView implements Serializable{
     
     private List<ProyectoInfo> lstRedes;
     
+    private List<SelectItem> lstMetodologias;
+    private List<SelectItem> lstEstados;
+    
     private int cantidadLstProyectos;
     private int cantidadLstEvaluaciones;
     private int cantidadLstRedes;
@@ -52,6 +59,96 @@ public class ListasPrincipalView implements Serializable{
     private ProyectoInfo redSeleccionada;
     private ProyectoInfo evaluacionSeleccionada;
 
+    private String txtDescripcion;
+    private Integer idTipoProyecto;
+    private Integer idEstadoProyecto;
+    private Date txtFechaRegistroInicial;
+    private Date txtFechaRegistroFinal;
+    private Date txtFechaEjecucionInicial;
+    private Date txtFechaEjecucionFinal;        
+    private boolean blOcultos = false;
+
+    public List<SelectItem> getLstEstados() {
+        return lstEstados;
+    }
+
+    public void setLstEstados(List<SelectItem> lstEstados) {
+        this.lstEstados = lstEstados;
+    }
+
+    public List<SelectItem> getLstMetodologias() {
+        return lstMetodologias;
+    }
+
+    public void setLstMetodologias(List<SelectItem> lstMetodologias) {
+        this.lstMetodologias = lstMetodologias;
+    }
+
+    public String getTxtDescripcion() {
+        return txtDescripcion;
+    }
+
+    public void setTxtDescripcion(String txtDescripcion) {
+        this.txtDescripcion = txtDescripcion;
+    }
+
+    public Integer getIdTipoProyecto() {
+        return idTipoProyecto;
+    }
+
+    public void setIdTipoProyecto(Integer idTipoProyecto) {
+        this.idTipoProyecto = idTipoProyecto;
+    }
+
+    public Integer getIdEstadoProyecto() {
+        return idEstadoProyecto;
+    }
+
+    public void setIdEstadoProyecto(Integer idEstadoProyecto) {
+        this.idEstadoProyecto = idEstadoProyecto;
+    }
+
+    public Date getTxtFechaRegistroInicial() {
+        return txtFechaRegistroInicial;
+    }
+
+    public void setTxtFechaRegistroInicial(Date txtFechaRegistroInicial) {
+        this.txtFechaRegistroInicial = txtFechaRegistroInicial;
+    }
+
+    public Date getTxtFechaRegistroFinal() {
+        return txtFechaRegistroFinal;
+    }
+
+    public void setTxtFechaRegistroFinal(Date txtFechaRegistroFinal) {
+        this.txtFechaRegistroFinal = txtFechaRegistroFinal;
+    }
+
+    public Date getTxtFechaEjecucionInicial() {
+        return txtFechaEjecucionInicial;
+    }
+
+    public void setTxtFechaEjecucionInicial(Date txtFechaEjecucionInicial) {
+        this.txtFechaEjecucionInicial = txtFechaEjecucionInicial;
+    }
+
+    public Date getTxtFechaEjecucionFinal() {
+        return txtFechaEjecucionFinal;
+    }
+
+    public void setTxtFechaEjecucionFinal(Date txtFechaEjecucionFinal) {
+        this.txtFechaEjecucionFinal = txtFechaEjecucionFinal;
+    }
+
+
+    public boolean isBlOcultos() {
+        return blOcultos;
+    }
+
+    public void setBlOcultos(boolean blOcultos) {
+        this.blOcultos = blOcultos;
+    }
+    
     public ProyectoInfo getRedSeleccionada() {
         return redSeleccionada;
     }
@@ -141,6 +238,12 @@ public class ListasPrincipalView implements Serializable{
     @PostConstruct
     public void init() {
         
+        limpiarFiltro();
+        
+        lstProyectos = new ArrayList<>();
+        lstRedes = new ArrayList<>();
+        lstEvaluaciones = new ArrayList<>(); 
+        
         HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
         session.removeAttribute("proyectoInfo");
         
@@ -148,7 +251,7 @@ public class ListasPrincipalView implements Serializable{
         
         UsuarioInfo objUsuarioInfo = objUsuarioSesion.obtenerUsuarioInfo();
         
-        poblarListaProyectos(objUsuarioInfo);
+        buscarProyectos();
         poblarListaRedes(objUsuarioInfo);
         poblarListaEvaluaciones(objUsuarioInfo);
         
@@ -161,6 +264,18 @@ public class ListasPrincipalView implements Serializable{
         if(!lstEvaluaciones.isEmpty()){
             this.cantidadLstEvaluaciones = this.lstEvaluaciones.size();
         }
+    }
+    
+    public void buscarProyectos(){
+    
+        poblarListaProyectos(Utilitarios.obtenerUsuario());
+         
+        if(!lstProyectos.isEmpty()){
+            this.cantidadLstProyectos = this.lstProyectos.size();
+        }else{
+            this.cantidadLstProyectos = 0;
+        }
+    
     }
     
     public void cargarProyecto(ProyectoInfo obj){
@@ -178,7 +293,7 @@ public class ListasPrincipalView implements Serializable{
             FacesContext.getCurrentInstance().getExternalContext().redirect("resumenProyecto.jsf");
             
         } catch (IOException ex) {
-            log.debug(ex);
+            log.error(ex);
         }
         
     }
@@ -186,7 +301,16 @@ public class ListasPrincipalView implements Serializable{
     private void poblarListaProyectos(UsuarioInfo objUsuarioInfo) {
 
         ProyectoDAO objProyectoDAO = new ProyectoDAO();
-        List lstProyecto = objProyectoDAO.obtenListaProyectosPorUsuario(objUsuarioInfo.getIntUsuarioPk(), null);
+        List lstProyecto = objProyectoDAO.obtenListaProyectosPorUsuario(objUsuarioInfo.getIntUsuarioPk(), null, 
+                blOcultos,
+                txtDescripcion,
+                idTipoProyecto,
+                idEstadoProyecto,
+                txtFechaRegistroInicial,
+                txtFechaRegistroFinal,
+                txtFechaEjecucionInicial,
+                txtFechaEjecucionFinal
+                );
         
         if(!lstProyecto.isEmpty()){
             
@@ -296,7 +420,7 @@ public class ListasPrincipalView implements Serializable{
             FacesContext.getCurrentInstance().getExternalContext().redirect("defineRed.jsf");
             
         } catch (IOException ex) {
-            log.debug(ex);
+            log.error(ex);
         }
         
     }
@@ -314,6 +438,8 @@ public class ListasPrincipalView implements Serializable{
         objProyectoInfo.setDtFechaCreacion(objProyecto.getPoFeRegistro());
         objProyectoInfo.setDtFechaEjecucion(objProyecto.getPoFeEjecucion());
         objProyectoInfo.setStrMotivo(objProyecto.getPoTxMotivo());
+        objProyectoInfo.setStrMotivo(objProyecto.getPoTxMotivo());
+        objProyectoInfo.setBoOculto(objProyecto.getPoInOculto());
         
         return objProyectoInfo;
     
@@ -345,7 +471,7 @@ public class ListasPrincipalView implements Serializable{
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Borrar proyecto", "El proyecto se eliminó correctamente");
             FacesContext.getCurrentInstance().addMessage(null, message);
         
-            init();
+            buscarProyectos();
             
         } catch (Exception ex) {
             log.error(ex);
@@ -376,9 +502,98 @@ public class ListasPrincipalView implements Serializable{
             FacesContext.getCurrentInstance().addMessage(null, msg);
             init();
         }catch(Exception e){
+            log.error(e);
             FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Modificación de proyecto", "Ocurrio un error en la actualización");
             FacesContext.getCurrentInstance().addMessage(null, msg);
         }
     }
 
+    public void ocultarProyecto(ProyectoInfo objProyectoInfo){
+        try{
+            
+            ProyectoDAO objProyectoDAO = new ProyectoDAO();
+            Proyecto objProyecto = objProyectoDAO.obtenProyecto(objProyectoInfo.getIntIdProyecto());
+                
+            if(objProyectoInfo.isBoOculto()){ 
+                
+                objProyecto.setPoInOculto(Boolean.TRUE);
+                objProyectoInfo.setBoOculto(true);
+                lstProyectos.remove(objProyectoInfo);
+                FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Modificación de proyecto", "El proyecto se ocultó correctamente");
+                FacesContext.getCurrentInstance().addMessage(null, msg);                
+            }else{
+            
+                objProyecto.setPoInOculto(Boolean.FALSE);
+                objProyectoInfo.setBoOculto(false);
+                lstProyectos.remove(objProyectoInfo);
+                FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Modificación de proyecto", "El proyecto se habilitó correctamente");
+                FacesContext.getCurrentInstance().addMessage(null, msg);
+            }
+            
+            objProyectoDAO.actualizaProyecto(objProyecto);
+            
+        }catch(Exception e){
+            log.error(e);
+            FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Modificación de proyecto", "Ocurrio un error en la actualización");
+            FacesContext.getCurrentInstance().addMessage(null, msg);
+        }
+    }
+
+    public void buscarOcultos(){
+
+        lstProyectos = new ArrayList<>();
+        
+        ProyectoDAO objProyectoDAO = new ProyectoDAO();
+
+        List lstProyecto = objProyectoDAO.obtenListaProyectosPorUsuario(Utilitarios.obtenerUsuario().getIntUsuarioPk(), null, blOcultos
+                ,null,null,null,null,null,null,null);
+        
+        if(!lstProyecto.isEmpty()){
+            
+            List<ProyectoInfo> lstProyectos = new ArrayList<>();
+            
+            Iterator itLstProyectos = lstProyecto.iterator();
+            
+            ProyectoInfo objProyectoInfo = new ProyectoInfo();
+                    
+            while(itLstProyectos.hasNext()){
+                
+                Proyecto objProyecto = (Proyecto) itLstProyectos.next();
+                
+                lstProyectos.add(setearProyecto(objProyecto, objProyectoInfo));
+            }
+            
+            this.lstProyectos = lstProyectos;
+        }
+  
+
+    }
+
+    public void limpiarFiltro(){
+    
+        lstMetodologias = Utilitarios.poblarCombo(Constantes.INT_DT_METODOLOGIAS);
+        lstEstados = Utilitarios.poblarCombo(Constantes.INT_DT_ESTADOS_PROYECTO);
+        txtDescripcion = Constantes.TODO_TEXTO;
+        idTipoProyecto = Constantes.ZERO_INTEGER;
+        idEstadoProyecto = Constantes.ZERO_INTEGER;
+        
+        Date fecha = Utilitarios.obtenerFechaHoraSistema();
+        String dias = EHCacheManager.obtenerValor1Elemento(Constantes.ET_DIAS_BUSQUEDAS);
+        
+        if(Utilitarios.noEsNuloOVacio(dias) && Utilitarios.isNumber(dias, true)){
+            txtFechaRegistroInicial = Utilitarios.sumarRestarDiasFecha(fecha, Utilitarios.aNumero(dias));
+            txtFechaEjecucionInicial = Utilitarios.sumarRestarDiasFecha(fecha, Utilitarios.aNumero(dias));
+        }else{
+            int diasTemp = -100;
+            txtFechaRegistroInicial = Utilitarios.sumarRestarDiasFecha(fecha, diasTemp);
+            txtFechaEjecucionInicial = Utilitarios.sumarRestarDiasFecha(fecha, diasTemp);
+        }
+        
+        txtFechaRegistroFinal = fecha;
+        txtFechaEjecucionFinal = fecha;
+        
+        blOcultos = false;
+        
+    
+    }
 }

@@ -385,7 +385,7 @@ public class NotificacionesDAO implements Serializable{
     } 
     
     
-    public boolean guardarmeComunicados() throws HibernateException, Exception { 
+    public boolean guardarmeComunicados(List <String> lstCorreosAdicionales) throws HibernateException, Exception { 
         
         iniciaOperacion();
                 
@@ -415,6 +415,14 @@ public class NotificacionesDAO implements Serializable{
                 objDestinatarios.setDeTxMail(Utilitarios.obtenerUsuario().getStrEmail());
                 objDestinatarios.setNotificaciones(objNotificaciones);
                 sesion.save(objDestinatarios);
+                
+                for(String strCorreo : lstCorreosAdicionales){
+                    objDestinatarios = new Destinatarios();
+                    objDestinatarios.setDeTxMail(strCorreo);
+                    objDestinatarios.setNotificaciones(objNotificaciones);
+                    sesion.save(objDestinatarios);                    
+                }
+                
             }
 
             objMensaje = objMensajeDAO.obtenMensaje(intIdProyecto, Constantes.INT_ET_NOTIFICACION_INSTRUCCIONES, sesion); 
@@ -434,6 +442,14 @@ public class NotificacionesDAO implements Serializable{
                 objDestinatarios.setDeTxMail(Utilitarios.obtenerUsuario().getStrEmail());
                 objDestinatarios.setNotificaciones(objNotificaciones);
                 sesion.save(objDestinatarios);
+                
+                for(String strCorreo : lstCorreosAdicionales){
+                    objDestinatarios = new Destinatarios();
+                    objDestinatarios.setDeTxMail(strCorreo);
+                    objDestinatarios.setNotificaciones(objNotificaciones);
+                    sesion.save(objDestinatarios);                    
+                }
+                
             }
 
             objMensaje = objMensajeDAO.obtenMensaje(intIdProyecto, Constantes.INT_ET_NOTIFICACION_AGRADECIMIENTO, sesion); 
@@ -453,6 +469,14 @@ public class NotificacionesDAO implements Serializable{
                 objDestinatarios.setDeTxMail(Utilitarios.obtenerUsuario().getStrEmail());
                 objDestinatarios.setNotificaciones(objNotificaciones);
                 sesion.save(objDestinatarios);
+                
+                for(String strCorreo : lstCorreosAdicionales){
+                    objDestinatarios = new Destinatarios();
+                    objDestinatarios.setDeTxMail(strCorreo);
+                    objDestinatarios.setNotificaciones(objNotificaciones);
+                    sesion.save(objDestinatarios);                    
+                }
+                
             }
 
             tx.commit();

@@ -10,35 +10,82 @@
 <h:body>
     <ui:composition>
         <h:form>
-        <center>
-            <br/>
             <p:fragment autoUpdate="true">
-                <p:panel header="Parametros de búsqueda" style="width: 400px;" id="pnlFormBiblioteca" widgetVar="pnlFormBiblioteca" >
+                <p:panel header="Parametros de búsqueda" id="pnlFormBiblioteca" widgetVar="pnlFormBiblioteca" >
                     <h:panelGrid  columns="2" border="0">
 
+                        <p:outputLabel value="Descripción : " />      
+                        <p:inputText/>      
+                        
+                        <p:outputLabel for="metodologia" value="Tipo de proyecto : " />      
+                        <p:selectOneMenu id="metodologia" value="#{bibliotecaView.metodologia}">
+                            <f:selectItem itemLabel="Todos" itemValue="" />
+                            <f:selectItems value="#{bibliotecaView.metodologias.entrySet()}" var="entry" itemValue="#{entry.key}" itemLabel="#{entry.value}" />
+                        </p:selectOneMenu>  
+                        
+                        
                         <p:outputLabel for="estProyecto" value="Estado de Proyecto : " />
                         <p:selectOneMenu id="estProyecto" value="#{bibliotecaView.estadoProyecto}">
                             <f:selectItem itemLabel="Todos" itemValue="" />
                             <f:selectItems value="#{bibliotecaView.estados.entrySet()}" var="entry" itemValue="#{entry.key}" itemLabel="#{entry.value}"/>
                         </p:selectOneMenu>
 
-                        <p:outputLabel for="metodologia" value="Metodologia : " />      
-                        <p:selectOneMenu id="metodologia" value="#{bibliotecaView.metodologia}">
-                            <f:selectItem itemLabel="Todos" itemValue="" />
-                            <f:selectItems value="#{bibliotecaView.metodologias.entrySet()}" var="entry" itemValue="#{entry.key}" itemLabel="#{entry.value}" />
-                        </p:selectOneMenu>  
-
+                        <p:outputLabel value="Fecha de registro : " />      
+                        <p:inputText  />      
+                        
+                        
                     </h:panelGrid>
-                    <f:facet name="footer">
-                        <p:commandButton value="Consultar" ajax="true" actionListener="#{bibliotecaView.buscarBiblioteca}" />
-                    </f:facet>
+                    <p:commandButton value="Buscar" ajax="true" actionListener="#{bibliotecaView.buscarBiblioteca}" />
+                    <p:commandButton value="Limpiar" ajax="true" actionListener="#{bibliotecaView.buscarBiblioteca}" />
                 </p:panel> 
 
-                <c:if test="#{bibliotecaView.cantidadElementos>0}">
-                    <br/><br/>
-                    <h:outputText value="Recuerda que la información mostrada es solo de tu propiedad, si deseas borrarla tendrás que dar de baja tu cuenta." />
-                    <br/><br/>
-                    
+
+            <p:dataTable 
+                        id="tbl"
+                        var="ele"
+                        value="#{bibliotecaView.lstElementos}" 
+                        rows="50"
+                        paginator="true" 
+                        paginatorPosition="top"
+                        paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+                        filteredValue="#{bibliotecaView.filtroElementos}"
+                        emptyMessage="No se encontró ningun elemento">
+
+                <p:column headerText="Nro elemento">
+                    <h:outputText value="#{ele.strNroElemento}" />
+                </p:column>
+
+                    <p:column headerText="Proyecto">
+                        <h:outputText value="#{ele.strProyectos}" />
+                    </p:column>
+
+                    <p:column headerText="Fecha proyecto">
+                        <h:outputText value="#{ele.strFechaProyecto}" />
+                    </p:column>
+
+                    <p:column headerText="Evaluacion">
+                        <h:outputText value="#{ele.strCuestionarios}" />
+                    </p:column>
+
+                    <p:column headerText="Metodologia">
+                        <h:outputText value="#{ele.strDescMetodologia}" />
+                    </p:column>
+
+                    <p:column headerText="Tipo elemento">
+                        <h:outputText value="#{ele.strTipoElemento}" />
+                    </p:column>
+
+                    <p:column headerText="Descripcion">
+                        <h:outputText value="#{ele.strDescElemento}" />
+                    </p:column>
+
+                    <p:column headerText="Usados en:">
+                        <h:outputText value="#{ele.strExtension}" />
+                    </p:column>
+
+                
+                <f:facet name="footer">
+                    <p:outputPanel style="text-align: right;" >
                     <h:commandLink>
                         <p:graphicImage value="/images/excel.png" width="24" />
                         <p:dataExporter type="xls" postProcessor="#{bibliotecaView.postProcessXLS}" target="tbl" fileName="biblioteca" />
@@ -58,87 +105,12 @@
                         <p:graphicImage value="/images/xml.png" width="24"/>
                         <p:dataExporter type="xml" target="tbl" fileName="biblioteca" />
                     </h:commandLink>
-                    
-                    <br/><br/>
-                    
-                    <p:dataTable 
-                                id="tbl"
-                                var="ele"
-                                value="#{bibliotecaView.lstElementos}" 
-                                rows="50"
-                                paginator="true" 
-                                paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
-                                filteredValue="#{bibliotecaView.filtroElementos}"
-                                emptyMessage="No se encontró ningun elemento :(" 
-                                style="height: 80%;">
-<!--
-                        <f:facet name="header">
-                            <p:outputPanel style="text-align: right;">
-                                <h:outputText value="BUSCAR EN TODO EL CONTENIDO : " />
-                                <p:inputText id="globalFilter" onkeyup="PF('elementosTabla').filter();" style="width:150px" placeholder="Ingresar texto"/>
-                            </p:outputPanel>
-                        </f:facet>
-    -->                    
+</p:outputPanel>
+                </f:facet>
+                </p:dataTable>
 
-                        <p:column headerText="Nro elemento">
-                            <h:outputText value="#{ele.strNroElemento}" />
-                        </p:column>
-                      
-                        <p:column headerText="Proyecto">
-                            <h:outputText value="#{ele.strProyectos}" />
-                        </p:column>
-                        
-                        <p:column headerText="Fecha proyecto">
-                            <h:outputText value="#{ele.strFechaProyecto}" />
-                        </p:column>
-                        
-                        <p:column headerText="Evaluacion">
-                            <h:outputText value="#{ele.strCuestionarios}" />
-                        </p:column>
-                        
-                        <p:column headerText="Metodologia">
-                            <h:outputText value="#{ele.strDescMetodologia}" />
-                        </p:column>
-                        
-                        <p:column headerText="Tipo elemento">
-                            <h:outputText value="#{ele.strTipoElemento}" />
-                        </p:column>
-
-                        <p:column headerText="Descripcion">
-                            <h:outputText value="#{ele.strDescElemento}" />
-                        </p:column>
-
-                        <p:column headerText="Usados en:">
-                            <h:outputText value="#{ele.strExtension}" />
-                        </p:column>
-    
-                    </p:dataTable>
-                    
-                </c:if>
-
-                <c:if test="#{bibliotecaView.cantidadElementos==0}">
-                    <h:panelGrid columns="1" style="width: 100%; height: 100%;" border="0" class="ui-align-center" >
-                        <h:outputLabel class="ui-amigable-1">
-                            <br/>
-                            ¡Sin resultado!<br/>
-                            No encontramos datos guardados sobre tu búsqueda! <br/>
-                            <h:outputLabel class="ui-amigable-2" value=":("/>
-                        </h:outputLabel>
-                    </h:panelGrid>
-                </c:if>
-
-                <c:if test="#{bibliotecaView.cantidadElementos==-1}">
-                    <h:panelGrid columns="1" style="width: 100%; height: 100%;" border="0" class="ui-align-center" >
-                        <h:outputLabel class="ui-amigable-1">
-                            <br/>
-                            ¡Inicia tu búsqueda!<br/>
-                            Coloca los parametros y presiona consultar! <br/>
-                            <h:outputLabel class="ui-amigable-2" value=":)"/>
-                        </h:outputLabel>
-                    </h:panelGrid>
-                </c:if>
             </p:fragment>
-        </center>
+
         </h:form>
     </ui:composition>
 

@@ -168,6 +168,7 @@ public class CrearProyecto implements Serializable{
             objProyecto.setPoIdEstado(Constantes.INT_ET_ESTADO_PROYECTO_REGISTRADO);
             objProyecto.setPoIdMetodologia(Integer.parseInt(strMetodologia));
             objProyecto.setPoTxMotivo(this.getStrDescripcion());
+            objProyecto.setPoInOculto(Boolean.FALSE);
             
             Usuario objUsuario = new Usuario();
             objUsuario.setUsIdCuentaPk(objUsuarioInfo.getIntUsuarioPk());

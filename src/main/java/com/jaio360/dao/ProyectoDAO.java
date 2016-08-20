@@ -161,7 +161,19 @@ public class ProyectoDAO implements Serializable
         return listaProyecto; 
     }  
 
-    public List<Proyecto> obtenListaProyectosPorUsuario(Integer intIdUsuario, Integer intIdProyecto) throws HibernateException { 
+    public List<Proyecto> obtenListaProyectosPorUsuario(Integer intIdUsuario, 
+            Integer intIdProyecto, 
+            Boolean blocultos,
+            String txtDescripcion,
+            Integer idTipoProyecto,
+            Integer idEstadoProyecto,
+            Date txtFechaRegistroInicial,
+            Date txtFechaRegistroFinal,
+            Date txtFechaEjecucionInicial,
+            Date txtFechaEjecucionFinal
+            ) throws HibernateException { 
+        
+        //(objUsuarioInfo.getIntUsuarioPk(), null, blOcultos, txtDescripcion,idTipoProyecto,idEstadoProyecto,txtFechaEjecucionInicial,txtFechaEjecucionInicial,txtFechaRegistroFinal,txtFechaRegistroInicial);
         
         List<Proyecto> lstProyectos = null;  
 
@@ -174,16 +186,57 @@ public class ProyectoDAO implements Serializable
                              + " where p.usuario.usIdCuentaPk = ? ";
                                 
                             if(intIdProyecto != null) strCadena += " and poIdProyectoPk = ? ";
-                                
+                            
+                            if(Utilitarios.noEsNuloOVacio(blocultos)){ 
+                                strCadena += " and poInOculto = "+blocultos;
+                            }
+                            if(Utilitarios.noEsNuloOVacio(txtDescripcion)){ 
+                                strCadena += " and poTxDescripcion like ? ";
+                            }
+                            if(Utilitarios.noEsNuloOVacio(idTipoProyecto) && idTipoProyecto > 0){ 
+                                strCadena += " and poIdMetodologia = ? ";
+                            }
+                            if(Utilitarios.noEsNuloOVacio(idEstadoProyecto) && idEstadoProyecto > 0){ 
+                                strCadena += " and poIdEstado = ? ";
+                            }
+                            if(Utilitarios.noEsNuloOVacio(txtFechaRegistroInicial)){ 
+                                strCadena += " and poFeRegistro >= ? ";
+                            }
+                            if(Utilitarios.noEsNuloOVacio(txtFechaRegistroFinal)){ 
+                                strCadena += " and poFeRegistro <= ? ";
+                            }
+                            
+//                            if(Utilitarios.noEsNuloOVacio(txtFechaEjecucionInicial)){ 
+//                                strCadena += " and poFeEjecucion >= ? ";
+//                            }
+//                            if(Utilitarios.noEsNuloOVacio(txtFechaEjecucionFinal)){ 
+//                                strCadena += " and poFeEjecucion <= ? ";
+//                            }
+
+                            
                   strCadena += " order by p.poIdProyectoPk desc ";
                     
             Query query = sesion.createQuery(strCadena);
-            
-            query.setInteger(0, intIdUsuario);
-            
-            if(intIdProyecto != null){
-                query.setInteger(1, intIdProyecto);
-            }
+            int param = 0;
+            query.setInteger(param++, intIdUsuario);
+            if(intIdProyecto != null)
+                query.setInteger(param++, intIdProyecto);
+            if(Utilitarios.noEsNuloOVacio(txtDescripcion))
+                query.setString(param++, txtDescripcion);
+            if(Utilitarios.noEsNuloOVacio(idTipoProyecto) && idTipoProyecto > 0)
+                query.setInteger(param++, idTipoProyecto);
+            if(Utilitarios.noEsNuloOVacio(idEstadoProyecto) && idEstadoProyecto > 0)
+                query.setInteger(param++, idEstadoProyecto);
+            if(Utilitarios.noEsNuloOVacio(txtFechaRegistroInicial))
+                query.setDate(param++, txtFechaRegistroInicial);
+            if(Utilitarios.noEsNuloOVacio(txtFechaRegistroFinal))
+                query.setDate(param++, txtFechaRegistroFinal);
+            /*
+            if(Utilitarios.noEsNuloOVacio(txtFechaEjecucionInicial))
+                query.setDate(param++, txtFechaEjecucionInicial);
+            if(Utilitarios.noEsNuloOVacio(txtFechaEjecucionFinal))
+                query.setDate(param++, txtFechaEjecucionFinal);
+            */
             
             return query.list();
             
@@ -261,7 +314,14 @@ public class ProyectoDAO implements Serializable
                                                 "    and rp.RP_ID_ESTADO = 79 "+
                                                 "    and re.RE_ID_ESTADO = ?       " +
                                                 "  union all                                                       "+
-                                                " select po.*, 'Autoevaluate', cu.CU_TX_DESCRIPCION, cu.CU_ID_CUESTIONARIO_PK, pa.PA_ID_PARTICIPANTE_PK, pa.PA_TX_CORREO "+
+                                                " select po.PO_ID_PROYECTO_PK, " +
+                                                " po.US_ID_CUENTA_FK, " +
+                                                " po.PO_TX_DESCRIPCION, " +
+                                                " po.PO_ID_ESTADO, " +
+                                                " po.PO_FE_REGISTRO, " +
+                                                " po.PO_FE_EJECUCION, " +
+                                                " po.PO_ID_METODOLOGIA, " +
+                                                " po.PO_TX_MOTIVO, 'Autoevaluate', cu.CU_TX_DESCRIPCION, cu.CU_ID_CUESTIONARIO_PK, pa.PA_ID_PARTICIPANTE_PK, pa.PA_TX_CORREO "+
                                                 "   from participante pa,                                          "+
                                                 " 	   proyecto po,                                                "+
                                                 "	   cuestionario_evaluado ce,                                   "+

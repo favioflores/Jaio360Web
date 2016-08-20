@@ -281,7 +281,8 @@ public class EjecutarEvaluacionView implements Serializable{
                     idPregunta = comp.getCoIdComponentePk().toString();
                     //objOutputLabel.setFor("pr" + idPregunta);
                     objOutputLabel.setId("ol_" + idPregunta);
-                    objOutputLabel.setValue(contador + ". " + comp.getCoTxDescripcion());
+                    //objOutputLabel.setValue(contador + ". " + comp.getCoTxDescripcion());
+                    objOutputLabel.setValue(comp.getCoTxDescripcion());
                     //objOutputLabel.setStyle("min-width:450px; max-width:450px; font-size:15px;");
                     objOutputLabel.setStyle("font-size:15px;");
 
@@ -354,7 +355,8 @@ public class EjecutarEvaluacionView implements Serializable{
                     idAbierta = comp.getCoIdComponentePk().toString();
                     htmlInputText.setId("pr" + idAbierta);
 
-                    htmlInputText.setValue(contadorPA + ". " + comp.getCoTxDescripcion());
+                    //htmlInputText.setValue(contadorPA + ". " + comp.getCoTxDescripcion());
+                    htmlInputText.setValue(comp.getCoTxDescripcion());
 
                     objHtmlPanelGridAbierta.getChildren().add(htmlInputText);
 

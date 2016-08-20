@@ -17,6 +17,7 @@ public class Constantes {
     public final static int INT_PARAMETER_ZERO_POS = 0;
     public final static int INT_PARAMETER_ONE_POS = 1;
     public static String ZERO = "0";
+    public static Integer ZERO_INTEGER = 0;
     public String strApp = "Constantes";
     
     public static byte[] TRUE_BYTE = new byte[]{(byte) 1};
@@ -239,5 +240,10 @@ public class Constantes {
 
     
     public static Charset UTF8_CHARSET = Charset.forName("UTF-8");
+
+    public static String ASTERISCO = "*";
+    public static String TODO_TEXTO = "%%";
     
+
+    public static Integer ET_DIAS_BUSQUEDAS = 100;
 }

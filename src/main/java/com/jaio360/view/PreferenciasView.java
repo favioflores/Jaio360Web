@@ -11,7 +11,9 @@ import javax.faces.context.FacesContext;
 @SessionScoped
 public class PreferenciasView implements Serializable {
 
-	private String theme = "aristo"; //default
+	//private String theme = "aristo"; //default
+        private String theme = "aristo"; //default
+        
 
 	public String getTheme() {
 		Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();

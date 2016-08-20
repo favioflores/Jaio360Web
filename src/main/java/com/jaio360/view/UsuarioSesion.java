@@ -20,9 +20,7 @@ import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -30,7 +28,6 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpSessionContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.primefaces.context.RequestContext;
@@ -90,11 +87,21 @@ public class UsuarioSesion implements Serializable{
                 .getExternalContext().getRequestParameterMap();
         String captha = params.get("g-recaptcha-response");
         
-        if(captchaInvalido(captha)){
-        //if(false){
-            message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error de inicio de sesion", "Captcha invalido");
-            FacesContext.getCurrentInstance().addMessage(null, message);
+        boolean blValido = false;
+        
+        //if(validaConexionGoogle()){
+        if(false){
+            if(captchaInvalido(captha)){
+                message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error de inicio de sesion", "Captcha invalido");
+                FacesContext.getCurrentInstance().addMessage(null, message);
+            }else{
+                blValido = true;
+            }
         }else{
+            blValido = true;
+        }
+        
+        if(blValido){
          
             try {
 
@@ -332,6 +339,27 @@ public class UsuarioSesion implements Serializable{
 
     }
 
+
+    private boolean validaConexionGoogle() throws Exception {
+
+        try {
+            
+        
+        String url = "https://www.google.com/";
+
+        URL obj = new URL(url);
+        HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+
+        con.connect();
+        
+        
+        } catch (Exception e) {
+            log.error(e); 
+            return false;
+        }
+        return true;
+
+    }
 
     public void timeout() throws IOException {
         

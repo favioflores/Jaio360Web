@@ -20,6 +20,7 @@ public class Proyecto  implements java.io.Serializable {
      private Date poFeEjecucion;
      private Integer poIdMetodologia;
      private String poTxMotivo;
+     private Boolean poInOculto;
      private Set redEvaluacions = new HashSet(0);
      private Set relacions = new HashSet(0);
      private Set metricas = new HashSet(0);
@@ -169,6 +170,14 @@ public class Proyecto  implements java.io.Serializable {
     
     public void setMensajes(Set mensajes) {
         this.mensajes = mensajes;
+    }
+
+    public Boolean getPoInOculto() {
+        return poInOculto;
+    }
+
+    public void setPoInOculto(Boolean poInOculto) {
+        this.poInOculto = poInOculto;
     }
 
 

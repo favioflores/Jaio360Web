@@ -13,6 +13,8 @@ import java.util.Date;
  */
 public class ProyectoInfo implements Serializable{
 
+    private static final long serialVersionUID = -1L;
+    
     private Integer intIdProyecto;
     private String strDescNombre;
     private String strMotivo;
@@ -36,6 +38,8 @@ public class ProyectoInfo implements Serializable{
     /* Para lista de evaluaciones */
     private String strDescEvaluado;
     private Integer intIdEvaluado;
+    
+    private boolean boOculto;
 
     public ProyectoInfo(){
         blConvocatoria = false;
@@ -44,6 +48,14 @@ public class ProyectoInfo implements Serializable{
         boDefineArtificio = false;
     }
 
+    public boolean isBoOculto() {
+        return boOculto;
+    }
+
+    public void setBoOculto(boolean boOculto) {
+        this.boOculto = boOculto;
+    }
+    
     public Date getDtFechaEjecucion() {
         return dtFechaEjecucion;
     }

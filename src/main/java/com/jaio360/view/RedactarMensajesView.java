@@ -34,7 +34,26 @@ public class RedactarMensajesView implements Serializable{
     private boolean blProyectoTerminado = false;
     private Integer intIdEstadoProyecto;
     private String strPreview;
+    private String correoExtra;
+    private List<String> lstCorreosExtra;
 
+    public String getCorreoExtra() {
+        return correoExtra;
+    }
+
+    public void setCorreoExtra(String correoExtra) {
+        this.correoExtra = correoExtra;
+    }
+
+    public List<String> getLstCorreosExtra() {
+        return lstCorreosExtra;
+    }
+
+    public void setLstCorreosExtra(List<String> lstCorreosExtra) {
+        this.lstCorreosExtra = lstCorreosExtra;
+    }
+
+    
     public Integer getIntIdEstadoProyecto() {
         return intIdEstadoProyecto;
     }
@@ -112,6 +131,7 @@ public class RedactarMensajesView implements Serializable{
     @PostConstruct
     public void init() {
         
+        lstCorreosExtra = new ArrayList<String>();
         strPreview = Constantes.strVacio;
         
         Integer intIdProyecto = Utilitarios.obtenerProyecto().getIntIdProyecto();
@@ -162,7 +182,7 @@ public class RedactarMensajesView implements Serializable{
         try{
         
             NotificacionesDAO objNotificacionesDAO = new NotificacionesDAO();
-            if(objNotificacionesDAO.guardarmeComunicados()){
+            if(objNotificacionesDAO.guardarmeComunicados(lstCorreosExtra)){
                 FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Envio de mensajes", "Se enviaron las notificaciones al correo "+Utilitarios.obtenerUsuario().getStrEmail());
                 FacesContext.getCurrentInstance().addMessage(null, message);    
             }else{
@@ -176,6 +196,25 @@ public class RedactarMensajesView implements Serializable{
         }
         
     }
-       
+
+    
+    public void agregaCorreoExtra(){
+        correoExtra = correoExtra.toLowerCase();
+        if(!lstCorreosExtra.contains(correoExtra)){
+            lstCorreosExtra.add(correoExtra);
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Agregar correo", "Correo agregado correctamente");
+            FacesContext.getCurrentInstance().addMessage(null, message);   
+            correoExtra = "";
+        }else{
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Agregar correo", "El correo ingresado ya existe en la lista");
+            FacesContext.getCurrentInstance().addMessage(null, message);                
+        }
+    }
+    
+    public void eliminarCorreoExtra(String correoExtra){
+        lstCorreosExtra.remove(correoExtra);
+        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Eliminar correo", "Correo se eliminó correctamente");
+        FacesContext.getCurrentInstance().addMessage(null, message);            
+    }
 }
 

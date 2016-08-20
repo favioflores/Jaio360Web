@@ -7,20 +7,20 @@ package com.jaio360.utils;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Element;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfImportedPage;
-import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStamper;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.jaio360.application.EHCacheManager;
 import com.jaio360.dao.ProyectoDAO;
 import com.jaio360.domain.DatosReporte;
 import com.jaio360.domain.ProyectoInfo;
 import com.jaio360.domain.UsuarioInfo;
+import com.jaio360.orm.Elemento;
 import com.jaio360.orm.Proyecto;
 import com.jaio360.orm.Usuario;
 import com.jaio360.view.ListasPrincipalView;
@@ -39,7 +39,9 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.sql.Blob;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
@@ -47,9 +49,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.NoSuchElementException;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import javax.faces.context.FacesContext;
+import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpSession;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -154,7 +159,8 @@ public class Utilitarios {
         session.removeAttribute("proyectoInfo");
         
         ProyectoDAO objProyectoDAO = new ProyectoDAO();
-        List lstProyecto = objProyectoDAO.obtenListaProyectosPorUsuario(obtenerUsuario().getIntUsuarioPk(), intIdProyecto);
+        List lstProyecto = objProyectoDAO.obtenListaProyectosPorUsuario(obtenerUsuario().getIntUsuarioPk(), intIdProyecto, null
+                ,null,null,null,null,null,null,null);
         
         ProyectoInfo objProyectoInfo = new ProyectoInfo();
                     
@@ -228,7 +234,9 @@ public class Utilitarios {
     public static String retirarEspacios(String strCadena){
         
         if(strCadena!=null){
-            strCadena = strCadena.replaceAll(Constantes.strEspacio, Constantes.strVacio);
+            while(strCadena.contains(Constantes.strEspacio)){
+                strCadena = strCadena.replaceAll(Constantes.strEspacio, Constantes.strVacio);
+            }
         }
         
         return strCadena;
@@ -978,7 +986,69 @@ public void onEndPage(PdfWriter writer, Document document) {
             log.error("PDF generation error", e);
         }
     }    
+ 
+    public static int aNumero(String strCadena){
     
+        try {
+            return Integer.parseInt(strCadena);
+        } catch (Exception e) {
+            return Constantes.ZERO_INTEGER;
+        }
+        
+    }
      
      
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    public static List poblarCombo(Integer DT) {
+
+        List lstMetodologias = new ArrayList();
+        
+        List<Elemento> lstElementos = EHCacheManager.obtenerElementosPorDefinicion(DT);
+        
+        Iterator itLstElementos = lstElementos.iterator();
+        
+        SelectItem objSelectItem = new SelectItem();
+        objSelectItem.setValue("");
+        objSelectItem.setLabel("---- Todos ----");
+        lstMetodologias.add(objSelectItem);
+        
+        while(itLstElementos.hasNext()){
+            Elemento objElemento = (Elemento) itLstElementos.next(); 
+            
+            objSelectItem = new SelectItem();
+            objSelectItem.setValue(objElemento.getElIdElementoPk());
+            objSelectItem.setLabel(objElemento.getElTxDescripcion());
+            
+            lstMetodologias.add(objSelectItem);
+        }
+        
+        return lstMetodologias;
+        
+    }
+        
+ 
+    public static Date convertStringToDate(String dateString, String formato)
+    {
+        
+        DateFormat df = new SimpleDateFormat("MM/dd/yyyy"); 
+        Date startDate;
+        try {
+            startDate = df.parse(dateString);
+        
+        return startDate;
+        } catch (ParseException ex) {
+            log.error(ex);
+        }
+        return getCurrentDate();
+        
+    }
+        
 }
