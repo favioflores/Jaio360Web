@@ -203,11 +203,11 @@ public class Constantes {
     
     
   
-    //public static String STR_INBOX_PRELIMINAR = File.separator + "var" + File.separator + "tmp" + File.separator + "InboxPreliminar";
-    //public static String STR_INBOX_DEFINITIVO = File.separator + "var" + File.separator + "tmp" + File.separator + "InboxDefinitivo";
+    public static String STR_INBOX_PRELIMINAR = File.separator + "var" + File.separator + "tmp" + File.separator + "InboxPreliminar";
+    public static String STR_INBOX_DEFINITIVO = File.separator + "var" + File.separator + "tmp" + File.separator + "InboxDefinitivo";
     
-    public static String STR_INBOX_PRELIMINAR = File.separator + "InboxPreliminar";
-    public static String STR_INBOX_DEFINITIVO = File.separator + "InboxDefinitivo";
+    //public static String STR_INBOX_PRELIMINAR = File.separator + "InboxPreliminar";
+    //public static String STR_INBOX_DEFINITIVO = File.separator + "InboxDefinitivo";
     
     public static int FORMAT_DATE_SHORT = DateFormat.SHORT;
     public static int FORMAT_DATE_MEDIUM = DateFormat.MEDIUM;

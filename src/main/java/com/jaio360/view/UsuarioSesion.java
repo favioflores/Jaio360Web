@@ -27,6 +27,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -86,14 +87,20 @@ public class UsuarioSesion implements Serializable{
         Map<String, String> params = FacesContext.getCurrentInstance()
                 .getExternalContext().getRequestParameterMap();
         String captha = params.get("g-recaptcha-response");
-        
+         
         boolean blValido = false;
         
-        //if(validaConexionGoogle()){
-        if(false){
-            if(captchaInvalido(captha)){
-                message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error de inicio de sesion", "Captcha invalido");
-                FacesContext.getCurrentInstance().addMessage(null, message);
+        HttpServletRequest  request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+        String ipAddress = request.getRemoteAddr();
+
+        if (!ipAddress.equals("127.0.0.1")) {
+            if(validaConexionGoogle()){
+                if(captchaInvalido(captha)){
+                    message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error de inicio de sesion", "Captcha invalido");
+                    FacesContext.getCurrentInstance().addMessage(null, message);
+                }else{
+                    blValido = true;
+                }
             }else{
                 blValido = true;
             }

@@ -14,7 +14,7 @@
         
         <p:separator/>
         
-        <p:growl id="growlMsg" showDetail="true" sticky="false" life="4000" />
+        <p:growl id="growlMsg" autoUpdate="false" showDetail="true" sticky="false" life="4000" />
         
         <h:panelGrid columns="1" >
 
@@ -119,11 +119,28 @@
                                 <p:progressBar value="#{reg.bdPorcentajeAvance}" labelTemplate="#{reg.bdPorcentajeAvance}%" />
                             </p:column>
                             <p:column headerText="Filtrar red" style="text-align:center" >
+                                <f:facet name="header">
+                                    <p:panelGrid columns="1" styleClass="PanelGridNoColor" >
+                                        <p:outputLabel value="Filtrar red" />
+                                        <p:selectBooleanCheckbox value="#{seguimientoProyectoView.flagFiltrarRed}" >
+                                            <p:ajax update="tbEva,:formSeguimientoProyecto:tblRed" listener="#{seguimientoProyectoView.putFlagFiltrarRed}" /> 
+                                        </p:selectBooleanCheckbox>
+                                    </p:panelGrid>
+                                </f:facet>
+
                                 <p:selectBooleanCheckbox value="#{reg.boCheckFilterSeg}" >
                                     <p:ajax update=":formSeguimientoProyecto:" listener="#{seguimientoProyectoView.actListaEvaluadores()}" />
                                 </p:selectBooleanCheckbox>
                             </p:column> 
                             <p:column headerText="Descarga fisico" style="text-align:center" >
+                                <f:facet name="header">
+                                    <p:panelGrid columns="1" styleClass="PanelGridNoColor" >
+                                        <p:outputLabel value="Descarga fisico" />
+                                        <p:selectBooleanCheckbox value="#{seguimientoProyectoView.flagDescargaFisico}" >
+                                            <p:ajax update="tbEva" listener="#{seguimientoProyectoView.putFlagDescargaFisico}" /> 
+                                        </p:selectBooleanCheckbox>
+                                    </p:panelGrid>
+                                </f:facet>
                                 <p:selectBooleanCheckbox value="#{reg.blManual}" disabled="#{seguimientoProyectoView.intIdEstadoProyecto==37}" />
                             </p:column> 
                             <p:column headerText="Revertir" style="width:50px;text-align: center;" >
@@ -134,7 +151,7 @@
 
                         </p:dataTable>
                         
-                        <p:commandButton actionListener="#{seguimientoProyectoView.descargarFisico}" value="Descargar evaluaciones" ajax="false" icon="ui-icon-arrowthickstop-1-s" update=":formSeguimientoProyecto:growlMsg" disabled="#{seguimientoProyectoView.intIdEstadoProyecto==37}" >
+                        <p:commandButton actionListener="#{seguimientoProyectoView.descargarFisico}" value="Descargar evaluaciones" ajax="false" icon="ui-icon-arrowthickstop-1-s" oncomplete=":formSeguimientoProyecto:growlMsg" disabled="#{seguimientoProyectoView.intIdEstadoProyecto==37}" >
                             <p:fileDownload value="#{seguimientoProyectoView.fileIndividual}" />
                         </p:commandButton>
                         
@@ -146,7 +163,7 @@
                                     widgetVar="tblRed"
                                     resizableColumns="true"
                                     value="#{seguimientoProyectoView.lstRelacionEvaluadoEvaluador}" 
-                                    rows="50"
+                                    rows="30"
                                     paginatorPosition="bottom"
                                     paginator="true" 
                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
@@ -179,6 +196,15 @@
                             </p:column>
 
                             <p:column headerText="Comunicar" style="text-align:center" >
+                                <f:facet name="header">
+                                    <p:panelGrid columns="1" styleClass="PanelGridNoColor" >
+                                        <p:outputLabel value="Comunicar" />
+                                        <p:selectBooleanCheckbox value="#{seguimientoProyectoView.flagComunicar}" >
+                                            <p:ajax update=":formSeguimientoProyecto:tblRed" listener="#{seguimientoProyectoView.putFlagComunicar}" /> 
+                                        </p:selectBooleanCheckbox>
+                                    </p:panelGrid>
+                                </f:facet>
+
                                 <p:selectBooleanCheckbox value="#{red.blEnvioCorreo}"  disabled="#{red.blEvaluacionTerminada==true or seguimientoProyectoView.intIdEstadoProyecto==37}" >
                                     <p:ajax update=":formSeguimientoProyecto:tbEva" /> 
                                 </p:selectBooleanCheckbox>

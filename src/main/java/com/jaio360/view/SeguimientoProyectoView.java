@@ -40,8 +40,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -98,7 +96,35 @@ public class SeguimientoProyectoView implements Serializable{
     private List<RelacionEvaluadoEvaluador> lstRelacionEvaluadoEvaluador;
 
     private StreamedContent fileIndividual;
+    
+    private Boolean flagDescargaFisico = Boolean.FALSE;
+    private Boolean flagFiltrarRed = Boolean.FALSE;
+    private Boolean flagComunicar = Boolean.TRUE;
 
+    public Boolean getFlagComunicar() {
+        return flagComunicar;
+    }
+
+    public void setFlagComunicar(Boolean flagComunicar) {
+        this.flagComunicar = flagComunicar;
+    }
+
+    public Boolean getFlagFiltrarRed() {
+        return flagFiltrarRed;
+    }
+
+    public void setFlagFiltrarRed(Boolean flagFiltrarRed) {
+        this.flagFiltrarRed = flagFiltrarRed;
+    }
+    
+    public Boolean getFlagDescargaFisico() {
+        return flagDescargaFisico;
+    }
+
+    public void setFlagDescargaFisico(Boolean flagDescargaFisico) {
+        this.flagDescargaFisico = flagDescargaFisico;
+    }
+    
     public StreamedContent getFileIndividual() {
         return fileIndividual;
     }
@@ -677,7 +703,7 @@ public class SeguimientoProyectoView implements Serializable{
         }
         
         if(!flag){
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Descargar evaluación", "Debe seleccionar un check de un evaluado al menos");
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Descargar evaluación", "Debe seleccionar al menos un evaluado");
             FacesContext.getCurrentInstance().addMessage(null, message);
         }else{
         
@@ -934,5 +960,49 @@ public class SeguimientoProyectoView implements Serializable{
         }
         
     }
+
+    public void putFlagDescargaFisico(){
         
+        for(Evaluado objEvaluado : lstParticipantesIniciados){
+            if(flagDescargaFisico){
+                objEvaluado.setBlManual(Boolean.TRUE);
+            }else{
+                objEvaluado.setBlManual(Boolean.FALSE);
+            }
+            
+        }
+        
+    }
+    
+    public void putFlagFiltrarRed(){
+        
+        for(Evaluado objEvaluado : lstParticipantesIniciados){
+            if(flagFiltrarRed){
+                objEvaluado.setBoCheckFilterSeg(Boolean.TRUE);
+            }else{
+                objEvaluado.setBoCheckFilterSeg(Boolean.FALSE);
+            }
+            
+        }
+        
+        actListaEvaluadores();
+                
+    }
+
+    public void putFlagComunicar(){
+        
+        for(RelacionEvaluadoEvaluador objRelacionEvaluadoEvaluador : lstRelacionEvaluadoEvaluador){
+            if(objRelacionEvaluadoEvaluador.getBlEvaluacionTerminada()==null || objRelacionEvaluadoEvaluador.getBlEvaluacionTerminada().equals(Boolean.FALSE)){
+                if(flagComunicar){
+                    objRelacionEvaluadoEvaluador.setBlEnvioCorreo(Boolean.TRUE);    
+                }else{
+                    objRelacionEvaluadoEvaluador.setBlEnvioCorreo(Boolean.FALSE);
+                }
+            }
+            
+        }
+        
+    }
+
+    
 }
