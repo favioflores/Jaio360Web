@@ -223,16 +223,16 @@ public class GeneraReportesView implements Serializable{
         
         agregarDescripciones();
         
-        lstContenidoIndividual.add(new ModeloContenido(1,"Sumario de categoria","",strDescripcionesIndividual[1],"PDF"));
-        lstContenidoIndividual.add(new ModeloContenido(2,"Sumario de categoria - Mismo/Otro","",strDescripcionesIndividual[2],"PDF"));
-        lstContenidoIndividual.add(new ModeloContenido(3,"Calificaciones por item - Por categoria (Desglozado)","",strDescripcionesIndividual[3],"PDF"));
+        lstContenidoIndividual.add(new ModeloContenido(1,"Sumario de categoría","",strDescripcionesIndividual[1],"PDF"));
+        lstContenidoIndividual.add(new ModeloContenido(2,"Sumario de categoría - Mismo/Otro","",strDescripcionesIndividual[2],"PDF"));
+        lstContenidoIndividual.add(new ModeloContenido(3,"Calificaciones por item - Por categoría (Desglosado)","",strDescripcionesIndividual[3],"PDF"));
         lstContenidoIndividual.add(new ModeloContenido(4,"Calificaciones por item - Promedio","",strDescripcionesIndividual[4],"PDF"));
         lstContenidoIndividual.add(new ModeloContenido(5,"Items con más alta calificación","",strDescripcionesIndividual[5],"PDF"));
         lstContenidoIndividual.add(new ModeloContenido(6,"Items con más baja calificación","",strDescripcionesIndividual[6],"PDF"));
         lstContenidoIndividual.add(new ModeloContenido(7,"Preguntas abiertas","",strDescripcionesIndividual[7],"PDF"));
         
         lstContenidoGrupal.add(new ModeloContenido(8,"Todas las respuestas","",strDescripcionesGrupal[8],"EXCEL"));
-        lstContenidoGrupal.add(new ModeloContenido(9,"Sumario por categorias","",strDescripcionesGrupal[0],"PDF"));
+        lstContenidoGrupal.add(new ModeloContenido(9,"Sumario por categorías","",strDescripcionesGrupal[0],"PDF"));
         lstContenidoGrupal.add(new ModeloContenido(10,"Nivel de participación","",strDescripcionesGrupal[0],"PDF"));
         //Resultados Generales - Competencias y preguntas
         /*
