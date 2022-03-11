@@ -12,29 +12,7 @@ import javax.faces.context.FacesContext;
 public class PreferenciasView implements Serializable {
 
 	//private String theme = "aristo"; //default
-        private String theme = "aristo"; //default
-        
-
-	public String getTheme() {
-		Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
-		if(params.containsKey("theme")) {
-			theme = params.get("theme");
-		}
-		
-		return theme;
-	}
-        
-        public void changeTheme() {
-            
-            Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
-                if(params.containsKey("globaltheme")) {
-                        theme = params.get("globaltheme");
-                }
-        }
-
-	public void setTheme(String theme) {
-		this.theme = theme;
-	}
+        private String theme = "bootstrap"; //default
         
         /*
         themes = new ArrayList<Theme>();
@@ -78,4 +56,27 @@ public class PreferenciasView implements Serializable {
         themes.add(new Theme(36, "UI-Lightness", "ui-lightness"));
         themes.add(new Theme(37, "Vader", "vader"));
         */
+
+	public String getTheme() {
+		Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
+		if(params.containsKey("theme")) {
+			theme = params.get("theme");
+		}
+		
+		return theme;
+	}
+        
+        public void changeTheme() {
+            
+            Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
+                if(params.containsKey("globaltheme")) {
+                        theme = params.get("globaltheme");
+                }
+        }
+
+	public void setTheme(String theme) {
+		this.theme = theme;
+	}
+        
+
 }

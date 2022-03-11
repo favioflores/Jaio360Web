@@ -80,6 +80,31 @@ public class MetricaDAO implements Serializable
             sesion.close(); 
         } 
     }  
+    
+    public void actualizaMetricaEliminaDetalle(Metrica metrica) throws HibernateException 
+    { 
+        try 
+        { 
+            iniciaOperacion(); 
+            
+            sesion.update(metrica); 
+            
+            Query sql = sesion.createQuery("delete from DetalleMetrica dm where dm.metrica.meIdMetricaPk = :idMetrica and dm.deNuOrden > :nuRango");
+            sql.setInteger("idMetrica", metrica.getMeIdMetricaPk());
+            sql.setInteger("nuRango", metrica.getMeNuRango()-1);
+            sql.executeUpdate();
+            
+            tx.commit(); 
+            
+        } catch (HibernateException he) 
+        { 
+            manejaExcepcion(he); 
+            throw he; 
+        } finally 
+        { 
+            sesion.close(); 
+        } 
+    }  
 
     public void eliminaMetrica(Metrica metrica) throws HibernateException 
     { 

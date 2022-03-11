@@ -6,11 +6,13 @@ public class DosDatos implements Serializable{
     
     private String strDato1;
     private String strDato2;
+    private String strDato3;
 
-    public DosDatos(String a, String b){
+    public DosDatos(String a, String b, String c){
     
         strDato1 = a;
         strDato2 = b;
+        strDato3 = c;
         
     }
             
@@ -29,5 +31,15 @@ public class DosDatos implements Serializable{
     public void setStrDato2(String strDato2) {
         this.strDato2 = strDato2;
     }
+
+    public String getStrDato3() {
+        return strDato3;
+    }
+
+    public void setStrDato3(String strDato3) {
+        this.strDato3 = strDato3;
+    }
+    
+    
 
 }

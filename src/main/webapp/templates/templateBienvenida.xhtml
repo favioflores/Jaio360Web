@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<f:view contentType="text/html">
+
+	<h:head>
+        <f:facet name="first">
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <title>Jaio 360</title>
+            <link rel="shortcut icon" type="image/png" href="#{request.contextPath}/images/favicon.png" />
+        </f:facet>
+        
+        <link type="text/css" rel="stylesheet" href="#{request.contextPath}/resources/showcase/css/primeflex.css" />
+        <link type="text/css" rel="stylesheet" href="#{request.contextPath}/resources/showcase/css/flags/flags.css" />
+
+        <h:outputScript name="jquery/jquery.js" library="primefaces"/>
+        <h:outputScript name="jquery/jquery-plugins.js" library="primefaces"/>
+        
+        <ui:insert name="head"/>
+      
+	</h:head>
+
+    <h:body>
+        <ui:insert name="content">...</ui:insert>
+        
+        
+            <h:form prependId="false">
+                <!--p:idleMonitor timeout="3600000" -->
+                <p:idleMonitor timeout="3600000" >
+                    <p:ajax event="idle" listener="#{usuarioSesion.timeout()}" oncomplete="PF('timeoutDlg').show();"/>
+                </p:idleMonitor>
+
+                <p:dialog header="Aviso de cierre de sesión" widgetVar="timeoutDlg" width="400" closable="false" maximizable="false" resizable="false" draggable="false" closeOnEscape="false" modal="true" >
+
+                    <div class="ui-fluid">
+
+                        <div class="p-field">
+                            <p:outputLabel value="Por seguridad su sesión fue cerrada tras 60 minutos de inactividad." class="p-m-2" />
+                        </div>
+                        <div class="p-field">
+                            <p:button outcome="iniciar" value="Ok" class="p-m-2" />         
+                        </div>
+                    </div>
+                    
+                </p:dialog> 
+
+            </h:form>
+        
+    </h:body>
+
+	
+</f:view>
+</html>

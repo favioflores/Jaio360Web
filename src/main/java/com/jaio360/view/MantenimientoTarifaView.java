@@ -23,7 +23,6 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.primefaces.context.RequestContext;
 import org.primefaces.event.RowEditEvent;
 
 @ManagedBean(name = "mantenimientoTarifaView")

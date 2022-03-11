@@ -14,7 +14,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.HibernateException;
@@ -22,129 +24,125 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
-public class NotificacionesDAO implements Serializable{
-    
+public class NotificacionesDAO implements Serializable {
+
     private static Log log = LogFactory.getLog(NotificacionesDAO.class);
-    private Session sesion; 
-    private Transaction tx;  
+    private Session sesion;
+    private Transaction tx;
 
-    private void iniciaOperacion() throws HibernateException { 
-        sesion = HibernateUtil.getSessionFactory().openSession(); 
-        tx = sesion.beginTransaction(); 
-    }  
+    private void iniciaOperacion() throws HibernateException {
+        sesion = HibernateUtil.getSessionFactory().openSession();
+        tx = sesion.beginTransaction();
+    }
 
-    private void manejaExcepcion(HibernateException he) throws HibernateException { 
-        tx.rollback(); 
-        throw new HibernateException("Ocurrió un error en la capa de acceso a datos", he); 
-    } 
-    
-    public List obtieneNotificaciones(Date dtFechaEntrega, Integer intLimiteNotificaciones) throws HibernateException { 
-        
+    private void manejaExcepcion(HibernateException he) throws HibernateException {
+        tx.rollback();
+        throw new HibernateException("Ocurrió un error en la capa de acceso a datos", he);
+    }
+
+    public List obtieneNotificaciones(Date dtFechaEntrega, Integer intLimiteNotificaciones) throws HibernateException {
+
         iniciaOperacion();
-        
+
         List lstMails = new ArrayList();
 
-        Query query = sesion.createQuery("from Notificaciones where DATE_FORMAT(noFeCreacion, '%Y-%m-%d') <= DATE_FORMAT(?, '%Y-%m-%d') and noIdEstado = ? ");
+        Query query = sesion.createQuery("from Notificaciones where noIdEstado = ? ");
 
-        query.setDate(0, dtFechaEntrega); 
-        query.setInteger(1, Constantes.INT_ET_ESTADO_NOTIFICACION_PENDIENTE);
+        query.setInteger(0, Constantes.INT_ET_ESTADO_NOTIFICACION_PENDIENTE);
         query.setMaxResults(intLimiteNotificaciones);
-        
-        List <Notificaciones> lstNotificaciones = query.list();
-        
-        if(!lstNotificaciones.isEmpty()){
-        
+
+        List<Notificaciones> lstNotificaciones = query.list();
+
+        if (!lstNotificaciones.isEmpty()) {
+
             Iterator itLstNotificaciones = lstNotificaciones.iterator();
-            
+
             DestinatariosDAO objDestinatariosDAO = new DestinatariosDAO();
-            
+
             Notificaciones objNotificaciones;
-            
-            while(itLstNotificaciones.hasNext()){
-            
+
+            while (itLstNotificaciones.hasNext()) {
+
                 objNotificaciones = (Notificaciones) itLstNotificaciones.next();
-                
+
                 List<Destinatarios> lstDestinatarios = objDestinatariosDAO.obtieneDestinatarios(objNotificaciones.getNoIdNotificacionPk(), sesion);
-                
-                if(!lstDestinatarios.isEmpty()){
-                
+
+                if (!lstDestinatarios.isEmpty()) {
+
                     Object[] obj = {objNotificaciones, lstDestinatarios};
-                    
+
                     lstMails.add(obj);
-                    
+
                 }
-            
+
             }
-            
+
         }
-        
+
         tx.commit();
         sesion.close();
-        
-        return lstMails; 
-    }  
 
-    public boolean actualizaNotificacion(Notificaciones objNotificaciones) throws HibernateException { 
-        
-        try { 
-            iniciaOperacion(); 
-            sesion.update(objNotificaciones); 
-            tx.commit(); 
-            
-        } catch (HibernateException he) { 
-            manejaExcepcion(he); 
+        return lstMails;
+    }
+
+    public boolean actualizaNotificacion(Notificaciones objNotificaciones) throws HibernateException {
+
+        try {
+            iniciaOperacion();
+            sesion.update(objNotificaciones);
+            tx.commit();
+
+        } catch (HibernateException he) {
+            manejaExcepcion(he);
             return false;
-        } finally { 
-            sesion.close(); 
-        } 
-        
+        } finally {
+            sesion.close();
+        }
+
         return true;
-    }  
-        
-    public Integer guardaNotificacion(Notificaciones objNotificaciones) throws HibernateException { 
-        
-        Integer id = 0;  
+    }
 
-        try 
-        { 
-            iniciaOperacion(); 
-            id = (Integer)sesion.save(objNotificaciones); 
-            tx.commit(); 
-        } catch (HibernateException he) 
-        { 
-            manejaExcepcion(he); 
-            throw he; 
-        } finally 
-        { 
-            sesion.close(); 
-        }  
+    public Integer guardaNotificacion(Notificaciones objNotificaciones) throws HibernateException {
 
-        return id; 
-    }  
-    
-    public boolean guardaNotificacionesEvaluados(List<Usuario> lstUsuariosGrabados) throws HibernateException, Exception { 
-        
-        Integer intIdProyecto       = Utilitarios.obtenerProyecto().getIntIdProyecto();
-        Integer intIdMetodologia    = Utilitarios.obtenerProyecto().getIntIdMetodologia();
-        String strDescEmpresa       = Utilitarios.obtenerUsuario().getStrDescripcion();
-        String strEmailContacto     = Utilitarios.obtenerUsuario().getStrEmail();
-        
+        Integer id = 0;
+
+        try {
+            iniciaOperacion();
+            id = (Integer) sesion.save(objNotificaciones);
+            tx.commit();
+        } catch (HibernateException he) {
+            manejaExcepcion(he);
+            throw he;
+        } finally {
+            sesion.close();
+        }
+
+        return id;
+    }
+
+    public boolean guardaNotificacionesEvaluados(List<Usuario> lstUsuariosGrabados) throws HibernateException, Exception {
+
+        Integer intIdProyecto = Utilitarios.obtenerProyecto().getIntIdProyecto();
+        Integer intIdMetodologia = Utilitarios.obtenerProyecto().getIntIdMetodologia();
+        String strDescEmpresa = Utilitarios.obtenerUsuario().getStrDescripcion();
+        String strEmailContacto = Utilitarios.obtenerUsuario().getStrEmail();
+
         MensajeDAO objMensajeDAO = new MensajeDAO();
-        
-        Mensaje objMensaje = objMensajeDAO.obtenMensaje(Utilitarios.obtenerProyecto().getIntIdProyecto(),Constantes.INT_ET_NOTIFICACION_CONVOCATORIA_RED);
-        
+
+        Mensaje objMensaje = objMensajeDAO.obtenMensaje(Utilitarios.obtenerProyecto().getIntIdProyecto(), Constantes.INT_ET_NOTIFICACION_CONVOCATORIA_RED);
+
         byte[] bdata = objMensaje.getMeTxCuerpo();
         String strNotificacion = Utilitarios.decodeUTF8(bdata);
         String strNotificacionPer;
-        
+
         EncryptDecrypt objEncryptDecrypt = new EncryptDecrypt();
-                
-        try { 
-            
-            iniciaOperacion(); 
-            
-            for(Usuario objUsuario : lstUsuariosGrabados){
-        
+
+        try {
+
+            iniciaOperacion();
+
+            for (Usuario objUsuario : lstUsuariosGrabados) {
+
                 strNotificacionPer = strNotificacion;
                 strNotificacionPer = strNotificacionPer.replace("#%DATO.PROYECTO", Utilitarios.obtenerProyecto().getStrDescNombre());
                 strNotificacionPer = strNotificacionPer.replace("#%DATO.MENSAJE", Utilitarios.formatearFecha(new Date(), Constantes.HH24_MI_DDMMYYYY));
@@ -158,7 +156,7 @@ public class NotificacionesDAO implements Serializable{
                 objNotificaciones.setNoIdRefProceso(intIdProyecto);
                 objNotificaciones.setNoIdTipoProceso(intIdMetodologia);
                 objNotificaciones.setNoTxAsunto(objMensaje.getMeTxAsunto());
-                objNotificaciones.setNoTxMensaje(Utilitarios.encodeUTF8(strNotificacion));     
+                objNotificaciones.setNoTxMensaje(Utilitarios.encodeUTF8(strNotificacion));
                 objNotificaciones.setNoIdNotificacionPk((Integer) sesion.save(objNotificaciones));
 
                 Destinatarios objDestinatarios = new Destinatarios();
@@ -166,48 +164,47 @@ public class NotificacionesDAO implements Serializable{
                 objDestinatarios.setNotificaciones(objNotificaciones);
 
                 sesion.save(objDestinatarios);
-        
+
             }
-        
-            tx.commit(); 
-            
-        } catch (HibernateException he) { 
-            manejaExcepcion(he); 
-            throw he; 
-        } finally { 
-            sesion.close(); 
-        }  
 
-        return true; 
-    }  
-    
+            tx.commit();
 
-    public boolean guardaNotificacionesEvaluadosRecordatorio(List<Participante> lstEvaluados) throws HibernateException, Exception { 
-        
-        Integer intIdProyecto       = Utilitarios.obtenerProyecto().getIntIdProyecto();
-        Integer intIdMetodologia    = Utilitarios.obtenerProyecto().getIntIdMetodologia();
-        String strDescEmpresa       = Utilitarios.obtenerUsuario().getStrDescripcion();
-        String strEmailContacto     = Utilitarios.obtenerUsuario().getStrEmail();
-        
+        } catch (HibernateException he) {
+            manejaExcepcion(he);
+            throw he;
+        } finally {
+            sesion.close();
+        }
+
+        return true;
+    }
+
+    public boolean guardaNotificacionesEvaluadosRecordatorio(List<Participante> lstEvaluados) throws HibernateException, Exception {
+
+        Integer intIdProyecto = Utilitarios.obtenerProyecto().getIntIdProyecto();
+        Integer intIdMetodologia = Utilitarios.obtenerProyecto().getIntIdMetodologia();
+        String strDescEmpresa = Utilitarios.obtenerUsuario().getStrDescripcion();
+        String strEmailContacto = Utilitarios.obtenerUsuario().getStrEmail();
+
         MensajeDAO objMensajeDAO = new MensajeDAO();
-        
-        Mensaje objMensaje = objMensajeDAO.obtenMensaje(Utilitarios.obtenerProyecto().getIntIdProyecto(),Constantes.INT_ET_NOTIFICACION_CONVOCATORIA_RED);
-        
+
+        Mensaje objMensaje = objMensajeDAO.obtenMensaje(Utilitarios.obtenerProyecto().getIntIdProyecto(), Constantes.INT_ET_NOTIFICACION_CONVOCATORIA_RED);
+
         byte[] bdata = objMensaje.getMeTxCuerpo();
         String strNotificacion = Utilitarios.decodeUTF8(bdata);
         String strNotificacionPer;
-        
+
         EncryptDecrypt objEncryptDecrypt = new EncryptDecrypt();
-                
-        try { 
-            
-            iniciaOperacion(); 
-            
+
+        try {
+
+            iniciaOperacion();
+
             UsuarioDAO objUsuarioDAO = new UsuarioDAO();
-                    
-            for(Participante objEvaluado : lstEvaluados){
-        
-                if(objEvaluado.getPaIdEstado().equals(Constantes.INT_ET_ESTADO_EVALUADO_EN_PARAMETRIZACION) && objEvaluado.getPaInRedCargada()==false){
+
+            for (Participante objEvaluado : lstEvaluados) {
+
+                if (objEvaluado.getPaIdEstado().equals(Constantes.INT_ET_ESTADO_EVALUADO_EN_PARAMETRIZACION) && objEvaluado.getPaInRedCargada() == false) {
                     Usuario objUsuario = objUsuarioDAO.iniciaSesion(objEvaluado.getPaTxCorreo());
 
                     strNotificacionPer = strNotificacion;
@@ -223,7 +220,7 @@ public class NotificacionesDAO implements Serializable{
                     objNotificaciones.setNoIdRefProceso(intIdProyecto);
                     objNotificaciones.setNoIdTipoProceso(intIdMetodologia);
                     objNotificaciones.setNoTxAsunto(objMensaje.getMeTxAsunto());
-                    objNotificaciones.setNoTxMensaje(Utilitarios.encodeUTF8(strNotificacionPer));     
+                    objNotificaciones.setNoTxMensaje(Utilitarios.encodeUTF8(strNotificacionPer));
                     objNotificaciones.setNoIdNotificacionPk((Integer) sesion.save(objNotificaciones));
 
                     Destinatarios objDestinatarios = new Destinatarios();
@@ -232,46 +229,46 @@ public class NotificacionesDAO implements Serializable{
 
                     sesion.save(objDestinatarios);
                 }
-        
-            }
-        
-            tx.commit(); 
-            
-        } catch (HibernateException he) { 
-            manejaExcepcion(he); 
-            throw he; 
-        } finally { 
-            sesion.close(); 
-        }  
 
-        return true; 
-    }  
-    
-    public boolean guardaNotificacionesEvaluadosRecordatorio(String[] strEvaluados) throws HibernateException, Exception { 
-        
-        Integer intIdProyecto       = Utilitarios.obtenerProyecto().getIntIdProyecto();
-        Integer intIdMetodologia    = Utilitarios.obtenerProyecto().getIntIdMetodologia();
-        String strDescEmpresa       = Utilitarios.obtenerUsuario().getStrDescripcion();
-        String strEmailContacto     = Utilitarios.obtenerUsuario().getStrEmail();
-        
+            }
+
+            tx.commit();
+
+        } catch (HibernateException he) {
+            manejaExcepcion(he);
+            throw he;
+        } finally {
+            sesion.close();
+        }
+
+        return true;
+    }
+
+    public boolean guardaNotificacionesEvaluadosRecordatorio(String[] strEvaluados) throws HibernateException, Exception {
+
+        Integer intIdProyecto = Utilitarios.obtenerProyecto().getIntIdProyecto();
+        Integer intIdMetodologia = Utilitarios.obtenerProyecto().getIntIdMetodologia();
+        String strDescEmpresa = Utilitarios.obtenerUsuario().getStrDescripcion();
+        String strEmailContacto = Utilitarios.obtenerUsuario().getStrEmail();
+
         MensajeDAO objMensajeDAO = new MensajeDAO();
-        
-        Mensaje objMensaje = objMensajeDAO.obtenMensaje(Utilitarios.obtenerProyecto().getIntIdProyecto(),Constantes.INT_ET_NOTIFICACION_CONVOCATORIA_RED);
-        
+
+        Mensaje objMensaje = objMensajeDAO.obtenMensaje(Utilitarios.obtenerProyecto().getIntIdProyecto(), Constantes.INT_ET_NOTIFICACION_CONVOCATORIA_RED);
+
         byte[] bdata = objMensaje.getMeTxCuerpo();
         String strNotificacion = Utilitarios.decodeUTF8(bdata);
         String strNotificacionPer;
-        
+
         EncryptDecrypt objEncryptDecrypt = new EncryptDecrypt();
-                
-        try { 
-            
-            iniciaOperacion(); 
-            
+
+        try {
+
+            iniciaOperacion();
+
             UsuarioDAO objUsuarioDAO = new UsuarioDAO();
-                    
-            for(int i = 0; i < strEvaluados.length; i++){
-        
+
+            for (int i = 0; i < strEvaluados.length; i++) {
+
                 Usuario objUsuario = objUsuarioDAO.iniciaSesion(strEvaluados[i]);
 
                 strNotificacionPer = strNotificacion;
@@ -287,7 +284,7 @@ public class NotificacionesDAO implements Serializable{
                 objNotificaciones.setNoIdRefProceso(intIdProyecto);
                 objNotificaciones.setNoIdTipoProceso(intIdMetodologia);
                 objNotificaciones.setNoTxAsunto(objMensaje.getMeTxAsunto());
-                objNotificaciones.setNoTxMensaje(Utilitarios.encodeUTF8(strNotificacion));     
+                objNotificaciones.setNoTxMensaje(Utilitarios.encodeUTF8(strNotificacion));
                 objNotificaciones.setNoIdNotificacionPk((Integer) sesion.save(objNotificaciones));
 
                 Destinatarios objDestinatarios = new Destinatarios();
@@ -295,136 +292,143 @@ public class NotificacionesDAO implements Serializable{
                 objDestinatarios.setNotificaciones(objNotificaciones);
 
                 sesion.save(objDestinatarios);
-        
-            }
-        
-            tx.commit(); 
-            
-        } catch (HibernateException he) { 
-            manejaExcepcion(he); 
-            throw he; 
-        } finally { 
-            sesion.close(); 
-        }  
 
-        return true; 
-    }  
-    
-    public boolean guardaNotificacionesEvaluadores(List<RelacionEvaluadoEvaluador> lstRelacionEvaluadoEvaluador) throws HibernateException, Exception { 
-        
+            }
+
+            tx.commit();
+
+        } catch (HibernateException he) {
+            manejaExcepcion(he);
+            throw he;
+        } finally {
+            sesion.close();
+        }
+
+        return true;
+    }
+
+    public boolean guardaNotificacionesEvaluadores(List<RelacionEvaluadoEvaluador> lstRelacionEvaluadoEvaluador) throws HibernateException, Exception {
+
         UsuarioDAO objUsuarioDAO = new UsuarioDAO();
-        
+
         iniciaOperacion();
-        
+
         boolean m = true;
-        
-        Integer intIdProyecto       = Utilitarios.obtenerProyecto().getIntIdProyecto();
-        String strProyecto          = Utilitarios.obtenerProyecto().getStrDescNombre();
-        Integer intIdMetodologia    = Utilitarios.obtenerProyecto().getIntIdMetodologia();
-        String strEmailContacto     = Utilitarios.obtenerUsuario().getStrEmail();
-        
+
+        Integer intIdProyecto = Utilitarios.obtenerProyecto().getIntIdProyecto();
+        String strProyecto = Utilitarios.obtenerProyecto().getStrDescNombre();
+        Integer intIdMetodologia = Utilitarios.obtenerProyecto().getIntIdMetodologia();
+        String strEmailContacto = Utilitarios.obtenerUsuario().getStrEmail();
+
         MensajeDAO objMensajeDAO = new MensajeDAO();
-        Mensaje objMensaje = objMensajeDAO.obtenMensaje(intIdProyecto, Constantes.INT_ET_NOTIFICACION_CONVOCATORIA, sesion); 
-        
+        Mensaje objMensaje = objMensajeDAO.obtenMensaje(intIdProyecto, Constantes.INT_ET_NOTIFICACION_CONVOCATORIA, sesion);
+
         byte[] bdata = objMensaje.getMeTxCuerpo();
         String strNotificacion = Utilitarios.decodeUTF8(bdata);
         String strNotificacionPer;
-        
+
+        LinkedHashMap<String, String> mapCuentas = new LinkedHashMap<>();
+
+        for (RelacionEvaluadoEvaluador objRelacionEvaluadoEvaluador : lstRelacionEvaluadoEvaluador) {
+            if (!mapCuentas.containsKey(objRelacionEvaluadoEvaluador.getStrCorreoEvaluador())) {
+                mapCuentas.put(objRelacionEvaluadoEvaluador.getStrCorreoEvaluador(), objRelacionEvaluadoEvaluador.getStrDescEvaluador());
+            }
+        }
+
         EncryptDecrypt objEncryptDecrypt = new EncryptDecrypt();
-                
-        try { 
+
+        try {
             Usuario objUsuario;
             Object obj;
-                        
-            for(RelacionEvaluadoEvaluador objRelacionEvaluadoEvaluador : lstRelacionEvaluadoEvaluador){
-                
-                if(objRelacionEvaluadoEvaluador.getBlEnvioCorreo()){
-        
-                    obj = objUsuarioDAO.obtenUsuario(objRelacionEvaluadoEvaluador.getStrCorreoEvaluador(), sesion);
 
-                    if(obj!=null){
-                        objUsuario = (Usuario) obj;
-                        strNotificacionPer = strNotificacion;
-                        strNotificacionPer = strNotificacionPer.replace("#%DATO.PROYECTO", strProyecto);
-                        strNotificacionPer = strNotificacionPer.replace("#%DATO.MENSAJE", Utilitarios.formatearFecha(new Date(), Constantes.HH24_MI_DDMMYYYY));
-                        strNotificacionPer = strNotificacionPer.replace("#%USUARIO.MENSAJE", objRelacionEvaluadoEvaluador.getStrCorreoEvaluador());
-                        strNotificacionPer = strNotificacionPer.replace("#%CLAVE.MENSAJE", objEncryptDecrypt.decrypt(objUsuario.getUsTxContrasenia()));
-                        strNotificacionPer = strNotificacionPer.replace("#%DATO.CORREO", strEmailContacto);
+            for (Map.Entry<String,String> entry : mapCuentas.entrySet()){
 
-                        Notificaciones objNotificaciones = new Notificaciones();
-                        objNotificaciones.setNoFeCreacion(new Date());
-                        objNotificaciones.setNoIdEstado(Constantes.INT_ET_ESTADO_NOTIFICACION_PENDIENTE);
-                        objNotificaciones.setNoIdRefProceso(intIdProyecto);
-                        objNotificaciones.setNoIdTipoProceso(intIdMetodologia);
-                        objNotificaciones.setNoTxAsunto(objMensaje.getMeTxAsunto());
-                        objNotificaciones.setNoTxMensaje(Utilitarios.encodeUTF8(strNotificacionPer));
-                        objNotificaciones.setNoIdNotificacionPk((Integer) sesion.save(objNotificaciones));
+                obj = objUsuarioDAO.obtenUsuario(entry.getKey(), sesion);
 
-                        Destinatarios objDestinatarios = new Destinatarios();
-                        objDestinatarios.setDeTxMail(objRelacionEvaluadoEvaluador.getStrCorreoEvaluador());
-                        objDestinatarios.setNotificaciones(objNotificaciones);
+                if (obj != null) {
+                    objUsuario = (Usuario) obj;
+                    strNotificacionPer = strNotificacion;
 
-                        sesion.save(objDestinatarios);
+                    strNotificacionPer = strNotificacionPer.replace("$NOMBRE", entry.getValue());
+                    strNotificacionPer = strNotificacionPer.replace("$TIEMPO", Utilitarios.obtieneFechaSistema(Constantes.FORMAT_DATE_FULL));
+                    strNotificacionPer = strNotificacionPer.replace("$CUENTA", entry.getKey());
+                    strNotificacionPer = strNotificacionPer.replace("$CLAVE", objEncryptDecrypt.decrypt(objUsuario.getUsTxContrasenia()));
+                    strNotificacionPer = strNotificacionPer.replace("$URL", "http://www.jaio360-app.com");
+                    strNotificacionPer = strNotificacionPer.replace("$TITULO", Utilitarios.decodeUTF8(objMensaje.getMeTxConvocatoriaTitulo()));
+                    strNotificacionPer = strNotificacionPer.replace("$PARRAFO", Utilitarios.decodeUTF8(objMensaje.getMeTxConvocatoriaParrafo()));
 
-                    }else{
-                        tx.rollback();
-                        return false;
-                    }
+                    Notificaciones objNotificaciones = new Notificaciones();
+                    objNotificaciones.setNoFeCreacion(new Date());
+                    objNotificaciones.setNoIdEstado(Constantes.INT_ET_ESTADO_NOTIFICACION_PENDIENTE);
+                    objNotificaciones.setNoIdRefProceso(intIdProyecto);
+                    objNotificaciones.setNoIdTipoProceso(intIdMetodologia);
+                    objNotificaciones.setNoTxAsunto(objMensaje.getMeTxAsunto());
+                    objNotificaciones.setNoTxMensaje(Utilitarios.encodeUTF8(strNotificacionPer));
+                    objNotificaciones.setNoIdNotificacionPk((Integer) sesion.save(objNotificaciones));
+
+                    Destinatarios objDestinatarios = new Destinatarios();
+                    objDestinatarios.setDeTxMail(entry.getKey());
+                    objDestinatarios.setNotificaciones(objNotificaciones);
+
+                    sesion.save(objDestinatarios);
+
+                } else {
+                    tx.rollback();
+                    return false;
                 }
+
             }
-        
+
             tx.commit();
-            
-        } catch (HibernateException he) { 
+
+        } catch (HibernateException he) {
             tx.rollback();
             log.error(he);
             m = false;
         }
 
-        return m; 
-    } 
-    
-    
-    public boolean guardarmeComunicados(List <String> lstCorreosAdicionales) throws HibernateException, Exception { 
-        
-        iniciaOperacion();
-                
-        boolean m = true;
-        
-        Integer intIdProyecto       = Utilitarios.obtenerProyecto().getIntIdProyecto();
-        Integer intIdMetodologia    = Utilitarios.obtenerProyecto().getIntIdMetodologia();
-        
-        MensajeDAO objMensajeDAO = new MensajeDAO();
-        
-        try { 
-                    
-            Mensaje objMensaje = objMensajeDAO.obtenMensaje(intIdProyecto, Constantes.INT_ET_NOTIFICACION_CONVOCATORIA, sesion); 
+        return m;
+    }
 
-            if(objMensaje!=null){
-                byte[] bdata = objMensaje.getMeTxCuerpo();
-                String strNotificacion = Utilitarios.decodeUTF8(bdata);
+    public boolean guardarmeComunicados(List<String> lstCorreosAdicionales, String strPreviewConvocatoriaTemplate) throws HibernateException, Exception {
+
+        iniciaOperacion();
+
+        boolean m = true;
+
+        Integer intIdProyecto = Utilitarios.obtenerProyecto().getIntIdProyecto();
+        Integer intIdMetodologia = Utilitarios.obtenerProyecto().getIntIdMetodologia();
+
+        MensajeDAO objMensajeDAO = new MensajeDAO();
+
+        try {
+
+            Mensaje objMensaje = objMensajeDAO.obtenMensaje(intIdProyecto, Constantes.INT_ET_NOTIFICACION_CONVOCATORIA, sesion);
+
+            if (objMensaje != null) {
+
                 Notificaciones objNotificaciones = new Notificaciones();
                 objNotificaciones.setNoFeCreacion(new Date());
                 objNotificaciones.setNoIdEstado(Constantes.INT_ET_ESTADO_NOTIFICACION_PENDIENTE);
                 objNotificaciones.setNoIdRefProceso(intIdProyecto);
                 objNotificaciones.setNoIdTipoProceso(intIdMetodologia);
                 objNotificaciones.setNoTxAsunto(objMensaje.getMeTxAsunto());
-                objNotificaciones.setNoTxMensaje(Utilitarios.encodeUTF8(strNotificacion));     
+                objNotificaciones.setNoTxMensaje(Utilitarios.encodeUTF8(strPreviewConvocatoriaTemplate));
                 objNotificaciones.setNoIdNotificacionPk((Integer) sesion.save(objNotificaciones));
                 Destinatarios objDestinatarios = new Destinatarios();
                 objDestinatarios.setDeTxMail(Utilitarios.obtenerUsuario().getStrEmail());
                 objDestinatarios.setNotificaciones(objNotificaciones);
                 sesion.save(objDestinatarios);
-                
-                for(String strCorreo : lstCorreosAdicionales){
+
+                for (String strCorreo : lstCorreosAdicionales) {
                     objDestinatarios = new Destinatarios();
                     objDestinatarios.setDeTxMail(strCorreo);
                     objDestinatarios.setNotificaciones(objNotificaciones);
-                    sesion.save(objDestinatarios);                    
+                    sesion.save(objDestinatarios);
                 }
-                
-            }
 
+            }
+            /*
             objMensaje = objMensajeDAO.obtenMensaje(intIdProyecto, Constantes.INT_ET_NOTIFICACION_INSTRUCCIONES, sesion); 
 
             if(objMensaje!=null){
@@ -478,15 +482,16 @@ public class NotificacionesDAO implements Serializable{
                 }
                 
             }
+             */
 
             tx.commit();
 
-        } catch (HibernateException he) { 
+        } catch (HibernateException he) {
             log.error(he);
             m = false;
-        }    
-        
-        return m; 
-    } 
+        }
+
+        return m;
+    }
 
 }

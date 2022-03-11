@@ -16,8 +16,6 @@ public class validaCorreo implements Validator {
  
     private Pattern pattern;
   
-
-  
     public validaCorreo() {
         pattern = Pattern.compile(Constantes.EMAIL_PATTERN);
     }
@@ -25,11 +23,11 @@ public class validaCorreo implements Validator {
     @Override
     public void validate(FacesContext context, UIComponent component, Object value) throws ValidatorException {
         if(Utilitarios.esNuloOVacio(value)) {
-            throw new ValidatorException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error de validacion", "El correo electronico es requerido"));
+            throw new ValidatorException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Debe ingresar un correo electronico válido", null));
         }
          
         if(!pattern.matcher(value.toString().trim()).matches()) {
-            throw new ValidatorException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error de validacion", "No es un correo electronico"));
+            throw new ValidatorException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Debe ingresar un correo electronico válido", null));
         }
     }
     

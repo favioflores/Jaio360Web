@@ -76,7 +76,7 @@ public class ProyectoDAO implements Serializable
         
         try{ 
             iniciaOperacion(); 
-             
+             /*
             Query query1 = sesion.createSQLQuery("delete from detalle_metrica where ME_ID_METRICA_FK in ( select ME_ID_METRICA_PK from metrica where PO_ID_PROYECTO_FK = ? ) ");
             Query query2 = sesion.createSQLQuery("delete from metrica where PO_ID_PROYECTO_FK = ? ");
             Query query3 = sesion.createSQLQuery("delete from cuestionario_evaluado where PO_ID_PROYECTO_FK = ? ");
@@ -89,8 +89,10 @@ public class ProyectoDAO implements Serializable
             Query query10 = sesion.createSQLQuery("delete from cuestionario where PO_ID_PROYECTO_FK = ? ");
             Query query11 = sesion.createSQLQuery("delete from relacion where PO_ID_PROYECTO_FK = ? ");
             Query query12 = sesion.createSQLQuery("delete from parametro where PO_ID_PROYECTO_FK = ? ");
-            Query query13 = sesion.createSQLQuery("delete from proyecto where PO_ID_PROYECTO_PK = ? ");
+            */
+            Query query13 = sesion.createSQLQuery("update proyecto set PO_ID_ESTADO = 201 where PO_ID_PROYECTO_PK = ? ");
             
+            /*
             query1.setInteger(0, intIdProyecto);
             query2.setInteger(0, intIdProyecto);
             query3.setInteger(0, intIdProyecto);
@@ -103,9 +105,10 @@ public class ProyectoDAO implements Serializable
             query10.setInteger(0, intIdProyecto);
             query11.setInteger(0, intIdProyecto);
             query12.setInteger(0, intIdProyecto);
+            */
             query13.setInteger(0, intIdProyecto);
             
-            query1.executeUpdate();
+            /*query1.executeUpdate();
             query2.executeUpdate();
             query3.executeUpdate();
             query4.executeUpdate();
@@ -117,6 +120,7 @@ public class ProyectoDAO implements Serializable
             query10.executeUpdate();
             query11.executeUpdate();
             query12.executeUpdate();
+            */
             query13.executeUpdate();
             
             tx.commit(); 
@@ -183,7 +187,8 @@ public class ProyectoDAO implements Serializable
             
             String strCadena = " select p "
                              + " from Proyecto p "
-                             + " where p.usuario.usIdCuentaPk = ? ";
+                             + " where p.usuario.usIdCuentaPk = ? "
+                             + " and p.poIdEstado != ? ";
                                 
                             if(intIdProyecto != null) strCadena += " and poIdProyectoPk = ? ";
                             
@@ -219,6 +224,8 @@ public class ProyectoDAO implements Serializable
             Query query = sesion.createQuery(strCadena);
             int param = 0;
             query.setInteger(param++, intIdUsuario);
+            query.setInteger(param++, Constantes.INT_ET_ESTADO_PROYECTO_ELIMINADO);
+            
             if(intIdProyecto != null)
                 query.setInteger(param++, intIdProyecto);
             if(Utilitarios.noEsNuloOVacio(txtDescripcion))
@@ -292,7 +299,7 @@ public class ProyectoDAO implements Serializable
                                                 " po.PO_FE_REGISTRO, " +
                                                 " po.PO_FE_EJECUCION, " +
                                                 " po.PO_ID_METODOLOGIA, " +
-                                                " po.PO_TX_MOTIVO, pa.PA_TX_DESCRIPCION, cu.CU_TX_DESCRIPCION, cu.CU_ID_CUESTIONARIO_PK, pa.PA_ID_PARTICIPANTE_PK, pa.PA_TX_CORREO "+
+                                                " po.PO_TX_MOTIVO, pa.PA_TX_DESCRIPCION, cu.CU_TX_DESCRIPCION, cu.CU_ID_CUESTIONARIO_PK, pa.PA_ID_PARTICIPANTE_PK, pa.PA_TX_CORREO, RE_TX_DESCRIPCION, RE_ID_RELACION_FK "+
                                                 "   from red_evaluacion re,                                        "+
                                                 " 	   participante pa,                                            "+
                                                 " 	   relacion_participante rp,                                   "+
@@ -321,7 +328,7 @@ public class ProyectoDAO implements Serializable
                                                 " po.PO_FE_REGISTRO, " +
                                                 " po.PO_FE_EJECUCION, " +
                                                 " po.PO_ID_METODOLOGIA, " +
-                                                " po.PO_TX_MOTIVO, 'Autoevaluate', cu.CU_TX_DESCRIPCION, cu.CU_ID_CUESTIONARIO_PK, pa.PA_ID_PARTICIPANTE_PK, pa.PA_TX_CORREO "+
+                                                " po.PO_TX_MOTIVO, pa.PA_TX_DESCRIPCION, cu.CU_TX_DESCRIPCION, cu.CU_ID_CUESTIONARIO_PK, pa.PA_ID_PARTICIPANTE_PK, pa.PA_TX_CORREO, PA_TX_DESCRIPCION, NULL "+
                                                 "   from participante pa,                                          "+
                                                 " 	   proyecto po,                                                "+
                                                 "	   cuestionario_evaluado ce,                                   "+

@@ -32,27 +32,25 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.primefaces.context.RequestContext;
- 
- 
+import org.primefaces.PrimeFaces;
+
 /**
  *
  * @author Favio
  */
-
 @ManagedBean(name = "crearProyecto")
 @ViewScoped
-public class CrearProyecto implements Serializable{
-    
+public class CrearProyecto implements Serializable {
+
     private static Log log = LogFactory.getLog(CrearProyecto.class);
-    
+
     private static final long serialVersionUID = -1L;
-    
+
     private String strNombre;
     private String strDescripcion;
     private String strMetodologia;
     private List<SelectItem> lstMetodologias;
-    private String diaMin,diaMax;
+    private String diaMin, diaMax;
     private Date díasDisponibles;
 
     public String getDiaMin() {
@@ -78,7 +76,6 @@ public class CrearProyecto implements Serializable{
     public void setDíasDisponibles(Date díasDisponibles) {
         this.díasDisponibles = díasDisponibles;
     }
-
 
     public String getStrNombre() {
         return strNombre;
@@ -112,53 +109,58 @@ public class CrearProyecto implements Serializable{
     public void setLstMetodologias(List<SelectItem> lstMetodologias) {
         this.lstMetodologias = lstMetodologias;
     }
-  
+
     public void abrirPanel() {
-        
-        Map<String,Object> options = new HashMap();
-        options.put("modal", true);
+
+        Map<String, Object> options = new HashMap();
         options.put("resizable", false);
-        options.put("contentWidth", 520);
-         
-        RequestContext.getCurrentInstance().openDialog("crearProyecto", options, null);
+        options.put("modal", false);
+        options.put("draggable", false);
+        options.put("closable", true);
+        options.put("closeOnEscape", true);
+        options.put("responsive", true);
+        options.put("modal", true);
+        options.put("appendTo", true);
+        options.put("dynamic", true);
+
+        PrimeFaces.current().dialog().openDynamic("crearProyecto");
+
     }
-    
+
     public void proyectoCreado() {
-        
-        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Correcto", "El proyecto fue creado exitosamente");
-         
+
+        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "El proyecto fue creado exitosamente", null);
         FacesContext.getCurrentInstance().addMessage(null, message);
     }
 
     public void poblarMetodologias() {
 
         lstMetodologias = new ArrayList();
-        
+
         List<Elemento> lstElementos = EHCacheManager.obtenerElementosPorDefinicion(Constantes.INT_DT_METODOLOGIAS);
-        
+
         Iterator itLstElementos = lstElementos.iterator();
-        
-        while(itLstElementos.hasNext()){
-            Elemento objElemento = (Elemento) itLstElementos.next(); 
-            
+
+        while (itLstElementos.hasNext()) {
+            Elemento objElemento = (Elemento) itLstElementos.next();
+
             SelectItem objSelectItem = new SelectItem();
             objSelectItem.setValue(objElemento.getElIdElementoPk());
             objSelectItem.setLabel(objElemento.getElTxDescripcion());
-            
-            if(objElemento.getElIdElementoPk().equals(Constantes.INT_ET_ESTADO_TIPO_PROYECTO_ESCALA)){
+
+            if (objElemento.getElIdElementoPk().equals(Constantes.INT_ET_ESTADO_TIPO_PROYECTO_ESCALA)) {
                 lstMetodologias.add(objSelectItem);
             }
         }
-        
+
     }
-    
-    
+
     public void guardarProyecto(ActionEvent event) {
-        
-        try{
+
+        try {
             UsuarioSesion objUsuarioSesion = new UsuarioSesion();
             UsuarioInfo objUsuarioInfo = objUsuarioSesion.obtenerUsuarioInfo();
-            
+
             ProyectoDAO objProyectoDAO = new ProyectoDAO();
 
             Proyecto objProyecto = new Proyecto();
@@ -166,30 +168,38 @@ public class CrearProyecto implements Serializable{
             objProyecto.setPoTxDescripcion(this.strNombre);
             objProyecto.setPoFeRegistro(new Date());
             objProyecto.setPoIdEstado(Constantes.INT_ET_ESTADO_PROYECTO_REGISTRADO);
-            objProyecto.setPoIdMetodologia(Integer.parseInt(strMetodologia));
+            //objProyecto.setPoIdMetodologia(Integer.parseInt(strMetodologia));
+            objProyecto.setPoIdMetodologia(30);
             objProyecto.setPoTxMotivo(this.getStrDescripcion());
             objProyecto.setPoInOculto(Boolean.FALSE);
-            
+
             Usuario objUsuario = new Usuario();
             objUsuario.setUsIdCuentaPk(objUsuarioInfo.getIntUsuarioPk());
             objProyecto.setUsuario(objUsuario);
-            
+
             objProyectoDAO.guardaProyecto(objProyecto);
-            RequestContext.getCurrentInstance().closeDialog("crearProyecto");
+
+            strNombre = Constantes.strVacio;
+            strDescripcion = Constantes.strVacio;
+            strMetodologia = Constantes.strVacio;
+
+            //RequestContext.getCurrentInstance().closeDialog("crearProyecto");
+            //PrimeFaces.current().dialog().closeDynamic("crearProyecto");
+            //PrimeFaces.current().executeScript("PF('dlgCrearProyecto').hide();");
             
-           
-        }catch(Exception e){
+            proyectoCreado();
+            
+        } catch (Exception e) {
             log.error(e);
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,"Fallo!","Ocurrio un error al guardar el proyecto"));
-        }        
-        
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Fallo!", "Ocurrio un error al guardar el proyecto"));
+        }
+
     }
 
-    
     @PostConstruct
-    public void init(){
-        this.diaMin = Utilitarios.formatearFecha(Utilitarios.obtenerFechaHoraSistema(),Constantes.DDMMYYYY);
-        this.diaMax = Utilitarios.formatearFecha(Utilitarios.sumarRestarDiasFecha(Utilitarios.obtenerFechaHoraSistema(),60),Constantes.DDMMYYYY);
+    public void init() {
+        this.diaMin = Utilitarios.formatearFecha(Utilitarios.obtenerFechaHoraSistema(), Constantes.DDMMYYYY);
+        this.diaMax = Utilitarios.formatearFecha(Utilitarios.sumarRestarDiasFecha(Utilitarios.obtenerFechaHoraSistema(), 60), Constantes.DDMMYYYY);
     }
 
 }

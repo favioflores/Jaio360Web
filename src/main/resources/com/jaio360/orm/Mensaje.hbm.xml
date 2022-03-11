@@ -20,5 +20,23 @@
         <property name="meTxCuerpo" type="binary">
             <column name="ME_TX_CUERPO" />
         </property>
+        <property name="meTxConvocatoriaTitulo" type="binary">
+            <column name="ME_TX_CONVOCATORIA_TITULO" />
+        </property>
+        <property name="meTxConvocatoriaParrafo" type="binary">
+            <column name="ME_TX_CONVOCATORIA_PARRAFO" />
+        </property>
+        <property name="meTxBienvenidaRecomendacion" type="binary">
+            <column name="ME_TX_BIENVENIDA_RECOMENDACION" />
+        </property>
+        <property name="meTxBienvenidaConfidencialidad" type="binary">
+            <column name="ME_TX_BIENVENIDA_CONFIDENCIALIDAD" />
+        </property>
+        <property name="meTxBienvenidaAgradecimiento" type="binary">
+            <column name="ME_TX_BIENVENIDA_AGRADECIMIENTO" />
+        </property>
+        <property name="meTxAgradecimiento" type="binary">
+            <column name="ME_TX_AGRADECIMIENTO" />
+        </property>
     </class>
 </hibernate-mapping>

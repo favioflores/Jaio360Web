@@ -5,6 +5,7 @@
 package com.jaio360.domain;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Date;
 
 /**
@@ -22,7 +23,7 @@ public class ProyectoInfo implements Serializable{
     private String strDescEstado;
     private Integer intIdMetodologia;
     private String strDescMetodologia;
-    private Date dtFechaCreacion;
+    private LocalDate dtFechaCreacion;
     private Date dtFechaEjecucion;
     private Integer intIdCuestionario;
     private String strDescCuestionario;
@@ -34,6 +35,9 @@ public class ProyectoInfo implements Serializable{
     private String strCorreoEvaluado;
     private String strNombreEvaluado;
     private String strCorreoEvaluador;
+    private String strNombreEvaluador;
+    private String strRelacion;
+    private String strRelacionColor;
     
     /* Para lista de evaluaciones */
     private String strDescEvaluado;
@@ -46,6 +50,30 @@ public class ProyectoInfo implements Serializable{
         blInstrucciones = false;
         blAgradecimiento = false;
         boDefineArtificio = false;
+    }
+
+    public String getStrRelacion() {
+        return strRelacion;
+    }
+
+    public void setStrRelacion(String strRelacion) {
+        this.strRelacion = strRelacion;
+    }
+
+    public String getStrRelacionColor() {
+        return strRelacionColor;
+    }
+
+    public void setStrRelacionColor(String strRelacionColor) {
+        this.strRelacionColor = strRelacionColor;
+    }
+
+    public String getStrNombreEvaluador() {
+        return strNombreEvaluador;
+    }
+
+    public void setStrNombreEvaluador(String strNombreEvaluador) {
+        this.strNombreEvaluador = strNombreEvaluador;
     }
 
     public boolean isBoOculto() {
@@ -154,11 +182,11 @@ public class ProyectoInfo implements Serializable{
         this.strDescNombre = strDescNombre;
     }
 
-    public Date getDtFechaCreacion() {
+    public LocalDate  getDtFechaCreacion() {
         return dtFechaCreacion;
     }
 
-    public void setDtFechaCreacion(Date dtFechaCreacion) {
+    public void setDtFechaCreacion(LocalDate  dtFechaCreacion) {
         this.dtFechaCreacion = dtFechaCreacion;
     }
 

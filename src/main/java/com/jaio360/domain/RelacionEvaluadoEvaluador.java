@@ -17,6 +17,16 @@ public class RelacionEvaluadoEvaluador implements Serializable{
     private String strDescRelacion;
     private Boolean blEvaluacionTerminada;
     private Boolean blEnvioCorreo;
+    private String strColorRelacion;
+
+    public String getStrColorRelacion() {
+        return strColorRelacion;
+    }
+
+    public void setStrColorRelacion(String strColorRelacion) {
+        this.strColorRelacion = strColorRelacion;
+    }
+    
 
     public Boolean getBlEnvioCorreo() {
         return blEnvioCorreo;

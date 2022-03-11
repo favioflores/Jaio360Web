@@ -1,0 +1,433 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                template="../templates/templateWorkspace.xhtml">    
+
+    <ui:define name="head"> 
+    </ui:define>
+
+    <ui:define name="cabecera">
+        <ui:include src="cabecera.xhtml" />
+    </ui:define>
+    <ui:define name="helpSteps">
+
+        <h:form id="formPrincipalProyecto">
+
+            <div class="p-field">
+                <center>
+                    <!-- <p:commandButton value="Ocultar pasos de ayuda" type="submit" update="formPrincipalProyecto" icon="pi pi-info-circle"  /> -->
+                </center>
+                <p:steps readonly="false" activeIndex="#{stepTwoView.activeIndex}" >
+                    <p:menuitem value="Configurar base"         actionListener="#{stepTwoView.goToStep(1)}"/>
+                    <p:menuitem value="Cargar evaluación"       actionListener="#{stepTwoView.goToStep(2)}"/>
+                    <p:menuitem value="Asignar evaluaciones"    actionListener="#{stepTwoView.goToStep(3)}"/>
+                    <p:menuitem value="Preparar comunicados"       actionListener="#{stepTwoView.goToStep(4)}"/>
+                    <p:menuitem value="Ejecución"               actionListener="#{stepTwoView.goToStep(5)}"/>
+                </p:steps></div>
+            <p:spacer/>
+            <div class="p-field">
+                <center>
+                    <p:commandButton value="Regresar" type="submit" actionListener="#{stepTwoView.backStep()}" update="formPrincipalProyecto" styleClass="ui-button-secondary" icon="pi pi-angle-left" />
+                    <p:spacer/>
+                    <p:commandButton value="Siguiente" type="submit" actionListener="#{stepTwoView.nextStep()}" update="formPrincipalProyecto" styleClass="ui-button-secondary" icon="pi pi-angle-right" />                   
+                </center>
+            </div>
+
+        </h:form>   
+
+    </ui:define>
+
+    <ui:define name="content">
+        <p:panel>
+
+            <h:form id="formMetrica" >
+
+                <p:growl life="4000" showSummary="true" />
+
+                <p:card id="panelMetrica" >  
+
+                    <h3>Metrica de evaluación</h3>
+
+                    <div class="ui-fluid p-formgrid p-grid">
+
+                        <div class="p-field p-col-12 p-md-12">
+                            <p:outputLabel value="Seleccione el número de respuestas y edite las etiquetas que aparecerán en las evaluaciones." />
+                        </div>
+                    </div>
+                    <div class="ui-fluid p-formgrid p-grid">
+
+                        <div class="p-field p-col-12 p-md-4">
+                            <p:card id="cardMetricas" >
+
+                                <h4>Respuestas</h4>
+
+                                <p:outputLabel for="@next" value="Número de respuestas para las evaluaciones" />
+                                <p:spinner  id="rangos" value="#{crearCuestionarioView.intRangos}" 
+                                            max="#{crearCuestionarioView.intRangoMax}" 
+                                            min="#{crearCuestionarioView.intRangoMin}" 
+                                            disabled="#{crearCuestionarioView.intCantidadEjecutados>0?true:false}" required="true" >
+                                    <p:ajax process="@this" listener="#{crearCuestionarioView.guardarEscala}" update="formMetrica" /> 
+                                </p:spinner>
+
+                                <p:spacer/>
+
+                                <c:forEach var="counter" begin="1" end="#{crearCuestionarioView.intRangos}">
+                                    <div class="p-field">
+                                        <span class="ui-float-label">
+
+                                            <p:inputText required="true" label="aqui" value="#{crearCuestionarioView.strRptaDesc[counter-1]}" >
+                                                <p:ajax event="blur" listener="#{crearCuestionarioView.addMetrica(counter-1)}" update="formMetrica" />
+                                            </p:inputText>
+                                            <p:outputLabel for="@previous" value="Etiqueta de respuesta nro. #{counter}"/>
+                                        </span>
+                                    </div>        
+                                </c:forEach>
+
+                            </p:card>
+
+                        </div>
+
+                        <div class="p-field p-col-12 p-md-8">
+
+                            <p:card id="cardMetricasPreview" >
+
+                                <h4>Vista preliminar de respuestas</h4>
+
+                                <div class="p-field p-formgrid p-grid">
+
+                                    <div class="p-field p-col-12 p-md-12 p-text-center">
+                                        <p:outputLabel>
+                                            ¿Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.?
+                                        </p:outputLabel>
+                                    </div>
+
+                                    <div class="p-grid" style="text-align:center;margin: 0 auto" >
+                                        <c:forEach var="counter" begin="1" end="#{crearCuestionarioView.intRangos}">
+                                            <div class="p-col">
+                                                <p:button disabled="true" icon="pi pi-check" styleClass="#{crearCuestionarioView.strRptaDesc[counter-1]!=null?'rounded-button':'rounded-button ui-button-danger'}" />
+                                                <p:commandButton ajax="false" disabled="true" value="#{crearCuestionarioView.strRptaDesc[counter-1]!=null?crearCuestionarioView.strRptaDesc[counter-1]:'Sin definir'}" styleClass="#{crearCuestionarioView.strRptaDesc[counter-1]!=null?'ui-button-outlined':'ui-button-outlined ui-button-danger'}"  style=" height: 100px;" />
+                                            </div>
+                                        </c:forEach>
+
+                                    </div>
+                                </div>
+
+                            </p:card>
+
+                        </div>
+
+                    </div>
+                </p:card>
+
+            </h:form>
+
+            <p:spacer/>
+
+            <h:form id="formCuestionario" enctype="multipart/form-data" >
+
+                <p:growl life="4000" showSummary="true" />
+
+                <p:card id="panelCuestionarios" >  
+
+                    <h3>Carga de cuestionarios</h3>
+
+                    <div class="ui-fluid p-formgrid p-grid">
+
+                        <div class="p-field p-col-12 p-md-12">
+                            <p:outputLabel value="Importa tu cuestionario a través del archivo Excel. En caso requieras ayuda, descarga el material de apoyo." />
+                        </div>
+
+                    </div>
+                    <div class="ui-fluid p-formgrid p-grid">
+
+                        <div class="p-field p-col-12 p-md-6">
+                            <p:card>
+                                <f:facet name="title">
+                                    Subir archivo
+                                </f:facet>
+                                <div class="p-field">
+
+                                    <p:fileUpload widgetVar="archivoMasivoEvaluado" value="#{importarCuestionariosView.inputFile}" 
+                                                  mode="simple"
+                                                  skinSimple="true"
+                                                  dragDropSupport="false" 
+                                                  multiple="false" 
+                                                  sizeLimit="2000000" 
+                                                  allowTypes="/(\.|\/)(xls)$/"
+                                                  label="Buscar archivo" 
+                                                  disabled="#{importarCuestionariosView.blExistPrevImport or importarCuestionariosView.intIdEstadoProyecto==37}" />
+                                </div>
+                                <div class="p-field">
+                                    <p:commandButton id="btnUploadFile" value="Subir archivo" ajax="true" 
+                                                     actionListener="#{importarCuestionariosView.cargaCuestionarios}" 
+                                                     disabled="#{importarCuestionariosView.blExistPrevImport or importarCuestionariosView.intIdEstadoProyecto==37}" 
+                                                     icon="pi pi-upload" update="formCuestionario" />
+                                </div>
+                            </p:card>
+                        </div>
+                        <div class="p-field p-col-12 p-md-6">
+                            <p:card>
+                                <f:facet name="title">
+                                    Material de apoyo
+                                </f:facet>
+                                <div class="p-field">
+                                    <p:commandButton value="Descargar formato en EXCEL" ajax="false" icon="pi pi-download" styleClass="ui-button-warning" disabled="#{importarCuestionariosView.intIdEstadoProyecto==37}" >
+                                        <p:fileDownload value="#{importarCuestionariosView.fileImport}" />
+                                    </p:commandButton>
+                                </div>
+                                <div class="p-field">
+                                    <p:commandButton value="Guía de uso" immediate="true" ajax="false" icon="pi pi-download" styleClass="ui-button-warning"  >
+                                        <p:fileDownload value="#{importarCuestionariosView.fileImport}" />
+                                    </p:commandButton>
+                                </div>
+                            </p:card>
+                        </div>
+
+                    </div>
+                    <div class="ui-fluid p-formgrid p-grid">
+
+                        <c:if test="#{importarCuestionariosView.lstErrores.size()>0}">
+                            <p:spacer/>
+                            <div class="p-field p-col-12 p-md-12">
+                                <p:card rendered="#{importarCuestionariosView.lstErrores.size()>0}">
+                                    <p:staticMessage severity="error" summary="ERROR" detail="Debes corregir los errores de la siguiente lista para que se muetren los cuestionarios a crear" style="width: 100%"/>
+                                    <p:spacer/>
+
+                                    <p:dataTable 
+                                        id="tblLstErrores"
+                                        widgetVar="tblLstErrores"
+                                        rows="10"
+                                        paginator="true" 
+                                        stickyHeader="true" stickyTopAt=".layout-topbar"
+                                        var="err"
+                                        stripedRows="true"
+                                        value="#{importarCuestionariosView.lstErrores}"
+                                        paginatorPosition="bottom"
+                                        paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                        currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords}"
+                                        emptyMessage="No se encontró ningun registro"
+                                        rowIndexVar="index">
+
+                                        <f:facet name="header">
+                                            Lista de errores encontrados
+                                        </f:facet>  
+
+                                        <f:facet name="footer">
+                                            Se han encontrado en total #{importarCuestionariosView.lstErrores.size()} error(res).
+                                        </f:facet>
+
+                                        <p:column style="width: 60px;">
+                                            <f:facet name="header">
+                                                <h:outputText value="#" />
+                                            </f:facet>
+                                            <h:outputText 
+                                                value="#{index + 1}" />
+                                        </p:column> 
+
+                                        <p:column headerText="Descripcion" >
+                                            <h:outputText value="#{err.strDesc}"/>
+                                        </p:column> 
+                                        <p:column headerText="Cuestionario" >
+                                            <h:outputText value="#{err.strCues}"/>
+                                        </p:column>
+                                        <p:column headerText="Linea" >
+                                            <h:outputText value="#{err.strLinea}"/>
+                                        </p:column>
+                                        <p:column>
+                                            <p:tag value="POR FAVOR RESOLVER" severity="danger" />
+                                        </p:column>
+
+                                    </p:dataTable>
+                                </p:card>
+                            </div>
+                        </c:if>
+
+                    </div>
+
+
+                    <div class="ui-fluid p-formgrid p-grid">
+                        <c:if test="#{importarCuestionariosView.lstCuestionariosImportados.size()>0}">
+
+                            <div class="p-field p-col-12 p-md-5">
+
+                                <p:card rendered="#{importarCuestionariosView.lstCuestionariosImportados.size()>0}">
+
+                                    <p:dataTable 
+                                        id="tblLstCuestionariosImportados"
+                                        widgetVar="tblLstCuestionariosImportados"
+                                        rows="10"
+                                        rowIndexVar="index"
+                                        paginator="true" 
+                                        var="cue"
+                                        stripedRows="true"
+                                        size="small"
+                                        value="#{importarCuestionariosView.lstCuestionariosImportados}"
+                                        stickyHeader="true" stickyTopAt=".layout-topbar"
+                                        paginatorPosition="bottom"
+                                        paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                        currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords}"
+                                        emptyMessage="No se encontró ningun registro" >
+
+                                        <f:facet name="header">
+                                            <p:outputLabel value="Lista de cuestionarios" />
+                                        </f:facet>
+                                        <f:facet name="footer">
+                                            En total tiene(s) #{importarCuestionariosView.lstCuestionariosImportados.size()} cuestionario(s).
+                                        </f:facet>
+
+                                        <p:column style="width: 60px;">
+                                            <f:facet name="header">
+                                                <h:outputText value="#" />
+                                            </f:facet>
+                                            <h:outputText 
+                                                value="#{index + 1}" />
+                                        </p:column>
+                                        <p:column headerText="Nombre del cuestionario" >
+                                            <h:outputText value="#{cue.strDescCuestionario}" />
+                                        </p:column> 
+                                        <p:column style="width: 100px;" headerText="Ver contenido" >
+                                            <p:commandButton icon="pi pi-eye" update="@form" styleClass="rounded-button ui-button-outlined"  actionListener="#{importarCuestionariosView.verElementos(cue.idCuestionario)}" />
+                                        </p:column> 
+
+                                    </p:dataTable>
+
+                                </p:card>
+                            </div>
+
+                            <div class="p-field p-col-12 p-md-7">
+
+                                <p:card rendered="#{importarCuestionariosView.lstElementosDelCuestionarios.size()>0}">
+
+                                    <p:dataTable 
+                                        rendered="#{importarCuestionariosView.lstElementosDelCuestionarios!=null}"
+                                        id="tblCuestionarioImportado"
+                                        widgetVar="tblCuestionarioImportado"
+                                        value="#{importarCuestionariosView.lstElementosDelCuestionarios}" 
+                                        rows="50"
+                                        var="cuesprev"
+                                        paginator="true" 
+                                        stripedRows="true"
+                                        size="small"
+                                        rowIndexVar="index"
+                                        stickyHeader="true" stickyTopAt=".layout-topbar"
+                                        paginatorPosition="bottom"
+                                        paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                        currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords}"                                    
+                                        emptyMessage="No se encontró ningun elemento " >                 
+
+                                        <f:facet name="header">
+                                            <p:outputLabel value="Lista de elementos del cuestionario #{importarCuestionariosView.strCuestionario}" style="text-align: left;" />
+                                        </f:facet>  
+
+                                        <p:column headerText="Tipo elemento" groupRow="true" style="width: 150px;" >
+                                            <p:button value="#{cuesprev.strDato1}" style="height: 100%;" styleClass="ui-button-#{cuesprev.strDato3}" disabled="true" />
+                                        </p:column>
+
+                                        <p:column style="width: 60px;">
+                                            <f:facet name="header">
+                                                <h:outputText value="#" />
+                                            </f:facet>
+                                            <h:outputText 
+                                                value="#{index + 1}" />
+                                        </p:column> 
+
+                                        <p:column headerText="Descripción" >
+                                            <h:outputText value="#{cuesprev.strDato2}" />
+                                        </p:column>
+
+                                    </p:dataTable>
+
+
+                                </p:card>
+
+                                <p:card rendered="#{importarCuestionariosView.lstElementoCuestionario.size()>0}">
+
+                                    <p:dataTable 
+                                        rendered="#{importarCuestionariosView.lstElementoCuestionario!=null}"
+                                        id="lstElementoCuestionario"
+                                        var="cues"
+                                        widgetVar="lstElementoCuestionario"
+                                        value="#{importarCuestionariosView.lstElementoCuestionario}" 
+                                        rows="50"
+                                        paginator="true" 
+                                        size="small"
+                                        stripedRows="true"
+                                        rowIndexVar="index"
+                                        stickyHeader="true" stickyTopAt=".layout-topbar"
+                                        paginatorPosition="bottom"
+                                        paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                        currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords}"                                    
+                                        emptyMessage="No se encontró ningun elemento" >                 
+
+                                        <f:facet name="header">
+                                            <p:outputLabel value="Lista de elementos del cuestionario #{importarCuestionariosView.strCuestionario}" style="text-align: left;" />
+                                        </f:facet>  
+
+                                        <p:column headerText="Tipo elemento" groupRow="true" style="width: 150px;" >
+                                            <p:button value="#{cues.strTipo}" style="height: 100%;" styleClass="ui-button-#{cues.strColor}" disabled="true" />
+                                        </p:column>
+
+
+                                        <p:column style="width: 60px;">
+                                            <f:facet name="header">
+                                                <h:outputText value="#" />
+                                            </f:facet>
+                                            <h:outputText 
+                                                value="#{index + 1}" />
+                                        </p:column> 
+
+                                        <p:column headerText="Descripción" >
+                                            <h:outputText value="#{cues.strDescripción}" />
+                                        </p:column>
+
+                                    </p:dataTable>
+
+                                </p:card>
+
+                            </div>
+                        </c:if>
+
+                    </div>
+
+                    <c:if test="#{!importarCuestionariosView.blExistPrevImport and importarCuestionariosView.lstCuestionariosImportados.size()>0}">
+                        <div class="ui-fluid p-formgrid p-grid">
+                            <div class="p-field p-col-12 p-md-12">
+                                <p:commandButton value="Guardar cuestionarios"
+                                                 icon="pi pi-save" 
+                                                 type="submit"
+                                                 update="@form"
+                                                 immediate="true"
+                                                 disabled="#{importarCuestionariosView.blExistPrevImport}" 
+                                                 actionListener="#{importarCuestionariosView.guardarImportacion}"  /> 
+                            </div>
+                        </div>
+                    </c:if>
+
+                    <c:if test="#{importarCuestionariosView.blExistPrevImport and importarCuestionariosView.lstCuestionariosImportados.size()>0}">
+                        <div class="ui-fluid p-formgrid p-grid">
+                            <div class="p-field p-col-12 p-md-12">
+                                <p:commandButton value="Eliminar cuestionarios"
+                                                 type="submit"
+                                                 immediate="true"
+                                                 update="@form"
+                                                 rendered="#{!(importarCuestionariosView.blExistPrevImport) or !(evaluadosView.intIdEstadoProyecto == 37 or evaluadosView.intIdEstadoProyecto == 34)}"
+                                                 disabled="#{!(importarCuestionariosView.blExistPrevImport) or !(evaluadosView.intIdEstadoProyecto == 37 or evaluadosView.intIdEstadoProyecto == 34)}" 
+                                                 actionListener="#{importarCuestionariosView.eliminarCuestionario()}" 
+                                                 styleClass="ui-button-danger"
+                                                 icon="pi pi-times" /> 
+                            </div>
+                        </div>
+                    </c:if>
+
+
+
+                </p:card>
+
+            </h:form>
+
+        </p:panel>
+    </ui:define>
+</ui:composition>

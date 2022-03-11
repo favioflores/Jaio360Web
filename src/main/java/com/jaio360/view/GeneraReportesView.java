@@ -90,8 +90,14 @@ public class GeneraReportesView implements Serializable{
         
         File objFile = new File(fullPath);
         InputStream stream = new FileInputStream(objFile.getAbsolutePath());
-        planAccion = new DefaultStreamedContent(stream, "application/doc", "PlanDeAccion.doc");
+        //planAccion = new DefaultStreamedContent(stream, "application/doc", "PlanDeAccion.doc");
         
+        planAccion = DefaultStreamedContent.builder()
+        .name("PlanDeAccion.doc")
+        .contentType("application/doc")
+        .stream(() -> FacesContext.getCurrentInstance().getExternalContext().getResourceAsStream(objFile.getAbsolutePath()))
+        .build();
+
         } catch (FileNotFoundException ex) {
             log.error(ex);
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_FATAL, "Plan de accion", "No existe el documento. Por favor contactese con el administrador");
@@ -482,8 +488,14 @@ public class GeneraReportesView implements Serializable{
 
                     if(flag){
                         log.debug("Archivo zipeado correctamente");
-                        InputStream stream = new FileInputStream(objFile.getAbsolutePath());
-                        fileGrupal = new DefaultStreamedContent(stream, "application/zip", ZipName);
+                        //InputStream stream = new FileInputStream(objFile.getAbsolutePath());
+                        //fileGrupal = new DefaultStreamedContent(stream, "application/zip", ZipName);
+
+                        fileGrupal = DefaultStreamedContent.builder()
+                        .name(ZipName)
+                        .contentType("application/zip")
+                        .stream(() -> FacesContext.getCurrentInstance().getExternalContext().getResourceAsStream(objFile.getAbsolutePath()))
+                        .build();
 
                     }else{
                         log.debug("Error al zipear archivo");
@@ -905,8 +917,14 @@ public class GeneraReportesView implements Serializable{
 
                     if(flag){
                         log.debug("Archivo zipeado correctamente");
-                        InputStream stream = new FileInputStream(objFile.getAbsolutePath());
-                        fileIndividual = new DefaultStreamedContent(stream, "application/zip", ZipName);
+                        //InputStream stream = new FileInputStream(objFile.getAbsolutePath());
+                        //fileIndividual = new DefaultStreamedContent().getStream().stream, "application/zip");
+                        
+                        fileIndividual = DefaultStreamedContent.builder()
+                        .name(ZipName)
+                        .contentType("application/zip")
+                        .stream(() -> FacesContext.getCurrentInstance().getExternalContext().getResourceAsStream(objFile.getAbsolutePath()))
+                        .build();
 
                     }else{
                         log.debug("Error al zipear archivo");

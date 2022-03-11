@@ -1,20 +1,23 @@
 package com.jaio360.view;
 
+import com.jaio360.application.EHCacheManager;
 import com.jaio360.dao.CuestionarioDAO;
 import com.jaio360.dao.ProyectoDAO;
+import com.jaio360.dao.ComponenteDAO;
 import com.jaio360.domain.Categorias;
+import com.jaio360.domain.CuestionarioBean;
 import com.jaio360.domain.CuestionarioImportado;
 import com.jaio360.domain.DosDatos;
+import com.jaio360.domain.ElementoCuestionario;
 import com.jaio360.domain.ErrorBean;
+import com.jaio360.orm.Componente;
+import com.jaio360.orm.Cuestionario;
 import com.jaio360.orm.Proyecto;
 import com.jaio360.utils.Constantes;
 import com.jaio360.utils.Utilitarios;
 import com.jaio360.validator.validaTextoIngresado;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -31,45 +34,66 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
-import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
-import org.primefaces.model.UploadedFile;
+import org.primefaces.model.file.UploadedFile;
 
 @ManagedBean(name = "importarCuestionariosView")
 @ViewScoped
-public class importarCuestionariosView implements Serializable{
+public class importarCuestionariosView implements Serializable {
 
     private static Log log = LogFactory.getLog(importarCuestionariosView.class);
-    
+
     private Integer idCuestionario;
     private String strCuestionario;
     private List<ErrorBean> lstErrores;
     private List<CuestionarioImportado> lstCuestionariosImportados;
     private List<DosDatos> lstElementosDelCuestionarios;
+    private List<ElementoCuestionario> lstElementoCuestionario;
     private UploadedFile inputFile;
     private boolean processOk;
+    private boolean blExistPrevImport;
     private StreamedContent fileImport;
     private Integer intIdEstadoProyecto;
 
     public StreamedContent getFileImport() {
         try {
-            
-        ServletContext servletContext = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
-        
-        String fullPath = servletContext.getRealPath(File.separator + "WEB-INF" + File.separator + "resources" + File.separator + "ModeloDeImportacionCuestionario.xls");
-            
-        File objFile = new File(fullPath);
-        InputStream stream = new FileInputStream(objFile.getAbsolutePath());
-        fileImport = new DefaultStreamedContent(stream, "application/xls", "ModeloDeImportacionCuestionario.xls");
-        
-        } catch (FileNotFoundException ex) {
+
+            ServletContext servletContext = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
+
+            String fullPath = servletContext.getRealPath(File.separator + "WEB-INF" + File.separator + "resources" + File.separator + "ModeloDeImportacionCuestionario.xls");
+
+            File objFile = new File(fullPath);
+
+            fileImport = DefaultStreamedContent.builder()
+                    .name("ModeloDeImportacionCuestionario.xls")
+                    .contentType("application/vnd.ms-excel")
+                    .stream(() -> FacesContext.getCurrentInstance().getExternalContext().getResourceAsStream(File.separator + "WEB-INF" + File.separator + "resources" + File.separator + "ModeloDeImportacionCuestionario.xls"))
+                    .build();
+
+        } catch (Exception ex) {
             log.error(ex);
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_FATAL, "Modelo de importación de cuestionario", "No existe el documento. Por favor contactese con el administrador");
             FacesContext.getCurrentInstance().addMessage(null, message);
         }
 
         return fileImport;
+    }
+
+    public boolean isBlExistPrevImport() {
+        return blExistPrevImport;
+    }
+
+    public void setBlExistPrevImport(boolean blExistPrevImport) {
+        this.blExistPrevImport = blExistPrevImport;
+    }
+
+    public List<ElementoCuestionario> getLstElementoCuestionario() {
+        return lstElementoCuestionario;
+    }
+
+    public void setLstElementoCuestionario(List<ElementoCuestionario> lstElementoCuestionario) {
+        this.lstElementoCuestionario = lstElementoCuestionario;
     }
 
     public Integer getIntIdEstadoProyecto() {
@@ -92,46 +116,54 @@ public class importarCuestionariosView implements Serializable{
         this.strCuestionario = strCuestionario;
     }
 
-    
     public boolean isProcessOk() {
         return processOk;
     }
+
     public void setProcessOk(boolean processOk) {
         this.processOk = processOk;
     }
+
     public UploadedFile getInputFile() {
         return inputFile;
     }
+
     public void setInputFile(UploadedFile inputFile) {
         this.inputFile = inputFile;
     }
+
     public Integer getIdCuestionario() {
         return idCuestionario;
     }
+
     public void setIdCuestionario(Integer idCuestionario) {
         this.idCuestionario = idCuestionario;
     }
+
     public List<ErrorBean> getLstErrores() {
         return lstErrores;
     }
+
     public void setLstErrores(List<ErrorBean> lstErrores) {
         this.lstErrores = lstErrores;
     }
+
     public List<CuestionarioImportado> getLstCuestionariosImportados() {
         return lstCuestionariosImportados;
     }
+
     public void setLstCuestionariosImportados(List<CuestionarioImportado> lstCuestionariosImportados) {
         this.lstCuestionariosImportados = lstCuestionariosImportados;
     }
+
     public List<DosDatos> getLstElementosDelCuestionarios() {
         return lstElementosDelCuestionarios;
     }
+
     public void setLstElementosDelCuestionarios(List<DosDatos> lstElementosDelCuestionarios) {
         this.lstElementosDelCuestionarios = lstElementosDelCuestionarios;
     }
 
-
-    
     @PostConstruct
     public void init() {
         this.lstErrores = new ArrayList<>();
@@ -141,15 +173,18 @@ public class importarCuestionariosView implements Serializable{
         this.strCuestionario = null;
         this.inputFile = null;
         this.processOk = false;
+        this.blExistPrevImport = false;
 
         ProyectoDAO objProyectoDAO = new ProyectoDAO();
         Proyecto objProyecto = objProyectoDAO.obtenProyecto(Utilitarios.obtenerProyecto().getIntIdProyecto());
 
         this.intIdEstadoProyecto = objProyecto.getPoIdEstado();
 
+        loadCuestionarios();
+
     }
-    
-    public void irCrearCuestionarios(){
+
+    public void irCrearCuestionarios() {
         try {
             HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
             session.removeAttribute("importarCuestionario");
@@ -158,136 +193,136 @@ public class importarCuestionariosView implements Serializable{
             log.error(ex);
         }
     }
-    
-    public void cargaCuestionarios(FileUploadEvent event){
-        FacesContext context = FacesContext.getCurrentInstance();
+
+    public void cargaCuestionarios() {
+
+        FacesMessage message;
+
         this.lstCuestionariosImportados = new ArrayList<>();
         this.lstElementosDelCuestionarios = new ArrayList<>();
+        this.lstElementoCuestionario = new ArrayList();
         this.lstErrores = new ArrayList<>();
-        if (event.getFile() == null) {
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,"Carga masiva", "Archivo " + event.getFile().getFileName() + " esta vacio"));
-        }else{
-            
+
+        if (inputFile == null) {
+            message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Debe buscar un archivo primero", "");
+        } else {
+
             HSSFWorkbook xlsAvanzado;
-            
+
             try {
-                xlsAvanzado = new HSSFWorkbook(event.getFile().getInputstream());
+                xlsAvanzado = new HSSFWorkbook(inputFile.getInputStream());
 
                 lstErrores = validaContenido(xlsAvanzado);
 
-                if(lstErrores.isEmpty()){
+                if (lstErrores.isEmpty()) {
                     procesaArchivo(xlsAvanzado);
-                    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Importar cuestionario", "Archivo leido exitosamente.");
-                    FacesContext.getCurrentInstance().addMessage(null, message);        
-                    message = new FacesMessage(FacesMessage.SEVERITY_WARN, "Importar cuestionario", "No te olvides de presionar \"Guardar importación\"");
-                    FacesContext.getCurrentInstance().addMessage(null, message);
+                    message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Archivo cargado correctamente.", null);
                     processOk = true;
+                } else {
+                    message = new FacesMessage(FacesMessage.SEVERITY_FATAL, "Archivo contiene errores.", null);
                 }
-                            
+
             } catch (IOException ex) {
                 log.error(ex);
+                message = new FacesMessage(FacesMessage.SEVERITY_FATAL, "Ocurrió un error al cargar el archivo", null);
             }
-            
+
         }
 
-    }    
-    
+        FacesContext.getCurrentInstance().addMessage(null, message);
+
+    }
+
     private List<ErrorBean> validaContenido(HSSFWorkbook xlsAvanzado) {
-    
+
         validaTextoIngresado PatterTexto = new validaTextoIngresado();
-                
+
         HSSFSheet sheet = xlsAvanzado.getSheetAt(0);
         Iterator<Row> rowElementos = sheet.iterator();
 
         int contador = 0;
-        
+
         boolean cuestionarioEncontrado = false;
-        
-        boolean categoriaEncontrada = false;
+
         boolean primeraCategoria = false;
-        
-        String strCuestTemp;
-        
+
         while (rowElementos.hasNext()) {
             Row row = rowElementos.next();
-            
+
             String strTipo = Utilitarios.obtieneDatoCelda(row, 0);
             String strElemento = Utilitarios.obtieneDatoCelda(row, 1);
-            
-            if(Utilitarios.noEsNuloOVacio(strTipo) && Utilitarios.noEsNuloOVacio(strElemento)){
-                if(contador==0){
+
+            if (Utilitarios.noEsNuloOVacio(strTipo) && Utilitarios.noEsNuloOVacio(strElemento)) {
+                if (contador == 0) {
                     cuestionarioEncontrado = true;
                 }
-                
-                if(strTipo.equals(Constantes.LINEA_CUESTIONARIO)){
+
+                if (strTipo.equals(Constantes.LINEA_CUESTIONARIO)) {
                     primeraCategoria = true;
                 }
-                
-                if(primeraCategoria == true){
-                
-                    if(strTipo.equals(Constantes.LINEA_PREGUNTA_CERRADA)){
-                        lstErrores.add(new ErrorBean((row.getRowNum()+1), "Esta pregunta cerrada no esta dentro de una categoria", null, (row.getRowNum()+1)+""));
-                    }else{
+
+                if (primeraCategoria == true) {
+
+                    if (strTipo.equals(Constantes.LINEA_PREGUNTA_CERRADA)) {
+                        lstErrores.add(new ErrorBean((row.getRowNum() + 1), "Esta pregunta cerrada no esta dentro de una categoria", null, (row.getRowNum() + 1) + ""));
+                    } else {
                         primeraCategoria = false;
                     }
-                    
+
                 }
 
-                if(strTipo.equals(Constantes.LINEA_CUESTIONARIO) ||
-                   strTipo.equals(Constantes.LINEA_CATEGORIA) ||
-                   strTipo.equals(Constantes.LINEA_PREGUNTA_CERRADA) ||
-                   strTipo.equals(Constantes.LINEA_COMENTARIO) ||
-                   strTipo.equals(Constantes.LINEA_PREGUNTA_ABIERTA)){
-                
-                }else{
+                if (strTipo.equals(Constantes.LINEA_CUESTIONARIO)
+                        || strTipo.equals(Constantes.LINEA_CATEGORIA)
+                        || strTipo.equals(Constantes.LINEA_PREGUNTA_CERRADA)
+                        || strTipo.equals(Constantes.LINEA_COMENTARIO)
+                        || strTipo.equals(Constantes.LINEA_PREGUNTA_ABIERTA)) {
 
-                    lstErrores.add(new ErrorBean((row.getRowNum()+1), "Tipo desconocido", null, (row.getRowNum()+1)+""));
+                } else {
+
+                    lstErrores.add(new ErrorBean((row.getRowNum() + 1), "Tipo de linea desconocida", null, "A" + (row.getRowNum() + 1) + ""));
 
                 }
 
                 String validaDescripcion = PatterTexto.validar(strElemento);
 
-                if(!Utilitarios.esNuloOVacio(validaDescripcion)){
-                    lstErrores.add(new ErrorBean((row.getRowNum()+1) , "Descripcion de elemento inválido, asegurate de que no sea vacio o tenga algún digito especial", null, (row.getRowNum()+1)+""));
-                } 
+                if (!Utilitarios.esNuloOVacio(validaDescripcion)) {
+                    lstErrores.add(new ErrorBean((row.getRowNum() + 1), "Descripcion de elemento inválido, asegurate de que no sea vacio o tenga algún digito especial", null, (row.getRowNum() + 1) + ""));
+                }
 
-                if( strTipo.equals(Constantes.LINEA_CATEGORIA)||
-                    strTipo.equals(Constantes.LINEA_PREGUNTA_CERRADA)||
-                    strTipo.equals(Constantes.LINEA_COMENTARIO)||
-                    strTipo.equals(Constantes.LINEA_PREGUNTA_ABIERTA)){
+                if (strTipo.equals(Constantes.LINEA_CATEGORIA)
+                        || strTipo.equals(Constantes.LINEA_PREGUNTA_CERRADA)
+                        || strTipo.equals(Constantes.LINEA_COMENTARIO)
+                        || strTipo.equals(Constantes.LINEA_PREGUNTA_ABIERTA)) {
 
-                    if(cuestionarioEncontrado==false){
+                    if (cuestionarioEncontrado == false) {
                         cuestionarioEncontrado = true;
-                        lstErrores.add(new ErrorBean((row.getRowNum()+1), "Debes colocar al menos un cuestionario en la primera fila", null, "1"));
+                        lstErrores.add(new ErrorBean((row.getRowNum() + 1), "Debes colocar al menos un cuestionario en la primera fila", null, "1"));
                     }
                 }
-                
 
-                
-                
-            }else{
-            
-                if(Utilitarios.noEsNuloOVacio(strTipo) || Utilitarios.noEsNuloOVacio(strElemento)){
-                    
-                    if(Utilitarios.noEsNuloOVacio(strTipo)){
-                        lstErrores.add(new ErrorBean((row.getRowNum()+1), "No se especificó el tipo del elemento", null, (row.getRowNum()+1) + ""));
-                    }else{
-                        lstErrores.add(new ErrorBean((row.getRowNum()+1), "No se especificó una descripción para el elemento del cuestionario", null, (row.getRowNum()+1) + ""));
+            } else {
+
+                if (Utilitarios.noEsNuloOVacio(strTipo) || Utilitarios.noEsNuloOVacio(strElemento)) {
+
+                    if (Utilitarios.noEsNuloOVacio(strTipo)) {
+                        lstErrores.add(new ErrorBean((row.getRowNum() + 1), "No se especificó el tipo del elemento", null, "A" + (row.getRowNum() + 1) + ""));
+                    } else {
+                        lstErrores.add(new ErrorBean((row.getRowNum() + 1), "No se especificó una descripción para el elemento del cuestionario", null, "B" + (row.getRowNum() + 1) + ""));
                     }
-                
+
                 }
-            
+
             }
-                
+
             contador++;
         }
         return lstErrores;
     }
 
     private void procesaArchivo(HSSFWorkbook xlsAvanzado) {
-        
-        try{
-            
+
+        try {
+
             HSSFSheet sheet = xlsAvanzado.getSheetAt(0);
             Iterator<Row> rowElementos = sheet.iterator();
             String key = null;
@@ -302,10 +337,10 @@ public class importarCuestionariosView implements Serializable{
                 String strTipo = Utilitarios.obtieneDatoCelda(row, 0);
                 String strElemento = Utilitarios.obtieneDatoCelda(row, 1);
 
-                if(Utilitarios.noEsNuloOVacio(strTipo) && Utilitarios.noEsNuloOVacio(strElemento)){
+                if (Utilitarios.noEsNuloOVacio(strTipo) && Utilitarios.noEsNuloOVacio(strElemento)) {
 
-                    if(strTipo.equals(Constantes.LINEA_CUESTIONARIO)){
-                        if(objCuestionarioImportado!=null){
+                    if (strTipo.equals(Constantes.LINEA_CUESTIONARIO)) {
+                        if (objCuestionarioImportado != null) {
                             lstCuestionariosImportados.add(objCuestionarioImportado);
                         }
                         objCuestionarioImportado = new CuestionarioImportado();
@@ -318,20 +353,20 @@ public class importarCuestionariosView implements Serializable{
 
                     }
 
-                    if(strTipo.equals(Constantes.LINEA_COMENTARIO)){
+                    if (strTipo.equals(Constantes.LINEA_COMENTARIO)) {
                         objCuestionarioImportado.getLstComentarios().add(strElemento);
                     }
 
-                    if(strTipo.equals(Constantes.LINEA_PREGUNTA_ABIERTA)){
+                    if (strTipo.equals(Constantes.LINEA_PREGUNTA_ABIERTA)) {
                         objCuestionarioImportado.getLstPreguntasAbiertas().add(strElemento);
                     }
 
-                    if(strTipo.equals(Constantes.LINEA_CATEGORIA)){
-                        objCuestionarioImportado.getLstCategorias().add(new Categorias(strElemento,new ArrayList<String>()));
-                        objCategorias = objCuestionarioImportado.getLstCategorias().get(objCuestionarioImportado.getLstCategorias().size()-1);
+                    if (strTipo.equals(Constantes.LINEA_CATEGORIA)) {
+                        objCuestionarioImportado.getLstCategorias().add(new Categorias(strElemento, new ArrayList<String>()));
+                        objCategorias = objCuestionarioImportado.getLstCategorias().get(objCuestionarioImportado.getLstCategorias().size() - 1);
                     }
 
-                    if(strTipo.equals(Constantes.LINEA_PREGUNTA_CERRADA)){
+                    if (strTipo.equals(Constantes.LINEA_PREGUNTA_CERRADA)) {
                         objCategorias.getLstPreguntasCerradas().add(strElemento);
                     }
 
@@ -339,99 +374,188 @@ public class importarCuestionariosView implements Serializable{
 
             }
 
-            if(objCuestionarioImportado!=null){
+            if (objCuestionarioImportado != null) {
                 lstCuestionariosImportados.add(objCuestionarioImportado);
             }
-        
-        }catch(Exception e){
+
+        } catch (Exception e) {
             log.error(e);
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_FATAL, "Importar cuestionario", "Ocurrio un error al procesar el archivo");
-            FacesContext.getCurrentInstance().addMessage(null, message);        
+            FacesContext.getCurrentInstance().addMessage(null, message);
         }
-        
+
     }
-    
-    
-    public void verElementos(Integer idCuestionario){
+
+    public void verElementos(Integer idCuestionario) {
 
         this.idCuestionario = idCuestionario;
-        
+
         this.lstElementosDelCuestionarios = new ArrayList<>();
 
         CuestionarioImportado objElementos = lstCuestionariosImportados.get(idCuestionario);
-            
-        this.strCuestionario = objElementos.getStrDescCuestionario();
-        
-        try{
-            
-            //lstElementosDelCuestionarios.add(new DosDatos("Cuestionario",objElementos.getStrDescCuestionario()));
 
+        this.strCuestionario = objElementos.getStrDescCuestionario();
+
+        try {
+
+            //lstElementosDelCuestionarios.add(new DosDatos("Cuestionario",objElementos.getStrDescCuestionario()));
             Iterator itCategoria = objElementos.getLstCategorias().iterator();
 
-            while(itCategoria.hasNext()){
+            while (itCategoria.hasNext()) {
 
                 Categorias objCat = (Categorias) itCategoria.next();
-                lstElementosDelCuestionarios.add(new DosDatos("Categoria",objCat.getStrCategoria()));
+                lstElementosDelCuestionarios.add(new DosDatos("Categoria", objCat.getStrCategoria(),null));
 
                 Iterator itPreguntasC = objCat.getLstPreguntasCerradas().iterator();
 
                 while (itPreguntasC.hasNext()) {
 
                     String strPreguntaC = (String) itPreguntasC.next();
-                    lstElementosDelCuestionarios.add(new DosDatos("Pregunta cerrada",strPreguntaC));
+                    lstElementosDelCuestionarios.add(new DosDatos("Pregunta cerrada", strPreguntaC,"secondary"));
                 }
 
             }
 
             Iterator itComentarios = objElementos.getLstComentarios().iterator();
 
-            while(itComentarios.hasNext()){
+            while (itComentarios.hasNext()) {
 
                 String strComment = (String) itComentarios.next();
-                lstElementosDelCuestionarios.add(new DosDatos("Comentario",strComment));
+                lstElementosDelCuestionarios.add(new DosDatos("Comentario", strComment,"warning"));
 
             }
 
             Iterator itPreguntasA = objElementos.getLstPreguntasAbiertas().iterator();
 
-            while(itPreguntasA.hasNext()){
+            while (itPreguntasA.hasNext()) {
 
                 String strPreguntaA = (String) itPreguntasA.next();
-                lstElementosDelCuestionarios.add(new DosDatos("Pregunta abierta",strPreguntaA));
+                lstElementosDelCuestionarios.add(new DosDatos("Pregunta abierta", strPreguntaA,"success"));
 
             }
 
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Importar cuestionario", "Se seleccionó el cuestionario " + objElementos.getStrDescCuestionario());
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Se seleccionó el cuestionario " + objElementos.getStrDescCuestionario(), null);
             FacesContext.getCurrentInstance().addMessage(null, message);
-        }catch(Exception e){
+        } catch (Exception e) {
             log.error(e);
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_FATAL, "Importar cuestionario", "Ocurrio un error al ver los elementos del cuestionario " + objElementos.getStrDescCuestionario());
-            FacesContext.getCurrentInstance().addMessage(null, message);        
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_FATAL, "Ocurrio un error al ver los elementos del cuestionario " + objElementos.getStrDescCuestionario(), null);
+            FacesContext.getCurrentInstance().addMessage(null, message);
         }
     }
 
-    
-    public void guardarImportacion(){
-    
-        try{
+    public void guardarImportacion() {
+
+        try {
             
+            this.lstElementoCuestionario = new ArrayList();
+
             CuestionarioDAO objCuestionarioDAO = new CuestionarioDAO();
             boolean correcto = objCuestionarioDAO.guardaImportacionCuestionario(lstCuestionariosImportados);
-            if(correcto){
-                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Guardar cuestionarios", "Cuestionarios cargados exitosamente");
-                FacesContext.getCurrentInstance().addMessage(null, message);        
-            }else{
-                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_FATAL, "Guardar cuestionarios", "Ocurrio un error al guardar los cuestionarios");
+            if (correcto) {
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Cuestionarios cargados exitosamente", null);
+                FacesContext.getCurrentInstance().addMessage(null, message);
+            } else {
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_FATAL, "Ocurrio un error al guardar los cuestionarios", null);
                 FacesContext.getCurrentInstance().addMessage(null, message);
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             log.error(e);
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_FATAL, "Guardar cuestionarios", "Ocurrio un error al guardar los cuestionarios");
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_FATAL, "Ocurrio un error al guardar los cuestionarios", null);
             FacesContext.getCurrentInstance().addMessage(null, message);
         }
-        
+
         init();
-        
+
     }
-    
+
+    public void loadCuestionarios() {
+
+        List<Cuestionario> lstCuestionario;
+
+        CuestionarioDAO objCuestionarioDAO = new CuestionarioDAO();
+
+        lstCuestionario = objCuestionarioDAO.obtenListaCuestionario(Utilitarios.obtenerProyecto().getIntIdProyecto());
+
+        CuestionarioImportado objCuestionarioImportado;
+
+        for (Cuestionario objCuestionario : lstCuestionario) {
+            
+            blExistPrevImport = true;
+
+            objCuestionarioImportado = new CuestionarioImportado();
+
+            objCuestionarioImportado.setIdCuestionario(objCuestionario.getCuIdCuestionarioPk());
+            //objCuestionarioImportado.setCuIdEstado(objCuestionario.getCuIdEstado());
+            //objCuestionarioImportado.setStrDescCuestionario(EHCacheManager.obtenerDescripcionElemento(objCuestionario.getCuIdEstado()));
+            objCuestionarioImportado.setStrDescCuestionario(objCuestionario.getCuTxDescripcion());
+
+            lstCuestionariosImportados.add(objCuestionarioImportado);
+
+            /*
+            if (objCuestionario.getCuIdEstado().equals(Constantes.INT_ET_ESTADO_CUESTIONARIO_REGISTRADO)) {
+                objCuestionarioBean.setBoConfirmado(Boolean.FALSE);
+            } else {
+                objCuestionarioBean.setBoConfirmado(Boolean.TRUE);
+            }
+             */
+            Integer intC1 = 0;
+            Integer intC2 = 0;
+            Integer intC3 = 0;
+            Integer intC4 = 0;
+
+            ComponenteDAO objComponenteDao = new ComponenteDAO();
+
+            List<Componente> lstComponente = objComponenteDao.listaComponenteXCuestionario(objCuestionario.getCuIdCuestionarioPk());
+
+            lstElementoCuestionario = new ArrayList();
+
+            ElementoCuestionario objElementoCuestionario;
+
+            for (Componente objComponente : lstComponente) {
+
+                objElementoCuestionario = new ElementoCuestionario();
+
+                if (objComponente.getCoIdTipoComponente().equals(Constantes.INT_ET_TIPO_COMPONENTE_CATEGORIA)) {
+                    objElementoCuestionario.setStrTipo(EHCacheManager.obtenerDescripcionElemento(Constantes.INT_ET_TIPO_COMPONENTE_CATEGORIA).toUpperCase());
+                } else if (objComponente.getCoIdTipoComponente().equals(Constantes.INT_ET_TIPO_COMPONENTE_PREGUNTA_CERRADA)) {
+                    objElementoCuestionario.setStrTipo(EHCacheManager.obtenerDescripcionElemento(Constantes.INT_ET_TIPO_COMPONENTE_PREGUNTA_CERRADA).toUpperCase());
+                    objElementoCuestionario.setStrColor("secondary");
+                } else if (objComponente.getCoIdTipoComponente().equals(Constantes.INT_ET_TIPO_COMPONENTE_COMENTARIO)) {
+                    objElementoCuestionario.setStrTipo(EHCacheManager.obtenerDescripcionElemento(Constantes.INT_ET_TIPO_COMPONENTE_COMENTARIO).toUpperCase());
+                    objElementoCuestionario.setStrColor("warning");
+                } else if (objComponente.getCoIdTipoComponente().equals(Constantes.INT_ET_TIPO_COMPONENTE_PREGUNTA_ABIERTA)) {
+                    objElementoCuestionario.setStrTipo(EHCacheManager.obtenerDescripcionElemento(Constantes.INT_ET_TIPO_COMPONENTE_PREGUNTA_ABIERTA).toUpperCase());
+                    objElementoCuestionario.setStrColor("success");
+                }
+
+                objElementoCuestionario.setStrDescripción(objComponente.getCoTxDescripcion());
+
+                lstElementoCuestionario.add(objElementoCuestionario);
+
+            }
+            /*
+            objCuestionarioBean.setIntCantidadCategorias(intC1);
+            objCuestionarioBean.setIntCantidadPreguntasCerradas(intC2);
+            objCuestionarioBean.setIntCantidadComentarios(intC3);
+            objCuestionarioBean.setIntCantidadPreguntasAbiertas(intC4);
+             */
+
+        }
+
+    }
+
+    public void eliminarCuestionario() {
+        CuestionarioDAO objCuestionarioDAO = new CuestionarioDAO();
+        
+        boolean correcto = objCuestionarioDAO.eliminaCuestionarioTotal();
+
+        if (correcto) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Cuestionarios eliminados correctamente",null));
+            init();
+        } else {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,"Ocurrio un error al eliminar los cuestionarios",null));
+        }
+
+    }
+
 }

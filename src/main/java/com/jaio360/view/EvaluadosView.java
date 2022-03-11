@@ -6,17 +6,21 @@ import com.jaio360.dao.ParametroDAO;
 import com.jaio360.dao.ParticipanteDAO;
 import com.jaio360.dao.ProyectoDAO;
 import com.jaio360.dao.RedEvaluacionDAO;
+import com.jaio360.dao.RelacionDAO;
+import com.jaio360.dao.RelacionParticipanteDAO;
 import com.jaio360.dao.UsuarioDAO;
 import com.jaio360.domain.ErrorBean;
 import com.jaio360.domain.Evaluado;
 import com.jaio360.domain.EvaluadoAvan;
 import com.jaio360.domain.Evaluador;
+import com.jaio360.domain.ProyectoInfo;
 import com.jaio360.domain.RelacionAvanzada;
 import com.jaio360.domain.RelacionBean;
 import com.jaio360.orm.Parametro;
 import com.jaio360.orm.Participante;
 import com.jaio360.orm.Proyecto;
 import com.jaio360.orm.RedEvaluacion;
+import com.jaio360.orm.Relacion;
 import com.jaio360.orm.Usuario;
 import com.jaio360.utils.Constantes;
 import com.jaio360.utils.Utilitarios;
@@ -48,31 +52,34 @@ import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.TabChangeEvent;
 import org.primefaces.model.StreamedContent;
-import org.primefaces.model.UploadedFile;
+import org.primefaces.model.file.UploadedFile;
 
 @ManagedBean(name = "evaluadosView")
 @ViewScoped
-public class EvaluadosView implements Serializable{
-    
+public class EvaluadosView implements Serializable {
+
     private static Log log = LogFactory.getLog(EvaluadosView.class);
-    
+
     private ParametroDAO objParametroDAO = new ParametroDAO();
     private ParticipanteDAO objParticipanteDAO = new ParticipanteDAO();
     private ProyectoDAO objProyectoDAO = new ProyectoDAO();
-    
-    private Integer modoConfiguracion = 0; 
-    
+    private CargaAvanzadaDAO objCargaAvanzadaDAO = new CargaAvanzadaDAO();
+
+    private Integer modoConfiguracion = 0;
+
+    private boolean btnUploadDisabled = true;
+
     private Map hSexo;
     private Map hNO;
     private Map hAN;
-    
+
     private List<ErrorBean> lstErrorAvan;
-    
+
     private boolean blHabilitarSexo = false;
     private boolean blHabilitarEdad = false;
     private boolean blHabilitarTiempoEmpresa = false;
@@ -80,18 +87,18 @@ public class EvaluadosView implements Serializable{
     private boolean blHabilitarAreaNegocio = false;
     private List<SelectItem> lstNivelOcupacional;
     private List<SelectItem> lstAreaNegocio;
-    
+
     private Integer modo;
     private String strDescripcion;
     private String strCargo;
     private String strCorreo;
-    
+
     private String strSexo;
     private Integer intEdad;
     private Integer intTiempoEmpresa;
     private String strOcupacion;
     private String strAreaNegocio;
-    
+
     private Integer intCorrelativo;
     private Integer idParticipantePk;
     private Boolean paInAutoevaluar;
@@ -104,7 +111,6 @@ public class EvaluadosView implements Serializable{
     private Integer intCantTempIncorrect;
 
     /* PARA EVALUADORES */
-    
     private Integer modoEvaluadores;
     private String strDescripcionEvaluadores;
     private String strCargoEvaluadores;
@@ -123,9 +129,7 @@ public class EvaluadosView implements Serializable{
     private StreamedContent xlsContentEvaluadores;
     private Integer intCantTempCorrectEvaluadores;
     private Integer intCantTempIncorrectEvaluadores;
-    
-    
-    
+
     /* Configuración avanzada */
     private List<RelacionBean> lstAvanRelacion;
     private List<EvaluadoAvan> lstAvanPersonas;
@@ -137,9 +141,83 @@ public class EvaluadosView implements Serializable{
     private Map mapRelacionesAbrev = new HashMap();
     private Map mapPersonasAvanzado = new HashMap();
     private Map mapRelacionesPersonasAvanzado = new HashMap();
-    
+
     private Map mapPerEvaluados = new HashMap();
     private Map mapPerEvaluadores = new HashMap();
+
+    private String strNombre;
+    private String strAbreviatura;
+    private String strDescripcionRelacion;
+    private String strColor;
+    private Integer idRelacionPk;
+
+    private Integer intIdEstadoProyecto;
+
+    private List<RelacionBean> lstRelacionBean;
+
+    public Integer getIntIdEstadoProyecto() {
+        return intIdEstadoProyecto;
+    }
+
+    public void setIntIdEstadoProyecto(Integer intIdEstadoProyecto) {
+        this.intIdEstadoProyecto = intIdEstadoProyecto;
+    }
+
+    public String getStrNombre() {
+        return strNombre;
+    }
+
+    public void setStrNombre(String strNombre) {
+        this.strNombre = strNombre;
+    }
+
+    public String getStrAbreviatura() {
+        return strAbreviatura;
+    }
+
+    public void setStrAbreviatura(String strAbreviatura) {
+        this.strAbreviatura = strAbreviatura;
+    }
+
+    public String getStrDescripcionRelacion() {
+        return strDescripcionRelacion;
+    }
+
+    public void setStrDescripcionRelacion(String strDescripcionRelacion) {
+        this.strDescripcionRelacion = strDescripcionRelacion;
+    }
+
+    public String getStrColor() {
+        return strColor;
+    }
+
+    public void setStrColor(String strColor) {
+        this.strColor = strColor;
+    }
+
+    public Integer getIdRelacionPk() {
+        return idRelacionPk;
+    }
+
+    public void setIdRelacionPk(Integer idRelacionPk) {
+        this.idRelacionPk = idRelacionPk;
+    }
+
+    public List<RelacionBean> getLstRelacionBean() {
+        return lstRelacionBean;
+    }
+
+    public void setLstRelacionBean(List<RelacionBean> lstRelacionBean) {
+        this.lstRelacionBean = lstRelacionBean;
+    }
+
+    public boolean isBtnUploadDisabled() {
+        return btnUploadDisabled;
+    }
+
+    public void setBtnUploadDisabled(boolean btnUploadDisabled) {
+        this.btnUploadDisabled = btnUploadDisabled;
+    }
 
     public Map getMapRelacionesPersonasAvanzado() {
         return mapRelacionesPersonasAvanzado;
@@ -156,7 +234,7 @@ public class EvaluadosView implements Serializable{
     public void setLstRelacionAvanzadas(List<RelacionAvanzada> lstRelacionAvanzadas) {
         this.lstRelacionAvanzadas = lstRelacionAvanzadas;
     }
-    
+
     public List<ErrorBean> getLstErrorAvan() {
         return lstErrorAvan;
     }
@@ -180,7 +258,7 @@ public class EvaluadosView implements Serializable{
     public void setLstAvanPersonas(List<EvaluadoAvan> lstAvanPersonas) {
         this.lstAvanPersonas = lstAvanPersonas;
     }
-    
+
     public StreamedContent getXlsContentAvanzado() {
         return xlsContentAvanzado;
     }
@@ -196,11 +274,6 @@ public class EvaluadosView implements Serializable{
     public void setFileAvanzado(UploadedFile fileAvanzado) {
         this.fileAvanzado = fileAvanzado;
     }
-    
-    
-    
-    
-    
 
     public List<RelacionBean> getLstAvanRelacion() {
         return lstAvanRelacion;
@@ -209,7 +282,7 @@ public class EvaluadosView implements Serializable{
     public void setLstAvanRelacion(List<RelacionBean> lstAvanRelacion) {
         this.lstAvanRelacion = lstAvanRelacion;
     }
-    
+
     public Integer getModoConfiguracion() {
         return modoConfiguracion;
     }
@@ -218,7 +291,6 @@ public class EvaluadosView implements Serializable{
         this.modoConfiguracion = modoConfiguracion;
     }
 
-    
     public String getStrSexo() {
         return strSexo;
     }
@@ -335,7 +407,6 @@ public class EvaluadosView implements Serializable{
         this.lstAreaNegocio = lstAreaNegocio;
     }
 
-    
     public boolean isBlHabilitarTiempoEmpresa() {
         return blHabilitarTiempoEmpresa;
     }
@@ -359,7 +430,7 @@ public class EvaluadosView implements Serializable{
     public void setBlHabilitarAreaNegocio(boolean blHabilitarAreaNegocio) {
         this.blHabilitarAreaNegocio = blHabilitarAreaNegocio;
     }
-    
+
     public void setStrCargoEvaluadores(String strCargoEvaluadores) {
         this.strCargoEvaluadores = strCargoEvaluadores;
     }
@@ -459,7 +530,7 @@ public class EvaluadosView implements Serializable{
     public void setIntCantTempIncorrectEvaluadores(Integer intCantTempIncorrectEvaluadores) {
         this.intCantTempIncorrectEvaluadores = intCantTempIncorrectEvaluadores;
     }
-    
+
     public Integer getIntCantTempIncorrect() {
         return intCantTempIncorrect;
     }
@@ -515,7 +586,7 @@ public class EvaluadosView implements Serializable{
     public void setStrDescripcion(String strDescripcion) {
         this.strDescripcion = strDescripcion;
     }
-    
+
     public String getStrCargo() {
         return strCargo;
     }
@@ -571,19 +642,18 @@ public class EvaluadosView implements Serializable{
     public void setXlsContent(StreamedContent xlsContent) {
         this.xlsContent = xlsContent;
     }
-     
-    public EvaluadosView(){
-        this.lstEvaluado = new ArrayList<>();        
+
+    public EvaluadosView() {
+        this.lstEvaluado = new ArrayList<>();
     }
-       
-    
+
     @PostConstruct
     public void init() {
-        
+
         habilitarParametros();
-    
+
         ParticipanteDAO objParticipanteDAO = new ParticipanteDAO();
-        
+
         List<Participante> lstParticipantes = objParticipanteDAO.obtenListaParticipanteXProyecto(Utilitarios.obtenerProyecto().getIntIdProyecto());
 
         this.blCargarCorrectoAvan = false;
@@ -594,11 +664,11 @@ public class EvaluadosView implements Serializable{
         this.lstAvanRelacion = new ArrayList<>();
         this.lstRelacionAvanzadas = new ArrayList<>();
         this.lstErrorAvan = new ArrayList<>();
-        
-        if(!lstParticipantes.isEmpty()){
-        
-            for (Participante objParticipante : lstParticipantes){
-                
+
+        if (!lstParticipantes.isEmpty()) {
+
+            for (Participante objParticipante : lstParticipantes) {
+
                 Evaluado evaluado = new Evaluado();
 
                 evaluado.setPaIdParticipantePk(objParticipante.getPaIdParticipantePk());
@@ -606,45 +676,42 @@ public class EvaluadosView implements Serializable{
                 evaluado.setPaInAutoevaluar(objParticipante.getPaInAutoevaluar());
                 evaluado.setPaInRedCargada(objParticipante.getPaInRedCargada());
                 evaluado.setPaInRedVerificada(objParticipante.getPaInRedVerificada());
-                evaluado.setPaTxCorreo(objParticipante.getPaTxCorreo());            
+                evaluado.setPaTxCorreo(objParticipante.getPaTxCorreo());
                 evaluado.setPaTxDescripcion(objParticipante.getPaTxDescripcion());
                 evaluado.setPaTxNombreCargo(objParticipante.getPaTxNombreCargo());
                 evaluado.setPaIdEstado(objParticipante.getPaIdEstado());
                 evaluado.setPaStrEstado(EHCacheManager.obtenerDescripcionElemento(objParticipante.getPaIdEstado()));
-                
+
                 evaluado.setPaTxSexo(objParticipante.getPaTxSexo());
                 evaluado.setPaNrEdad(objParticipante.getPaNrEdad());
                 evaluado.setPaNrTiempoTrabajo(objParticipante.getPaNrTiempoTrabajo());
                 evaluado.setPaTxOcupacion(objParticipante.getPaTxOcupacion());
                 evaluado.setPaTxAreaNegocio(objParticipante.getPaTxAreaNegocio());
-                
-                if(evaluado.getPaIdEstado().equals(Constantes.INT_ET_ESTADO_EVALUADO_REGISTRADO)){
+
+                if (evaluado.getPaIdEstado().equals(Constantes.INT_ET_ESTADO_EVALUADO_REGISTRADO)) {
                     this.cantidadEvaluadosRegistrados++;
                 }
-                    
 
                 this.lstEvaluado.add(evaluado);
-                
+
             }
-        
+
         }
-        
+
         /* Evaluadores */
-        
-        
         RedEvaluacionDAO objRedEvaluacionDAO = new RedEvaluacionDAO();
-        
+
         List<RedEvaluacion> lstRedEvaluacion = objRedEvaluacionDAO.obtenListaRedEvaluacion(Utilitarios.obtenerProyecto().getIntIdProyecto());
 
         this.lstEvaluadores = new ArrayList<>();
-        this.cantidadEvaluadoresRegistrados = 0;            
-        
-        if(!lstRedEvaluacion.isEmpty()){
-        
+        this.cantidadEvaluadoresRegistrados = 0;
+
+        if (!lstRedEvaluacion.isEmpty()) {
+
             int i = 0;
-            
-            for (RedEvaluacion objRedEvaluacion : lstRedEvaluacion){
-                
+
+            for (RedEvaluacion objRedEvaluacion : lstRedEvaluacion) {
+
                 Evaluador evaluador = new Evaluador();
 
                 evaluador.setReIdParticipantePk(objRedEvaluacion.getReIdParticipantePk());
@@ -659,24 +726,57 @@ public class EvaluadosView implements Serializable{
                 evaluador.setReNrTiempoTrabajo(objRedEvaluacion.getReNrTiempoTrabajo());
                 evaluador.setReTxOcupacion(objRedEvaluacion.getReTxOcupacion());
                 evaluador.setReTxAreaNegocio(objRedEvaluacion.getReTxAreaNegocio());
-                
+
                 evaluador.setIntCorrelativo(i);
                 i++;
-                
-                if(evaluador.getReIdEstado().equals(Constantes.INT_ET_ESTADO_EVALUADOR_REGISTRADO)){
+
+                if (evaluador.getReIdEstado().equals(Constantes.INT_ET_ESTADO_EVALUADOR_REGISTRADO)) {
                     this.cantidadEvaluadoresRegistrados++;
                 }
-                    
+
                 this.lstEvaluadores.add(evaluador);
-                
+
             }
-        
+
+        }
+
+        /****
+         * CARGA RELACIONES
+         */
+        this.lstRelacionBean = new ArrayList();
+
+        ProyectoDAO objProyectoDAO = new ProyectoDAO();
+
+        Proyecto proyecto = objProyectoDAO.obtenProyecto(Utilitarios.obtenerProyecto().getIntIdProyecto());
+
+        intIdEstadoProyecto = proyecto.getPoIdEstado();
+
+        RelacionDAO objRelacionDAO = new RelacionDAO();
+
+        List<Relacion> lstRelacion = objRelacionDAO.obtenListaRelacionPorProyecto(proyecto);
+
+        RelacionParticipanteDAO objRelacionParticipanteDAO = new RelacionParticipanteDAO();
+
+        for (Relacion obj : lstRelacion) {
+
+            RelacionBean objRelacionBean = new RelacionBean();
+            objRelacionBean.setStrNombre(obj.getReTxNombre());
+            objRelacionBean.setStrAbreviatura(obj.getReTxAbreviatura());
+            objRelacionBean.setStrColor(obj.getReColor());
+            objRelacionBean.setStrDescripcion(obj.getReTxDescripcion());
+            objRelacionBean.setIdRelacionPk(obj.getReIdRelacionPk());
+            objRelacionBean.setIntIdEstado(obj.getReIdEstado());
+            objRelacionBean.setStrEstado(EHCacheManager.obtenerDescripcionElemento(obj.getReIdEstado()));
+
+            objRelacionBean.setIntCantidadUso(objRelacionParticipanteDAO.existeRelacionesXRelacion(obj.getReIdRelacionPk()));
+
+            lstRelacionBean.add(objRelacionBean);
         }
 
     }
-    
-    public void agregarEvaluado(){
-        
+
+    public void agregarEvaluado() {
+
         FacesContext context = FacesContext.getCurrentInstance();
 
         Integer error = buscarLista(this.strDescripcion, this.strCargo, this.strCorreo, this.paInAutoevaluar, false);
@@ -695,7 +795,7 @@ public class EvaluadosView implements Serializable{
         evaluado.setPaIdEstado(Constantes.INT_ET_ESTADO_EVALUADO_REGISTRADO);
         evaluado.setPaStrEstado(EHCacheManager.obtenerDescripcionElemento(Constantes.INT_ET_ESTADO_EVALUADO_REGISTRADO));
 
-        if(error==null){
+        if (error == null) {
 
             ParticipanteDAO objParticipanteDAO = new ParticipanteDAO();
             evaluado.setPaIdParticipantePk(objParticipanteDAO.guardaParticipante(creaParticipante(evaluado)));
@@ -704,36 +804,35 @@ public class EvaluadosView implements Serializable{
 
             calculaIndicadores();
 
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,"Confirmación", "El evaluado se agrego a la lista correctamente") );  
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Confirmación", "El evaluado se agrego a la lista correctamente"));
 
-            incluirComoEvaluador(evaluado.getPaTxDescripcion(),evaluado.getPaTxNombreCargo(), evaluado.getPaTxCorreo(), evaluado.getPaTxSexo(), evaluado.getPaNrEdad(), evaluado.getPaNrTiempoTrabajo(), evaluado.getPaTxOcupacion(), evaluado.getPaTxAreaNegocio(), false);
-            
+            incluirComoEvaluador(evaluado.getPaTxDescripcion(), evaluado.getPaTxNombreCargo(), evaluado.getPaTxCorreo(), evaluado.getPaTxSexo(), evaluado.getPaNrEdad(), evaluado.getPaNrTiempoTrabajo(), evaluado.getPaTxOcupacion(), evaluado.getPaTxAreaNegocio(), false);
+
             this.resetFail();
 
-        }else{
+        } else {
             evaluado = determinaError(evaluado, error);
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,"Falló", evaluado.getStrObservacionMasivo()));  
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Falló", evaluado.getStrObservacionMasivo()));
         }
 
-          
     }
-    
-    private void calculaIndicadores(){
-        
+
+    private void calculaIndicadores() {
+
         this.cantidadEvaluadosRegistrados = 0;
-        
-        for(Evaluado objEvaluado : lstEvaluado){
-            if(objEvaluado.getPaIdEstado().equals(Constantes.INT_ET_ESTADO_EVALUADO_REGISTRADO)){
+
+        for (Evaluado objEvaluado : lstEvaluado) {
+            if (objEvaluado.getPaIdEstado().equals(Constantes.INT_ET_ESTADO_EVALUADO_REGISTRADO)) {
                 this.cantidadEvaluadosRegistrados++;
             }
         }
-        
+
     }
-    
-    private Participante creaParticipante(Evaluado objEvaluado){
-        
+
+    private Participante creaParticipante(Evaluado objEvaluado) {
+
         Participante objParticipante = new Participante();
-                
+
         objParticipante.setPaIdTipoParticipante(Constantes.INT_ET_TIPO_PARTICIPANTE_EVALUADO);
         objParticipante.setPaIdEstado(Constantes.INT_ET_ESTADO_EVALUADO_REGISTRADO);
         objParticipante.setPaInAutoevaluar(objEvaluado.isPaInAutoevaluar());
@@ -754,345 +853,346 @@ public class EvaluadosView implements Serializable{
         objParticipante.setProyecto(objProyecto);
 
         return objParticipante;
-    
+
     }
-        
-    public Integer buscarLista(String strDescripcion, String strCargo, String strCorreo, Boolean paInAutoevaluar, Boolean Masivo ){
-         
+
+    public Integer buscarLista(String strDescripcion, String strCargo, String strCorreo, Boolean paInAutoevaluar, Boolean Masivo) {
+
         String strDesc = Utilitarios.retirarEspacios(strDescripcion);
         String strCorr = Utilitarios.retirarEspacios(strCorreo);
-        
-        for (Evaluado obj:lstEvaluado){  
-            if(Utilitarios.retirarEspacios(obj.getPaTxDescripcion()).toUpperCase().equals(strDesc.toUpperCase())){
+
+        for (Evaluado obj : lstEvaluado) {
+            if (Utilitarios.retirarEspacios(obj.getPaTxDescripcion()).toUpperCase().equals(strDesc.toUpperCase())) {
                 return 1; //"El evaluado ingresado ya se encuentra agregado";
             }
-            if(Utilitarios.retirarEspacios(obj.getPaTxCorreo()).toUpperCase().equals(strCorr.toUpperCase())){
-                if(Masivo){
-                    if(obj.getPaIdEstado().equals(Constantes.INT_ET_ESTADO_EVALUADO_REGISTRADO)){
+            if (Utilitarios.retirarEspacios(obj.getPaTxCorreo()).toUpperCase().equals(strCorr.toUpperCase())) {
+                if (Masivo) {
+                    if (obj.getPaIdEstado().equals(Constantes.INT_ET_ESTADO_EVALUADO_REGISTRADO)) {
                         return 2;//"Registro ya existe y será actualizado"
-                    }else{
+                    } else {
                         return 3;//"El correo ingresado esta siendo usado por " + obj.getPaTxDescripcion();
                     }
-                }else{
+                } else {
                     return 5; //"El correo ingresado esta siendo usado por " + obj.getPaTxDescripcion();
                 }
             }
-        }  
-                       
+        }
+
         return null;
     }
-    
-    public Integer buscarListaModifica(Integer idParticipante ,String strDescripcion, String strCargo, String strCorreo, Boolean paInAutoevaluar, Boolean Masivo){
-         
+
+    public Integer buscarListaModifica(Integer idParticipante, String strDescripcion, String strCargo, String strCorreo, Boolean paInAutoevaluar, Boolean Masivo) {
+
         String strDesc = Utilitarios.retirarEspacios(strDescripcion);
         String strCorr = Utilitarios.retirarEspacios(strCorreo);
-        
-        for (Evaluado obj:lstEvaluado){
-            
-            if(!idParticipante.equals(obj.getPaIdParticipantePk())){
-                if(Utilitarios.retirarEspacios(obj.getPaTxDescripcion()).toUpperCase().equals(strDesc.toUpperCase())){
+
+        for (Evaluado obj : lstEvaluado) {
+
+            if (!idParticipante.equals(obj.getPaIdParticipantePk())) {
+                if (Utilitarios.retirarEspacios(obj.getPaTxDescripcion()).toUpperCase().equals(strDesc.toUpperCase())) {
                     return 1; //"El evaluado ingresado ya se encuentra agregado";
                 }
-                if(Utilitarios.retirarEspacios(obj.getPaTxCorreo()).toUpperCase().equals(strCorr.toUpperCase())){
-                    if(Masivo){
-                        if(obj.getPaIdEstado().equals(Constantes.INT_ET_ESTADO_EVALUADO_REGISTRADO)){
+                if (Utilitarios.retirarEspacios(obj.getPaTxCorreo()).toUpperCase().equals(strCorr.toUpperCase())) {
+                    if (Masivo) {
+                        if (obj.getPaIdEstado().equals(Constantes.INT_ET_ESTADO_EVALUADO_REGISTRADO)) {
                             return 2;//"Registro ya existe y será actualizado"
-                        }else{
+                        } else {
                             return 3;//"El correo ingresado esta siendo usado por " + obj.getPaTxDescripcion();
                         }
-                    }else{
+                    } else {
                         return 5; //"El correo ingresado esta siendo usado por " + obj.getPaTxDescripcion();
                     }
                 }
             }
-        }  
-                       
+        }
+
         return null;
     }
-    
-    public Integer validarParametros(String strSexo, String strEdad, String strTiempoEmpresa, String strOcupacion, String strAreaNegocio){
-         
+
+    public Integer validarParametros(String strSexo, String strEdad, String strTiempoEmpresa, String strOcupacion, String strAreaNegocio) {
+
         String strSX = strSexo;
         String strED = strEdad;
         String strTE = strTiempoEmpresa;
         String strOC = strOcupacion;
         String strAN = strAreaNegocio;
-        
+
         /*SEXO*/
-        if(blHabilitarSexo){
-            if(Utilitarios.esNuloOVacio(strSX)){
+        if (blHabilitarSexo) {
+            if (Utilitarios.esNuloOVacio(strSX)) {
                 return 6;
             }
-            if(!hSexo.containsKey(strSX.trim().toUpperCase())){
+            if (!hSexo.containsKey(strSX.trim().toUpperCase())) {
                 return 6;
             }
         }
         /*EDAD*/
-        if(blHabilitarEdad){
-            if(Utilitarios.esNuloOVacio(strED)){
+        if (blHabilitarEdad) {
+            if (Utilitarios.esNuloOVacio(strED)) {
                 return 7;
             }
-            if(!Utilitarios.isNumber(strED,false)){
+            if (!Utilitarios.isNumber(strED, false)) {
                 return 7;
             }
             BigDecimal bl = new BigDecimal(strED);
             Integer edad = bl.intValue();
-            if(edad<=0){
+            if (edad <= 0) {
                 return 7;
             }
         }
         /*TIEMPO EMPRESA*/
-        if(blHabilitarTiempoEmpresa){
-            if(Utilitarios.esNuloOVacio(strTE)){
+        if (blHabilitarTiempoEmpresa) {
+            if (Utilitarios.esNuloOVacio(strTE)) {
                 return 8;
             }
-            if(!Utilitarios.isNumber(strTE,false)){
+            if (!Utilitarios.isNumber(strTE, false)) {
                 return 8;
             }
             BigDecimal bl = new BigDecimal(strTE);
             Integer tiempoEmpresa = bl.intValue();
-            if(tiempoEmpresa<=0){
+            if (tiempoEmpresa <= 0) {
                 return 8;
             }
         }
         /*NIVEL OCUPACIONAL*/
-        if(blHabilitarNivelOcupacional){
-            if(Utilitarios.esNuloOVacio(strOC)){
+        if (blHabilitarNivelOcupacional) {
+            if (Utilitarios.esNuloOVacio(strOC)) {
                 return 9;
             }
-            if(!hNO.containsKey(strOC.trim().toUpperCase())){
+            if (!hNO.containsKey(strOC.trim().toUpperCase())) {
                 return 9;
             }
         }
-        if(blHabilitarAreaNegocio){
+        if (blHabilitarAreaNegocio) {
             /*AREA NEGOCIO*/
-            if(Utilitarios.esNuloOVacio(strAN)){
+            if (Utilitarios.esNuloOVacio(strAN)) {
                 return 10;
             }
-            if(!hAN.containsKey(strAN.trim().toUpperCase())){
+            if (!hAN.containsKey(strAN.trim().toUpperCase())) {
                 return 10;
             }
         }
-        
+
         return null;
     }
-    
+
     public void resetFail() {
         this.strDescripcion = Constantes.strVacio;
         this.strCargo = Constantes.strVacio;
-        this.strCorreo = Constantes.strVacio;  
-        this.strSexo = Constantes.strVacio;  
-        this.intEdad = null;  
-        this.intTiempoEmpresa = null;  
-        this.strOcupacion = Constantes.strVacio;  
-        this.strAreaNegocio = Constantes.strVacio;  
+        this.strCorreo = Constantes.strVacio;
+        this.strSexo = Constantes.strVacio;
+        this.intEdad = null;
+        this.intTiempoEmpresa = null;
+        this.strOcupacion = Constantes.strVacio;
+        this.strAreaNegocio = Constantes.strVacio;
         this.idParticipantePk = null;
         this.paInAutoevaluar = Boolean.TRUE;
         this.intCorrelativo = null;
         this.lstCargaMasiva = new ArrayList();
         this.file = null;
         this.xlsContent = null;
-        
+
         this.strDescripcionEvaluadores = Constantes.strVacio;
         this.strCargoEvaluadores = Constantes.strVacio;
-        this.strCorreoEvaluadores = Constantes.strVacio;  
-        this.strSexoEvaluadores = Constantes.strVacio;  
-        this.intEdadEvaluadores = null;  
-        this.intTiempoEmpresaEvaluadores = null;  
-        this.strOcupacionEvaluadores = Constantes.strVacio;  
-        this.strAreaNegocioEvaluadores = Constantes.strVacio;  
+        this.strCorreoEvaluadores = Constantes.strVacio;
+        this.strSexoEvaluadores = Constantes.strVacio;
+        this.intEdadEvaluadores = null;
+        this.intTiempoEmpresaEvaluadores = null;
+        this.strOcupacionEvaluadores = Constantes.strVacio;
+        this.strAreaNegocioEvaluadores = Constantes.strVacio;
         this.reIdParticipantePk = null;
         this.intCorrelativoEvaluadores = null;
         this.lstCargaMasivaEvaluadores = new ArrayList();
         this.fileEvaluadores = null;
         this.xlsContentEvaluadores = null;
     }
-    
-    public void eliminarLista(Evaluado objEvaluado){
-        
+
+    public void eliminarLista(Evaluado objEvaluado) {
+
         int i = 0;
         boolean blEncontro = false;
-        
-        for (Evaluado obj:this.lstEvaluado){  
-            if(obj.getPaIdParticipantePk().equals(objEvaluado.getPaIdParticipantePk())){ 
-                blEncontro =  true;
+
+        for (Evaluado obj : this.lstEvaluado) {
+            if (obj.getPaIdParticipantePk().equals(objEvaluado.getPaIdParticipantePk())) {
+                blEncontro = true;
                 break;
             }
             i++;
-        }  
-        
-        if(blEncontro){
-            
+        }
+
+        if (blEncontro) {
+
             ParticipanteDAO objParticipanteDAO = new ParticipanteDAO();
             Participante objParticipante = objParticipanteDAO.obtenParticipante(objEvaluado.getPaIdParticipantePk());
-            
+
             objParticipanteDAO.eliminaParticipanteRelaciones(objParticipante);
-            
+
             this.cantidadEvaluadosRegistrados--;
             this.lstEvaluado.remove(i);
-            
+
         }
-        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,"Eliminar evaluado",  "Se eliminó correctamente"));
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Eliminar evaluado", "Se eliminó correctamente"));
         resetFail();
     }
-    
-    public void grabarLista(){
-        
+
+    public void grabarLista() {
+
         FacesContext context = FacesContext.getCurrentInstance();
 
-        try{
-            
+        try {
+
             ParticipanteDAO objParticipanteDAO = new ParticipanteDAO();
-            boolean correcto = objParticipanteDAO.guardaParticipante(this.lstEvaluado,Utilitarios.obtenerProyecto().getIntIdProyecto());
-            
-            if(correcto){ 
-                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,"Confirmación",  "Se guardo correctamente"));
-            }else{
-                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL,"Confirmación",  "Ocurrio un error al guardar el listado"));
+            boolean correcto = objParticipanteDAO.guardaParticipante(this.lstEvaluado, Utilitarios.obtenerProyecto().getIntIdProyecto());
+
+            if (correcto) {
+                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Confirmación", "Se guardo correctamente"));
+            } else {
+                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Confirmación", "Ocurrio un error al guardar el listado"));
             }
-           
-        }catch(Exception e){
+
+        } catch (Exception e) {
             log.error(e);
-        }   
-        
+        }
+
     }
-    
-    public void modificarEvaluado(Evaluado objEvaluado){
-        
+
+    public void modificarEvaluado(Evaluado objEvaluado) {
+
         this.modo = 1;
-        
+
         FacesContext context = FacesContext.getCurrentInstance();
-        context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN,"Modificar evaluado",  "Cualquier cambio será actualizado en la lista de evaluados"));
-        
+        context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Modificar evaluado", "Cualquier cambio será actualizado en la lista de evaluados"));
+
         this.strDescripcion = objEvaluado.getPaTxDescripcion();
         this.strCargo = objEvaluado.getPaTxNombreCargo();
-        this.strCorreo = objEvaluado.getPaTxCorreo();  
-        this.strSexo = objEvaluado.getPaTxSexo();  
-        this.intEdad = objEvaluado.getPaNrEdad();  
-        this.intTiempoEmpresa = objEvaluado.getPaNrTiempoTrabajo();  
-        this.strOcupacion = objEvaluado.getPaTxOcupacion();  
-        this.strAreaNegocio = objEvaluado.getPaTxAreaNegocio();  
+        this.strCorreo = objEvaluado.getPaTxCorreo();
+        this.strSexo = objEvaluado.getPaTxSexo();
+        this.intEdad = objEvaluado.getPaNrEdad();
+        this.intTiempoEmpresa = objEvaluado.getPaNrTiempoTrabajo();
+        this.strOcupacion = objEvaluado.getPaTxOcupacion();
+        this.strAreaNegocio = objEvaluado.getPaTxAreaNegocio();
         this.idParticipantePk = objEvaluado.getPaIdParticipantePk();
         this.paInAutoevaluar = objEvaluado.isPaInAutoevaluar();
-        
-    }
-   
-    public void generaExcel(){
 
-        HSSFWorkbook xlsEvaluados = new HSSFWorkbook(); 
+    }
+
+    public void generaExcel() {
+
+        HSSFWorkbook xlsEvaluados = new HSSFWorkbook();
 
         HSSFSheet hoja = xlsEvaluados.createSheet("Evaluados");
 
         HSSFRow row = hoja.createRow(0);
 
         int c = 0;
-        
+
         HSSFCell cell0 = row.createCell(c);
         HSSFRichTextString texto0 = new HSSFRichTextString("Descripción");
         cell0.setCellValue(texto0);
 
         c++;
-        
+
         HSSFCell cell1 = row.createCell(c);
         HSSFRichTextString texto1 = new HSSFRichTextString("Cargo");
         cell1.setCellValue(texto1);
 
         c++;
-        
+
         HSSFCell cell2 = row.createCell(c);
         HSSFRichTextString texto2 = new HSSFRichTextString("Correo");
         cell2.setCellValue(texto2);
-        
-        if(blHabilitarSexo){
+
+        if (blHabilitarSexo) {
             c++;
             HSSFCell cell3 = row.createCell(c);
             HSSFRichTextString texto3 = new HSSFRichTextString("Sexo");
             cell3.setCellValue(texto3);
         }
-        
-        if(blHabilitarEdad){
+
+        if (blHabilitarEdad) {
             c++;
             HSSFCell cell4 = row.createCell(c);
             HSSFRichTextString texto4 = new HSSFRichTextString("Edad");
             cell4.setCellValue(texto4);
         }
-        
-        if(blHabilitarTiempoEmpresa){
+
+        if (blHabilitarTiempoEmpresa) {
             c++;
             HSSFCell cell5 = row.createCell(c);
             HSSFRichTextString texto5 = new HSSFRichTextString("Tiempo en la empresa");
             cell5.setCellValue(texto5);
         }
-        
-        if(blHabilitarNivelOcupacional){
+
+        if (blHabilitarNivelOcupacional) {
             c++;
             HSSFCell cell6 = row.createCell(c);
             HSSFRichTextString texto6 = new HSSFRichTextString("Nivel ocupacional");
             cell6.setCellValue(texto6);
         }
-        
-        if(blHabilitarAreaNegocio){
+
+        if (blHabilitarAreaNegocio) {
             c++;
             HSSFCell cell7 = row.createCell(c);
             HSSFRichTextString texto7 = new HSSFRichTextString("Area del negocio");
             cell7.setCellValue(texto7);
         }
-        
+
         c++;
         HSSFCell cell8 = row.createCell(c);
         HSSFRichTextString texto8 = new HSSFRichTextString("Autoevaluación");
         cell8.setCellValue(texto8);
-        
-        HSSFCellStyle myStyle = xlsEvaluados.createCellStyle();   
-        
+
+        HSSFCellStyle myStyle = xlsEvaluados.createCellStyle();
+
         HSSFFont hSSFFont = xlsEvaluados.createFont();
-        hSSFFont.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD); 
-        
+        hSSFFont.setBold(true);
+        //hSSFFont.setFontHeight(.parseInt("700"));
+
         myStyle.setFont(hSSFFont);
 
         row.setRowStyle(myStyle);
 
         int i = 1;
-        for (Evaluado objEvaluado : lstEvaluado){
-            
-            if(objEvaluado.getPaIdEstado().equals(Constantes.INT_ET_ESTADO_EVALUADO_REGISTRADO)){
+        for (Evaluado objEvaluado : lstEvaluado) {
+
+            if (objEvaluado.getPaIdEstado().equals(Constantes.INT_ET_ESTADO_EVALUADO_REGISTRADO)) {
                 HSSFRow nextrow = hoja.createRow(i);
-                
+
                 int r = 0;
-                
+
                 nextrow.createCell(r).setCellValue(objEvaluado.getPaTxDescripcion());
                 r++;
                 nextrow.createCell(r).setCellValue(objEvaluado.getPaTxNombreCargo());
                 r++;
                 nextrow.createCell(r).setCellValue(objEvaluado.getPaTxCorreo());
-                
-                if(blHabilitarSexo){
+
+                if (blHabilitarSexo) {
                     r++;
                     nextrow.createCell(r).setCellValue(objEvaluado.getPaTxSexo());
                 }
-                if(blHabilitarEdad){
+                if (blHabilitarEdad) {
                     r++;
                     nextrow.createCell(r).setCellValue(objEvaluado.getPaNrEdad());
                 }
-                if(blHabilitarTiempoEmpresa){
+                if (blHabilitarTiempoEmpresa) {
                     r++;
                     nextrow.createCell(r).setCellValue(objEvaluado.getPaNrTiempoTrabajo());
                 }
-                if(blHabilitarNivelOcupacional){
+                if (blHabilitarNivelOcupacional) {
                     r++;
                     nextrow.createCell(r).setCellValue(objEvaluado.getPaTxOcupacion());
                 }
-                if(blHabilitarAreaNegocio){
+                if (blHabilitarAreaNegocio) {
                     r++;
-                    nextrow.createCell(r).setCellValue(objEvaluado.getPaTxAreaNegocio());                
+                    nextrow.createCell(r).setCellValue(objEvaluado.getPaTxAreaNegocio());
                 }
                 r++;
-                nextrow.createCell(r).setCellValue(objEvaluado.isPaInAutoevaluar()==true?"SI":"NO");
+                nextrow.createCell(r).setCellValue(objEvaluado.isPaInAutoevaluar() == true ? "SI" : "NO");
                 i++;
             }
-            
+
         }
-        
+
         hoja.autoSizeColumn(0);
         hoja.autoSizeColumn(1);
         hoja.autoSizeColumn(2);
@@ -1104,7 +1204,7 @@ public class EvaluadosView implements Serializable{
         hoja.autoSizeColumn(8);
 
         try {
-            
+
             FacesContext facesContext = FacesContext.getCurrentInstance();
             ExternalContext externalContext = facesContext.getExternalContext();
             externalContext.setResponseContentType("application/vnd.ms-excel");
@@ -1117,17 +1217,17 @@ public class EvaluadosView implements Serializable{
             log.error(e);
         }
     }
-    
-    public void generaExcelRespuesta(){
 
-        HSSFWorkbook xlsEvaluados = new HSSFWorkbook(); 
+    public void generaExcelRespuesta() {
+
+        HSSFWorkbook xlsEvaluados = new HSSFWorkbook();
 
         HSSFSheet hoja = xlsEvaluados.createSheet("Evaluados");
 
         HSSFRow row = hoja.createRow(0);
 
         int c = 0;
-        
+
         HSSFCell cell0 = row.createCell(c);
         HSSFRichTextString texto0 = new HSSFRichTextString("Descripción");
         cell0.setCellValue(texto0);
@@ -1141,36 +1241,36 @@ public class EvaluadosView implements Serializable{
         HSSFCell cell2 = row.createCell(c);
         HSSFRichTextString texto2 = new HSSFRichTextString("Correo");
         cell2.setCellValue(texto2);
-        
-        if(blHabilitarSexo){
+
+        if (blHabilitarSexo) {
             c++;
             HSSFCell cell3 = row.createCell(c);
             HSSFRichTextString texto3 = new HSSFRichTextString("Sexo");
             cell3.setCellValue(texto3);
         }
-        
-        if(blHabilitarEdad){
+
+        if (blHabilitarEdad) {
             c++;
             HSSFCell cell4 = row.createCell(c);
             HSSFRichTextString texto4 = new HSSFRichTextString("Edad");
             cell4.setCellValue(texto4);
         }
-        
-        if(blHabilitarTiempoEmpresa){
+
+        if (blHabilitarTiempoEmpresa) {
             c++;
             HSSFCell cell5 = row.createCell(c);
             HSSFRichTextString texto5 = new HSSFRichTextString("Tiempo en la empresa");
             cell5.setCellValue(texto5);
         }
-        
-        if(blHabilitarNivelOcupacional){
+
+        if (blHabilitarNivelOcupacional) {
             c++;
             HSSFCell cell6 = row.createCell(c);
             HSSFRichTextString texto6 = new HSSFRichTextString("Nivel ocupacional");
             cell6.setCellValue(texto6);
         }
-        
-        if(blHabilitarAreaNegocio){
+
+        if (blHabilitarAreaNegocio) {
             c++;
             HSSFCell cell7 = row.createCell(c);
             HSSFRichTextString texto7 = new HSSFRichTextString("Area del negocio");
@@ -1181,26 +1281,27 @@ public class EvaluadosView implements Serializable{
         HSSFCell cell8 = row.createCell(c);
         HSSFRichTextString texto8 = new HSSFRichTextString("Autoevaluar");
         cell8.setCellValue(texto8);
-        
+
         c++;
         HSSFCell cell9 = row.createCell(c);
         HSSFRichTextString texto9 = new HSSFRichTextString("Observacion");
         cell9.setCellValue(texto9);
-        
-        HSSFCellStyle myStyle = xlsEvaluados.createCellStyle();   
-        
+
+        HSSFCellStyle myStyle = xlsEvaluados.createCellStyle();
+
         HSSFFont hSSFFont = xlsEvaluados.createFont();
-        hSSFFont.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD); 
-        
+        hSSFFont.setBold(true);
+        //hSSFFont.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD); 
+
         myStyle.setFont(hSSFFont);
 
         row.setRowStyle(myStyle);
 
         int i = 1;
-        for (Evaluado objEvaluado : lstCargaMasiva){
-            
+        for (Evaluado objEvaluado : lstCargaMasiva) {
+
             int r = 0;
-            
+
             HSSFRow nextrow = hoja.createRow(i);
             nextrow.createCell(r).setCellValue(objEvaluado.getPaTxDescripcion());
             r++;
@@ -1208,36 +1309,35 @@ public class EvaluadosView implements Serializable{
             r++;
             nextrow.createCell(r).setCellValue(objEvaluado.getPaTxCorreo());
 
-            if(blHabilitarSexo){
+            if (blHabilitarSexo) {
                 r++;
                 nextrow.createCell(r).setCellValue(objEvaluado.getPaTxSexo());
             }
-            if(blHabilitarEdad){
+            if (blHabilitarEdad) {
                 r++;
                 nextrow.createCell(r).setCellValue(objEvaluado.getPaNrEdad());
             }
-            if(blHabilitarTiempoEmpresa){
+            if (blHabilitarTiempoEmpresa) {
                 r++;
                 nextrow.createCell(r).setCellValue(objEvaluado.getPaNrTiempoTrabajo());
             }
-            if(blHabilitarNivelOcupacional){
+            if (blHabilitarNivelOcupacional) {
                 r++;
                 nextrow.createCell(r).setCellValue(objEvaluado.getPaTxOcupacion());
             }
-            if(blHabilitarAreaNegocio){
+            if (blHabilitarAreaNegocio) {
                 r++;
-                nextrow.createCell(r).setCellValue(objEvaluado.getPaTxAreaNegocio());                
+                nextrow.createCell(r).setCellValue(objEvaluado.getPaTxAreaNegocio());
             }
-            
+
             r++;
-            nextrow.createCell(r).setCellValue(objEvaluado.isPaInAutoevaluar()==true?"SI":"NO");
+            nextrow.createCell(r).setCellValue(objEvaluado.isPaInAutoevaluar() == true ? "SI" : "NO");
             r++;
             nextrow.createCell(r).setCellValue(objEvaluado.getStrObservacionMasivo());
             i++;
-            
+
         }
-        
-        
+
         hoja.autoSizeColumn(0);
         hoja.autoSizeColumn(1);
         hoja.autoSizeColumn(2);
@@ -1251,7 +1351,7 @@ public class EvaluadosView implements Serializable{
         hoja.autoSizeColumn(10);
 
         try {
-            
+
             FacesContext facesContext = FacesContext.getCurrentInstance();
             ExternalContext externalContext = facesContext.getExternalContext();
             externalContext.setResponseContentType("application/vnd.ms-excel");
@@ -1265,245 +1365,243 @@ public class EvaluadosView implements Serializable{
         }
     }
 
-    
     public void leeExcel(FileUploadEvent event) {
 
         FacesContext context = FacesContext.getCurrentInstance();
-        
+
         intCantTempCorrect = 0;
         intCantTempIncorrect = 0;
-        
+
         if (event.getFile() == null) {
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,"Carga masiva", "Archivo " + event.getFile().getFileName() + " esta vacio"));
-        }else{
-        
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Carga masiva", "Archivo " + event.getFile().getFileName() + " esta vacio"));
+        } else {
+
             HSSFWorkbook xlsEvaluados = null;
-                    
+
             try {
-                
-                xlsEvaluados = new HSSFWorkbook(event.getFile().getInputstream());
-            
+
+                xlsEvaluados = new HSSFWorkbook(event.getFile().getInputStream());
+
                 HSSFSheet sheet = xlsEvaluados.getSheetAt(0);
 
                 Iterator<Row> rowIterator = sheet.iterator();
 
                 rowIterator.next();
-                
+
                 lstCargaMasiva = new ArrayList();
-                
+
                 Evaluado objEvaluado;
-                        
+
                 while (rowIterator.hasNext()) {
-                    
+
                     Row row = rowIterator.next();
 
                     int c = 0;
-                    
+
                     String strDescripcion;
-                    strDescripcion = Utilitarios.obtieneDatoCelda(row,c);
-                    
+                    strDescripcion = Utilitarios.obtieneDatoCelda(row, c);
+
                     String strCargo;
                     c++;
-                    strCargo = Utilitarios.obtieneDatoCelda(row,c);
-                    
+                    strCargo = Utilitarios.obtieneDatoCelda(row, c);
+
                     String strCorreo;
                     c++;
-                    strCorreo = Utilitarios.obtieneDatoCelda(row,c);
-                    
+                    strCorreo = Utilitarios.obtieneDatoCelda(row, c);
+
                     String strSexo = null;
-                    if(blHabilitarSexo){
+                    if (blHabilitarSexo) {
                         c++;
-                        strSexo = Utilitarios.obtieneDatoCelda(row,c);
+                        strSexo = Utilitarios.obtieneDatoCelda(row, c);
                     }
-                    
+
                     String strEdad = null;
-                    if(blHabilitarEdad){
+                    if (blHabilitarEdad) {
                         c++;
-                        strEdad = Utilitarios.obtieneDatoCelda(row,c);
+                        strEdad = Utilitarios.obtieneDatoCelda(row, c);
                     }
-                    
+
                     String strTiempoEmpresa = null;
-                    if(blHabilitarTiempoEmpresa){
+                    if (blHabilitarTiempoEmpresa) {
                         c++;
-                        strTiempoEmpresa = Utilitarios.obtieneDatoCelda(row,c);;
+                        strTiempoEmpresa = Utilitarios.obtieneDatoCelda(row, c);;
                     }
-                    
+
                     String strOcupacion = null;
-                    if(blHabilitarNivelOcupacional){
+                    if (blHabilitarNivelOcupacional) {
                         c++;
-                        strOcupacion = Utilitarios.obtieneDatoCelda(row,c);
+                        strOcupacion = Utilitarios.obtieneDatoCelda(row, c);
                     }
-                    
+
                     String strAreaNegocio = null;
-                    if(blHabilitarAreaNegocio){
+                    if (blHabilitarAreaNegocio) {
                         c++;
-                        strAreaNegocio = Utilitarios.obtieneDatoCelda(row,c);
+                        strAreaNegocio = Utilitarios.obtieneDatoCelda(row, c);
                     }
-                    
+
                     String strAutoevaluar;
-                        c++;
-                        strAutoevaluar = Utilitarios.obtieneDatoCelda(row,c);
-                    
+                    c++;
+                    strAutoevaluar = Utilitarios.obtieneDatoCelda(row, c);
+
                     objEvaluado = new Evaluado();
-                    
+
                     objEvaluado.setPaTxDescripcion(strDescripcion);
                     objEvaluado.setPaTxNombreCargo(strCargo);
                     objEvaluado.setPaTxCorreo(strCorreo);
                     objEvaluado.setPaTxSexo(strSexo);
-                    
-                    if(Utilitarios.noEsNuloOVacio(strEdad)){
-                        if(Utilitarios.isNumber(strEdad, false)){
+
+                    if (Utilitarios.noEsNuloOVacio(strEdad)) {
+                        if (Utilitarios.isNumber(strEdad, false)) {
                             BigDecimal bd = new BigDecimal(strEdad);
                             objEvaluado.setPaNrEdad(bd.intValue());
-                        }else{
+                        } else {
                             objEvaluado.setPaNrEdad(0);
                         }
-                    }else{
+                    } else {
                         objEvaluado.setPaNrEdad(0);
                     }
-                    
-                    if(Utilitarios.noEsNuloOVacio(strTiempoEmpresa)){
-                        if(Utilitarios.isNumber(strTiempoEmpresa, false)){
+
+                    if (Utilitarios.noEsNuloOVacio(strTiempoEmpresa)) {
+                        if (Utilitarios.isNumber(strTiempoEmpresa, false)) {
                             BigDecimal bd = new BigDecimal(strTiempoEmpresa);
                             objEvaluado.setPaNrTiempoTrabajo(bd.intValue());
-                        }else{
+                        } else {
                             objEvaluado.setPaNrTiempoTrabajo(0);
                         }
-                    }else{
+                    } else {
                         objEvaluado.setPaNrTiempoTrabajo(0);
                     }
-                    
-                    
+
                     objEvaluado.setPaTxOcupacion(strOcupacion);
                     objEvaluado.setPaTxAreaNegocio(strAreaNegocio);
-                    
-                    if(Utilitarios.esNuloOVacio(strAutoevaluar) || strAutoevaluar.toUpperCase().equals("NO")){
+
+                    if (Utilitarios.esNuloOVacio(strAutoevaluar) || strAutoevaluar.toUpperCase().equals("NO")) {
                         objEvaluado.setPaInAutoevaluar(false);
-                    }else{
+                    } else {
                         objEvaluado.setPaInAutoevaluar(true);
                     }
-                    
+
                     Integer error;
-                    
+
                     error = buscarLista(strDescripcion, strCargo, strCorreo, null, true);
-                    
-                    if(Utilitarios.esNuloOVacio(error)){
+
+                    if (Utilitarios.esNuloOVacio(error)) {
                         error = buscarListaTemporal(strDescripcion, strCorreo);
                     }
-                    
-                    if(Utilitarios.esNuloOVacio(error)){
+
+                    if (Utilitarios.esNuloOVacio(error)) {
                         error = validarParametros(strSexo, strEdad, strTiempoEmpresa, strOcupacion, strAreaNegocio);
                     }
-                    
-                    if(Utilitarios.esNuloOVacio(error)){
+
+                    if (Utilitarios.esNuloOVacio(error)) {
                         intCantTempCorrect++;
                         objEvaluado.setStrCorrectoMasivo("good");
-                    }else{
+                    } else {
                         intCantTempIncorrect++;
-                        objEvaluado = determinaError(objEvaluado,error);
+                        objEvaluado = determinaError(objEvaluado, error);
                     }
 
                     lstCargaMasiva.add(objEvaluado);
 
                 }
-            
+
                 file = null;
-                        
-            } catch (IOException e){
+
+            } catch (IOException e) {
                 log.error(e);
-                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL,"Error al cargar excel", "Error en el archivo"));
+                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Error al cargar excel", "Error en el archivo"));
             } catch (NoSuchElementException e) {
                 log.error(e);
-                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL,"Error al cargar excel", "Estructura del archivo incorrecta"));
+                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Error al cargar excel", "Estructura del archivo incorrecta"));
             } catch (NullPointerException e) {
                 log.error(e);
-                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL,"Error al cargar excel", "Uno de los datos se encuentra vacio. Recuerda que el Excel debe estar completamente lleno"));
+                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Error al cargar excel", "Uno de los datos se encuentra vacio. Recuerda que el Excel debe estar completamente lleno"));
             }
         }
     }
-    
-    private Evaluado determinaError(Evaluado objEvaluado, Integer error){
-        
+
+    private Evaluado determinaError(Evaluado objEvaluado, Integer error) {
+
         String icon = null, mensaje = null;
-        
-        if(error.equals(0)){
+
+        if (error.equals(0)) {
             icon = "error";
             mensaje = "Contiene datos vacios";
-        }else if(error.equals(1)){
+        } else if (error.equals(1)) {
             icon = "error";
             mensaje = "El evaluado ingresado ya se encuentra agregado";
-        }else if(error.equals(2)){
+        } else if (error.equals(2)) {
             icon = "alert";
             mensaje = "Registro ya existe y será sobreescrito";
-        }else if(error.equals(3)){
+        } else if (error.equals(3)) {
             icon = "error";
             mensaje = "Correo duplicado";
-        }else if(error.equals(4)){
+        } else if (error.equals(4)) {
             icon = "error";
             mensaje = "No es un correo electronico";
-        }else if(error.equals(5)){
+        } else if (error.equals(5)) {
             icon = "error";
             mensaje = "El correo ya fue registrado";
-        }else if(error.equals(6)){
+        } else if (error.equals(6)) {
             icon = "error";
             mensaje = "Sexo no permitido";
-        }else if(error.equals(7)){
+        } else if (error.equals(7)) {
             icon = "error";
             mensaje = "Edad errada";
-        }else if(error.equals(8)){
+        } else if (error.equals(8)) {
             icon = "error";
             mensaje = "Tiempo en la empresa errado";
-        }else if(error.equals(9)){
+        } else if (error.equals(9)) {
             icon = "error";
             mensaje = "Ocupacion no permitida";
-        }else if(error.equals(10)){
+        } else if (error.equals(10)) {
             icon = "error";
             mensaje = "Area no permitida";
         }
-        
+
         objEvaluado.setStrCorrectoMasivo(icon);
         objEvaluado.setStrObservacionMasivo(mensaje);
-                        
+
         return objEvaluado;
-    
+
     }
 
-    public Integer buscarListaTemporal(String strDescripcion, String strCorreo){
-        
+    public Integer buscarListaTemporal(String strDescripcion, String strCorreo) {
+
         String strDesc = Utilitarios.retirarEspacios(strDescripcion);
         String strCorr = Utilitarios.retirarEspacios(strCorreo);
-        
-        if(Utilitarios.esNuloOVacio(strCorr)||Utilitarios.esNuloOVacio(strDesc)){
+
+        if (Utilitarios.esNuloOVacio(strCorr) || Utilitarios.esNuloOVacio(strDesc)) {
             return 0;//"Contiene datos vacios";
         }
-        
-        for (Evaluado obj : lstCargaMasiva){
-            if(Utilitarios.retirarEspacios(obj.getPaTxDescripcion()).toUpperCase().equals(strDesc.toUpperCase())){
+
+        for (Evaluado obj : lstCargaMasiva) {
+            if (Utilitarios.retirarEspacios(obj.getPaTxDescripcion()).toUpperCase().equals(strDesc.toUpperCase())) {
                 return 1;//"El evaluado ingresado ya se encuentra agregado";
             }
-            if(Utilitarios.retirarEspacios(obj.getPaTxCorreo()).toUpperCase().equals(strCorr.toUpperCase())){
+            if (Utilitarios.retirarEspacios(obj.getPaTxCorreo()).toUpperCase().equals(strCorr.toUpperCase())) {
                 return 3;//"El correo ingresado esta siendo usado por " + obj.getPaTxDescripcion();
             }
         }
 
-        if(!Pattern.compile(Constantes.EMAIL_PATTERN).matcher(strCorr).matches()){
+        if (!Pattern.compile(Constantes.EMAIL_PATTERN).matcher(strCorr).matches()) {
             return 4;//"No es un correo electronico";
         }
         return null;
 
     }
-    
-    public void cargarListaEvaluados(){
+
+    public void cargarListaEvaluados() {
 
         FacesContext context = FacesContext.getCurrentInstance();
-        
-        int countEvaluadorReg = 0;
-        
-        try{
-            
-            for(Evaluado objEvaluado: lstCargaMasiva){
 
-                if(objEvaluado.getStrCorrectoMasivo().equals("good")){
+        int countEvaluadorReg = 0;
+
+        try {
+
+            for (Evaluado objEvaluado : lstCargaMasiva) {
+
+                if (objEvaluado.getStrCorrectoMasivo().equals("good")) {
 
                     Integer error = buscarLista(objEvaluado.getPaTxDescripcion(), objEvaluado.getPaTxNombreCargo(), objEvaluado.getPaTxCorreo(), objEvaluado.isPaInAutoevaluar(), false);
 
@@ -1521,57 +1619,57 @@ public class EvaluadosView implements Serializable{
                     nuevoEvaluado.setPaIdEstado(Constantes.INT_ET_ESTADO_EVALUADO_REGISTRADO);
                     nuevoEvaluado.setPaStrEstado(EHCacheManager.obtenerDescripcionElemento(Constantes.INT_ET_ESTADO_EVALUADO_REGISTRADO));
 
-                    if(error==null){
+                    if (error == null) {
 
                         ParticipanteDAO objParticipanteDAO = new ParticipanteDAO();
                         nuevoEvaluado.setPaIdParticipantePk(objParticipanteDAO.guardaParticipante(creaParticipante(nuevoEvaluado)));
                         objEvaluado.setStrObservacionMasivo("Procesado");
-                        
-                        this.lstEvaluado.add(nuevoEvaluado);
-                        
-                        boolean good = incluirComoEvaluador(nuevoEvaluado.getPaTxDescripcion(),nuevoEvaluado.getPaTxNombreCargo(), nuevoEvaluado.getPaTxCorreo(), nuevoEvaluado.getPaTxSexo(), nuevoEvaluado.getPaNrEdad(), nuevoEvaluado.getPaNrTiempoTrabajo(), nuevoEvaluado.getPaTxOcupacion(), nuevoEvaluado.getPaTxAreaNegocio(), true);
 
-                        if(good){
+                        this.lstEvaluado.add(nuevoEvaluado);
+
+                        boolean good = incluirComoEvaluador(nuevoEvaluado.getPaTxDescripcion(), nuevoEvaluado.getPaTxNombreCargo(), nuevoEvaluado.getPaTxCorreo(), nuevoEvaluado.getPaTxSexo(), nuevoEvaluado.getPaNrEdad(), nuevoEvaluado.getPaNrTiempoTrabajo(), nuevoEvaluado.getPaTxOcupacion(), nuevoEvaluado.getPaTxAreaNegocio(), true);
+
+                        if (good) {
                             countEvaluadorReg++;
                         }
-                        
-                    }else{
+
+                    } else {
                         objEvaluado = determinaError(objEvaluado, error);
                     }
 
                 }
             }
-            if(countEvaluadorReg>0){
-                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,"Grabar evaluados","Adicionalmente de agregaron algunos evaluadores. Favor verificar"));  
-            }else{
-                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN,"Grabar evaluados","No se grabó ninguno evaluador. Posiblemente ya existan"));  
+            if (countEvaluadorReg > 0) {
+                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Grabar evaluados", "Adicionalmente de agregaron algunos evaluadores. Favor verificar"));
+            } else {
+                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Grabar evaluados", "No se grabó ninguno evaluador. Posiblemente ya existan"));
             }
-            
+
             calculaIndicadores();
 
             intCantTempCorrect = 0;
 
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,"Carga de evaluados", "El proceso de carga finalizó") );  
-        
-        }catch(Exception e){
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Carga de evaluados", "El proceso de carga finalizó"));
+
+        } catch (Exception e) {
             log.error(e);
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,"Carga de evaluados", "El proceso de carga tuvo un error") );  
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Carga de evaluados", "El proceso de carga tuvo un error"));
         }
     }
 
-    public void actualizarEvaluado(){
+    public void actualizarEvaluado() {
         strCorreo = strCorreo.toLowerCase();
         Integer error = buscarListaModifica(idParticipantePk, strDescripcion, strCargo, strCorreo, paInAutoevaluar, false);
         FacesContext context = FacesContext.getCurrentInstance();
         String correoAnterior;
-        if(error==null){
+        if (error == null) {
 
             ParticipanteDAO objParticipanteDAO = new ParticipanteDAO();
 
             Participante objParticipante = objParticipanteDAO.obtenParticipante(this.idParticipantePk);
 
             correoAnterior = objParticipante.getPaTxCorreo().toLowerCase();
-            
+
             objParticipante.setPaTxDescripcion(this.strDescripcion);
             objParticipante.setPaTxNombreCargo(this.strCargo);
             objParticipante.setPaTxCorreo(this.strCorreo);
@@ -1581,16 +1679,16 @@ public class EvaluadosView implements Serializable{
             objParticipante.setPaTxOcupacion(this.strOcupacion);
             objParticipante.setPaTxAreaNegocio(this.strAreaNegocio);
             objParticipante.setPaInAutoevaluar(this.paInAutoevaluar);
-            
-            if(!correoAnterior.equals(this.strCorreo)){
+
+            if (!correoAnterior.equals(this.strCorreo)) {
                 objParticipante.setPaIdEstado(Constantes.INT_ET_ESTADO_EVALUADO_REGISTRADO);
             }
 
             objParticipanteDAO.actualizaParticipante(objParticipante);
 
-            for(Evaluado objEvaluado : lstEvaluado){
+            for (Evaluado objEvaluado : lstEvaluado) {
 
-                if(objEvaluado.getPaIdParticipantePk().equals(this.idParticipantePk)){
+                if (objEvaluado.getPaIdParticipantePk().equals(this.idParticipantePk)) {
 
                     objEvaluado.setPaTxDescripcion(this.strDescripcion);
                     objEvaluado.setPaTxNombreCargo(this.strCargo);
@@ -1606,21 +1704,21 @@ public class EvaluadosView implements Serializable{
                 }
 
             }
-        
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,"Modificar evaluado",  "Se actualizó correctamente"));
-            
-            for(Evaluador objEvaluador : lstEvaluadores){
-            
-                if(objEvaluador.getReTxCorreo().toLowerCase().equals(correoAnterior)){
-                    
+
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Modificar evaluado", "Se actualizó correctamente"));
+
+            for (Evaluador objEvaluador : lstEvaluadores) {
+
+                if (objEvaluador.getReTxCorreo().toLowerCase().equals(correoAnterior)) {
+
                     RedEvaluacionDAO objRedEvaluacionDAO = new RedEvaluacionDAO();
 
                     RedEvaluacion objRedEvaluacion = objRedEvaluacionDAO.obtenRedEvaluacion(objEvaluador.getReIdParticipantePk());
-                    
-                    if(!this.strCorreo.equals(objRedEvaluacion.getReTxCorreo().toLowerCase())){
+
+                    if (!this.strCorreo.equals(objRedEvaluacion.getReTxCorreo().toLowerCase())) {
                         objRedEvaluacion.setReIdEstado(Constantes.INT_ET_ESTADO_EVALUADOR_REGISTRADO);
                     }
-                        
+
                     objRedEvaluacion.setReTxDescripcion(this.strDescripcion);
                     objRedEvaluacion.setReTxNombreCargo(this.strCargo);
                     objRedEvaluacion.setReTxCorreo(this.strCorreo);
@@ -1629,9 +1727,9 @@ public class EvaluadosView implements Serializable{
                     objRedEvaluacion.setReNrTiempoTrabajo(this.intTiempoEmpresa);
                     objRedEvaluacion.setReTxOcupacion(this.strOcupacion);
                     objRedEvaluacion.setReTxAreaNegocio(this.strAreaNegocio);
-                    
+
                     objRedEvaluacionDAO.actualizaRedEvaluacion(objRedEvaluacion);
-                            
+
                     objEvaluador.setReTxDescripcion(this.strDescripcion);
                     objEvaluador.setReTxNombreCargo(this.strCargo);
                     objEvaluador.setReTxCorreo(this.strCorreo);
@@ -1642,35 +1740,28 @@ public class EvaluadosView implements Serializable{
                     objEvaluador.setReTxAreaNegocio(this.strAreaNegocio);
                     objEvaluador.setReIdEstado(objRedEvaluacion.getReIdEstado());
                     objEvaluador.setReStrEstado(EHCacheManager.obtenerDescripcionElemento(objRedEvaluacion.getReIdEstado()));
-                    
-                    context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,"Modificar evaluado",  "Se actualizó un registro del los evaluadores"));
+
+                    context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Modificar evaluado", "Se actualizó un registro del los evaluadores"));
 
                 }
-            
+
             }
-            
+
             resetFail();
-        
-        }else{
+
+        } else {
             Evaluado objEvaluado = new Evaluado();
             objEvaluado = determinaError(objEvaluado, error);
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,"Falló", objEvaluado.getStrObservacionMasivo()));  
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Falló", objEvaluado.getStrObservacionMasivo()));
         }
-        
-        
-        
-        
+
     }
-    
-    
-    
- 
-    
-    public boolean agregarEvaluadores(boolean esMasivoEvaluado){
-        
+
+    public boolean agregarEvaluadores(boolean esMasivoEvaluado) {
+
         FacesContext context = FacesContext.getCurrentInstance();
         Evaluador evaluador;
-            
+
         Integer error = buscarListaEvaluadores(this.strDescripcionEvaluadores, this.strCargoEvaluadores, this.strCorreoEvaluadores.toLowerCase(), false);
 
         evaluador = new Evaluador();
@@ -1686,8 +1777,8 @@ public class EvaluadosView implements Serializable{
         evaluador.setReTxAreaNegocio(this.strAreaNegocioEvaluadores.trim());
         evaluador.setReIdEstado(Constantes.INT_ET_ESTADO_EVALUADOR_REGISTRADO);
         evaluador.setReStrEstado(EHCacheManager.obtenerDescripcionElemento(Constantes.INT_ET_ESTADO_EVALUADOR_REGISTRADO));
-            
-        if(error==null){
+
+        if (error == null) {
 
             RedEvaluacionDAO objRedEvaluacionDAO = new RedEvaluacionDAO();
             evaluador.setReIdParticipantePk(objRedEvaluacionDAO.guardaRedEvaluacion(creaRedEvaluacionEvaluadores(evaluador)));
@@ -1696,177 +1787,175 @@ public class EvaluadosView implements Serializable{
 
             calculaIndicadores();
 
-            if(!esMasivoEvaluado){
-                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,"Confirmación", "El evaluador se agregó a la lista correctamente") );  
+            if (!esMasivoEvaluado) {
+                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Confirmación", "El evaluador se agregó a la lista correctamente"));
             }
             this.resetFail();
-            
+
             return true;
-            
-        }else{            
+
+        } else {
             evaluador = determinaErrorEvaluadores(evaluador, error);
-            if(!esMasivoEvaluado){
-                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,"Falló", evaluador.getStrObservacionMasivo()));  
+            if (!esMasivoEvaluado) {
+                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Falló", evaluador.getStrObservacionMasivo()));
             }
             return false;
         }
-        
+
     }
-        
-    
-    public Integer buscarListaEvaluadores(Integer idRedEvaluacion, String strDescripcion,String strCargo, String strCorreo, Boolean Masivo ){
-         
+
+    public Integer buscarListaEvaluadores(Integer idRedEvaluacion, String strDescripcion, String strCargo, String strCorreo, Boolean Masivo) {
+
         String strDesc = Utilitarios.retirarEspacios(strDescripcion);
         String strCorr = Utilitarios.retirarEspacios(strCorreo);
-        
-        for (Evaluador obj:lstEvaluadores){  
-            if(!idRedEvaluacion.equals(obj.getReIdParticipantePk())){
-                
-                if(Utilitarios.retirarEspacios(obj.getReTxDescripcion()).toUpperCase().equals(strDesc.toUpperCase())){
+
+        for (Evaluador obj : lstEvaluadores) {
+            if (!idRedEvaluacion.equals(obj.getReIdParticipantePk())) {
+
+                if (Utilitarios.retirarEspacios(obj.getReTxDescripcion()).toUpperCase().equals(strDesc.toUpperCase())) {
                     return 1; //"El evaluado ingresado ya se encuentra agregado";
                 }
-                if(Utilitarios.retirarEspacios(obj.getReTxCorreo()).toUpperCase().equals(strCorr.toUpperCase())){
-                    if(Masivo){
-                        if(obj.getReIdEstado().equals(Constantes.INT_ET_ESTADO_EVALUADOR_REGISTRADO)){
+                if (Utilitarios.retirarEspacios(obj.getReTxCorreo()).toUpperCase().equals(strCorr.toUpperCase())) {
+                    if (Masivo) {
+                        if (obj.getReIdEstado().equals(Constantes.INT_ET_ESTADO_EVALUADOR_REGISTRADO)) {
                             return 2;//"Registro ya existe y será actualizado"
-                        }else{
+                        } else {
                             return 3;//"El correo ingresado esta siendo usado por " + obj.getPaTxDescripcion();
                         }
-                    }else{
+                    } else {
                         return 5; //"El correo ingresado esta siendo usado por " + obj.getPaTxDescripcion();
                     }
                 }
             }
-        }  
-                       
+        }
+
         return null;
     }
-    
-    
-    public Integer buscarListaEvaluadores(String strDescripcion,String strCargo, String strCorreo, Boolean Masivo ){
-         
+
+    public Integer buscarListaEvaluadores(String strDescripcion, String strCargo, String strCorreo, Boolean Masivo) {
+
         String strDesc = Utilitarios.retirarEspacios(strDescripcion);
         String strCorr = Utilitarios.retirarEspacios(strCorreo);
-        
-        for (Evaluador obj:lstEvaluadores){  
-                
-            if(Utilitarios.retirarEspacios(obj.getReTxDescripcion()).toUpperCase().equals(strDesc.toUpperCase())){
+
+        for (Evaluador obj : lstEvaluadores) {
+
+            if (Utilitarios.retirarEspacios(obj.getReTxDescripcion()).toUpperCase().equals(strDesc.toUpperCase())) {
                 return 1; //"El evaluado ingresado ya se encuentra agregado";
             }
-            if(Utilitarios.retirarEspacios(obj.getReTxCorreo()).toUpperCase().equals(strCorr.toUpperCase())){
-                if(Masivo){
-                    if(obj.getReIdEstado().equals(Constantes.INT_ET_ESTADO_EVALUADOR_REGISTRADO)){
+            if (Utilitarios.retirarEspacios(obj.getReTxCorreo()).toUpperCase().equals(strCorr.toUpperCase())) {
+                if (Masivo) {
+                    if (obj.getReIdEstado().equals(Constantes.INT_ET_ESTADO_EVALUADOR_REGISTRADO)) {
                         return 2;//"Registro ya existe y será actualizado"
-                    }else{
+                    } else {
                         return 3;//"El correo ingresado esta siendo usado por " + obj.getPaTxDescripcion();
                     }
-                }else{
+                } else {
                     return 5; //"El correo ingresado esta siendo usado por " + obj.getPaTxDescripcion();
                 }
             }
 
-        }  
-                       
+        }
+
         return null;
     }
-    
+
     public void resetFailEvaluadores() {
-      this.strDescripcionEvaluadores = Constantes.strVacio;
-      this.strCargoEvaluadores = Constantes.strVacio;
-      this.strCorreoEvaluadores = Constantes.strVacio;  
-      
-      this.strSexoEvaluadores = Constantes.strVacio;
-      this.intEdadEvaluadores = null;  
-      this.intTiempoEmpresaEvaluadores = null;  
-      this.strOcupacionEvaluadores = Constantes.strVacio;  
-      this.strAreaNegocioEvaluadores = Constantes.strVacio;  
-      
-      this.reIdParticipantePk = null;
-      this.intCorrelativoEvaluadores = null;
-      this.lstCargaMasivaEvaluadores = new ArrayList();
-      this.fileEvaluadores = null;
-      this.xlsContentEvaluadores = null;
+        this.strDescripcionEvaluadores = Constantes.strVacio;
+        this.strCargoEvaluadores = Constantes.strVacio;
+        this.strCorreoEvaluadores = Constantes.strVacio;
+
+        this.strSexoEvaluadores = Constantes.strVacio;
+        this.intEdadEvaluadores = null;
+        this.intTiempoEmpresaEvaluadores = null;
+        this.strOcupacionEvaluadores = Constantes.strVacio;
+        this.strAreaNegocioEvaluadores = Constantes.strVacio;
+
+        this.reIdParticipantePk = null;
+        this.intCorrelativoEvaluadores = null;
+        this.lstCargaMasivaEvaluadores = new ArrayList();
+        this.fileEvaluadores = null;
+        this.xlsContentEvaluadores = null;
     }
-    
-    public void eliminarListaEvaluadores(Evaluador objEvaluador){
-        
+
+    public void eliminarListaEvaluadores(Evaluador objEvaluador) {
+
         int i = 0;
         boolean blEncontro = false;
-        
-        for (Evaluador obj:this.lstEvaluadores){  
-            if(obj.getReIdParticipantePk().equals(objEvaluador.getReIdParticipantePk())){ 
-                blEncontro =  true;
+
+        for (Evaluador obj : this.lstEvaluadores) {
+            if (obj.getReIdParticipantePk().equals(objEvaluador.getReIdParticipantePk())) {
+                blEncontro = true;
                 break;
             }
             i++;
-        }  
-        
-        if(blEncontro){
-            
+        }
+
+        if (blEncontro) {
+
             RedEvaluacionDAO objRedEvaluacionDAO = new RedEvaluacionDAO();
             RedEvaluacion objRedEvaluacion = objRedEvaluacionDAO.obtenRedEvaluacion(objEvaluador.getReIdParticipantePk());
-            
+
             objRedEvaluacionDAO.eliminaRedEvaluacion(objRedEvaluacion);
-            
+
             this.cantidadEvaluadoresRegistrados--;
             this.lstEvaluadores.remove(i);
-            
+
         }
-        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,"Eliminar evaluador",  "Se eliminó correctamente"));
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Eliminar evaluador", "Se eliminó correctamente"));
         resetFail();
-        
+
     }
-    
-    public void grabarListaEvaluador(){
-        
+
+    public void grabarListaEvaluador() {
+
         FacesContext context = FacesContext.getCurrentInstance();
 
-        try{
-            
+        try {
+
             RedEvaluacionDAO objRedEvaluacionDAO = new RedEvaluacionDAO();
-            boolean correcto = objRedEvaluacionDAO.guardaRedEvaluacion(this.lstEvaluadores,Utilitarios.obtenerProyecto().getIntIdProyecto());
-            
-            if(correcto){
+            boolean correcto = objRedEvaluacionDAO.guardaRedEvaluacion(this.lstEvaluadores, Utilitarios.obtenerProyecto().getIntIdProyecto());
+
+            if (correcto) {
                 init();
-                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,"Confirmación",  "Se guardo correctamente"));
-            }else{
-                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL,"Confirmación",  "Ocurrio un error al guardar el listado"));
+                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Confirmación", "Se guardo correctamente"));
+            } else {
+                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Confirmación", "Ocurrio un error al guardar el listado"));
             }
-           
-        }catch(Exception e){
+
+        } catch (Exception e) {
             log.error(e);
-        }   
-        
+        }
+
     }
-    
-    public void modificarEvaluador(Evaluador objEvaluador){
-        
+
+    public void modificarEvaluador(Evaluador objEvaluador) {
+
         this.modoEvaluadores = 1;
-        
+
         FacesContext context = FacesContext.getCurrentInstance();
 
         this.strDescripcionEvaluadores = objEvaluador.getReTxDescripcion();
         this.strCargoEvaluadores = objEvaluador.getReTxNombreCargo();
-        this.strCorreoEvaluadores = objEvaluador.getReTxCorreo();  
-        this.strSexoEvaluadores = objEvaluador.getReTxSexo();  
-        this.intEdadEvaluadores = objEvaluador.getReNrEdad();  
-        this.intTiempoEmpresaEvaluadores = objEvaluador.getReNrTiempoTrabajo();  
-        this.strOcupacionEvaluadores = objEvaluador.getReTxOcupacion();  
-        this.strAreaNegocioEvaluadores = objEvaluador.getReTxAreaNegocio();  
+        this.strCorreoEvaluadores = objEvaluador.getReTxCorreo();
+        this.strSexoEvaluadores = objEvaluador.getReTxSexo();
+        this.intEdadEvaluadores = objEvaluador.getReNrEdad();
+        this.intTiempoEmpresaEvaluadores = objEvaluador.getReNrTiempoTrabajo();
+        this.strOcupacionEvaluadores = objEvaluador.getReTxOcupacion();
+        this.strAreaNegocioEvaluadores = objEvaluador.getReTxAreaNegocio();
         this.reIdParticipantePk = objEvaluador.getReIdParticipantePk();
-        
-    }
-   
-    public void generaExcelEvaluadores(){
 
-        HSSFWorkbook xlsEvaluadores = new HSSFWorkbook(); 
+    }
+
+    public void generaExcelEvaluadores() {
+
+        HSSFWorkbook xlsEvaluadores = new HSSFWorkbook();
 
         HSSFSheet hoja = xlsEvaluadores.createSheet("Evaluadores");
 
         HSSFRow row = hoja.createRow(0);
 
         int c = 0;
-        
+
         HSSFCell cell0 = row.createCell(c);
         HSSFRichTextString texto0 = new HSSFRichTextString("Descripción");
         cell0.setCellValue(texto0);
@@ -1881,54 +1970,55 @@ public class EvaluadosView implements Serializable{
         HSSFRichTextString texto2 = new HSSFRichTextString("Correo");
         cell2.setCellValue(texto2);
 
-        if(blHabilitarSexo){
+        if (blHabilitarSexo) {
             c++;
             HSSFCell cell3 = row.createCell(c);
             HSSFRichTextString texto3 = new HSSFRichTextString("Sexo");
             cell3.setCellValue(texto3);
         }
-        
-        if(blHabilitarEdad){
+
+        if (blHabilitarEdad) {
             c++;
             HSSFCell cell4 = row.createCell(c);
             HSSFRichTextString texto4 = new HSSFRichTextString("Edad");
             cell4.setCellValue(texto4);
         }
-        
-        if(blHabilitarTiempoEmpresa){
+
+        if (blHabilitarTiempoEmpresa) {
             c++;
             HSSFCell cell5 = row.createCell(c);
             HSSFRichTextString texto5 = new HSSFRichTextString("Tiempo en la empresa");
             cell5.setCellValue(texto5);
         }
-        
-        if(blHabilitarNivelOcupacional){
+
+        if (blHabilitarNivelOcupacional) {
             c++;
             HSSFCell cell6 = row.createCell(c);
             HSSFRichTextString texto6 = new HSSFRichTextString("Nivel ocupacional");
             cell6.setCellValue(texto6);
         }
-        
-        if(blHabilitarAreaNegocio){
+
+        if (blHabilitarAreaNegocio) {
             c++;
             HSSFCell cell7 = row.createCell(c);
             HSSFRichTextString texto7 = new HSSFRichTextString("Area del negocio");
             cell7.setCellValue(texto7);
         }
-        
-        HSSFCellStyle myStyle = xlsEvaluadores.createCellStyle();   
-        
+
+        HSSFCellStyle myStyle = xlsEvaluadores.createCellStyle();
+
         HSSFFont hSSFFont = xlsEvaluadores.createFont();
-        hSSFFont.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD); 
-        
+        hSSFFont.setBold(true);
+        //hSSFFont.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD); 
+
         myStyle.setFont(hSSFFont);
 
         row.setRowStyle(myStyle);
 
         int i = 1;
-        for (Evaluador objEvaluador : lstEvaluadores){
-            
-            if(objEvaluador.getReIdEstado().equals(Constantes.INT_ET_ESTADO_EVALUADOR_REGISTRADO)){
+        for (Evaluador objEvaluador : lstEvaluadores) {
+
+            if (objEvaluador.getReIdEstado().equals(Constantes.INT_ET_ESTADO_EVALUADOR_REGISTRADO)) {
                 HSSFRow nextrow = hoja.createRow(i);
                 int r = 0;
                 nextrow.createCell(r).setCellValue(objEvaluador.getReTxDescripcion());
@@ -1936,32 +2026,31 @@ public class EvaluadosView implements Serializable{
                 nextrow.createCell(r).setCellValue(objEvaluador.getReTxNombreCargo());
                 r++;
                 nextrow.createCell(r).setCellValue(objEvaluador.getReTxCorreo());
-                if(blHabilitarSexo){
+                if (blHabilitarSexo) {
                     r++;
                     nextrow.createCell(r).setCellValue(objEvaluador.getReTxSexo());
                 }
-                if(blHabilitarEdad){
+                if (blHabilitarEdad) {
                     r++;
                     nextrow.createCell(r).setCellValue(objEvaluador.getReNrEdad());
                 }
-                if(blHabilitarTiempoEmpresa){
+                if (blHabilitarTiempoEmpresa) {
                     r++;
                     nextrow.createCell(r).setCellValue(objEvaluador.getReNrTiempoTrabajo());
                 }
-                if(blHabilitarNivelOcupacional){
+                if (blHabilitarNivelOcupacional) {
                     r++;
                     nextrow.createCell(r).setCellValue(objEvaluador.getReTxOcupacion());
                 }
-                if(blHabilitarAreaNegocio){
+                if (blHabilitarAreaNegocio) {
                     r++;
-                    nextrow.createCell(r).setCellValue(objEvaluador.getReTxAreaNegocio());                
+                    nextrow.createCell(r).setCellValue(objEvaluador.getReTxAreaNegocio());
                 }
                 i++;
             }
-            
+
         }
-        
-        
+
         hoja.autoSizeColumn(0);
         hoja.autoSizeColumn(1);
         hoja.autoSizeColumn(2);
@@ -1972,7 +2061,7 @@ public class EvaluadosView implements Serializable{
         hoja.autoSizeColumn(7);
 
         try {
-            
+
             FacesContext facesContext = FacesContext.getCurrentInstance();
             ExternalContext externalContext = facesContext.getExternalContext();
             externalContext.setResponseContentType("application/vnd.ms-excel");
@@ -1985,15 +2074,15 @@ public class EvaluadosView implements Serializable{
             log.error(e);
         }
     }
-    
-    public void generaExcelRespuestaEvaluadores(){
 
-        HSSFWorkbook xlsEvaluadores = new HSSFWorkbook(); 
+    public void generaExcelRespuestaEvaluadores() {
+
+        HSSFWorkbook xlsEvaluadores = new HSSFWorkbook();
 
         HSSFSheet hoja = xlsEvaluadores.createSheet("Evaluadores");
 
         int c = 0;
-        
+
         HSSFRow row = hoja.createRow(0);
 
         HSSFCell cell0 = row.createCell(c);
@@ -2004,63 +2093,63 @@ public class EvaluadosView implements Serializable{
         HSSFCell cell1 = row.createCell(c);
         HSSFRichTextString texto1 = new HSSFRichTextString("Cargo");
         cell1.setCellValue(texto1);
-        
+
         c++;
         HSSFCell cell2 = row.createCell(c);
         HSSFRichTextString texto2 = new HSSFRichTextString("Correo");
         cell2.setCellValue(texto2);
-        
-        if(blHabilitarSexo){
+
+        if (blHabilitarSexo) {
             c++;
             HSSFCell cell3 = row.createCell(c);
             HSSFRichTextString texto3 = new HSSFRichTextString("Sexo");
             cell3.setCellValue(texto3);
         }
-        
-        if(blHabilitarEdad){
+
+        if (blHabilitarEdad) {
             c++;
             HSSFCell cell4 = row.createCell(c);
             HSSFRichTextString texto4 = new HSSFRichTextString("Edad");
             cell4.setCellValue(texto4);
         }
-        
-        if(blHabilitarTiempoEmpresa){
+
+        if (blHabilitarTiempoEmpresa) {
             c++;
             HSSFCell cell5 = row.createCell(c);
             HSSFRichTextString texto5 = new HSSFRichTextString("Tiempo en la empresa");
             cell5.setCellValue(texto5);
         }
-        
-        if(blHabilitarNivelOcupacional){
+
+        if (blHabilitarNivelOcupacional) {
             c++;
             HSSFCell cell6 = row.createCell(c);
             HSSFRichTextString texto6 = new HSSFRichTextString("Nivel ocupacional");
             cell6.setCellValue(texto6);
         }
-        
-        if(blHabilitarAreaNegocio){
+
+        if (blHabilitarAreaNegocio) {
             c++;
             HSSFCell cell7 = row.createCell(c);
             HSSFRichTextString texto7 = new HSSFRichTextString("Area del negocio");
             cell7.setCellValue(texto7);
         }
 
-
         HSSFCell cell8 = row.createCell(8);
         HSSFRichTextString texto8 = new HSSFRichTextString("Observacion");
         cell8.setCellValue(texto8);
-        
-        HSSFCellStyle myStyle = xlsEvaluadores.createCellStyle();   
-        
+
+        HSSFCellStyle myStyle = xlsEvaluadores.createCellStyle();
+
         HSSFFont hSSFFont = xlsEvaluadores.createFont();
-        hSSFFont.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD); 
-        
+        //hSSFFont.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD); 
+        hSSFFont.setBold(true);
+
         myStyle.setFont(hSSFFont);
 
         row.setRowStyle(myStyle);
 
         int i = 1;
-        for (Evaluador objEvaluador : lstCargaMasivaEvaluadores){
+        for (Evaluador objEvaluador : lstCargaMasivaEvaluadores) {
             int r = 0;
             HSSFRow nextrow = hoja.createRow(i);
             nextrow.createCell(r).setCellValue(objEvaluador.getReTxDescripcion());
@@ -2068,33 +2157,32 @@ public class EvaluadosView implements Serializable{
             nextrow.createCell(r).setCellValue(objEvaluador.getReTxNombreCargo());
             r++;
             nextrow.createCell(r).setCellValue(objEvaluador.getReTxCorreo());
-            if(blHabilitarSexo){
+            if (blHabilitarSexo) {
                 r++;
                 nextrow.createCell(r).setCellValue(objEvaluador.getReTxSexo());
             }
-            if(blHabilitarEdad){
+            if (blHabilitarEdad) {
                 r++;
                 nextrow.createCell(r).setCellValue(objEvaluador.getReNrEdad());
             }
-            if(blHabilitarTiempoEmpresa){
+            if (blHabilitarTiempoEmpresa) {
                 r++;
                 nextrow.createCell(r).setCellValue(objEvaluador.getReNrTiempoTrabajo());
             }
-            if(blHabilitarNivelOcupacional){
+            if (blHabilitarNivelOcupacional) {
                 r++;
                 nextrow.createCell(r).setCellValue(objEvaluador.getReTxOcupacion());
             }
-            if(blHabilitarAreaNegocio){
+            if (blHabilitarAreaNegocio) {
                 r++;
-                nextrow.createCell(r).setCellValue(objEvaluador.getReTxAreaNegocio());                
+                nextrow.createCell(r).setCellValue(objEvaluador.getReTxAreaNegocio());
             }
             r++;
             nextrow.createCell(3).setCellValue(objEvaluador.getStrObservacionMasivo());
             i++;
-            
+
         }
-        
-        
+
         hoja.autoSizeColumn(0);
         hoja.autoSizeColumn(1);
         hoja.autoSizeColumn(2);
@@ -2106,7 +2194,7 @@ public class EvaluadosView implements Serializable{
         hoja.autoSizeColumn(8);
 
         try {
-            
+
             FacesContext facesContext = FacesContext.getCurrentInstance();
             ExternalContext externalContext = facesContext.getExternalContext();
             externalContext.setResponseContentType("application/vnd.ms-excel");
@@ -2119,35 +2207,35 @@ public class EvaluadosView implements Serializable{
             log.error(e);
         }
     }
-    
+
     public void leeExcelEvaluadores(FileUploadEvent event) {
 
         FacesContext context = FacesContext.getCurrentInstance();
-        
+
         intCantTempCorrectEvaluadores = 0;
         intCantTempIncorrectEvaluadores = 0;
-        
+
         if (event.getFile() == null) {
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,"Carga masiva", "Archivo " + event.getFile().getFileName() + " esta vacio"));
-        }else{
-        
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Carga masiva", "Archivo " + event.getFile().getFileName() + " esta vacio"));
+        } else {
+
             HSSFWorkbook xlsEvaluadores = null;
-                    
+
             try {
-                
-                xlsEvaluadores = new HSSFWorkbook(event.getFile().getInputstream());
-            
+
+                xlsEvaluadores = new HSSFWorkbook(event.getFile().getInputStream());
+
                 HSSFSheet sheet = xlsEvaluadores.getSheetAt(0);
 
                 Iterator<Row> rowIterator = sheet.iterator();
 
                 Row cabecera = rowIterator.next();
-                
-                if(validaCabecera(cabecera, true)){
-                    context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,"Carga masiva", "Las columnas de la primera linea no coinciden con la estructura. Por favor descarga nuevamente el archivo Excel."));
-                    
-                }else{
-                
+
+                if (validaCabecera(cabecera, true)) {
+                    context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Carga masiva", "Las columnas de la primera linea no coinciden con la estructura. Por favor descarga nuevamente el archivo Excel."));
+
+                } else {
+
                     lstCargaMasivaEvaluadores = new ArrayList();
 
                     Evaluador objEvaluador;
@@ -2159,46 +2247,45 @@ public class EvaluadosView implements Serializable{
                         int c = 0;
 
                         String strDescripcion;
-                        strDescripcion = Utilitarios.obtieneDatoCelda(row,c);
-                        
+                        strDescripcion = Utilitarios.obtieneDatoCelda(row, c);
+
                         String strCargo;
                         c++;
-                        strCargo = Utilitarios.obtieneDatoCelda(row,c);
-                        
+                        strCargo = Utilitarios.obtieneDatoCelda(row, c);
+
                         String strCorreo;
                         c++;
-                        strCorreo = Utilitarios.obtieneDatoCelda(row,c);
-                        
+                        strCorreo = Utilitarios.obtieneDatoCelda(row, c);
+
                         String strSexo = null;
-                        if(blHabilitarSexo){
+                        if (blHabilitarSexo) {
                             c++;
-                            strSexo = Utilitarios.obtieneDatoCelda(row,c);;
+                            strSexo = Utilitarios.obtieneDatoCelda(row, c);;
                         }
 
                         String strEdad = null;
-                        if(blHabilitarEdad){
+                        if (blHabilitarEdad) {
                             c++;
-                            strEdad = Utilitarios.obtieneDatoCelda(row,c);
+                            strEdad = Utilitarios.obtieneDatoCelda(row, c);
                         }
 
                         String strTiempoEmpresa = null;
-                        if(blHabilitarTiempoEmpresa){
+                        if (blHabilitarTiempoEmpresa) {
                             c++;
-                            strTiempoEmpresa = Utilitarios.obtieneDatoCelda(row,c);
+                            strTiempoEmpresa = Utilitarios.obtieneDatoCelda(row, c);
                         }
 
                         String strOcupacion = null;
-                        if(blHabilitarNivelOcupacional){
+                        if (blHabilitarNivelOcupacional) {
                             c++;
-                            strOcupacion = Utilitarios.obtieneDatoCelda(row,c);
+                            strOcupacion = Utilitarios.obtieneDatoCelda(row, c);
                         }
 
                         String strAreaNegocio = null;
-                        if(blHabilitarAreaNegocio){
+                        if (blHabilitarAreaNegocio) {
                             c++;
-                            strAreaNegocio = Utilitarios.obtieneDatoCelda(row,c);
+                            strAreaNegocio = Utilitarios.obtieneDatoCelda(row, c);
                         }
-
 
                         objEvaluador = new Evaluador();
 
@@ -2207,51 +2294,49 @@ public class EvaluadosView implements Serializable{
                         objEvaluador.setReTxCorreo(strCorreo);
                         objEvaluador.setReTxSexo(strSexo);
 
-                        if(Utilitarios.noEsNuloOVacio(strEdad)){
-                            if(Utilitarios.isNumber(strEdad, false)){
+                        if (Utilitarios.noEsNuloOVacio(strEdad)) {
+                            if (Utilitarios.isNumber(strEdad, false)) {
                                 BigDecimal bd = new BigDecimal(strEdad);
                                 objEvaluador.setReNrEdad(bd.intValue());
-                            }else{
+                            } else {
                                 objEvaluador.setReNrEdad(0);
                             }
-                        }else{
+                        } else {
                             objEvaluador.setReNrEdad(0);
                         }
 
-                        if(Utilitarios.noEsNuloOVacio(strTiempoEmpresa)){
-                            if(Utilitarios.isNumber(strEdad, false)){
+                        if (Utilitarios.noEsNuloOVacio(strTiempoEmpresa)) {
+                            if (Utilitarios.isNumber(strEdad, false)) {
                                 BigDecimal bd = new BigDecimal(strTiempoEmpresa);
                                 objEvaluador.setReNrTiempoTrabajo(bd.intValue());
-                            }else{
+                            } else {
                                 objEvaluador.setReNrTiempoTrabajo(0);
                             }
-                        }else{
+                        } else {
                             objEvaluador.setReNrTiempoTrabajo(0);
                         }
 
-
                         objEvaluador.setReTxOcupacion(strOcupacion);
                         objEvaluador.setReTxAreaNegocio(strAreaNegocio);
-
 
                         Integer error;
 
                         error = buscarListaEvaluadores(strDescripcion, strCargo, strCorreo, true);
 
-                        if(Utilitarios.esNuloOVacio(error)){
+                        if (Utilitarios.esNuloOVacio(error)) {
                             error = buscarListaTemporalEvaluadores(strDescripcion, strCargo, strCorreo);
                         }
 
-                        if(Utilitarios.esNuloOVacio(error)){
+                        if (Utilitarios.esNuloOVacio(error)) {
                             error = validarParametros(strSexo, strEdad, strTiempoEmpresa, strOcupacion, strAreaNegocio);
                         }
 
-                        if(Utilitarios.esNuloOVacio(error)){
+                        if (Utilitarios.esNuloOVacio(error)) {
                             intCantTempCorrectEvaluadores++;
                             objEvaluador.setStrCorrectoMasivo("good");
-                        }else{
+                        } else {
                             intCantTempIncorrectEvaluadores++;
-                            objEvaluador = determinaErrorEvaluadores(objEvaluador,error);
+                            objEvaluador = determinaErrorEvaluadores(objEvaluador, error);
                         }
 
                         lstCargaMasivaEvaluadores.add(objEvaluador);
@@ -2261,86 +2346,86 @@ public class EvaluadosView implements Serializable{
                     fileEvaluadores = null;
 
                 }
-                
-            } catch (IOException e){
+
+            } catch (IOException e) {
                 log.error(e);
-                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,"Error al cargar excel", "Error en el archivo"));
+                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al cargar excel", "Error en el archivo"));
             } catch (NoSuchElementException e) {
                 log.error(e);
-                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,"Error al cargar excel", "Estructura del archivo incorrecta"));
+                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al cargar excel", "Estructura del archivo incorrecta"));
             } catch (NullPointerException e) {
                 log.error(e);
-                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,"Error al cargar excel", "Uno de los datos se encuentra vacio"));
+                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al cargar excel", "Uno de los datos se encuentra vacio"));
             }
         }
     }
-    
-    private Evaluador determinaErrorEvaluadores(Evaluador objEvaluador, Integer error){
-        
+
+    private Evaluador determinaErrorEvaluadores(Evaluador objEvaluador, Integer error) {
+
         String icon = null, mensaje = null;
-        
-        if(error.equals(0)){
+
+        if (error.equals(0)) {
             icon = "error";
             mensaje = "Contiene datos vacios";
-        }else if(error.equals(1)){
+        } else if (error.equals(1)) {
             icon = "error";
             mensaje = "El evaluador ingresado ya se encuentra agregado";
-        }else if(error.equals(2)){
+        } else if (error.equals(2)) {
             icon = "alert";
             mensaje = "Registro ya existe y será sobreescrito";
-        }else if(error.equals(3)){
+        } else if (error.equals(3)) {
             icon = "error";
             mensaje = "Correo duplicado";
-        }else if(error.equals(4)){
+        } else if (error.equals(4)) {
             icon = "error";
             mensaje = "No es un correo electronico";
-        }else if(error.equals(5)){
+        } else if (error.equals(5)) {
             icon = "error";
             mensaje = "El correo ya fue registrado";
         }
-        
+
         objEvaluador.setStrCorrectoMasivo(icon);
         objEvaluador.setStrObservacionMasivo(mensaje);
-                        
+
         return objEvaluador;
-    
+
     }
 
-    public Integer buscarListaTemporalEvaluadores(String strDescripcion, String strCargo, String strCorreo){
-        
+    public Integer buscarListaTemporalEvaluadores(String strDescripcion, String strCargo, String strCorreo) {
+
         String strDesc = Utilitarios.retirarEspacios(strDescripcion);
         String strCorr = Utilitarios.retirarEspacios(strCorreo);
         String strCarg = Utilitarios.retirarEspacios(strCargo);
-        
-        if(Utilitarios.esNuloOVacio(strCorr)||Utilitarios.esNuloOVacio(strDesc)||Utilitarios.esNuloOVacio(strCarg)){
+
+        if (Utilitarios.esNuloOVacio(strCorr) || Utilitarios.esNuloOVacio(strDesc) || Utilitarios.esNuloOVacio(strCarg)) {
             return 0;//"Contiene datos vacios";
         }
-        
-        for (Evaluador obj : lstCargaMasivaEvaluadores){
-            if(Utilitarios.retirarEspacios(obj.getReTxDescripcion()).toUpperCase().equals(strDesc.toUpperCase())){
+
+        for (Evaluador obj : lstCargaMasivaEvaluadores) {
+            if (Utilitarios.retirarEspacios(obj.getReTxDescripcion()).toUpperCase().equals(strDesc.toUpperCase())) {
                 return 1;//"El evaluado ingresado ya se encuentra agregado";
             }
-            if(Utilitarios.retirarEspacios(obj.getReTxCorreo()).toUpperCase().equals(strCorr.toUpperCase())){
+            if (Utilitarios.retirarEspacios(obj.getReTxCorreo()).toUpperCase().equals(strCorr.toUpperCase())) {
                 return 3;//"El correo ingresado esta siendo usado por " + obj.getPaTxDescripcion();
             }
         }
 
-        if(!Pattern.compile(Constantes.EMAIL_PATTERN).matcher(strCorr).matches()){
+        if (!Pattern.compile(Constantes.EMAIL_PATTERN).matcher(strCorr).matches()) {
             return 4;//"No es un correo electronico";
         }
         return null;
 
     }
-    
-    public void cargarListaEvaluadores(){
+
+    public void cargarListaEvaluadores() {
 
         FacesContext context = FacesContext.getCurrentInstance();
-        
-        try{
-            
-            for(Evaluador objEvaluador: lstCargaMasivaEvaluadores){
 
-                if(objEvaluador.getStrCorrectoMasivo().equals("good")){
+        try {
+
+            for (Evaluador objEvaluador : lstCargaMasivaEvaluadores) {
+
+                if (objEvaluador.getStrCorrectoMasivo().equals("good")) {
 
                     Integer error = buscarListaEvaluadores(objEvaluador.getReTxDescripcion(), objEvaluador.getReTxNombreCargo(), objEvaluador.getReTxCorreo(), false);
 
@@ -2358,15 +2443,15 @@ public class EvaluadosView implements Serializable{
                     nuevoEvaluador.setReIdEstado(Constantes.INT_ET_ESTADO_EVALUADOR_REGISTRADO);
                     nuevoEvaluador.setReStrEstado(EHCacheManager.obtenerDescripcionElemento(Constantes.INT_ET_ESTADO_EVALUADOR_REGISTRADO));
 
-                    if(error==null){
+                    if (error == null) {
 
                         RedEvaluacionDAO objRedEvaluacionDAO = new RedEvaluacionDAO();
                         nuevoEvaluador.setReIdParticipantePk(objRedEvaluacionDAO.guardaRedEvaluacion(creaRedEvaluacionEvaluadores(nuevoEvaluador)));
                         objEvaluador.setStrObservacionMasivo("Procesado");
-                        
+
                         this.lstEvaluadores.add(nuevoEvaluador);
 
-                    }else{
+                    } else {
                         objEvaluador = determinaErrorEvaluadores(objEvaluador, error);
                     }
 
@@ -2377,30 +2462,30 @@ public class EvaluadosView implements Serializable{
 
             intCantTempCorrect = 0;
 
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,"Carga de evaluados", "El proceso de carga finalizó") );  
-        
-        }catch(Exception e){
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Carga de evaluados", "El proceso de carga finalizó"));
+
+        } catch (Exception e) {
             log.error(e);
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,"Carga de evaluados", "El proceso de carga tuvo un error") );  
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Carga de evaluados", "El proceso de carga tuvo un error"));
         }
     }
-        
-    private void calculaIndicadoresEvaluadores(){
-    
+
+    private void calculaIndicadoresEvaluadores() {
+
         this.cantidadEvaluadoresRegistrados = 0;
 
-        for(Evaluador objEvaluador : lstEvaluadores){
-            if(objEvaluador.getReIdEstado().equals(Constantes.INT_ET_ESTADO_EVALUADOR_REGISTRADO)){
+        for (Evaluador objEvaluador : lstEvaluadores) {
+            if (objEvaluador.getReIdEstado().equals(Constantes.INT_ET_ESTADO_EVALUADOR_REGISTRADO)) {
                 this.cantidadEvaluadoresRegistrados++;
             }
         }
 
     }
 
-    private RedEvaluacion creaRedEvaluacionEvaluadores(Evaluador objEvaluador){
-        
+    private RedEvaluacion creaRedEvaluacionEvaluadores(Evaluador objEvaluador) {
+
         RedEvaluacion objRedEvaluacion = new RedEvaluacion();
-                
+
         objRedEvaluacion.setReIdTipoParticipante(Constantes.INT_ET_TIPO_PARTICIPANTE_EVALUADOR);
         objRedEvaluacion.setReIdEstado(Constantes.INT_ET_ESTADO_EVALUADOR_REGISTRADO);
         //objParticipante.setPaInAutoevaluar(objEvaluador.isPaInAutoevaluar());
@@ -2409,7 +2494,7 @@ public class EvaluadosView implements Serializable{
         objRedEvaluacion.setReTxCorreo(objEvaluador.getReTxCorreo().toLowerCase());
         objRedEvaluacion.setReTxNombreCargo(objEvaluador.getReTxNombreCargo());
         objRedEvaluacion.setReTxDescripcion(objEvaluador.getReTxDescripcion());
-        
+
         objRedEvaluacion.setReTxSexo(objEvaluador.getReTxSexo());
         objRedEvaluacion.setReNrEdad(objEvaluador.getReNrEdad());
         objRedEvaluacion.setReNrTiempoTrabajo(objEvaluador.getReNrTiempoTrabajo());
@@ -2422,14 +2507,14 @@ public class EvaluadosView implements Serializable{
         objRedEvaluacion.setProyecto(objProyecto);
 
         return objRedEvaluacion;
-    
+
     }
 
-    public void actualizarEvaluadores(){
+    public void actualizarEvaluadores() {
         strCorreoEvaluadores = strCorreoEvaluadores.toLowerCase();
         Integer error = buscarListaEvaluadores(this.reIdParticipantePk, strDescripcionEvaluadores, strCargoEvaluadores, strCorreoEvaluadores, false);
-        
-        if(error==null){
+
+        if (error == null) {
             RedEvaluacionDAO objRedEvaluacionDAO = new RedEvaluacionDAO();
 
             RedEvaluacion objRedEvaluacion = objRedEvaluacionDAO.obtenRedEvaluacion(this.reIdParticipantePk);
@@ -2437,7 +2522,7 @@ public class EvaluadosView implements Serializable{
             objRedEvaluacion.setReTxDescripcion(strDescripcionEvaluadores);
             objRedEvaluacion.setReTxNombreCargo(strCargoEvaluadores);
             objRedEvaluacion.setReTxCorreo(strCorreoEvaluadores);
-            
+
             objRedEvaluacion.setReTxSexo(strSexoEvaluadores);
             objRedEvaluacion.setReNrEdad(intEdadEvaluadores);
             objRedEvaluacion.setReNrTiempoTrabajo(intTiempoEmpresaEvaluadores);
@@ -2446,9 +2531,9 @@ public class EvaluadosView implements Serializable{
 
             objRedEvaluacionDAO.actualizaRedEvaluacion(objRedEvaluacion);
 
-            for(Evaluador objEvaluador : lstEvaluadores){
+            for (Evaluador objEvaluador : lstEvaluadores) {
 
-                if(objEvaluador.getReIdParticipantePk().equals(this.reIdParticipantePk)){
+                if (objEvaluador.getReIdParticipantePk().equals(this.reIdParticipantePk)) {
 
                     objEvaluador.setReTxDescripcion(strDescripcionEvaluadores);
                     objEvaluador.setReTxNombreCargo(strCargoEvaluadores);
@@ -2465,15 +2550,15 @@ public class EvaluadosView implements Serializable{
             }
 
             FacesContext context = FacesContext.getCurrentInstance();
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,"Modificar evaluador",  "Se actualizó correctamente"));
-            
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Modificar evaluador", "Se actualizó correctamente"));
+
             resetFail();
-            
-        }else{
+
+        } else {
             Evaluador objEvaluador = new Evaluador();
             objEvaluador = determinaErrorEvaluadores(objEvaluador, error);
             FacesContext context = FacesContext.getCurrentInstance();
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,"Falló", objEvaluador.getStrObservacionMasivo()));  
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Falló", objEvaluador.getStrObservacionMasivo()));
         }
     }
 
@@ -2502,21 +2587,21 @@ public class EvaluadosView implements Serializable{
         blHabilitarNivelOcupacional = false;
         blHabilitarSexo = false;
         blHabilitarTiempoEmpresa = false;
-        
+
         List<Parametro> lstParametros = objParametroDAO.obtenListaParametros(Utilitarios.obtenerProyecto().getIntIdProyecto());
-        
-        for(Parametro objParametro : lstParametros){
-            
-            if(objParametro.getPaIdTipoParametro().equals(Constantes.INT_ET_TIPO_PARAMETRO_EDAD)){
+
+        for (Parametro objParametro : lstParametros) {
+
+            if (objParametro.getPaIdTipoParametro().equals(Constantes.INT_ET_TIPO_PARAMETRO_EDAD)) {
                 blHabilitarEdad = true;
-            }else if(objParametro.getPaIdTipoParametro().equals(Constantes.INT_ET_TIPO_PARAMETRO_AREA)){
+            } else if (objParametro.getPaIdTipoParametro().equals(Constantes.INT_ET_TIPO_PARAMETRO_AREA)) {
                 blHabilitarAreaNegocio = true;
                 lstAreaNegocio = new ArrayList<>();
                 byte[] bdata = objParametro.getPaTxPatron();
-                String data = new String(bdata);       
+                String data = new String(bdata);
                 String[] strDatos = data.split(",");
                 int i = 0;
-                while(i<strDatos.length){
+                while (i < strDatos.length) {
                     SelectItem objSelectItem = new SelectItem();
                     objSelectItem.setValue(strDatos[i]);
                     objSelectItem.setLabel(strDatos[i]);
@@ -2524,14 +2609,14 @@ public class EvaluadosView implements Serializable{
                     hAN.put(strDatos[i].toUpperCase(), strDatos[i]);
                     i++;
                 }
-            }else if(objParametro.getPaIdTipoParametro().equals(Constantes.INT_ET_TIPO_PARAMETRO_NIVEL)){
+            } else if (objParametro.getPaIdTipoParametro().equals(Constantes.INT_ET_TIPO_PARAMETRO_NIVEL)) {
                 blHabilitarNivelOcupacional = true;
                 lstNivelOcupacional = new ArrayList<>();
                 byte[] bdata = objParametro.getPaTxPatron();
-                String data = new String(bdata);       
+                String data = new String(bdata);
                 String[] strDatos = data.split(",");
                 int i = 0;
-                while(i<strDatos.length){
+                while (i < strDatos.length) {
                     SelectItem objSelectItem = new SelectItem();
                     objSelectItem.setValue(strDatos[i]);
                     objSelectItem.setLabel(strDatos[i]);
@@ -2539,35 +2624,36 @@ public class EvaluadosView implements Serializable{
                     hNO.put(strDatos[i].toUpperCase(), strDatos[i]);
                     i++;
                 }
-            }else if(objParametro.getPaIdTipoParametro().equals(Constantes.INT_ET_TIPO_PARAMETRO_SEXO)){
+            } else if (objParametro.getPaIdTipoParametro().equals(Constantes.INT_ET_TIPO_PARAMETRO_SEXO)) {
                 blHabilitarSexo = true;
-                hSexo.put("MASCULINO","MASCULINO");
-                hSexo.put("FEMENINO","FEMENINO");
-            }else if(objParametro.getPaIdTipoParametro().equals(Constantes.INT_ET_TIPO_PARAMETRO_TIEMPO)){
+                hSexo.put("MASCULINO", "MASCULINO");
+                hSexo.put("FEMENINO", "FEMENINO");
+            } else if (objParametro.getPaIdTipoParametro().equals(Constantes.INT_ET_TIPO_PARAMETRO_TIEMPO)) {
                 blHabilitarTiempoEmpresa = true;
             }
-            
-            
+
         }
-        
+
     }
 
     private boolean validaCabecera(Row cabecera, boolean flag) {
-        
-        if(flag){
-            
-        }else{
-        
+
+        if (flag) {
+
+        } else {
+
         }
-        
+
         return false;
     }
 
-    
-    
-    public void leeExcelAvanzado(FileUploadEvent event) {
+    public void enableUploadButton() {
+        btnUploadDisabled = false;
+    }
 
-        FacesContext context = FacesContext.getCurrentInstance();
+    public void leeExcelAvanzado() {
+
+        FacesMessage message;
 
         lstErrorAvan = new ArrayList();
         lstAvanPersonas = new ArrayList();
@@ -2579,406 +2665,425 @@ public class EvaluadosView implements Serializable{
         mapRelacionesPersonasAvanzado = new HashMap();
         mapPerEvaluados = new HashMap();
         mapPerEvaluadores = new HashMap();
-                            
-        if (event.getFile() == null) {
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,"Carga masiva", "Archivo " + event.getFile().getFileName() + " esta vacio"));
-        }else{
-        
+
+        if (fileAvanzado == null) {
+            message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Debe buscar un archivo primero", "");
+        } else {
+
             HSSFWorkbook xlsAvanzado = null;
-                    
+
             try {
-                
-                xlsAvanzado = new HSSFWorkbook(event.getFile().getInputstream());
-                
+
+                xlsAvanzado = new HSSFWorkbook(fileAvanzado.getInputStream());
+
                 validaEstructuraAvanzado(xlsAvanzado);
-            
-                if(lstErrorAvan.isEmpty()){
-                    
-                    validaTextoIngresado  objvalidaTextoIngresado = new validaTextoIngresado();
-                    validaCorreo  objvalidaCorreo = new validaCorreo();
-                    
-                    /****************/
+
+                if (lstErrorAvan.isEmpty()) {
+
+                    validaTextoIngresado objvalidaTextoIngresado = new validaTextoIngresado();
+                    validaCorreo objvalidaCorreo = new validaCorreo();
+
+                    /**
+                     * *************
+                     */
                     /* LEE PERSONAS */
-                    /****************/
+                    /**
+                     * *************
+                     */
                     HSSFSheet sheetPersonas = xlsAvanzado.getSheetAt(0);
                     Iterator<Row> rowIteratorPersonas = sheetPersonas.iterator();
                     rowIteratorPersonas.next();
 
                     while (rowIteratorPersonas.hasNext()) {
                         Row row = rowIteratorPersonas.next();
-                        procesaFilaPersonasAvanzado(row,objvalidaTextoIngresado,objvalidaCorreo);
+                        procesaFilaPersonasAvanzado(row, objvalidaTextoIngresado, objvalidaCorreo);
                     }
 
-                    /******************/
+                    /**
+                     * ***************
+                     */
                     /* LEE RELACIONES */
-                    /******************/
+                    /**
+                     * ***************
+                     */
                     HSSFSheet sheetRelaciones = xlsAvanzado.getSheetAt(1);
                     Iterator<Row> rowIteratorRelaciones = sheetRelaciones.iterator();
                     rowIteratorRelaciones.next();
 
                     while (rowIteratorRelaciones.hasNext()) {
                         Row row = rowIteratorRelaciones.next();
-                        procesaFilaRelacionesAvanzado(row,objvalidaTextoIngresado,objvalidaCorreo);
+                        procesaFilaRelacionesAvanzado(row, objvalidaTextoIngresado, objvalidaCorreo);
                     }
-                                        
+
                 }
-            
+
                 fileAvanzado = null;
-                
-                if(lstErrorAvan.size() > 0 && lstAvanPersonas.isEmpty() && lstAvanRelacion.isEmpty() ){
+
+                if (lstErrorAvan.size() > 0 && lstAvanPersonas.isEmpty() && lstAvanRelacion.isEmpty()) {
                     blCargarCorrectoAvan = false;
-                    context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL,"Carga excel avanzada", "El excel tiene errores y no pudo procesarse"));
-                }else if(lstErrorAvan.size() > 0 ){
+                    message = new FacesMessage(FacesMessage.SEVERITY_FATAL, "El excel tiene errores y no pudo procesarse", "");
+                } else if (lstErrorAvan.size() > 0) {
                     blCargarCorrectoAvan = true;
-                    context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN,"Carga excel avanzada", "El excel fue procesado pero se encontraron algunos errores"));
-                }else{
+                    message = new FacesMessage(FacesMessage.SEVERITY_WARN, "El excel fue procesado pero se encontraron algunos errores", "");
+                } else {
                     blCargarCorrectoAvan = true;
-                    context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,"Carga excel avanzada", "El excel fue procesado satisfactoriamente"));
+                    message = new FacesMessage(FacesMessage.SEVERITY_INFO, "El excel fue procesado satisfactoriamente", "");
                 }
-                        
-            } catch (IOException e){
+
+            } catch (IOException e) {
                 log.error(e);
-                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL,"Error al cargar excel", "Error en el archivo"));
+                message = new FacesMessage(FacesMessage.SEVERITY_FATAL, "Error en el archivo", "");
             } catch (NoSuchElementException e) {
                 log.error(e);
-                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL,"Error al cargar excel", "Estructura del archivo incorrecta"));
+                message = new FacesMessage(FacesMessage.SEVERITY_FATAL, "Estructura del archivo incorrecta", "");
             } catch (NullPointerException e) {
                 log.error(e);
-                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL,"Error al cargar excel", "Uno de los datos se encuentra vacio. Recuerda que el Excel debe estar completamente lleno"));
+                message = new FacesMessage(FacesMessage.SEVERITY_FATAL, "Uno de los datos se encuentra vacio. Recuerda que el Excel debe estar completamente lleno", "");
             }
         }
+
+        FacesContext.getCurrentInstance().addMessage(null, message);
+
     }
 
     private void validaEstructuraAvanzado(HSSFWorkbook xlsAvanzado) {
-        
+
         HSSFSheet sheetPersonas = null;
         HSSFSheet sheetRelacion = null;
-        
+
         boolean blLibrosOk = true;
         boolean blCabPersonasOk = true;
         boolean blCabRelacionOk = true;
-        
-        try{
+
+        try {
             sheetPersonas = xlsAvanzado.getSheetAt(0);
             sheetRelacion = xlsAvanzado.getSheetAt(1);
-        }catch(Exception e){
+        } catch (Exception e) {
             blLibrosOk = false;
             log.error(e);
-            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Excel mal configurado, debe exitir dos libros. Por favor descarga el modelo de ejemplo."));
+            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Excel mal configurado, debe exitir dos libros. Por favor descarga el modelo de ejemplo."));
         }
-        
-        if(blLibrosOk){
-            
+
+        if (blLibrosOk) {
+
             Iterator<Row> rowIteratorPersonas = null;
             Iterator<Row> rowIteratorRelacion = null;
 
-            try{
+            try {
                 rowIteratorPersonas = sheetPersonas.iterator();
-                if(!rowIteratorPersonas.hasNext()){
+                if (!rowIteratorPersonas.hasNext()) {
                     blCabPersonasOk = false;
-                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Excel mal configurado, el libro de personas no tiene filas editadas. Por favor descarga el modelo de ejemplo."));
+                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Excel mal configurado, el libro de personas no tiene filas editadas. Por favor descarga el modelo de ejemplo."));
                 }
-            }catch(Exception e){
+            } catch (Exception e) {
                 blCabPersonasOk = false;
                 log.error(e);
-                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Excel mal configurado, el libro de personas no tiene filas editadas. Por favor descarga el modelo de ejemplo."));
+                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Excel mal configurado, el libro de personas no tiene filas editadas. Por favor descarga el modelo de ejemplo."));
             }
-            
-            try{
+
+            try {
                 rowIteratorRelacion = sheetRelacion.iterator();
-                if(!rowIteratorRelacion.hasNext()){
+                if (!rowIteratorRelacion.hasNext()) {
                     blCabRelacionOk = false;
-                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Excel mal configurado, el libro de relaciones no tiene filas editadas. Por favor descarga el modelo de ejemplo."));
+                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Excel mal configurado, el libro de relaciones no tiene filas editadas. Por favor descarga el modelo de ejemplo."));
                 }
-            }catch(Exception e){
+            } catch (Exception e) {
                 blCabRelacionOk = false;
                 log.error(e);
-                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Excel mal configurado, el libro de relaciones no tiene filas editadas. Por favor descarga el modelo de ejemplo."));
+                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Excel mal configurado, el libro de relaciones no tiene filas editadas. Por favor descarga el modelo de ejemplo."));
             }
-            
-            if(blCabPersonasOk && blCabRelacionOk){
-                
-                /*******************************/
+
+            if (blCabPersonasOk && blCabRelacionOk) {
+
+                /**
+                 * ****************************
+                 */
                 /* VALIDA CABECERA DE PERSONAS */
-                /*******************************/
-                
+                /**
+                 * ****************************
+                 */
                 Row row = rowIteratorPersonas.next();
 
                 int c = 0;
-                
+
                 //DESCRIPCION
-                try{
-                    String strDato = row.getCell(c, Row.CREATE_NULL_AS_BLANK).getStringCellValue();
-                    if(Utilitarios.esNuloOVacio(strDato)){
-                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Celda "+Utilitarios.columnExcel(c)+" del libro \"Personas\" no tiene el titulo \"Descripción\""));
-                    }else{
-                        if(!strDato.trim().equals("Descripción")){
-                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Celda "+Utilitarios.columnExcel(c)+" del libro \"Personas\" no tiene el titulo \"Descripción\""));
+                try {
+                    //String strDato = row.getCell(c, Row.CREATE_NULL_AS_BLANK).getStringCellValue();
+                    String strDato = row.getCell(c, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+                    if (Utilitarios.esNuloOVacio(strDato)) {
+                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Celda " + Utilitarios.columnExcel(c) + " del libro \"Personas\" no tiene el titulo \"Descripción\""));
+                    } else {
+                        if (!strDato.trim().equals("Descripción")) {
+                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Celda " + Utilitarios.columnExcel(c) + " del libro \"Personas\" no tiene el titulo \"Descripción\""));
                         }
                     }
-                }catch(NoSuchElementException | NullPointerException e){
-                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Celda "+Utilitarios.columnExcel(c)+" del libro \"Personas\" no tiene el titulo \"Descripción\""));
+                } catch (NoSuchElementException | NullPointerException e) {
+                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Celda " + Utilitarios.columnExcel(c) + " del libro \"Personas\" no tiene el titulo \"Descripción\""));
                 }
-                
+
                 //CARGO
-                try{
+                try {
                     c++;
-                    String strDato = row.getCell(c, Row.CREATE_NULL_AS_BLANK).getStringCellValue();
-                    if(Utilitarios.esNuloOVacio(strDato)){
-                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Celda "+Utilitarios.columnExcel(c)+" del libro \"Personas\" no tiene el titulo \"Cargo\""));
-                    }else{
-                        if(!strDato.trim().equals("Cargo")){
-                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Celda "+Utilitarios.columnExcel(c)+" del libro \"Personas\" no tiene el titulo \"Cargo\""));
+                    String strDato = row.getCell(c, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+                    if (Utilitarios.esNuloOVacio(strDato)) {
+                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Celda " + Utilitarios.columnExcel(c) + " del libro \"Personas\" no tiene el titulo \"Cargo\""));
+                    } else {
+                        if (!strDato.trim().equals("Cargo")) {
+                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Celda " + Utilitarios.columnExcel(c) + " del libro \"Personas\" no tiene el titulo \"Cargo\""));
                         }
                     }
-                }catch(NoSuchElementException | NullPointerException e){
-                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Celda "+Utilitarios.columnExcel(c)+" del libro \"Personas\" no tiene el titulo \"Cargo\""));
+                } catch (NoSuchElementException | NullPointerException e) {
+                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Celda " + Utilitarios.columnExcel(c) + " del libro \"Personas\" no tiene el titulo \"Cargo\""));
                 }
-                
+
                 //CORREO
-                try{
+                try {
                     c++;
-                    String strDato = row.getCell(c, Row.CREATE_NULL_AS_BLANK).getStringCellValue();
-                    if(Utilitarios.esNuloOVacio(strDato)){
-                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Celda "+Utilitarios.columnExcel(c)+" del libro \"Personas\" no tiene el titulo \"Correo\""));
-                    }else{
-                        if(!strDato.trim().equals("Correo")){
-                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Celda "+Utilitarios.columnExcel(c)+" del libro \"Personas\" no tiene el titulo \"Correo\""));
+                    String strDato = row.getCell(c, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+                    if (Utilitarios.esNuloOVacio(strDato)) {
+                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Celda " + Utilitarios.columnExcel(c) + " del libro \"Personas\" no tiene el titulo \"Correo\""));
+                    } else {
+                        if (!strDato.trim().equals("Correo")) {
+                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Celda " + Utilitarios.columnExcel(c) + " del libro \"Personas\" no tiene el titulo \"Correo\""));
                         }
                     }
-                }catch(NoSuchElementException | NullPointerException e){
-                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Celda "+Utilitarios.columnExcel(c)+" del libro \"Personas\" no tiene el titulo \"Correo\""));
+                } catch (NoSuchElementException | NullPointerException e) {
+                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Celda " + Utilitarios.columnExcel(c) + " del libro \"Personas\" no tiene el titulo \"Correo\""));
                 }
-                
+
                 //SEXO
-                if(blHabilitarSexo){
-                    try{
+                if (blHabilitarSexo) {
+                    try {
                         c++;
-                        String strDato = row.getCell(c, Row.CREATE_NULL_AS_BLANK).getStringCellValue();
-                        if(Utilitarios.esNuloOVacio(strDato)){
-                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Celda "+Utilitarios.columnExcel(c)+" del libro \"Personas\" no tiene el titulo \"Sexo\""));
-                        }else{
-                            if(!strDato.trim().equals("Sexo")){
-                                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Celda "+Utilitarios.columnExcel(c)+" del libro \"Personas\" no tiene el titulo \"Sexo\""));
+                        String strDato = row.getCell(c, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+                        if (Utilitarios.esNuloOVacio(strDato)) {
+                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Celda " + Utilitarios.columnExcel(c) + " del libro \"Personas\" no tiene el titulo \"Sexo\""));
+                        } else {
+                            if (!strDato.trim().equals("Sexo")) {
+                                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Celda " + Utilitarios.columnExcel(c) + " del libro \"Personas\" no tiene el titulo \"Sexo\""));
                             }
                         }
-                    }catch(NoSuchElementException | NullPointerException e){
-                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Celda "+Utilitarios.columnExcel(c)+" del libro \"Personas\" no tiene el titulo \"Sexo\""));
+                    } catch (NoSuchElementException | NullPointerException e) {
+                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Celda " + Utilitarios.columnExcel(c) + " del libro \"Personas\" no tiene el titulo \"Sexo\""));
                     }
                 }
 
                 //EDAD
-                if(blHabilitarEdad){
-                    try{
+                if (blHabilitarEdad) {
+                    try {
                         c++;
-                        String strDato = row.getCell(c, Row.CREATE_NULL_AS_BLANK).getStringCellValue();
-                        if(Utilitarios.esNuloOVacio(strDato)){
-                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Celda "+Utilitarios.columnExcel(c)+" del libro \"Personas\" no tiene el titulo \"Edad\""));
-                        }else{
-                            if(!strDato.trim().equals("Edad")){
-                                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Celda "+Utilitarios.columnExcel(c)+" del libro \"Personas\" no tiene el titulo \"Edad\""));
+                        String strDato = row.getCell(c, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+                        if (Utilitarios.esNuloOVacio(strDato)) {
+                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Celda " + Utilitarios.columnExcel(c) + " del libro \"Personas\" no tiene el titulo \"Edad\""));
+                        } else {
+                            if (!strDato.trim().equals("Edad")) {
+                                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Celda " + Utilitarios.columnExcel(c) + " del libro \"Personas\" no tiene el titulo \"Edad\""));
                             }
                         }
-                    }catch(NoSuchElementException | NullPointerException e){
-                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Celda "+Utilitarios.columnExcel(c)+" del libro \"Personas\" no tiene el titulo \"Edad\""));
+                    } catch (NoSuchElementException | NullPointerException e) {
+                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Celda " + Utilitarios.columnExcel(c) + " del libro \"Personas\" no tiene el titulo \"Edad\""));
                     }
-                }
-                
-                //TIEMPO EN LA EMPRESA
-                if(blHabilitarTiempoEmpresa){
-                    try{
-                        c++;
-                        String strDato = row.getCell(c, Row.CREATE_NULL_AS_BLANK).getStringCellValue();
-                        if(Utilitarios.esNuloOVacio(strDato)){
-                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Celda "+Utilitarios.columnExcel(c)+" del libro \"Personas\" no tiene el titulo \"Tiempo en la empresa\""));
-                        }else{
-                            if(!strDato.trim().equals("Tiempo en la empresa")){
-                                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Celda "+Utilitarios.columnExcel(c)+" del libro \"Personas\" no tiene el titulo \"Tiempo en la empresa\""));
-                            }
-                        }
-                    }catch(NoSuchElementException | NullPointerException e){
-                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Celda "+Utilitarios.columnExcel(c)+" del libro \"Personas\" no tiene el titulo \"Tiempo en la empresa\""));
-                    }
-                }
-                
-                //TIEMPO EN LA EMPRESA
-                if(blHabilitarNivelOcupacional){
-                    try{
-                        c++;
-                        String strDato = row.getCell(c, Row.CREATE_NULL_AS_BLANK).getStringCellValue();
-                        if(Utilitarios.esNuloOVacio(strDato)){
-                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Celda "+Utilitarios.columnExcel(c)+" del libro \"Personas\" no tiene el titulo \"Nivel ocupacional\""));
-                        }else{
-                            if(!strDato.trim().equals("Nivel ocupacional")){
-                                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Celda "+Utilitarios.columnExcel(c)+" del libro \"Personas\" no tiene el titulo \"Nivel ocupacional\""));
-                            }
-                        }
-                    }catch(NoSuchElementException | NullPointerException e){
-                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Celda "+Utilitarios.columnExcel(c)+" del libro \"Personas\" no tiene el titulo \"Nivel ocupacional\""));
-                    }
-                }
-                
-                //AREA DEL NEGOCIO
-                if(blHabilitarAreaNegocio){
-                    try{
-                        c++;
-                        String strDato = row.getCell(c, Row.CREATE_NULL_AS_BLANK).getStringCellValue();
-                        if(Utilitarios.esNuloOVacio(strDato)){
-                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Celda "+Utilitarios.columnExcel(c)+" del libro \"Personas\" no tiene el titulo \"Area del negocio\""));
-                        }else{
-                            if(!strDato.trim().equals("Area del negocio")){
-                                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Celda "+Utilitarios.columnExcel(c)+" del libro \"Personas\" no tiene el titulo \"Area del negocio\""));
-                            }
-                        }
-                    }catch(NoSuchElementException | NullPointerException e){
-                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Celda "+Utilitarios.columnExcel(c)+" del libro \"Personas\" no tiene el titulo \"Area del negocio\""));
-                    }
-                }
-                
-                //AUTOEVALUACION
-                try{
-                    c++;
-                    String strDato = row.getCell(c, Row.CREATE_NULL_AS_BLANK).getStringCellValue();
-                    if(Utilitarios.esNuloOVacio(strDato)){
-                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Celda "+Utilitarios.columnExcel(c)+" del libro \"Personas\" no tiene el titulo \"Autoevaluación\""));
-                    }else{
-                        if(!strDato.trim().equals("Autoevaluación")){
-                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Celda "+Utilitarios.columnExcel(c)+" del libro \"Personas\" no tiene el titulo \"Autoevaluación\""));
-                        }
-                    }
-                }catch(NoSuchElementException | NullPointerException e){
-                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Celda "+Utilitarios.columnExcel(c)+" del libro \"Personas\" no tiene el titulo \"Autoevaluación\""));
                 }
 
-                
-                /*********************************/
+                //TIEMPO EN LA EMPRESA
+                if (blHabilitarTiempoEmpresa) {
+                    try {
+                        c++;
+                        String strDato = row.getCell(c, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+                        if (Utilitarios.esNuloOVacio(strDato)) {
+                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Celda " + Utilitarios.columnExcel(c) + " del libro \"Personas\" no tiene el titulo \"Tiempo en la empresa\""));
+                        } else {
+                            if (!strDato.trim().equals("Tiempo en la empresa")) {
+                                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Celda " + Utilitarios.columnExcel(c) + " del libro \"Personas\" no tiene el titulo \"Tiempo en la empresa\""));
+                            }
+                        }
+                    } catch (NoSuchElementException | NullPointerException e) {
+                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Celda " + Utilitarios.columnExcel(c) + " del libro \"Personas\" no tiene el titulo \"Tiempo en la empresa\""));
+                    }
+                }
+
+                //TIEMPO EN LA EMPRESA
+                if (blHabilitarNivelOcupacional) {
+                    try {
+                        c++;
+                        String strDato = row.getCell(c, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+                        if (Utilitarios.esNuloOVacio(strDato)) {
+                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Celda " + Utilitarios.columnExcel(c) + " del libro \"Personas\" no tiene el titulo \"Nivel ocupacional\""));
+                        } else {
+                            if (!strDato.trim().equals("Nivel ocupacional")) {
+                                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Celda " + Utilitarios.columnExcel(c) + " del libro \"Personas\" no tiene el titulo \"Nivel ocupacional\""));
+                            }
+                        }
+                    } catch (NoSuchElementException | NullPointerException e) {
+                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Celda " + Utilitarios.columnExcel(c) + " del libro \"Personas\" no tiene el titulo \"Nivel ocupacional\""));
+                    }
+                }
+
+                //AREA DEL NEGOCIO
+                if (blHabilitarAreaNegocio) {
+                    try {
+                        c++;
+                        String strDato = row.getCell(c, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+                        if (Utilitarios.esNuloOVacio(strDato)) {
+                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Celda " + Utilitarios.columnExcel(c) + " del libro \"Personas\" no tiene el titulo \"Area del negocio\""));
+                        } else {
+                            if (!strDato.trim().equals("Area del negocio")) {
+                                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Celda " + Utilitarios.columnExcel(c) + " del libro \"Personas\" no tiene el titulo \"Area del negocio\""));
+                            }
+                        }
+                    } catch (NoSuchElementException | NullPointerException e) {
+                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Celda " + Utilitarios.columnExcel(c) + " del libro \"Personas\" no tiene el titulo \"Area del negocio\""));
+                    }
+                }
+
+                //AUTOEVALUACION
+                try {
+                    c++;
+                    String strDato = row.getCell(c, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+                    if (Utilitarios.esNuloOVacio(strDato)) {
+                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Celda " + Utilitarios.columnExcel(c) + " del libro \"Personas\" no tiene el titulo \"Autoevaluación\""));
+                    } else {
+                        if (!strDato.trim().equals("Autoevaluación")) {
+                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Celda " + Utilitarios.columnExcel(c) + " del libro \"Personas\" no tiene el titulo \"Autoevaluación\""));
+                        }
+                    }
+                } catch (NoSuchElementException | NullPointerException e) {
+                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Celda " + Utilitarios.columnExcel(c) + " del libro \"Personas\" no tiene el titulo \"Autoevaluación\""));
+                }
+
+                /**
+                 * ******************************
+                 */
                 /* VALIDA CABECERA DE RELACIONES */
-                /*********************************/
-                
+                /**
+                 * ******************************
+                 */
                 row = rowIteratorRelacion.next();
 
                 c = 0;
-                
+
                 //EVALUADO
-                try{
-                    String strDato = row.getCell(c, Row.CREATE_NULL_AS_BLANK).getStringCellValue();
-                    if(Utilitarios.esNuloOVacio(strDato)){
-                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Celda "+Utilitarios.columnExcel(c)+" del libro \"Red de evaluación\" no tiene el titulo \"Evaluado\""));
-                    }else{
-                        if(!strDato.trim().equals("Evaluado")){
-                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Celda "+Utilitarios.columnExcel(c)+" del libro \"Red de evaluación\" no tiene el titulo \"Evaluado\""));
+                try {
+                    String strDato = row.getCell(c, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+                    if (Utilitarios.esNuloOVacio(strDato)) {
+                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Celda " + Utilitarios.columnExcel(c) + " del libro \"Red de evaluación\" no tiene el titulo \"Evaluado\""));
+                    } else {
+                        if (!strDato.trim().equals("Evaluado")) {
+                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Celda " + Utilitarios.columnExcel(c) + " del libro \"Red de evaluación\" no tiene el titulo \"Evaluado\""));
                         }
                     }
-                }catch(NoSuchElementException | NullPointerException e){
-                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Celda "+Utilitarios.columnExcel(c)+" del libro \"Red de evaluación\" no tiene el titulo \"Evaluado\""));
-                }
-                
-                //RELACION
-                try{
-                    c++;
-                    String strDato = row.getCell(c, Row.CREATE_NULL_AS_BLANK).getStringCellValue();
-                    if(Utilitarios.esNuloOVacio(strDato)){
-                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Celda "+Utilitarios.columnExcel(c)+" del libro \"Red de evaluación\" no tiene el titulo \"Relación\""));
-                    }else{
-                        if(!strDato.trim().equals("Relación")){
-                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Celda "+Utilitarios.columnExcel(c)+" del libro \"Red de evaluación\" no tiene el titulo \"Relación\""));
-                        }
-                    }
-                }catch(NoSuchElementException | NullPointerException e){
-                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Celda "+Utilitarios.columnExcel(c)+" del libro \"Red de evaluación\" no tiene el titulo \"Relación\""));
-                }
-                
-                //EVALUADOR
-                try{
-                    c++;
-                    String strDato = row.getCell(c, Row.CREATE_NULL_AS_BLANK).getStringCellValue();
-                    if(Utilitarios.esNuloOVacio(strDato)){
-                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Celda "+Utilitarios.columnExcel(c)+" del libro \"Red de evaluación\" no tiene el titulo \"Evaluador\""));
-                    }else{
-                        if(!strDato.trim().equals("Evaluador")){
-                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Celda "+Utilitarios.columnExcel(c)+" del libro \"Red de evaluación\" no tiene el titulo \"Evaluador\""));
-                        }
-                    }
-                }catch(NoSuchElementException | NullPointerException e){
-                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Celda "+Utilitarios.columnExcel(c)+" del libro \"Red de evaluación\" no tiene el titulo \"Evaluador\""));
-                }
-                
-                
-                
-                /*************************************/
-                /* VALIDA SI TIENEN AL MENOS UNA FILA*/
-                /*************************************/
-                try{
-                    rowIteratorRelacion.next();
-                }catch(Exception e){
-                    log.debug(e);
-                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Libro \"Red de evaluación\" no tiene información"));
+                } catch (NoSuchElementException | NullPointerException e) {
+                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Celda " + Utilitarios.columnExcel(c) + " del libro \"Red de evaluación\" no tiene el titulo \"Evaluado\""));
                 }
 
-                try{
-                    rowIteratorPersonas.next();
-                }catch(Exception e){
+                //RELACION
+                try {
+                    c++;
+                    String strDato = row.getCell(c, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+                    if (Utilitarios.esNuloOVacio(strDato)) {
+                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Celda " + Utilitarios.columnExcel(c) + " del libro \"Red de evaluación\" no tiene el titulo \"Relación\""));
+                    } else {
+                        if (!strDato.trim().equals("Relación")) {
+                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Celda " + Utilitarios.columnExcel(c) + " del libro \"Red de evaluación\" no tiene el titulo \"Relación\""));
+                        }
+                    }
+                } catch (NoSuchElementException | NullPointerException e) {
+                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Celda " + Utilitarios.columnExcel(c) + " del libro \"Red de evaluación\" no tiene el titulo \"Relación\""));
+                }
+
+                //EVALUADOR
+                try {
+                    c++;
+                    String strDato = row.getCell(c, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+                    if (Utilitarios.esNuloOVacio(strDato)) {
+                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Celda " + Utilitarios.columnExcel(c) + " del libro \"Red de evaluación\" no tiene el titulo \"Evaluador\""));
+                    } else {
+                        if (!strDato.trim().equals("Evaluador")) {
+                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Celda " + Utilitarios.columnExcel(c) + " del libro \"Red de evaluación\" no tiene el titulo \"Evaluador\""));
+                        }
+                    }
+                } catch (NoSuchElementException | NullPointerException e) {
+                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Celda " + Utilitarios.columnExcel(c) + " del libro \"Red de evaluación\" no tiene el titulo \"Evaluador\""));
+                }
+
+                /**
+                 * **********************************
+                 */
+                /* VALIDA SI TIENEN AL MENOS UNA FILA*/
+                /**
+                 * **********************************
+                 */
+                try {
+                    rowIteratorRelacion.next();
+                } catch (Exception e) {
                     log.debug(e);
-                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Libro \"Personas\" no tiene información"));
+                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Libro \"Red de evaluación\" no tiene información"));
+                }
+
+                try {
+                    rowIteratorPersonas.next();
+                } catch (Exception e) {
+                    log.debug(e);
+                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Libro \"Personas\" no tiene información"));
                 }
             }
-            
+
         }
 
     }
 
     private void procesaFilaPersonasAvanzado(Row row, validaTextoIngresado objvalidaTextoIngresado, validaCorreo objvalidaCorreo) {
-        
-        boolean blRegistroOK= true;
+
+        boolean blRegistroOK = true;
         int c = 0;
         List<ErrorBean> lstErrorAvan = new ArrayList<>();
-        
+
         /* DESCRIPCION */
         String strDescripcion = null;
-        try{
+        try {
             String strTemp = null;
-            if(row.getCell(c).getCellType() == Cell.CELL_TYPE_STRING || row.getCell(c).getCellType() == Cell.CELL_TYPE_BLANK){
-                strTemp = Utilitarios.obtieneDatoCelda(row,c);
+            if (row.getCell(c).getCellType() == CellType.STRING || row.getCell(c).getCellType() == CellType.BLANK) {
+                strTemp = Utilitarios.obtieneDatoCelda(row, c);
                 String strError = objvalidaTextoIngresado.validar(strTemp);
-                if(Utilitarios.esNuloOVacio(strError)){
+                if (Utilitarios.esNuloOVacio(strError)) {
                     strDescripcion = strTemp.trim();
-                }else{
+                } else {
                     blRegistroOK = false;
-                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Fila "+(row.getRowNum()+1)+" del libro \"Personas\" tiene el campo \"Descripción\" " + strError));
+                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Fila " + (row.getRowNum() + 1) + " del libro \"Personas\" tiene el campo \"Descripción\" " + strError));
                 }
-            }else{
+            } else {
                 blRegistroOK = false;
-                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Fila "+(row.getRowNum()+1)+" del libro \"Personas\" tiene el campo \"Descripción\" vacio o en un formato diferente de texto"));
+                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Fila " + (row.getRowNum() + 1) + " del libro \"Personas\" tiene el campo \"Descripción\" vacio o en un formato diferente de texto"));
             }
-            
-        }catch(NoSuchElementException | NullPointerException e){
+
+        } catch (NoSuchElementException | NullPointerException e) {
             blRegistroOK = false;
-            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Fila "+(row.getRowNum()+1)+" del libro \"Personas\" tiene el campo \"Descripción\" vacio o en un formato diferente de texto"));
+            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Fila " + (row.getRowNum() + 1) + " del libro \"Personas\" tiene el campo \"Descripción\" vacio o en un formato diferente de texto"));
         }
-        
+
         /* CARGO */
         String strCargo = null;
         c++;
-        try{
+        try {
             String strTemp = null;
-            if(row.getCell(c).getCellType() == Cell.CELL_TYPE_STRING || row.getCell(c).getCellType() == Cell.CELL_TYPE_BLANK){
-                strTemp = Utilitarios.obtieneDatoCelda(row,c);
-                if(Utilitarios.noEsNuloOVacio(strTemp)){
+            if (row.getCell(c).getCellType() == CellType.STRING || row.getCell(c).getCellType() == CellType.BLANK) {
+                strTemp = Utilitarios.obtieneDatoCelda(row, c);
+                if (Utilitarios.noEsNuloOVacio(strTemp)) {
                     String strError = objvalidaTextoIngresado.validar(strTemp);
-                    if(Utilitarios.esNuloOVacio(strError)){
+                    if (Utilitarios.esNuloOVacio(strError)) {
                         strCargo = Utilitarios.limpiarTexto(strTemp).trim();
-                    }else{
+                    } else {
                         blRegistroOK = false;
-                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Fila "+(row.getRowNum()+1)+" del libro \"Personas\" tiene el campo \"Cargo\" " + strError));
+                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Fila " + (row.getRowNum() + 1) + " del libro \"Personas\" tiene el campo \"Cargo\" " + strError));
                     }
                 }
-                
-            }else{
+
+            } else {
                 blRegistroOK = false;
-                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Fila "+(row.getRowNum()+1)+" del libro \"Personas\" tiene el campo \"Cargo\" en un formato diferente de texto"));
+                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Fila " + (row.getRowNum() + 1) + " del libro \"Personas\" tiene el campo \"Cargo\" en un formato diferente de texto"));
             }
 
-        }catch(NoSuchElementException | NullPointerException e){
+        } catch (NoSuchElementException | NullPointerException e) {
             //blRegistroOK = false;
             //lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Fila "+(row.getRowNum()+1)+" del libro \"Personas\" tiene el campo \"Cargo\" vacio o en un formato diferente de texto"));
         }
@@ -2986,204 +3091,203 @@ public class EvaluadosView implements Serializable{
         /* CORREO */
         String strCorreo = null;
         c++;
-        try{
+        try {
             String strTemp = null;
-            if(row.getCell(c).getCellType() == Cell.CELL_TYPE_STRING || row.getCell(c).getCellType() == Cell.CELL_TYPE_BLANK){
-                strTemp = Utilitarios.obtieneDatoCelda(row,c);
+            if (row.getCell(c).getCellType() == CellType.STRING || row.getCell(c).getCellType() == CellType.BLANK) {
+                strTemp = Utilitarios.obtieneDatoCelda(row, c);
                 String strError = objvalidaCorreo.validate(strTemp);
-                if(Utilitarios.esNuloOVacio(strError)){
+                if (Utilitarios.esNuloOVacio(strError)) {
                     strCorreo = strTemp.trim().toLowerCase();
-                }else{
+                } else {
                     blRegistroOK = false;
-                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Fila "+(row.getRowNum()+1)+" del libro \"Personas\" tiene el campo \"Correo\" " + strError));
+                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Fila " + (row.getRowNum() + 1) + " del libro \"Personas\" tiene el campo \"Correo\" " + strError));
                 }
-            }else{
+            } else {
                 blRegistroOK = false;
-                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Fila "+(row.getRowNum()+1)+" del libro \"Personas\" tiene el campo \"Correo\" vacio o en un formato diferente de texto"));
+                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Fila " + (row.getRowNum() + 1) + " del libro \"Personas\" tiene el campo \"Correo\" vacio o en un formato diferente de texto"));
             }
-            
-        }catch(NoSuchElementException | NullPointerException e){
+
+        } catch (NoSuchElementException | NullPointerException e) {
             blRegistroOK = false;
-            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Fila "+(row.getRowNum()+1)+" del libro \"Personas\" tiene el campo \"Correo\" vacio o en un formato diferente de texto"));
+            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Fila " + (row.getRowNum() + 1) + " del libro \"Personas\" tiene el campo \"Correo\" vacio o en un formato diferente de texto"));
         }
 
         String strSexo = null;
-        if(blHabilitarSexo){
+        if (blHabilitarSexo) {
             c++;
-            try{
+            try {
                 String strTemp = null;
-                if(row.getCell(c).getCellType() == Cell.CELL_TYPE_STRING || row.getCell(c).getCellType() == Cell.CELL_TYPE_BLANK){
-                    strTemp = Utilitarios.obtieneDatoCelda(row,c);
-                    if(Utilitarios.noEsNuloOVacio(strTemp)){
+                if (row.getCell(c).getCellType() == CellType.STRING || row.getCell(c).getCellType() == CellType.BLANK) {
+                    strTemp = Utilitarios.obtieneDatoCelda(row, c);
+                    if (Utilitarios.noEsNuloOVacio(strTemp)) {
                         strTemp = Utilitarios.limpiarTexto(strTemp);
-                        if(strTemp.equals("MASCULINO") || strTemp.equals("FEMENINO")){
+                        if (strTemp.equals("MASCULINO") || strTemp.equals("FEMENINO")) {
                             strSexo = strTemp.trim();
-                        }else{
+                        } else {
                             blRegistroOK = false;
-                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Fila "+(row.getRowNum()+1)+" del libro \"Personas\" tiene el campo \"Sexo\" con un dato diferente de \"Masculino\" o \"Femenino\""));
+                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Fila " + (row.getRowNum() + 1) + " del libro \"Personas\" tiene el campo \"Sexo\" con un dato diferente de \"Masculino\" o \"Femenino\""));
                         }
-                    }else{
+                    } else {
                         blRegistroOK = false;
-                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Fila "+(row.getRowNum()+1)+" del libro \"Personas\" tiene el campo \"Sexo\" con un dato vacio"));
+                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Fila " + (row.getRowNum() + 1) + " del libro \"Personas\" tiene el campo \"Sexo\" con un dato vacio"));
                     }
-                }else{
+                } else {
                     blRegistroOK = false;
-                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Fila "+(row.getRowNum()+1)+" del libro \"Personas\" tiene el campo \"Sexo\" vacio o en un formato diferente de texto"));
+                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Fila " + (row.getRowNum() + 1) + " del libro \"Personas\" tiene el campo \"Sexo\" vacio o en un formato diferente de texto"));
                 }
-                
-            }catch(NoSuchElementException | NullPointerException e){
+
+            } catch (NoSuchElementException | NullPointerException e) {
                 blRegistroOK = false;
                 strSexo = Constantes.strVacio;
-                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Fila "+(row.getRowNum()+1)+" del libro \"Personas\" tiene el campo \"Sexo\" vacio o en un formato diferente de texto"));
+                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Fila " + (row.getRowNum() + 1) + " del libro \"Personas\" tiene el campo \"Sexo\" vacio o en un formato diferente de texto"));
             }
         }
 
         Integer intEdad = null;
-        if(blHabilitarEdad){
+        if (blHabilitarEdad) {
             c++;
-            try{
+            try {
                 String strTemp = null;
-                if(row.getCell(c).getCellType() == Cell.CELL_TYPE_NUMERIC || row.getCell(c).getCellType() == Cell.CELL_TYPE_STRING || row.getCell(c).getCellType() == Cell.CELL_TYPE_BLANK){
-                    strTemp = Utilitarios.obtieneDatoCelda(row,c);
-                    if(Utilitarios.isNumber(strTemp, false)){
+                if (row.getCell(c).getCellType() == CellType.NUMERIC || row.getCell(c).getCellType() == CellType.STRING || row.getCell(c).getCellType() == CellType.BLANK) {
+                    strTemp = Utilitarios.obtieneDatoCelda(row, c);
+                    if (Utilitarios.isNumber(strTemp, false)) {
                         BigDecimal bd = new BigDecimal(strTemp);
-                        if(bd.intValue()>0){
+                        if (bd.intValue() > 0) {
                             intEdad = bd.intValue();
-                        }else{
+                        } else {
                             blRegistroOK = false;
-                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Fila "+(row.getRowNum()+1)+" del libro \"Personas\" tiene el campo \"Edad\" con un valor menor o igual a 0"));
+                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Fila " + (row.getRowNum() + 1) + " del libro \"Personas\" tiene el campo \"Edad\" con un valor menor o igual a 0"));
                         }
-                    }else{
+                    } else {
                         blRegistroOK = false;
-                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Fila "+(row.getRowNum()+1)+" del libro \"Personas\" tiene el campo \"Edad\" vacio o no es numerico"));
+                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Fila " + (row.getRowNum() + 1) + " del libro \"Personas\" tiene el campo \"Edad\" vacio o no es numerico"));
                     }
 
-                }else{
+                } else {
                     blRegistroOK = false;
-                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Fila "+(row.getRowNum()+1)+" del libro \"Personas\" tiene el campo \"Edad\" vacio o no es numerico"));
+                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Fila " + (row.getRowNum() + 1) + " del libro \"Personas\" tiene el campo \"Edad\" vacio o no es numerico"));
                 }
-                
-            }catch(NoSuchElementException | NullPointerException e){
+
+            } catch (NoSuchElementException | NullPointerException e) {
                 blRegistroOK = false;
-                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Fila "+(row.getRowNum()+1)+" del libro \"Personas\" tiene el campo \"Edad\" vacio o no es numerico"));
+                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Fila " + (row.getRowNum() + 1) + " del libro \"Personas\" tiene el campo \"Edad\" vacio o no es numerico"));
             }
         }
 
         Integer intTiempoEmpresa = null;
-        if(blHabilitarTiempoEmpresa){
+        if (blHabilitarTiempoEmpresa) {
             c++;
-            try{
+            try {
                 String strTemp = null;
-                if(row.getCell(c).getCellType() == Cell.CELL_TYPE_NUMERIC || row.getCell(c).getCellType() == Cell.CELL_TYPE_BLANK || row.getCell(c).getCellType() == Cell.CELL_TYPE_STRING){
-                    strTemp = Utilitarios.obtieneDatoCelda(row,c);
-                    if(Utilitarios.isNumber(strTemp, false)){
+                if (row.getCell(c).getCellType() == CellType.NUMERIC || row.getCell(c).getCellType() == CellType.STRING || row.getCell(c).getCellType() == CellType.BLANK) {
+                    strTemp = Utilitarios.obtieneDatoCelda(row, c);
+                    if (Utilitarios.isNumber(strTemp, false)) {
                         BigDecimal bd = new BigDecimal(strTemp.trim());
-                        if(bd.intValue()>0){
+                        if (bd.intValue() > 0) {
                             intTiempoEmpresa = bd.intValue();
-                        }else{
+                        } else {
                             blRegistroOK = false;
-                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Fila "+(row.getRowNum()+1)+" del libro \"Personas\" tiene el campo \"Tiempo en la empresa\" con un valor menor o igual a 0"));
+                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Fila " + (row.getRowNum() + 1) + " del libro \"Personas\" tiene el campo \"Tiempo en la empresa\" con un valor menor o igual a 0"));
                         }
-                    }else{
+                    } else {
                         blRegistroOK = false;
-                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Fila "+(row.getRowNum()+1)+" del libro \"Personas\" tiene el campo \"Tiempo en la empresa\" vacio o no es numerico"));
+                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Fila " + (row.getRowNum() + 1) + " del libro \"Personas\" tiene el campo \"Tiempo en la empresa\" vacio o no es numerico"));
                     }
-                }else{
+                } else {
                     blRegistroOK = false;
-                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Fila "+(row.getRowNum()+1)+" del libro \"Personas\" tiene el campo \"Tiempo en la empresa\" vacio o no es numerico"));
+                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Fila " + (row.getRowNum() + 1) + " del libro \"Personas\" tiene el campo \"Tiempo en la empresa\" vacio o no es numerico"));
                 }
 
-            }catch(NoSuchElementException | NullPointerException e){
+            } catch (NoSuchElementException | NullPointerException e) {
                 blRegistroOK = false;
-                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Fila "+(row.getRowNum()+1)+" del libro \"Personas\" tiene el campo \"Tiempo en la empresa\" vacio o es numerico"));
+                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Fila " + (row.getRowNum() + 1) + " del libro \"Personas\" tiene el campo \"Tiempo en la empresa\" vacio o es numerico"));
             }
         }
 
         String strOcupacion = null;
-        if(blHabilitarNivelOcupacional){
+        if (blHabilitarNivelOcupacional) {
             c++;
-            try{
+            try {
                 String strTemp = null;
-                if(row.getCell(c).getCellType() == Cell.CELL_TYPE_STRING || row.getCell(c).getCellType() == Cell.CELL_TYPE_BLANK){
-                    strTemp = Utilitarios.obtieneDatoCelda(row,c);
-                    if(Utilitarios.noEsNuloOVacio(strTemp)){
+                if (row.getCell(c).getCellType() == CellType.STRING || row.getCell(c).getCellType() == CellType.BLANK) {
+                    strTemp = Utilitarios.obtieneDatoCelda(row, c);
+                    if (Utilitarios.noEsNuloOVacio(strTemp)) {
                         strTemp = Utilitarios.limpiarTexto(strTemp);
-                        if(!hNO.containsKey(strTemp.trim())){
+                        if (!hNO.containsKey(strTemp.trim())) {
                             blRegistroOK = false;
-                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Fila "+(row.getRowNum()+1)+" del libro \"Personas\" tiene el campo \"Nivel ocupacional\" con un valor no definido para el proyecto"));
-                        }else{
+                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Fila " + (row.getRowNum() + 1) + " del libro \"Personas\" tiene el campo \"Nivel ocupacional\" con un valor no definido para el proyecto"));
+                        } else {
                             strOcupacion = hNO.get(strTemp.trim()).toString();
                         }
-                    }else{
+                    } else {
                         blRegistroOK = false;
-                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Fila "+(row.getRowNum()+1)+" del libro \"Personas\" tiene el campo \"Nivel ocupacional\" vacio"));                
+                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Fila " + (row.getRowNum() + 1) + " del libro \"Personas\" tiene el campo \"Nivel ocupacional\" vacio"));
                     }
-                }else{
+                } else {
                     blRegistroOK = false;
-                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Fila "+(row.getRowNum()+1)+" del libro \"Personas\" tiene el campo \"Nivel ocupacional\" vacio o en un formato diferente de texto"));
+                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Fila " + (row.getRowNum() + 1) + " del libro \"Personas\" tiene el campo \"Nivel ocupacional\" vacio o en un formato diferente de texto"));
                 }
-                
-            }catch(NoSuchElementException | NullPointerException e){
+
+            } catch (NoSuchElementException | NullPointerException e) {
                 blRegistroOK = false;
-                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Fila "+(row.getRowNum()+1)+" del libro \"Personas\" tiene el campo \"Nivel ocupacional\" vacio o en un formato diferente de texto"));
+                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Fila " + (row.getRowNum() + 1) + " del libro \"Personas\" tiene el campo \"Nivel ocupacional\" vacio o en un formato diferente de texto"));
             }
         }
 
         String strAreaNegocio = null;
-        if(blHabilitarAreaNegocio){
+        if (blHabilitarAreaNegocio) {
             c++;
-            try{
+            try {
                 String strTemp = null;
-                if(row.getCell(c).getCellType() == Cell.CELL_TYPE_STRING || row.getCell(c).getCellType() == Cell.CELL_TYPE_BLANK){
-                    strTemp = Utilitarios.obtieneDatoCelda(row,c);
-                    if(Utilitarios.noEsNuloOVacio(strTemp)){
+                if (row.getCell(c).getCellType() == CellType.STRING || row.getCell(c).getCellType() == CellType.BLANK) {
+                    strTemp = Utilitarios.obtieneDatoCelda(row, c);
+                    if (Utilitarios.noEsNuloOVacio(strTemp)) {
                         strTemp = Utilitarios.limpiarTexto(strTemp);
-                        if(!hAN.containsKey(strTemp.trim())){
+                        if (!hAN.containsKey(strTemp.trim())) {
                             blRegistroOK = false;
-                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Fila "+(row.getRowNum()+1)+" del libro \"Personas\" tiene el campo \"Area del negocio\" con un valor no definido para el proyecto"));
-                        }else{
+                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Fila " + (row.getRowNum() + 1) + " del libro \"Personas\" tiene el campo \"Area del negocio\" con un valor no definido para el proyecto"));
+                        } else {
                             strAreaNegocio = hAN.get(strTemp.trim()).toString();
                         }
-                    }else{
+                    } else {
                         blRegistroOK = false;
-                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Fila "+(row.getRowNum()+1)+" del libro \"Personas\" tiene el campo \"Area del negocio\" vacio"));
-                    }   
-                }else{
+                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Fila " + (row.getRowNum() + 1) + " del libro \"Personas\" tiene el campo \"Area del negocio\" vacio"));
+                    }
+                } else {
                     blRegistroOK = false;
-                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Fila "+(row.getRowNum()+1)+" del libro \"Personas\" tiene el campo \"Area del negocio\" vacio o en un formato diferente de texto"));
+                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Fila " + (row.getRowNum() + 1) + " del libro \"Personas\" tiene el campo \"Area del negocio\" vacio o en un formato diferente de texto"));
                 }
 
-            }catch(NoSuchElementException | NullPointerException e){
+            } catch (NoSuchElementException | NullPointerException e) {
                 blRegistroOK = false;
-                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Fila "+(row.getRowNum()+1)+" del libro \"Personas\" tiene el campo \"Area del negocio\" vacio o en un formato diferente de texto"));
+                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Fila " + (row.getRowNum() + 1) + " del libro \"Personas\" tiene el campo \"Area del negocio\" vacio o en un formato diferente de texto"));
             }
         }
 
         boolean blAutoevaluar = false;
         c++;
-        try{
+        try {
             String strTemp = null;
-            if(row.getCell(c).getCellType() == Cell.CELL_TYPE_STRING || row.getCell(c).getCellType() == Cell.CELL_TYPE_BLANK){
-                strTemp = Utilitarios.obtieneDatoCelda(row,c);
+            if (row.getCell(c).getCellType() == CellType.STRING || row.getCell(c).getCellType() == CellType.BLANK) {
+                strTemp = Utilitarios.obtieneDatoCelda(row, c);
             }
-            
-            if(Utilitarios.noEsNuloOVacio(strTemp)){
-                if(Utilitarios.limpiarTexto(strTemp).equals("SI")){
+
+            if (Utilitarios.noEsNuloOVacio(strTemp)) {
+                if (Utilitarios.limpiarTexto(strTemp).equals("SI")) {
                     blAutoevaluar = true;
                 }
             }
-        }catch(NoSuchElementException | NullPointerException e){
+        } catch (NoSuchElementException | NullPointerException e) {
         }
 
+        if (blRegistroOK) {
 
-        if(blRegistroOK){
-        
             String strKey = Utilitarios.limpiarTexto(strCorreo);
-            
-            if(mapPersonasAvanzado.containsKey(strKey)){
-                this.lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Fila "+(row.getRowNum()+1)+" del libro \"Personas\" se encuentra duplicado, favor de revisar el correo electronico"));
-            }else{
-            
+
+            if (mapPersonasAvanzado.containsKey(strKey)) {
+                this.lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Fila " + (row.getRowNum() + 1) + " del libro \"Personas\" se encuentra duplicado, favor de revisar el correo electronico"));
+            } else {
+
                 EvaluadoAvan objEvaluado = new EvaluadoAvan();
 
                 objEvaluado.setPaTxDescripcion(strDescripcion);
@@ -3200,122 +3304,131 @@ public class EvaluadosView implements Serializable{
                 lstAvanPersonas.add(objEvaluado);
 
             }
-        }else{
+        } else {
             String strKey = Utilitarios.limpiarTexto(strCorreo);
-            if(mapPersonasAvanzado.containsKey(strKey)){
-                this.lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Fila "+(row.getRowNum()+1)+" del libro \"Personas\" se encuentra duplicado, favor de revisar el correo electronico"));
-            }else{
+            if (mapPersonasAvanzado.containsKey(strKey)) {
+                this.lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Fila " + (row.getRowNum() + 1) + " del libro \"Personas\" se encuentra duplicado, favor de revisar el correo electronico"));
+            } else {
                 this.lstErrorAvan.addAll(lstErrorAvan);
             }
         }
-        
+
     }
 
-    private void procesaFilaRelacionesAvanzado(Row row,validaTextoIngresado objvalidaTextoIngresado,validaCorreo objvalidaCorreo) {
-    
+    private void procesaFilaRelacionesAvanzado(Row row, validaTextoIngresado objvalidaTextoIngresado, validaCorreo objvalidaCorreo) {
+
         boolean blRegistroOK = true;
-        
+
         /* RELACION */
         String strRelacion = null;
-        try{
+        try {
             String strTemp = null;
-            if(row.getCell(1).getCellType() == Cell.CELL_TYPE_STRING || row.getCell(1).getCellType() == Cell.CELL_TYPE_STRING){
-                strTemp = Utilitarios.obtieneDatoCelda(row,1);                
-                if(Utilitarios.limpiarTexto(strTemp).isEmpty()){
+            if (row.getCell(1).getCellType() == CellType.STRING || row.getCell(1).getCellType() == CellType.BLANK) {
+                strTemp = Utilitarios.obtieneDatoCelda(row, 1);
+                if (Utilitarios.limpiarTexto(strTemp).isEmpty()) {
                     blRegistroOK = false;
-                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Fila "+(row.getRowNum()+1)+" del libro \"Red de evaluación\" tiene el campo \"Relación\" vacio"));
-                }else{
+                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Fila " + (row.getRowNum() + 1) + " del libro \"Red de evaluación\" tiene el campo \"Relación\" vacio"));
+                } else {
                     strRelacion = strTemp;
                     procesaRelacion(strRelacion, row);
                 }
-            }else{
+            } else {
                 blRegistroOK = false;
-                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Fila "+(row.getRowNum()+1)+" del libro \"Red de evaluación\" tiene el campo \"Relación\" en vacio o en un formato diferente de texto"));
+                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Fila " + (row.getRowNum() + 1) + " del libro \"Red de evaluación\" tiene el campo \"Relación\" en vacio o en un formato diferente de texto"));
             }
-        }catch(NoSuchElementException | NullPointerException e){
+        } catch (NoSuchElementException | NullPointerException e) {
             blRegistroOK = false;
-            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Fila "+(row.getRowNum()+1)+" del libro \"Red de evaluación\" tiene el campo \"Relación\" en vacio o en un formato diferente de texto"));
+            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Fila " + (row.getRowNum() + 1) + " del libro \"Red de evaluación\" tiene el campo \"Relación\" en vacio o en un formato diferente de texto"));
         }
 
         /* EVALUADO */
         String strCorreoEvaluado = null;
-        try{
+        try {
             String strTemp = null;
-            if(row.getCell(0).getCellType() == Cell.CELL_TYPE_STRING || row.getCell(0).getCellType() == Cell.CELL_TYPE_STRING){
-                strTemp = Utilitarios.obtieneDatoCelda(row,0);
+            if (row.getCell(0).getCellType() == CellType.STRING || row.getCell(0).getCellType() == CellType.BLANK) {
+                strTemp = Utilitarios.obtieneDatoCelda(row, 0);
                 String strError = objvalidaCorreo.validate(strTemp);
-                if(Utilitarios.esNuloOVacio(strError)){
-                    if(mapPersonasAvanzado.containsKey(Utilitarios.limpiarTexto(strTemp))){
+                if (Utilitarios.esNuloOVacio(strError)) {
+                    if (mapPersonasAvanzado.containsKey(Utilitarios.limpiarTexto(strTemp))) {
                         strCorreoEvaluado = strTemp.trim().toLowerCase();
-                    }else{
+                    } else {
                         blRegistroOK = false;
-                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Fila "+(row.getRowNum()+1)+" del libro \"Red de Evaluación\" tiene el campo \"Evaluado\" tiene un correo que no existe en la lista de personas"));
+                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Fila " + (row.getRowNum() + 1) + " del libro \"Red de Evaluación\" tiene el campo \"Evaluado\" tiene un correo que no existe en la lista de personas"));
                     }
-                }else{
+                } else {
                     blRegistroOK = false;
-                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Fila "+(row.getRowNum()+1)+" del libro \"Red de Evaluación\" tiene el campo \"Evaluado\" " + strError));
+                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Fila " + (row.getRowNum() + 1) + " del libro \"Red de Evaluación\" tiene el campo \"Evaluado\" " + strError));
                 }
-            }else{
+            } else {
                 blRegistroOK = false;
-                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Fila "+(row.getRowNum()+1)+" del libro \"Red de Evaluación\" tiene el campo \"Evaluado\" vacio o en un formato diferente de texto"));
+                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Fila " + (row.getRowNum() + 1) + " del libro \"Red de Evaluación\" tiene el campo \"Evaluado\" vacio o en un formato diferente de texto"));
             }
-            
-        }catch(NoSuchElementException | NullPointerException e){
+
+        } catch (NoSuchElementException | NullPointerException e) {
             blRegistroOK = false;
-            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Fila "+(row.getRowNum()+1)+" del libro \"Red de Evaluación\" tiene el campo \"Evaluado\" vacio o en un formato diferente de texto"));
+            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Fila " + (row.getRowNum() + 1) + " del libro \"Red de Evaluación\" tiene el campo \"Evaluado\" vacio o en un formato diferente de texto"));
         }
 
         /* EVALUADOR */
         String strCorreoEvaluador = null;
-        try{
+        try {
             String strTemp = null;
-            if(row.getCell(2).getCellType() == Cell.CELL_TYPE_STRING || row.getCell(2).getCellType() == Cell.CELL_TYPE_STRING){
-                strTemp = Utilitarios.obtieneDatoCelda(row,2);
+            if (row.getCell(2).getCellType() == CellType.STRING || row.getCell(2).getCellType() == CellType.BLANK) {
+                strTemp = Utilitarios.obtieneDatoCelda(row, 2);
                 String strError = objvalidaCorreo.validate(strTemp);
-                if(Utilitarios.esNuloOVacio(strError)){
-                    if(mapPersonasAvanzado.containsKey(Utilitarios.limpiarTexto(strTemp))){
+                if (Utilitarios.esNuloOVacio(strError)) {
+                    if (mapPersonasAvanzado.containsKey(Utilitarios.limpiarTexto(strTemp))) {
                         strCorreoEvaluador = strTemp.trim().toLowerCase();
-                    }else{
+                    } else {
                         blRegistroOK = false;
-                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Fila "+(row.getRowNum()+1)+" del libro \"Red de Evaluación\" tiene el campo \"Evaluador\" un correo que no existe en la lista de personas"));
+                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Fila " + (row.getRowNum() + 1) + " del libro \"Red de Evaluación\" tiene el campo \"Evaluador\" un correo que no existe en la lista de personas"));
                     }
-                }else{
+                } else {
                     blRegistroOK = false;
-                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Fila "+(row.getRowNum()+1)+" del libro \"Red de Evaluación\" tiene el campo \"Evaluador\" " + strError));
+                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Fila " + (row.getRowNum() + 1) + " del libro \"Red de Evaluación\" tiene el campo \"Evaluador\" " + strError));
                 }
-            }else{
+            } else {
                 blRegistroOK = false;
-                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Fila "+(row.getRowNum()+1)+" del libro \"Red de Evaluación\" tiene el campo \"Evaluador\" vacio o en un formato diferente de texto"));
+                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Fila " + (row.getRowNum() + 1) + " del libro \"Red de Evaluación\" tiene el campo \"Evaluador\" vacio o en un formato diferente de texto"));
             }
-            
-        }catch(NoSuchElementException | NullPointerException e){
+
+        } catch (NoSuchElementException | NullPointerException e) {
             blRegistroOK = false;
-            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Fila "+(row.getRowNum()+1)+" del libro \"Red de Evaluación\" tiene el campo \"Evaluador\" vacio o en un formato diferente de texto"));
+            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Fila " + (row.getRowNum() + 1) + " del libro \"Red de Evaluación\" tiene el campo \"Evaluador\" vacio o en un formato diferente de texto"));
         }
-        
-        if(blRegistroOK){
-            String strKey = Utilitarios.limpiarTexto(strCorreoEvaluado) +
-                            Utilitarios.limpiarTexto(strCorreoEvaluador);
 
-            if(mapRelacionesPersonasAvanzado.containsKey(strKey)){
-                this.lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Fila "+(row.getRowNum()+1)+" del libro \"Red de Evaluación\" se encuentra duplicado, favor de revisar la combinación evaluado, evaluador y su relación"));
-            }else{
-                
-                if(!mapPerEvaluados.containsKey(Utilitarios.limpiarTexto(strCorreoEvaluado)))
-                    mapPerEvaluados.put(Utilitarios.limpiarTexto(strCorreoEvaluado), strCorreoEvaluado);
-                if(!mapPerEvaluadores.containsKey(Utilitarios.limpiarTexto(strCorreoEvaluador)))
-                    mapPerEvaluadores.put(Utilitarios.limpiarTexto(strCorreoEvaluador), strCorreoEvaluador);
+        try {
 
-                RelacionAvanzada objRelacionAvanzada = new RelacionAvanzada();
-                objRelacionAvanzada.setStrEvaluado(strCorreoEvaluado);
-                objRelacionAvanzada.setStrEvaluador(strCorreoEvaluador);
-                objRelacionAvanzada.setStrRelacion(strRelacion);
-                mapRelacionesPersonasAvanzado.put(strKey, objRelacionAvanzada);
-                lstRelacionAvanzadas.add(objRelacionAvanzada);
+            if (blRegistroOK) {
+                String strKey = Utilitarios.limpiarTexto(strCorreoEvaluado)
+                        + Utilitarios.limpiarTexto(strCorreoEvaluador);
 
-            }
+                if (mapRelacionesPersonasAvanzado.containsKey(strKey)) {
+                    this.lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Fila " + (row.getRowNum() + 1) + " del libro \"Red de Evaluación\" se encuentra duplicado, favor de revisar la combinación evaluado, evaluador y su relación"));
+                } else {
 
-        }/*else{
+                    if (!mapPerEvaluados.containsKey(Utilitarios.limpiarTexto(strCorreoEvaluado))) {
+                        mapPerEvaluados.put(Utilitarios.limpiarTexto(strCorreoEvaluado), strCorreoEvaluado);
+                    }
+                    if (!mapPerEvaluadores.containsKey(Utilitarios.limpiarTexto(strCorreoEvaluador))) {
+                        mapPerEvaluadores.put(Utilitarios.limpiarTexto(strCorreoEvaluador), strCorreoEvaluador);
+                    }
+
+                    RelacionAvanzada objRelacionAvanzada = new RelacionAvanzada();
+                    objRelacionAvanzada.setStrEvaluado(strCorreoEvaluado);
+                    objRelacionAvanzada.setStrEvaluadoDesc(((EvaluadoAvan) mapPersonasAvanzado.get(Utilitarios.limpiarTexto(strCorreoEvaluado))).getPaTxDescripcion());
+                    objRelacionAvanzada.setStrEvaluador(strCorreoEvaluador);
+                    objRelacionAvanzada.setStrEvaluadorDesc(((EvaluadoAvan) mapPersonasAvanzado.get(Utilitarios.limpiarTexto(strCorreoEvaluador))).getPaTxDescripcion());
+                    objRelacionAvanzada.setStrRelacion(strRelacion);
+                    objRelacionAvanzada.setStrRelacionAbreviatura(mapRelacionesAbrev.get(Utilitarios.limpiarTexto(strRelacion)).toString());
+                    objRelacionAvanzada.setStrRelacionColor(((RelacionBean) mapRelacionesAvanzado.get(Utilitarios.limpiarTexto(strRelacion))).getStrColor());
+
+                    mapRelacionesPersonasAvanzado.put(strKey, objRelacionAvanzada);
+                    lstRelacionAvanzadas.add(objRelacionAvanzada);
+
+                }
+
+            }/*else{
             String strKey = Utilitarios.limpiarTexto(strCorreo);
             if(mapRelacionesPersonasAvanzado.containsKey(strKey)){
                 this.lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Fila "+(row.getRowNum()+1)+" del libro \"Red de Evaluación\" se encuentra duplicado, favor de revisar la combinación evaluado, evaluador y su relación"));
@@ -3323,46 +3436,49 @@ public class EvaluadosView implements Serializable{
                 this.lstErrorAvan.addAll(lstErrorAvan);
             }
         }*/
-        
+
+        } catch (Exception e) {
+            log.error(e);
+        }
+
     }
-    
-    public RelacionBean procesaRelacion(String strNombre, Row row){
-        
+
+    public RelacionBean procesaRelacion(String strNombre, Row row) {
+
         String strKEY = Utilitarios.limpiarTexto(strNombre);
-            
+
         RelacionBean objRelacionBean = null;
-        
-        if(!mapRelacionesAvanzado.containsKey(strKEY)){
+
+        if (!mapRelacionesAvanzado.containsKey(strKEY)) {
 
             objRelacionBean = new RelacionBean();
-            objRelacionBean.setStrNombre(strNombre);
-            objRelacionBean.setStrDescripcion(strNombre); 
+            objRelacionBean.setStrNombre(strKEY);
+            objRelacionBean.setStrDescripcion(strKEY);
             String strAbrev = strKEY.substring(0, 3);
-            
+
             int a = 0;
-            while(mapRelacionesAbrev.containsKey(strAbrev)){
+            while (mapRelacionesAbrev.containsValue(strAbrev)) {
                 strAbrev = strAbrev + a;
             }
-                
+
             objRelacionBean.setStrAbreviatura(strAbrev);
-            objRelacionBean.setStrColor(Utilitarios.generaColorHtml());
+            objRelacionBean.setStrColor(Utilitarios.generaColorHtmlPreferencial(mapRelacionesAvanzado.size()));
             objRelacionBean.setIntIdEstado(Constantes.INT_ET_ESTADO_RELACION_REGISTRADO);
 
-            mapRelacionesAbrev.put(strAbrev, strAbrev);
+            mapRelacionesAbrev.put(strKEY, strAbrev);
             mapRelacionesAvanzado.put(strKEY, objRelacionBean);
             lstAvanRelacion.add(objRelacionBean);
-            
+
         }
-        
+
         return objRelacionBean;
     }
-    
 
     public void onTabChange(TabChangeEvent event) {
         this.lstAvanPersonas = new ArrayList<>();
         this.lstAvanRelacion = new ArrayList<>();
         this.lstRelacionAvanzadas = new ArrayList<>();
-        this.lstErrorAvan = new ArrayList<>();    
+        this.lstErrorAvan = new ArrayList<>();
         this.blCargarCorrectoAvan = false;
         this.fileAvanzado = null;
         this.mapRelacionesAvanzado = new HashMap();
@@ -3371,64 +3487,85 @@ public class EvaluadosView implements Serializable{
         this.mapRelacionesPersonasAvanzado = new HashMap();
 
     }
-    
-    
-    public void iniciarRedDeCargaAvanzada(){
-    
+
+    public void iniciarRedDeCargaAvanzada() {
+
         ParticipanteDAO objParticipanteDAO = new ParticipanteDAO();
         RedEvaluacionDAO objRedEvaluacionDAO = new RedEvaluacionDAO();
         UsuarioDAO objUsuarioDAO = new UsuarioDAO();
-       
+
         /* CREAMOS LISTA DE USUARIOS EVALUANTES */
         Map hUsuarios = obtieneUsuarios();
-        
-        List<Participante> lstParticipante = objParticipanteDAO.obtenListaParticipanteXEstado(Utilitarios.obtenerProyecto().getIntIdProyecto(),Constantes.INT_ET_ESTADO_EVALUADO_EN_PARAMETRIZACION, null);
-        
+
+        List<Participante> lstParticipante = objParticipanteDAO.obtenListaParticipanteXEstado(Utilitarios.obtenerProyecto().getIntIdProyecto(), Constantes.INT_ET_ESTADO_EVALUADO_EN_PARAMETRIZACION, null);
+
         Map hEvaluados = new HashMap();
-        
-        for (Participante objParticipante : lstParticipante){
-            if(!hEvaluados.containsKey(objParticipante.getPaTxCorreo())){
-                hEvaluados.put(objParticipante.getPaTxCorreo(),objParticipante.getPaTxDescripcion());
+
+        for (Participante objParticipante : lstParticipante) {
+            if (!hEvaluados.containsKey(objParticipante.getPaTxCorreo())) {
+                hEvaluados.put(objParticipante.getPaTxCorreo(), objParticipante.getPaTxDescripcion());
             }
         }
-        
+
         objUsuarioDAO.crearCuentasParaProyecto(hEvaluados, hUsuarios);
-        
+
     }
 
-    private Map obtieneUsuarios(){
+    public void eliminarCargar() {
+
+        FacesMessage message;
+
+        try {
+
+            Proyecto objProyecto = objProyectoDAO.obtenProyecto(Utilitarios.obtenerProyecto().getIntIdProyecto());
+
+            objCargaAvanzadaDAO.eliminarRegistrosAvanzado(objProyecto);
+
+            message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Se eliminó la carga de participantes y redes correctamente", "");
+
+        } catch (Exception e) {
+            log.error(e);
+            message = new FacesMessage(FacesMessage.SEVERITY_FATAL, "Ocurrió un error al ejecutar la instrucción eliminar", "");
+        }
+
+        FacesContext.getCurrentInstance().addMessage(null, message);
+        
+        init();
+    }
+
+    private Map obtieneUsuarios() {
 
         UsuarioDAO objUsuarioDAO = new UsuarioDAO();
-        
+
         List<Usuario> lstUsuarios = objUsuarioDAO.obtenListaUsuario();
-        
+
         Map hUsuarios = new HashMap();
-        
-        for (Usuario objUsuario : lstUsuarios){
+
+        for (Usuario objUsuario : lstUsuarios) {
             hUsuarios.put(objUsuario.getUsIdMail(), objUsuario);
         }
 
         return hUsuarios;
     }
-    
-    public void cargarListaAvanzado(){
-        
+
+    public void cargarListaAvanzado() {
+
         CargaAvanzadaDAO objCargaAvanzadaDAO = new CargaAvanzadaDAO();
-        
+
         Proyecto objProyecto = objProyectoDAO.obtenProyecto(Utilitarios.obtenerProyecto().getIntIdProyecto());
 
-            
         boolean correcto = objCargaAvanzadaDAO.guardaRegistros(lstAvanPersonas, lstAvanRelacion, lstRelacionAvanzadas, mapPersonasAvanzado, mapRelacionesAbrev, objProyecto, mapPerEvaluados, mapPerEvaluadores);
-        
+
         FacesContext context = FacesContext.getCurrentInstance();
 
-        if(correcto){
+        if (correcto) {
             iniciarRedDeCargaAvanzada();
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,"Carga de configuracion",  "Configuración se cargó correctamente"));
-        }else{
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,"Carga de configuracion",  "Configuración se cargó correctamente"));
+            init();
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Configuración se cargó correctamente", "Configuración se cargó correctamente"));
+        } else {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Configuración se cargó correctamente", "Configuración se cargó correctamente"));
         }
-        
+
         lstAvanPersonas.clear();
         lstAvanRelacion.clear();
         lstRelacionAvanzadas.clear();
@@ -3437,15 +3574,12 @@ public class EvaluadosView implements Serializable{
         mapRelacionesAbrev.clear();
         mapPerEvaluados.clear();
         mapPerEvaluadores.clear();
-       
+
     }
 
-    
-    
-    
-    public void generaModeloAzanvado(){
+    public void generaModeloAzanvado() {
 
-        HSSFWorkbook xlsEvaluados = new HSSFWorkbook(); 
+        HSSFWorkbook xlsEvaluados = new HSSFWorkbook();
 
         HSSFSheet hojaPersonas = xlsEvaluados.createSheet("Personas");
         HSSFSheet hojaRedEvaluacion = xlsEvaluados.createSheet("Red de Evaluación");
@@ -3454,73 +3588,73 @@ public class EvaluadosView implements Serializable{
         HSSFRow rowR = hojaRedEvaluacion.createRow(0);
 
         int c = 0;
-        
+
         HSSFCell cell0 = row.createCell(c);
         HSSFRichTextString texto0 = new HSSFRichTextString("Descripción");
         cell0.setCellValue(texto0);
 
         c++;
-        
+
         HSSFCell cell1 = row.createCell(c);
         HSSFRichTextString texto1 = new HSSFRichTextString("Cargo");
         cell1.setCellValue(texto1);
 
         c++;
-        
+
         HSSFCell cell2 = row.createCell(c);
         HSSFRichTextString texto2 = new HSSFRichTextString("Correo");
         cell2.setCellValue(texto2);
-        
-        if(blHabilitarSexo){
+
+        if (blHabilitarSexo) {
             c++;
             HSSFCell cell3 = row.createCell(c);
             HSSFRichTextString texto3 = new HSSFRichTextString("Sexo");
             cell3.setCellValue(texto3);
         }
-        
-        if(blHabilitarEdad){
+
+        if (blHabilitarEdad) {
             c++;
             HSSFCell cell4 = row.createCell(c);
             HSSFRichTextString texto4 = new HSSFRichTextString("Edad");
             cell4.setCellValue(texto4);
         }
-        
-        if(blHabilitarTiempoEmpresa){
+
+        if (blHabilitarTiempoEmpresa) {
             c++;
             HSSFCell cell5 = row.createCell(c);
             HSSFRichTextString texto5 = new HSSFRichTextString("Tiempo en la empresa");
             cell5.setCellValue(texto5);
         }
-        
-        if(blHabilitarNivelOcupacional){
+
+        if (blHabilitarNivelOcupacional) {
             c++;
             HSSFCell cell6 = row.createCell(c);
             HSSFRichTextString texto6 = new HSSFRichTextString("Nivel ocupacional");
             cell6.setCellValue(texto6);
         }
-        
-        if(blHabilitarAreaNegocio){
+
+        if (blHabilitarAreaNegocio) {
             c++;
             HSSFCell cell7 = row.createCell(c);
             HSSFRichTextString texto7 = new HSSFRichTextString("Area del negocio");
             cell7.setCellValue(texto7);
         }
-        
+
         c++;
         HSSFCell cell8 = row.createCell(c);
         HSSFRichTextString texto8 = new HSSFRichTextString("Autoevaluación");
         cell8.setCellValue(texto8);
-        
-        
-        HSSFCellStyle myStyle = xlsEvaluados.createCellStyle();   
-        
+
+        HSSFCellStyle myStyle = xlsEvaluados.createCellStyle();
+
         HSSFFont hSSFFont = xlsEvaluados.createFont();
-        hSSFFont.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD); 
-        
+        //hSSFFont.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD); 
+        hSSFFont.setBold(true);
+
         myStyle.setFont(hSSFFont);
 
         row.setRowStyle(myStyle);
-        
+
         hojaPersonas.autoSizeColumn(0);
         hojaPersonas.autoSizeColumn(1);
         hojaPersonas.autoSizeColumn(2);
@@ -3531,8 +3665,6 @@ public class EvaluadosView implements Serializable{
         hojaPersonas.autoSizeColumn(7);
         hojaPersonas.autoSizeColumn(8);
 
-        
-        
         HSSFCell cellR0 = rowR.createCell(0);
         HSSFRichTextString textoR0 = new HSSFRichTextString("Evaluado");
         cellR0.setCellValue(textoR0);
@@ -3545,17 +3677,16 @@ public class EvaluadosView implements Serializable{
         HSSFRichTextString textoR2 = new HSSFRichTextString("Evaluador");
         cellR2.setCellValue(textoR2);
 
-        
         myStyle.setFont(hSSFFont);
 
         rowR.setRowStyle(myStyle);
-        
+
         hojaRedEvaluacion.autoSizeColumn(0);
         hojaRedEvaluacion.autoSizeColumn(1);
         hojaRedEvaluacion.autoSizeColumn(2);
-        
+
         try {
-            
+
             FacesContext facesContext = FacesContext.getCurrentInstance();
             ExternalContext externalContext = facesContext.getExternalContext();
             externalContext.setResponseContentType("application/vnd.ms-excel");
@@ -3569,6 +3700,4 @@ public class EvaluadosView implements Serializable{
         }
     }
 
-    
 }
-

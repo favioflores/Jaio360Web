@@ -3,19 +3,13 @@ package com.jaio360.view;
 import com.jaio360.application.EHCacheManager;
 import com.jaio360.dao.MensajeDAO;
 import com.jaio360.dao.NotificacionesDAO;
-import com.jaio360.dao.ParticipanteDAO;
 import com.jaio360.domain.ProyectoInfo;
 import com.jaio360.orm.Mensaje;
-import com.jaio360.orm.Participante;
 import com.jaio360.orm.Proyecto;
 import com.jaio360.utils.Constantes;
 import com.jaio360.utils.Utilitarios;
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
-import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -24,7 +18,7 @@ import javax.faces.context.FacesContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.HibernateException;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
 
 @ManagedBean(name = "guardarNotificacionView")
 @ViewScoped
@@ -221,7 +215,7 @@ public class GuardarNotificacionView implements Serializable {
     }
     
     public void cerrarPanel(){
-        RequestContext.getCurrentInstance().closeDialog("crearNotificacion");
+        PrimeFaces.current().dialog().closeDynamic("crearNotificacion");
     }
 
     private boolean contenidoValido() {

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<faces-config xmlns="http://java.sun.com/xml/ns/javaee"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd"
-	version="2.0">
+<faces-config version="2.2"
+              xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
 	
     <application>
         <resource-bundle>
@@ -30,20 +30,13 @@
         <exception-handler-factory>com.jaio360.application.ShowcaseExceptionHandlerFactory</exception-handler-factory>
     </factory>
 
-<!--
-    <managed-bean>
-        <managed-bean-name>preferenciasView</managed-bean-name>
-        <managed-bean-class>com.jaio360.view.PreferenciasView</managed-bean-class>
-        <managed-bean-scope>session</managed-bean-scope>
-    </managed-bean>
-    <managed-bean>
-        <managed-bean-name>themeSwitcherBean</managed-bean-name>
-        <managed-bean-class>com.jaio360.view.ThemeSwitcherBean</managed-bean-class>
-        <managed-bean-scope>request</managed-bean-scope>
-        <managed-property>
-            <property-name>gp</property-name>
-            <value>#{preferenciasView}</value>
-        </managed-property></managed-bean>
--->    
-        
+    <lifecycle>
+        <phase-listener>org.primefaces.component.lifecycle.LifecyclePhaseListener</phase-listener>
+    </lifecycle>
+
+    <factory>
+        <exception-handler-factory>org.primefaces.application.exceptionhandler.PrimeExceptionHandlerFactory</exception-handler-factory>
+        <lifecycle-factory>org.primefaces.clientwindow.PrimeClientWindowLifecycleFactory</lifecycle-factory>
+    </factory>
+  
 </faces-config>

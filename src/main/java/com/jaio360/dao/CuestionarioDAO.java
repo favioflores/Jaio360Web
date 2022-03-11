@@ -86,7 +86,7 @@ public class CuestionarioDAO implements Serializable
         } 
     }  
     
-    public boolean eliminaCuestionarioTotal(Integer intIdCuestionario) throws HibernateException { 
+    public boolean eliminaCuestionarioById(Integer intIdCuestionario) throws HibernateException { 
         
         try { 
             
@@ -115,7 +115,38 @@ public class CuestionarioDAO implements Serializable
         return true;
         
     }  
-
+    public boolean eliminaCuestionarioTotal() throws HibernateException { 
+        
+        try { 
+            
+            iniciaOperacion(); 
+            
+            Query query1 = sesion.createQuery("delete from Componente c where c.cuestionario.cuIdCuestionarioPk in "
+                    + "(select cu.cuIdCuestionarioPk from Cuestionario cu where cu.proyecto.poIdProyectoPk = ? ) ");
+            Query query2 = sesion.createQuery("delete from CuestionarioEvaluado c where c.cuestionario.cuIdCuestionarioPk in"
+                    + "(select cu.cuIdCuestionarioPk from Cuestionario cu where cu.proyecto.poIdProyectoPk = ? )");
+            Query query3 = sesion.createQuery("delete from Cuestionario c where c.proyecto.poIdProyectoPk = ? ");
+            
+            query1.setInteger(0, Utilitarios.obtenerProyecto().getIntIdProyecto());
+            query2.setInteger(0, Utilitarios.obtenerProyecto().getIntIdProyecto());
+            query3.setInteger(0, Utilitarios.obtenerProyecto().getIntIdProyecto());
+            
+            query1.executeUpdate();
+            query2.executeUpdate();
+            query3.executeUpdate();
+            
+            tx.commit(); 
+            
+        } catch (HibernateException he) { 
+            manejaExcepcion(he); 
+            return false;
+        } finally { 
+            sesion.close(); 
+        } 
+        return true;
+        
+    }  
+    
     public Cuestionario obtenCuestionario(long idCuestionario) throws HibernateException 
     { 
         Cuestionario cuestionario = null;  
@@ -218,7 +249,7 @@ public class CuestionarioDAO implements Serializable
         
             iniciaOperacion(); 
             
-            Query query = sesion.createQuery("from Cuestionario c where c.proyecto.poIdProyectoPk = ? and c.cuIdEstado = ? ");
+            Query query = sesion.createQuery("from Cuestionario c where c.proyecto.poIdProyectoPk = ? and c.cuIdEstado = ? order c.cuTxDescripcion asc ");
             query.setInteger(0, intIdProyecto);
             query.setInteger(1, intEstadoCuestionario);
             
@@ -305,21 +336,22 @@ public class CuestionarioDAO implements Serializable
             
             iniciaOperacion(); 
             
-            /* Borramos datos anteriores */
+            /* Borramos datos anteriores */ 
             /* SOLO BORRA LAS SELECCIONES DE EVALUADOS QUE NO ESTAN EN EJECUCION */
+            /*
             Query query = sesion.createQuery("delete from CuestionarioEvaluado c where c.id.poIdProyectoFk = ? and c.ceIdEstado != ? ");
             query.setInteger(0, intIdProyecto);
             query.setInteger(1, Constantes.INT_ET_ESTADO_SELECCION_EN_EJECUCION);
             query.executeUpdate();
+            */
             
             /* Insertamos los datos nuevos */
             CuestionarioEvaluadoId objCuestionarioEvaluadoId;
             CuestionarioEvaluado objCuestionarioEvaluado;
                     
-            for (EvaluadoCuestionario objEvaluadoCuestionario:lstEvaluados){
+            for (EvaluadoCuestionario objEvaluadoCuestionario : lstEvaluados){
                 
-                if(objEvaluadoCuestionario.getIntIdCuestionario() != null && 
-                   objEvaluadoCuestionario.getIntIdCuestionario() != 0 &&
+                if(Utilitarios.noEsNuloOVacio(objEvaluadoCuestionario.getIntIdCuestionario())&&
                    !objEvaluadoCuestionario.getIntIdEstadoSel().equals(Constantes.INT_ET_ESTADO_SELECCION_EN_EJECUCION)){
               
                     objCuestionarioEvaluadoId = new CuestionarioEvaluadoId();
@@ -435,7 +467,7 @@ public class CuestionarioDAO implements Serializable
 
                 objCuestionario.setProyecto(objProyecto);
                 objCuestionario.setCuFeRegistro(new Date());
-                objCuestionario.setCuIdEstado(Constantes.INT_ET_ESTADO_CUESTIONARIO_REGISTRADO);
+                objCuestionario.setCuIdEstado(Constantes.INT_ET_ESTADO_CUESTIONARIO_CONFIRMADO);
                 objCuestionario.setCuTxDescripcion(objCuestionarioImportado.getStrDescCuestionario());
 
                 objCuestionario.setCuIdCuestionarioPk((Integer) sesion.save(objCuestionario));

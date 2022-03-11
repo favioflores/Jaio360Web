@@ -140,7 +140,7 @@ public class RelacionDAO implements Serializable
         } 
     }  
 
-    public Relacion obtenRelacion(long idRelacion) throws HibernateException 
+    public Relacion obtenRelacion(Integer idRelacion) throws HibernateException 
     { 
         Relacion relacion = null;  
         try 

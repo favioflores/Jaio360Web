@@ -14,12 +14,13 @@ public class validaContrasenia implements Validator {
  
     private Pattern pattern;
   
-    private static final String EMAIL_PATTERN = "((?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%]).{6,20})";
+    private static final String EMAIL_PATTERN = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#.?!@$%^#&*-]).{8,}$";
   
     public validaContrasenia() {
         pattern = Pattern.compile(EMAIL_PATTERN);
     }
  
+    @Override
     public void validate(FacesContext context, UIComponent component, Object value) throws ValidatorException {
         if(value == null) {
             return;

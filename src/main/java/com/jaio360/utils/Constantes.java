@@ -113,6 +113,7 @@ public class Constantes {
     public static Integer INT_ET_ESTADO_PROYECTO_MODIFICADO = 35;
     public static Integer INT_ET_ESTADO_PROYECTO_PAUSADO = 36;
     public static Integer INT_ET_ESTADO_PROYECTO_TERMINADO = 37;
+    public static Integer INT_ET_ESTADO_PROYECTO_ELIMINADO = 201;
 
     public static Integer INT_ET_ESTADO_CUESTIONARIO_REGISTRADO = 43;
     public static Integer INT_ET_ESTADO_CUESTIONARIO_CONFIRMADO = 44;
@@ -163,6 +164,13 @@ public class Constantes {
     public static String PASO_6 = "6";
     public static String PASO_7 = "7";
     
+    public static Integer INT_PASO_1 = 1;
+    public static Integer INT_PASO_2 = 2;
+    public static Integer INT_PASO_3 = 3;
+    public static Integer INT_PASO_4 = 4;
+    public static Integer INT_PASO_5 = 5;
+    public static Integer INT_PASO_6 = 6;
+    
     public static int FIRST_EQUAL_SECOND = 0;
     public static int FIRST_GREATER = 1;
     public static int SECOND_GREATER = -1;
@@ -206,8 +214,8 @@ public class Constantes {
     public static String STR_INBOX_PRELIMINAR = File.separator + "var" + File.separator + "tmp" + File.separator + "InboxPreliminar";
     public static String STR_INBOX_DEFINITIVO = File.separator + "var" + File.separator + "tmp" + File.separator + "InboxDefinitivo";
     
-    //public static String STR_INBOX_PRELIMINAR = File.separator + "InboxPreliminar";
-    //public static String STR_INBOX_DEFINITIVO = File.separator + "InboxDefinitivo";
+    //public static String STR_INBOX_PRELIMINAR = File.separator + "D://InboxPreliminar";
+    //public static String STR_INBOX_DEFINITIVO = File.separator + "D://InboxDefinitivo";
     
     public static int FORMAT_DATE_SHORT = DateFormat.SHORT;
     public static int FORMAT_DATE_MEDIUM = DateFormat.MEDIUM;

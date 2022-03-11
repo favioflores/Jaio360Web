@@ -1,31 +1,32 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:p="http://primefaces.org/ui">
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
 
-<f:view contentType="text/html">
+    <f:view contentType="text/html">
 
-	<h:head>
-        <f:facet name="first">
-            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
-            <title>Jaio 360</title>
-            <link rel="shortcut icon" type="image/png" href="#{request.contextPath}/images/favicon.png" />
-        </f:facet>
-        
-        <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/default.css" />
-        <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/syntaxhighlighter/syntaxhighlighter.css" />
+        <h:head>
+            <f:facet name="first">
+                <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+                <title>Jaio 360</title>
+                <link rel="shortcut icon" type="image/png" href="#{request.contextPath}/images/favicon.png" />
+            </f:facet>
 
-        
-        <ui:insert name="head"></ui:insert>
-      
-	</h:head>
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/resources/showcase/css/primeflex.css" />
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/resources/showcase/css/flags/flags.css" />
 
-    <h:body>
-        <ui:insert name="content-login">...</ui:insert>
-    </h:body>
+            <h:outputScript name="jquery/jquery.js" library="primefaces"/>
+            <h:outputScript name="jquery/jquery-plugins.js" library="primefaces"/>
 
-	
-</f:view>
+            <ui:insert name="head"/>
+
+        </h:head>
+
+        <h:body>
+            <ui:insert name="content">...</ui:insert>
+        </h:body>
+
+    </f:view>
 </html>

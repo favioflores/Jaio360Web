@@ -1,4 +1,3 @@
-
 package com.jaio360.report;
 
 import com.jaio360.dao.CuestionarioDAO;
@@ -33,25 +32,30 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 public class CuestionarioFisico implements Serializable {
-   
+
     private static Log log = LogFactory.getLog(CuestionarioFisico.class);
-            
+
     public String build(Evaluado objEvaluado) throws IOException {
-   
-        
-        String strNombreReporte = Utilitarios.reemplazar(objEvaluado.getPaTxDescripcion()," ","_") + "_" +
-                                  Utilitarios.formatearFecha(Utilitarios.getCurrentDate(), Constantes.DDMMYYYYHH24MISS) +
-                                  "_" + Constantes.STR_EXTENSION_PDF; 
+
+        String strNombreReporte = Utilitarios.reemplazar(objEvaluado.getPaTxDescripcion(), " ", "_") + "_"
+                + Utilitarios.formatearFecha(Utilitarios.getCurrentDate(), Constantes.DDMMYYYYHH24MISS)
+                + "_" + Constantes.STR_EXTENSION_PDF;
+
+        File directory = new File(Constantes.STR_INBOX_PRELIMINAR);
+
+        if (!directory.exists()) {
+            directory.mkdir();
+        }
 
         JasperPdfExporterBuilder pdfExporter = export.pdfExporter(Constantes.STR_INBOX_PRELIMINAR + File.separator + strNombreReporte)
-                                                     .setEncrypted(Boolean.FALSE);
+                .setEncrypted(Boolean.FALSE);
 
         try {
-            
+
             CuestionarioDAO objCuestionarioDAO = new CuestionarioDAO();
             Cuestionario objCuestionario = objCuestionarioDAO.obtenCuestionarioXEvaluado(objEvaluado.getPaIdParticipantePk());
-            
-            if(objCuestionario!=null){
+
+            if (objCuestionario != null) {
                 report().setTemplate(ModeloCaratula.reportTemplateManual)
                         .setSummaryWithPageHeaderAndFooter(Boolean.TRUE)
                         .pageHeader(creaCabecera(objCuestionario.getCuTxDescripcion(), objEvaluado.getPaTxDescripcion()))
@@ -60,107 +64,108 @@ public class CuestionarioFisico implements Serializable {
             }
 
         } catch (DRException e) {
-                log.error(e);
-                return null;
+            log.error(e);
+            return null;
         }
 
         return strNombreReporte;
-    }        
-    
-    private MultiPageListBuilder creaContenido(Evaluado objEvaluado){
-    
+    }
+
+    private MultiPageListBuilder creaContenido(Evaluado objEvaluado) {
+
         EjecutarEvaluacionDAO objEjecutarEvaluacionDAO = new EjecutarEvaluacionDAO();
         MetricaDAO objMetricaDAO = new MetricaDAO();
 
-        List<Componente> lstCompCerrada =  objEjecutarEvaluacionDAO.obtenerComponenteTipo(Utilitarios.obtenerProyecto().getIntIdProyecto(), objEvaluado.getPaTxCorreo(), TIPO_COMPONENTE_CERRADA);
+        List<Componente> lstCompCerrada = objEjecutarEvaluacionDAO.obtenerComponenteTipo(Utilitarios.obtenerProyecto().getIntIdProyecto(), objEvaluado.getPaTxCorreo(), TIPO_COMPONENTE_CERRADA);
         Metrica objMetrica = objMetricaDAO.obtenMetricaProyecto(Utilitarios.obtenerProyecto().getIntIdProyecto());
         List<DetalleMetrica> lstDetalleMetrica = objEjecutarEvaluacionDAO.obtenerDetalleMetrica(Utilitarios.obtenerProyecto().getIntIdProyecto());
-        List<Componente> lstCompComentario =  objEjecutarEvaluacionDAO.obtenerComponenteTipo(Utilitarios.obtenerProyecto().getIntIdProyecto(), objEvaluado.getPaTxCorreo(), TIPO_COMPONENTE_COMENTARIO);
-        List<Componente> lstCompAbierta =  objEjecutarEvaluacionDAO.obtenerComponenteTipo(Utilitarios.obtenerProyecto().getIntIdProyecto(), objEvaluado.getPaTxCorreo(), TIPO_COMPONENTE_ABIERTA);
+        List<Componente> lstCompComentario = objEjecutarEvaluacionDAO.obtenerComponenteTipo(Utilitarios.obtenerProyecto().getIntIdProyecto(), objEvaluado.getPaTxCorreo(), TIPO_COMPONENTE_COMENTARIO);
+        List<Componente> lstCompAbierta = objEjecutarEvaluacionDAO.obtenerComponenteTipo(Utilitarios.obtenerProyecto().getIntIdProyecto(), objEvaluado.getPaTxCorreo(), TIPO_COMPONENTE_ABIERTA);
 
         MultiPageListBuilder multiPageList = cmp.multiPageList();
-        
-        /**********************/
+
+        /**
+         * *******************
+         */
         /* PREGUNTAS CERRADAS */
-        /**********************/
-        
-        if(!lstCompCerrada.isEmpty()){
-            
+        /**
+         * *******************
+         */
+        if (!lstCompCerrada.isEmpty()) {
+
             HorizontalListBuilder horResp = cmp.horizontalList();
             horResp.add(cmp.verticalGap(5));
-            for(int i = 0; i<objMetrica.getMeNuRango(); i++)
-                horResp.add(cmp.text("("+(i+1)+")").setStyle(ModeloGeneral.styleRptaManualMedio));   
-            
+            for (int i = 0; i < objMetrica.getMeNuRango(); i++) {
+                horResp.add(cmp.text("(" + (i + 1) + ")").setStyle(ModeloGeneral.styleRptaManualMedio));
+            }
+
             horResp.add(cmp.verticalGap(5));
             horResp.newRow();
-            
-            for(DetalleMetrica objDetalleMetrica : lstDetalleMetrica)
-                horResp.add(cmp.text(objDetalleMetrica.getDeTxValor()).setStyle(ModeloGeneral.styleRptaManual));            
-            
+
+            for (DetalleMetrica objDetalleMetrica : lstDetalleMetrica) {
+                horResp.add(cmp.text(objDetalleMetrica.getDeTxValor()).setStyle(ModeloGeneral.styleRptaManual));
+            }
+
             int i = 1;
 
-            for(Componente objComponente : lstCompCerrada){
+            for (Componente objComponente : lstCompCerrada) {
 
                 VerticalListBuilder objVL = cmp.verticalList();
-                
-                objVL.add(cmp.text(i+". " +objComponente.getCoTxDescripcion()),horResp);
 
-                for(Componente objComponenteC : lstCompComentario){
+                objVL.add(cmp.text(i + ". " + objComponente.getCoTxDescripcion()), horResp);
+
+                for (Componente objComponenteC : lstCompComentario) {
                     objVL.add(cmp.verticalGap(5));
                     objVL.add(cmp.text(objComponenteC.getCoTxDescripcion()).setStyle(ModeloGeneral.styleContenidoDatos).setStyle(ModeloGeneral.styleNegrita));
                     objVL.add(cmp.text(Constantes.UNDERLINE_COMMENT));
                     objVL.add(cmp.verticalGap(5));
                 }
-                
+
                 multiPageList.add(objVL);
-                
+
                 i++;
 
             }
-            
-            
+
         }
 
         multiPageList.newPage();
-        
-        /**********************/
-        /* PREGUNTAS ABIERTAS */
-        /**********************/
 
+        /**
+         * *******************
+         */
+        /* PREGUNTAS ABIERTAS */
+        /**
+         * *******************
+         */
         int i = 0;
-        
+
         VerticalListBuilder objVL = cmp.verticalList();
 
         objVL.add(cmp.text("PREGUNTAS ABIERTAS").setStyle(ModeloGeneral.styleTercerTitulo));
         objVL.add(cmp.verticalGap(5));
-                
-        for(Componente objComponente : lstCompAbierta){
-            objVL.add(cmp.text(i+". " +objComponente.getCoTxDescripcion()));
+
+        for (Componente objComponente : lstCompAbierta) {
+            objVL.add(cmp.text(i + ". " + objComponente.getCoTxDescripcion()));
             objVL.add(cmp.text(Constantes.UNDERLINE_COMMENT));
             i++;
         }
-        
+
         multiPageList.add(objVL);
 
         return multiPageList;
 
     }
- 
- 
-    private ComponentBuilder<?, ?> creaCabecera(String strCuestionario, String strEvaluado){
-        
-        return  cmp.verticalList(
-                    cmp.verticalGap(5)
-                    ,
-                    cmp.text(strCuestionario).setStyle(ModeloGeneral.styleTituloPrincipal)
-                    ,
-                    cmp.text(strEvaluado).setStyle(ModeloGeneral.styleTituloSecundario)
-                    ,
-                    cmp.verticalGap(5)
-                    ,
-                    cmp.line().setPen(stl.pen(new Float("0.1"), LineStyle.SOLID))
-                    ,
-                    cmp.verticalGap(15)
-                );
+
+    private ComponentBuilder<?, ?> creaCabecera(String strCuestionario, String strEvaluado) {
+
+        return cmp.verticalList(
+                cmp.verticalGap(5),
+                 cmp.text(strCuestionario).setStyle(ModeloGeneral.styleTituloPrincipal),
+                 cmp.text(strEvaluado).setStyle(ModeloGeneral.styleTituloSecundario),
+                 cmp.verticalGap(5),
+                 cmp.line().setPen(stl.pen(new Float("0.1"), LineStyle.SOLID)),
+                 cmp.verticalGap(15)
+        );
     }
 }

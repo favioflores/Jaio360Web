@@ -1,0 +1,49 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                template="../templates/templateWorkspace.xhtml">    
+
+    <ui:define name="head"> 
+    </ui:define>
+
+    <ui:define name="cabecera">
+        <ui:include src="cabecera.xhtml" />
+    </ui:define>
+    <ui:define name="helpSteps">
+
+        <h:form id="formPrincipalProyecto">
+
+            <h2>Espacio de trabajo del proyecto: #{stepSixView.objProyectoInfo.strDescNombre}</h2>
+
+            <div class="p-field">
+                <center>
+                    <p:commandButton value="Ocultar pasos de ayuda" type="submit" update="formPrincipalProyecto" />
+                </center>
+                <p:steps readonly="false" activeIndex="#{stepSixView.activeIndex}" >
+                    <p:menuitem value="Configurar base"         actionListener="#{stepSixView.goToStep(1)}"/>
+                    <p:menuitem value="Cargar evaluación"       actionListener="#{stepSixView.goToStep(2)}"/>
+                    <p:menuitem value="Mapear evaluaciones"     actionListener="#{stepSixView.goToStep(3)}"/>
+                    <p:menuitem value="Armar comunicados"       actionListener="#{stepSixView.goToStep(4)}"/>
+                    <p:menuitem value="Poner en marcha"         actionListener="#{stepSixView.goToStep(5)}"/>
+                    <p:menuitem value="Generar reportes"        actionListener="#{stepSixView.goToStep(6)}"/>
+                </p:steps></div>
+            <p:spacer/>
+            <div class="p-field">
+                <center>
+                    <p:commandButton value="Regresar" type="submit" actionListener="#{stepSixView.backStep()}" update="formPrincipalProyecto" styleClass="ui-button-secondary" />
+                    <p:spacer/>
+                    <p:commandButton value="Siguiente" type="submit" actionListener="#{stepSixView.nextStep()}" update="formPrincipalProyecto" styleClass="ui-button-secondary" disabled="true" />                   
+                </center>
+            </div>
+
+        </h:form>   
+
+    </ui:define>
+
+    <ui:define name="content">
+
+    </ui:define>
+</ui:composition>

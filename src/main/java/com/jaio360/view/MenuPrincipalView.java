@@ -6,8 +6,11 @@ import java.io.Serializable;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import org.primefaces.component.divider.Divider;
+import org.primefaces.component.separator.UISeparator;
 import org.primefaces.model.menu.DefaultMenuItem;
 import org.primefaces.model.menu.DefaultMenuModel;
+import org.primefaces.model.menu.DefaultSeparator;
 import org.primefaces.model.menu.DefaultSubMenu;
 import org.primefaces.model.menu.MenuModel;
 
@@ -34,19 +37,83 @@ public class MenuPrincipalView implements Serializable{
         
         UsuarioInfo objUsuarioInfo = objUsuarioSesion.obtenerUsuarioInfo();
         
+        DefaultMenuItem item = DefaultMenuItem.builder()
+                    .value("Home")
+                    .icon("pi pi-fw pi-home")
+                    .url("home.jsf")
+                    //.command("#{menuView.save}")
+                    //.update("messages")
+                    .build();
+        
+        
+        model.getElements().add(item);
+        
+       
+                
         if(objUsuarioInfo.isBoEsAdministrador()){
-            DefaultSubMenu smAdministrador = new DefaultSubMenu("Opciones de Administrador");
+
+            DefaultSubMenu smUsuarioProyectos = DefaultSubMenu.builder().label("Proyectos").icon("pi pi-fw pi-file").build();
+            opcionesUsuarioProyectos(smUsuarioProyectos);
+            model.getElements().add(smUsuarioProyectos);
+            
+            DefaultSubMenu smUsuarioBiblioteca = DefaultSubMenu.builder().label("Biblioteca").icon("pi pi-fw pi-file").build();
+            opcionesUsuarioBiblioteca(smUsuarioBiblioteca);
+            model.getElements().add(smUsuarioBiblioteca);
+            
+            DefaultSubMenu smAdministrador = DefaultSubMenu.builder().label("Administración").build();
             opcionesAdministrador(smAdministrador);
-            model.addElement(smAdministrador);
-        }
+            model.getElements().add(smAdministrador);
+                        
+            DefaultMenuItem item3 = DefaultMenuItem.builder()
+                                .value("Actualizar datos")
+                                .icon("pi pi-fw pi-user-edit")
+                                .url("actMisDatos.jsf")
+                                //.command("#{menuView.save}")
+                                //.update("messages")
+                                .build();
+
+            model.getElements().add(item3);
+
+        }else if(objUsuarioInfo.isBoEsUsuarioMaestro()){
+            
+            DefaultMenuItem smUsuarioProyectos = DefaultMenuItem.builder()
+                                            .value("Administrar Proyectos")
+                                            .icon("pi pi-fw pi-briefcase")
+                                            .url("admProyectos.jsf")
+                                            .build();
+            
+                    
+            //opcionesUsuarioProyectos(smUsuarioProyectos);
+            model.getElements().add(smUsuarioProyectos);
+            /*
+            DefaultSubMenu smUsuarioBiblioteca = DefaultSubMenu.builder().label("Biblioteca").icon("pi pi-fw pi-file").build();
+            opcionesUsuarioBiblioteca(smUsuarioBiblioteca);
+            model.getElements().add(smUsuarioBiblioteca);
+            */
+            
+            DefaultMenuItem item3 = DefaultMenuItem.builder()
+                                .value("Actualizar datos")
+                                .icon("pi pi-fw pi-user-edit")
+                                .url("actMisDatos.jsf")
+                                //.command("#{menuView.save}")
+                                //.update("messages")
+                                .build();
+
+            model.getElements().add(item3);
         
-        DefaultSubMenu smUsuario = new DefaultSubMenu("Opciones de Usuario");
-        
-        if(objUsuarioInfo.isBoEsUsuarioMaestro() || objUsuarioInfo.isBoEsAdministrador()){
-            opcionesUsuarioMaestro(smUsuario);
+        }else{
+            
+            DefaultMenuItem item3 = DefaultMenuItem.builder()
+                                .value("Actualizar datos")
+                                .icon("pi pi-fw pi-user-edit")
+                                .url("actMisDatos.jsf")
+                                //.command("#{menuView.save}")
+                                //.update("messages")
+                                .build();
+
+            model.getElements().add(item3);
+            
         }
-        opcionesUsuario(smUsuario);
-        model.addElement(smUsuario);
         
     }
     
@@ -55,77 +122,72 @@ public class MenuPrincipalView implements Serializable{
     }   
     
     private void opcionesAdministrador(DefaultSubMenu smAdministrador){
-
-        //DefaultMenuItem item1 = new DefaultMenuItem("Panel de Indicadores");
-        DefaultMenuItem item2 = new DefaultMenuItem("Mantenimiento de Tarifas");
-        DefaultMenuItem item3 = new DefaultMenuItem("Mantenimiento de Cuentas");
+        /*
+        DefaultMenuItem item2 = DefaultMenuItem.builder()
+                                .value("Mantenimiento de Tarifas")
+                                .icon("ui-icon-calculator")
+                                //.ajax(false)
+                                .url("principalMantenimientoTarifas.jsf")
+                                //.command("#{menuView.save}")
+                                //.update("messages")
+                                .build();
+        */
+        DefaultMenuItem item3 = DefaultMenuItem.builder()
+                                .value("Mantenimiento de Cuentas")
+                                .icon("pi pi-fw pi-folder")
+                                //.ajax(false)
+                                .url("principalMantenimientoCuenta.jsf")
+                                //.command("#{menuView.save}")
+                                //.update("messages")
+                                .build();
         
-        //item1.setUrl("#");
-        item2.setUrl("principalMantenimientoTarifas.jsf");
-        item3.setUrl("principalMantenimientoCuenta.jsf");
-        
-        //item1.setIcon("ui-icon-bookmark");
-        item2.setIcon("ui-icon-calculator");
-        item3.setIcon("ui-icon-person");
-        
-        //smAdministrador.addElement(item1);
-        smAdministrador.addElement(item2);
-        smAdministrador.addElement(item3);
+        //smAdministrador.getElements().add(item2);
+        smAdministrador.getElements().add(item3);
         
     }
     
-        private void opcionesUsuarioMaestro(DefaultSubMenu smUsuario){
+        private void opcionesUsuarioBiblioteca(DefaultSubMenu smUsuario){
 
-        DefaultMenuItem item5 = new DefaultMenuItem("Bandeja Principal");
-        
-        DefaultMenuItem item2 = new DefaultMenuItem("Biblioteca de personas");
-        //DefaultMenuItem item3 = new DefaultMenuItem("Buscar Proyectos");
-        DefaultMenuItem item4 = new DefaultMenuItem("Biblioteca de Preguntas");
-        //DefaultMenuItem item6 = new DefaultMenuItem("Facturación");
-        
-        item5.setUrl("principal.jsf");
-        
-        //item2.setOnclick("triggerHiddenEvent('crearProyecto','#{crearProyecto.abrirPanel}'); return false;");
-        item2.setUrl("#");
-        item4.setUrl("principalBiblioteca.jsf");
-        //item6.setUrl("facturas.jsf");
-        
-        item5.setIcon("ui-icon-home");
-        
-        item2.setIcon("ui-icon-person");
-        //item3.setIcon("ui-icon-search");
-        item4.setIcon("ui-icon-note");
-        //item6.setIcon("ui-icon-cart");
-        
-        //item6.setDisabled(true);
-        item2.setDisabled(true);
-        
-        smUsuario.addElement(item5);
-        
-        smUsuario.addElement(item2);
-        //smUsuario.addElement(item3);
-        smUsuario.addElement(item4);
-        //smUsuario.addElement(item6);
+        DefaultMenuItem item4 = DefaultMenuItem.builder()
+                                .value("Preguntas")
+                                .icon("pi pi-fw pi-folder")
+                                //.ajax(false)
+                                .url("principalBiblioteca.jsf")
+                                //.command("#{menuView.save}")
+                                //.update("messages")
+                                .build();
+
+        smUsuario.getElements().add(item4);       
         
     }
         
-    private void opcionesUsuario(DefaultSubMenu smUsuario){
-        DefaultMenuItem item3 = new DefaultMenuItem("Actualizar Datos del Usuario");
-        DefaultMenuItem item1 = new DefaultMenuItem("Bienvenida");
-        DefaultMenuItem item2 = new DefaultMenuItem("Cerrar Sesion");
+    private void opcionesUsuarioProyectos(DefaultSubMenu smUsuario){
+
+        /*
+        DefaultMenuItem item6 = DefaultMenuItem.builder()
+                                .value("Nuevo proyecto")
+                                .icon("pi pi-fw pi-plus")
+                                //.ajax(false)
+                                //.url("principalBiblioteca.jsf")
+                                .url("crearProyecto.jsf")
+                                //.update("messages")
+                                .build();
         
-        item1.setUrl("bienvenida.jsf");
-        item2.setOnclick("triggerHiddenEvent('btcerrarSesion');");
-        item3.setUrl("actMisDatos.jsf"); 
-        item3.setIcon("ui-icon-contact");
-        item1.setIcon("ui-icon-home");
-        item2.setIcon("ui-icon-extlink");
+        DefaultMenuItem item5 = DefaultMenuItem.builder()
+                                .value("Buscar proyecto")
+                                .icon("pi pi-fw pi-search")
+                                //.ajax(false)
+                                .url("principal.jsf")
+                                //.command("#{menuView.save}")
+                                //.update("messages")
+                                .build();
         
-        smUsuario.addElement(item3);
-        smUsuario.addElement(item1);
-        smUsuario.addElement(item2);
         
+        smUsuario.getElements().add(item6);
+        smUsuario.getElements().add(item5);      
+        */
     }
+
     
     @PostConstruct
     public void init(){

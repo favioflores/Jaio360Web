@@ -36,7 +36,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.HibernateException;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.StreamedContent;
 
@@ -710,7 +710,7 @@ public class SeguimientoRedView implements Serializable{
             }
             params.put("evaluados", list3);
 
-            RequestContext.getCurrentInstance().openDialog("crearNotificacion", options, params);
+            PrimeFaces.current().dialog().openDynamic("crearNotificacion", options, params);
         }else{
             FacesContext context = FacesContext.getCurrentInstance();
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,"Envio de comunicados",  "Es necesario seleccionar al menos un evaluado.") );

@@ -3,56 +3,32 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
       xmlns:p="http://primefaces.org/ui" >
-<h:head/>
-<body>
-    <ui:composition>
-        <h:form id="cabecera">
-            
-        <p:growl id="mensajeGrowl" showDetail="true" />
-        <h:panelGrid columns="5" border="0" width="99%" >
-            <p:outputPanel style="text-align: left; width: 100%;">
-                <p:graphicImage style="border: 1px;" value="../images/logoJaio360.jpg" width="140" height="50" />
-            </p:outputPanel>
-            
-            <p:panel style="text-align: center;">
-                <p:outputLabel value="#{msg['cabecera.usuario']}">#{menuPrincipal.usuarioInfo.strEmail}</p:outputLabel>
-            </p:panel>
-            <p:panel style="text-align: center;">
-                <p:outputLabel value="#{msg['cabecera.tipo']}">#{menuPrincipal.usuarioInfo.strTipoUsuario}</p:outputLabel>
-            </p:panel>
-            
-            <p:panel style="text-align: center;">
-                <p:outputLabel value="#{msg['cabecera.ultima.conexion']}">#{menuPrincipal.usuarioInfo.strUltimaConexion}</p:outputLabel>
-            </p:panel>
-            <!--
-            <p:panel style="text-align: center;">
-                <p:outputLabel value="#{msg['cabecera.fallidos']}">#{menuPrincipal.usuarioInfo.strIntentosErrados}</p:outputLabel>
-            </p:panel>
-            -->
-            <p:outputPanel style="text-align: right; width: 100%;">
-                <p:commandButton id="menuRaiz" value="≡" type="button"  >
-                    <p:menu model="#{menuPrincipal.model}" style="min-width: 230px;" trigger="menuRaiz" overlay="true"  my="right top" at="right bottom" />
-                </p:commandButton>
-            </p:outputPanel>
-        </h:panelGrid>
+    <h:head/>
+    <body>
+        <ui:composition>
+            <h:form>
+                <p:menubar model="#{menuPrincipal.model}" >
+                    <f:facet name="options">
 
-        <p:commandButton id="btcerrarSesion" widgetVar="btcerrarSesion" actionListener="#{usuarioSesion.cerrarSesion}" style="display: none;" >
-            <p:confirm header="#{msg['cabecera.logout.confirmacion.title']}" message="#{msg['cabecera.logout.confirmacion.mensaje']}" icon="ui-icon-alert" /> 
-        </p:commandButton>
-        <p:confirmDialog global="true" >
-            <p:commandButton type="button" value="#{msg['cabecera.logout.confirmacion.si']}" styleClass="ui-confirmdialog-yes" />
-            <p:commandButton type="button" value="#{msg['cabecera.logout.confirmacion.no']}" styleClass="ui-confirmdialog-no"  />
-        </p:confirmDialog>
+                        <div class="ui-input-icon-left p-mr-2">
+                            <p:outputLabel style="margin-right:30px;" value="Bienvenido #{menuPrincipal.usuarioInfo.strDescripcion}" />
+                        </div>
+                        <p:commandButton value="Cerrar sesión" id="btcerrarSesion" widgetVar="btcerrarSesion" styleClass="ui-button-secondary" icon="pi pi-fw pi-sign-out" actionListener="#{usuarioSesion.cerrarSesion}"  >
+                            <p:confirm header="#{msg['cabecera.logout.confirmacion.title']}" icon="pi pi-info-circle" message="#{msg['cabecera.logout.confirmacion.mensaje']}" /> 
+                        </p:commandButton>
+                    </f:facet>
+                </p:menubar>
 
-    <script>
-          function triggerHiddenEvent(button) {
-            var a = document.getElementById("cabecera:"+ button);
-            a.click();
-          }
-    </script>
-    </h:form>
-    </ui:composition>
+                <p:confirmDialog global="true" showEffect="drop" hideEffect="drop" responsive="true" width="400"  >
+                    <p:commandButton type="button" value="#{msg['cabecera.logout.confirmacion.si']}" styleClass="ui-confirmdialog-yes" />
+                    <p:commandButton type="button" value="#{msg['cabecera.logout.confirmacion.no']}" styleClass="ui-confirmdialog-no" />
+                </p:confirmDialog>
 
-</body>
+            </h:form>
+
+        </ui:composition>
+
+    </body>
 </html>

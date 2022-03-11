@@ -24,6 +24,7 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 
 public class ReporteTodasRespuestas implements Serializable {
 
@@ -104,7 +105,7 @@ public class ReporteTodasRespuestas implements Serializable {
                 
                     if(mapColumnas.containsKey(obj[15].toString())){
                         int pos = (int) mapColumnas.get(obj[15].toString());
-                        nextrow.createCell(pos).setCellType(Cell.CELL_TYPE_NUMERIC);
+                        nextrow.createCell(pos).setCellType(CellType.NUMERIC);
                         nextrow.createCell(pos).setCellValue(obj[17].toString());
 ;                    }
                     
@@ -118,7 +119,7 @@ public class ReporteTodasRespuestas implements Serializable {
                 
                     if(mapColumnas.containsKey(obj[15].toString())){
                         int pos = (int) mapColumnas.get(obj[15].toString());
-                        nextrow.createCell(pos).setCellType(Cell.CELL_TYPE_NUMERIC);
+                        nextrow.createCell(pos).setCellType(CellType.NUMERIC);
                         nextrow.createCell(pos).setCellValue(obj[17].toString());
 ;                    }
                     
@@ -180,7 +181,8 @@ public class ReporteTodasRespuestas implements Serializable {
         
         HSSFRow row = hoja.createRow(0);
         HSSFFont hSSFFont = xlsRespuestas.createFont();
-        hSSFFont.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD); 
+        //hSSFFont.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD); 
+        hSSFFont.setBold(true);
         HSSFCellStyle myStyle = xlsRespuestas.createCellStyle();   
         myStyle.setFont(hSSFFont);
         

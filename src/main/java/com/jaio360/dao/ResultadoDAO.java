@@ -134,11 +134,22 @@ public class ResultadoDAO implements Serializable{
 "   from relacion_participante rp, participante pa                                " +
 "  where rp.PA_ID_PARTICIPANTE_FK = pa.PA_ID_PARTICIPANTE_PK                      " +
 "    and rp.RP_ID_ESTADO = ?                                                      " +
-"    and pa.PO_ID_PROYECTO_FK = ? ) d                                             " ); 
+"    and pa.PO_ID_PROYECTO_FK = ?                                             " +
+" union all "+
+"	select 	pa.PA_ID_PARTICIPANTE_PK, null, null "+
+"	from participante pa "+
+"	where pa.PO_ID_PROYECTO_FK = ? "+
+"		and pa.PA_IN_AUTOEVALUAR = true "+
+"		and pa.PA_ID_ESTADO = ? "+
+ "               ) d  ");
+            
+            /*falta agregar al participante que termina su evaluacion pero no responde nada */
             
             query.setInteger(0, intidProyecto);
             query.setInteger(1, Constantes.INT_ET_ESTADO_RELACION_EDO_EDOR_TERMINADO);
             query.setInteger(2, intidProyecto);
+            query.setInteger(3, intidProyecto);
+            query.setInteger(4, Constantes.INT_ET_ESTADO_EVALUADO_TERMINADO);
             
             listaResultado = query.list();
             

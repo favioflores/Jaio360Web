@@ -23,7 +23,7 @@ import javax.faces.model.SelectItem;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.annotations.Proxy;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
  
  
 /**
@@ -292,7 +292,8 @@ public class CrearUsuario implements Serializable{
                         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,"Confirmación",  "Se guardo correctamente"));
                     }
                     usuarioForm = null;
-                    RequestContext.getCurrentInstance().closeDialog("crearUsuario");
+                    //RequestContext.getCurrentInstance().closeDialog("crearUsuario");
+                    PrimeFaces.current().dialog().closeDynamic("crearUsuario");
                     
                 }else{
                     FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,"Error", strErrores));

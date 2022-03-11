@@ -16,7 +16,16 @@ public class EvaluadoCuestionario implements Serializable{
     private Integer intIdEstadoSel;
     private String strEstadoSel;
     private String strEstadoEvaluado;
+    private String strCuestionarioDesc;
 
+    public String getStrCuestionarioDesc() {
+        return strCuestionarioDesc;
+    }
+
+    public void setStrCuestionarioDesc(String strCuestionarioDesc) {
+        this.strCuestionarioDesc = strCuestionarioDesc;
+    }
+    
     public String getStrEstadoEvaluado() {
         return strEstadoEvaluado;
     }

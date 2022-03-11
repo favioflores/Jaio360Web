@@ -1,0 +1,299 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                template="../templates/templateWorkspace.xhtml">    
+
+    <ui:define name="head"> 
+
+        <script type="text/javascript">
+            function skinRadarChart() {
+                Chart.defaults.startAngle = 36;
+                Chart.defaults.plugins.tooltip.cornerRadius = 3;
+                Chart.defaults.plugins.tooltip.enabled = true;
+                Chart.defaults.plugins.tooltip.mode = 'point';
+                Chart.defaults.plugins.tooltip.position = 'nearest';
+            }
+        </script>
+
+    </ui:define>
+
+    <ui:define name="cabecera">
+        <ui:include src="cabecera.xhtml" />
+    </ui:define>
+    <ui:define name="helpSteps">
+
+        <h:form id="formPrincipalProyecto" enctype="multipart/form-data" >
+
+            <div class="p-field">
+                <p:steps readonly="false" activeIndex="#{stepFiveView.activeIndex}" >
+                    <p:menuitem value="Configurar base"         actionListener="#{stepFiveView.goToStep(1)}"/>
+                    <p:menuitem value="Cargar evaluación"       actionListener="#{stepFiveView.goToStep(2)}"/>
+                    <p:menuitem value="Asignar evaluaciones"    actionListener="#{stepFiveView.goToStep(3)}"/>
+                    <p:menuitem value="Preparar comunicados"       actionListener="#{stepFiveView.goToStep(4)}"/>
+                    <p:menuitem value="Ejecución"               actionListener="#{stepFiveView.goToStep(5)}"/>
+                </p:steps></div>
+            <p:spacer/>
+            <div class="p-field">
+                <center>
+                    <p:commandButton value="Regresar" type="submit" actionListener="#{stepFiveView.backStep()}" update="formPrincipalProyecto" styleClass="ui-button-secondary" icon="pi pi-angle-left" />
+                    <p:spacer/>
+                    <p:commandButton value="Siguiente" type="submit" actionListener="#{stepFiveView.nextStep()}" update="formPrincipalProyecto" styleClass="ui-button-secondary" icon="pi pi-angle-right" disabled="true" />                   
+                </center>
+            </div>
+
+        </h:form>   
+
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="form" >
+
+            <p:growl life="4000" showSummary="true" />
+
+            <p:panel id="panelMetrica" >  
+
+                <p:card>
+
+                    <h3>Ejecución y control del proceso</h3>
+
+                    <div class="ui-fluid p-formgrid p-grid">
+
+                        <div class="p-field p-col-12 p-md-12">
+                            <p:outputLabel value="Monitorea el avance del proyecto." />
+                        </div>
+                    </div>
+                    <div class="ui-fluid p-formgrid p-grid">
+
+                        <div class="p-field p-col-12 p-md-4">
+                            <p:card>
+                                <h4>Monitoreo de proyecto</h4>
+
+                                <div class="p-field">
+                                    <p:commandButton id="btnAddAsignado" 
+                                                     value="Iniciar el proceso" 
+                                                     type="submit"
+                                                     update="@form"
+                                                     actionListener="#{seguimientoProyectoView.iniciarProceso}" 
+                                                     disabled="#{seguimientoProyectoView.intCantPartCuesNoEje>0?false:true}"
+                                                     icon="pi pi-play">
+                                        <p:confirm header="Confirmacion" message="¿Estas seguro de iniciar el proceso?" icon="pi pi-info-circle" />
+                                    </p:commandButton>
+                                </div>
+
+                                <div class="p-field">
+                                    <p:commandButton id="btnGuardarFinalizar" 
+                                                     value="Finalizar proceso" 
+                                                     type="submit"
+                                                     update="@form"
+                                                     icon="pi pi-save" >
+
+                                    </p:commandButton>
+
+                                </div>
+
+                                <div class="p-field">
+                                    <p:commandButton id="btnGuardarAsignacion" 
+                                                     value="Anular proceso" 
+                                                     type="submit"
+                                                     update="@form"
+                                                     icon="pi pi-times" 
+                                                     styleClass="ui-button-danger">
+
+                                    </p:commandButton>
+
+                                </div>
+
+
+                                <div class="p-field">
+                                    <p:commandButton id="btnAddAsignado1" 
+                                                     value="Enviar recordatorios" 
+                                                     type="submit"
+                                                     update="@form"
+                                                     icon="pi pi-send"
+                                                     actionListener="#{seguimientoProyectoView.enviarRecordatorio()}"
+                                                     styleClass="ui-button-warning">
+                                        <p:confirm header="Confirmacion" message="¿Desea enviar recordatorios a los evaluadores pendientes de respuestas?" icon="pi pi-info-circle" />                 
+                                    </p:commandButton>
+                                </div>
+                                <div class="p-field">
+                                    <p:commandButton actionListener="#{seguimientoProyectoView.descargarFisico}" 
+                                                     value="Descargar evaluaciones" 
+                                                     icon="pi pi-download"
+                                                     ajax="false"
+                                                     styleClass="ui-button-secondary"
+                                                     disabled="#{seguimientoProyectoView.intIdEstadoProyecto==37}" >
+                                        <p:fileDownload value="#{seguimientoProyectoView.fileIndividual}" />
+                                    </p:commandButton>
+                                </div>
+
+                                <p:divider/>
+
+                                <h4>Avance general</h4>
+                                <div class="p-field">
+                                    <p:progressBar value="#{seguimientoProyectoView.intPorcentajeGeneral}" labelTemplate="#{seguimientoProyectoView.intPorcentajeGeneral}%" id="IdPorcentajeGeneral" />
+                                </div>
+
+                                <p:divider/>                            
+                                <h4>Avance agrupado</h4>
+                                <div class="p-field">
+                                    <p:selectOneMenu value="#{seguimientoProyectoView.idParametroElegido}" style="width:100%" >
+                                        <f:selectItems value="#{seguimientoProyectoView.mapItemsParametros}" />
+                                    </p:selectOneMenu>
+                                </div>
+                                <div class="p-field">
+                                    <p:radarChart model="#{seguimientoProyectoView.radarGrupo}"/>
+                                </div>
+
+                                <p:divider/>                            
+
+                                <h4>Evaluados</h4>
+
+                                <div class="p-field">
+
+                                    <p:dataTable 
+                                        id="tbEva"
+                                        var="reg"
+                                        widgetVar="tbEva"
+                                        resizableColumns="true"
+                                        value="#{seguimientoProyectoView.lstParticipantesIniciados}" 
+                                        rows="10"
+                                        rowsPerPageTemplate="5,10,{ShowAll|'All'}"
+                                        paginatorPosition="bottom"
+                                        stripedRows="true"
+                                        paginator="true" 
+                                        selectionMode="single"
+                                        selection=""
+                                        paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                        emptyMessage="No se encontró ningun elemento"
+                                        rowKey="#{reg.paIdParticipantePk}"
+                                        rowIndexVar="index"
+                                        >
+
+                                        <c:if test="#{seguimientoProyectoView.lstParticipantesIniciados.size()>0?true:false}" >
+                                            <f:facet name="footer">
+                                                En total tienes #{seguimientoProyectoView.lstParticipantesIniciados.size()} evaluado(s).
+                                            </f:facet>
+                                        </c:if>
+
+                                        <p:ajax event="rowSelect" listener="#{seguimientoProyectoView.onRowSelect}" update="@form"/>
+                                        <p:ajax event="rowUnselect" listener="#{seguimientoProyectoView.onRowUnselect}" update="@form"/>
+
+                                        <p:column style="width: 40px;">
+                                            <f:facet name="header">
+                                                <h:outputText value="#" />
+                                            </f:facet>
+                                            <h:outputText 
+                                                value="#{index + 1}" />
+                                        </p:column> 
+
+                                        <p:column headerText="Descripción" sortBy="#{reg.paTxDescripcion}">
+                                            <h:outputText value="#{reg.paTxDescripcion}" />
+                                            <!--<br/><br/>
+                                            <p:progressBar value="#{reg.bdPorcentajeAvance}" labelTemplate="#{reg.bdPorcentajeAvance}%" />-->
+                                        </p:column>                           
+                                        <!--
+                                        <p:column headerText="Correo" sortBy="#{reg.paTxCorreo}"> 
+                                            <h:outputText value="#{reg.paTxCorreo}" />
+                                        </p:column>
+                                        -->
+                                        <!--
+                                        <p:column headerText="Estado evaluado" sortBy="#{reg.paStrEstado}" style="text-align:center" >
+                                            <h:outputText value="#{reg.paStrEstado}" />
+                                        </p:column>
+                                        -->
+                                        <!--
+                                        <p:column headerText="Cuestionario" sortBy="#{reg.strDescCuestionario}" style="text-align:center" >
+                                            <h:outputText value="#{reg.strDescCuestionario}" />
+                                        </p:column>
+                                        -->
+
+                                        <p:column headerText="% Completado" sortBy="#{reg.bdPorcentajeAvance}" style="max-width: 100px; " >
+                                            <p:progressBar value="#{reg.bdPorcentajeAvance}" displayOnly="true" labelTemplate="#{reg.bdPorcentajeAvance}%" />
+                                        </p:column>
+
+
+
+                                    </p:dataTable>
+
+                                </div>
+
+                            </p:card>
+
+                        </div>
+
+                        <div class="p-field p-col-12 p-md-8">
+                            <p:card>
+
+                                <p:dataTable 
+                                    id="tblRed"
+                                    var="red"
+                                    widgetVar="tblRed"
+                                    resizableColumns="true"
+                                    value="#{seguimientoProyectoView.lstRelacionEvaluadoEvaluador}" 
+                                    rows="30"
+                                    rowsPerPageTemplate="5,10,30,{ShowAll|'All'}"
+                                    paginatorPosition="bottom"
+                                    paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                    stripedRows="true"
+                                    paginator="true"  
+                                    emptyMessage="No se encontró ningun elemento"
+                                    rowIndexVar="index">
+
+                                    <c:if test="#{seguimientoProyectoView.lstRelacionEvaluadoEvaluador.size()>0?true:false}" >
+                                        <f:facet name="footer">
+                                            En total tienes #{seguimientoProyectoView.lstRelacionEvaluadoEvaluador.size()} evaluacion(es).
+                                        </f:facet>
+                                    </c:if>
+
+                                    <p:column style="width: 40px;">
+                                        <f:facet name="header">
+                                            <h:outputText value="#" />
+                                        </f:facet>
+                                        <h:outputText 
+                                            value="#{index + 1}" />
+                                    </p:column> 
+                                    <p:column headerText="Evaluador" sortBy="#{red.strDescEvaluador}" groupRow="true" sortPriority="0" sortOrder="asc">
+                                        <h:outputText value="#{red.strDescEvaluador}" />
+                                    </p:column>                
+                                    <p:column headerText="Relacion" sortBy="#{red.strDescRelacion}">
+                                        <!--<h:outputText value="#{red.strDescRelacion}" />-->
+
+                                        <p:tag value="#{red.strDescRelacion}" style=" background-color: ##{red.strColorRelacion};" />
+                                    </p:column>
+                                    <!--
+                                    <p:column headerText="Correo" sortBy="#{red.strCorreoEvaluador}">
+                                        <h:outputText value="#{red.strCorreoEvaluador}" />
+                                    </p:column>    
+                                    -->
+                                    <p:column headerText="Evaluado" sortBy="#{red.strDescEvaluado}" groupRow="true" >
+                                        <h:outputText value="#{red.strDescEvaluado}" />
+                                    </p:column>
+
+                                    <p:column headerText="Estado" sortBy="#{red.blEvaluacionTerminada}">
+                                        <p:tag  value="#{red.blEvaluacionTerminada==true?'COMPLETADO':'PENDIENTE'}" 
+                                                severity="#{red.blEvaluacionTerminada==true?'success':''}" />
+                                    </p:column> 
+
+                                    <p:column headerText="Ingreso manual" style="text-align:center" >
+                                        <p:commandButton actionListener="#{seguimientoProyectoView.realizaEvaluacion(red)}" icon="pi pi-cloud-upload" styleClass="rounded-button ui-button-outlined" disabled="#{red.blEvaluacionTerminada==true or seguimientoProyectoView.intIdEstadoProyecto==37}" update="@form" >
+                                            <p:confirm header="Confirmacion" message="Esta seguro que quieres resolver esta evaluación?" icon="ui-icon-alert" />
+                                        </p:commandButton>
+                                    </p:column>
+
+                                </p:dataTable>
+
+                            </p:card>
+
+                        </div>
+
+
+                    </div>
+                </p:card>
+            </p:panel>
+        </h:form>
+
+    </ui:define>
+</ui:composition>

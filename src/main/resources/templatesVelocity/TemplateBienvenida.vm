@@ -1,0 +1,189 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>Untitled Document</title>
+        <style type="text/css">
+            body {
+                background-color: #ffffff;
+                margin: 0;
+                padding: 0;
+                margin-left: 0px;
+                margin-top: 0px;
+                margin-right: 0px;
+                margin-bottom: 0px;
+                font-size: 14px;
+                font-family: Arial !important;
+            }
+            .divTittle {
+                background-color: #ffffff;
+                color: #1480d4;
+                font-weight: bold;
+                font-size: 14px;
+                text-align: center;
+            }
+            .divCarita {
+                background-color: #ffffff;
+                color: #1480d4;
+                font-size: 15px;
+                text-align: center;
+            }
+            .divDatoEnvio {
+                background-color: #ffffff;
+                color: #333;
+                font-size: 12px;
+                text-align: center;
+            }
+            .divDatos {
+                background-color: #ffffff;
+                color: #333;
+                font-size: 12px;
+                text-align: justify;
+            }
+            .divDatosR {
+                background-color: #ffffff;
+                color: #333;
+                font-size: 12px;
+                font-weight: bold;
+                text-align: center;
+            }
+            .divDatosResaltado {
+                background-color: #ffffff;
+                color: #1480d4;
+                font-size: 12px;
+                font-weight: bold;
+                text-align: center;
+            }
+            ul,
+            ol,
+            dl {
+                padding: 0;
+                margin: 0;
+            }
+            .border_tabla {
+                border-radius: 15px 15px 15px 15px;
+                -moz-border-radius: 15px 15px 15px 15px;
+                -webkit-border-radius: 15px 15px 15px 15px;
+                border: 5px solid #1480d4;
+                padding: 3px 3px 3px 3px;
+                background: #ffffff;
+                text-align: center;
+            }
+            .border_tabla2 {
+                border-radius: 15px 15px 15px 15px;
+                -moz-border-radius: 15px 15px 15px 15px;
+                -webkit-border-radius: 15px 15px 15px 15px;
+                border: 0px solid #1480d4;
+                background: #ffffff;
+                text-align: center;
+            }
+            .myButton {
+                box-shadow: inset 0px 1px 3px 0px #1481d4;
+                background: linear-gradient(to bottom, #1481d4 5%, #1481d4 100%);
+                background-color: #1481d4;
+                border-radius: 5px;
+                border: 1px solid #1481d4;
+                display: inline-block;
+                cursor: pointer;
+                color: #ffffff;
+                font-family: Arial;
+                font-size: 15px;
+                font-weight: bold;
+                padding: 8px 20px;
+                text-decoration: none;
+                text-shadow: 0px -1px 0px #1481d4;
+            }
+            .myButton:hover {
+                background: linear-gradient(to bottom, #1481d4 5%, #1481d4 100%);
+                background-color: #1481d4;
+            }
+            .myButton:active {
+                position: relative;
+                top: 1px;
+            }
+        </style>
+    </head>
+    <body>
+        <table width="500" border="0" align="center">
+            <tr>
+                <td height="15"></td>
+            </tr>
+            <tr>
+                <td>
+                    <table width="400" align="center" class="border_tabla">
+                        <tr>
+                            <td>
+                                <table width="400" align="center" class="border_tabla2">
+                                    <tr>
+                                        <td width="33%">
+                                            <table width="100%" border="0">
+                                                <tr>
+                                                    <td width="10">&nbsp;</td>
+                                                    <td width="300">&nbsp;</td>
+                                                    <td width="10">&nbsp;</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>&nbsp;</td>
+                                                    <td><img id="j_idt9" src="http://jaio360-app.com/images/logoJaio360.jpg?pfdrid_c=true" alt="" width="140" height="50" /></td>
+                                                    <td>&nbsp;</td>
+                                                </tr>
+                                                <tr style="height: 60px;">
+                                                    <td>&nbsp;</td>
+                                                    <td><div class="divCarita">Bienvenido $NOMBRE,</div></td>
+                                                    <td>&nbsp;</td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td>&nbsp;</td>
+                                                    <td class="divDatosR"><div align="left">Recomendaciones para la evaluación:</div></td>
+                                                    <td>&nbsp;</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>&nbsp;</td>
+                                                    <td>
+                                                        <div class="divDatos">$PARRAFO_RECOMENDACION</div>
+             					    </td>
+                                                    <td>&nbsp;</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>&nbsp;</td>
+                                                    <td>&nbsp;</td>
+                                                    <td>&nbsp;</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>&nbsp;</td>
+                                                    <td class="divDatosR"><div align="left">Acerca de la confidencialidad:</div></td>
+                                                    <td>&nbsp;</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>&nbsp;</td>
+                                                    <td>
+                                                        <div class="divDatos">
+                                                            $PARRAFO_CONFIDENCIALIDAD
+                                                        </div>
+                                                    </td>
+                                                    <td>&nbsp;</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>&nbsp;</td>
+                                                    <td>
+                                                        <div class="divDatos">
+                                                            $PARRAFO_AGRADECIMIENTO
+                                                        </div>
+                                                    </td>
+                                                    <td>&nbsp;</td>
+                                                </tr>
+
+
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </body>
+</html>

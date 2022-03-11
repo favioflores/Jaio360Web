@@ -8,9 +8,10 @@ import javax.faces.context.FacesContext;
 import javax.faces.validator.FacesValidator;
 import javax.faces.validator.Validator;
 import javax.faces.validator.ValidatorException;
+import org.primefaces.validate.ClientValidator;
  
 @FacesValidator("validaNombreCompleto")
-public class validaNombreCompleto implements Validator {
+public class validaNombreCompleto implements Validator, ClientValidator  {
  
     private Pattern pattern;
   
@@ -20,6 +21,7 @@ public class validaNombreCompleto implements Validator {
         pattern = Pattern.compile(EMAIL_PATTERN);
     }
  
+    @Override
     public void validate(FacesContext context, UIComponent component, Object value) throws ValidatorException {
         if(value == null) {
             return;
@@ -29,13 +31,15 @@ public class validaNombreCompleto implements Validator {
             throw new ValidatorException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error de validacion", "Tiene digitos no permitidos"));
         }
     }
- 
+    
+    @Override
     public Map<String, Object> getMetadata() {
         return null;
     }
- 
+
+    @Override
     public String getValidatorId() {
-        return "validaNombreCompleto";
+        return "custom.validaNombreCompleto";
     }
      
 }

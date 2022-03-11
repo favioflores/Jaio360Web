@@ -4,6 +4,7 @@ import com.jaio360.application.EHCacheManager;
 import com.jaio360.dao.CuestionarioDAO;
 import com.jaio360.dao.MensajeDAO;
 import com.jaio360.dao.NotificacionesDAO;
+import com.jaio360.dao.ParametroDAO;
 import com.jaio360.dao.ParticipanteDAO;
 import com.jaio360.dao.ProyectoDAO;
 import com.jaio360.dao.RedEvaluacionDAO;
@@ -17,6 +18,7 @@ import com.jaio360.orm.Cuestionario;
 import com.jaio360.orm.CuestionarioEvaluado;
 import com.jaio360.orm.HibernateUtil;
 import com.jaio360.orm.Mensaje;
+import com.jaio360.orm.Parametro;
 import com.jaio360.orm.Participante;
 import com.jaio360.orm.Proyecto;
 import com.jaio360.orm.RedEvaluacion;
@@ -38,6 +40,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
@@ -57,18 +60,29 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.primefaces.event.SelectEvent;
+import org.primefaces.event.UnselectEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
+import org.primefaces.model.charts.ChartData;
+import org.primefaces.model.charts.optionconfig.elements.*;
+import org.primefaces.model.charts.radar.RadarChartDataSet;
+import org.primefaces.model.charts.radar.RadarChartModel;
+import org.primefaces.model.charts.radar.RadarChartOptions;
 
 @ManagedBean(name = "seguimientoProyectoView")
 @ViewScoped
-public class SeguimientoProyectoView implements Serializable{
-    
+public class SeguimientoProyectoView implements Serializable {
+
     private static Log log = LogFactory.getLog(SeguimientoProyectoView.class);
-    
-    /*******************/ 
+
+    /**
+     * ****************
+     */
     /* Iniciar proceso */
-    /*******************/
+    /**
+     * ****************
+     */
     private Integer intCantPartTodos;
     private Integer intCantPartRegistrados;
     private Integer intCantPartEjecucion;
@@ -77,29 +91,62 @@ public class SeguimientoProyectoView implements Serializable{
     private Integer intCantPartSel;
     private Integer intCantPartCuesNoEje;
     private Integer intCantPartCuesEje;
-    
+
+    private RadarChartModel radarGrupo;
+
     private Boolean boProyectoEjecutado;
     private Integer intIdEstadoProyecto;
-    
+
     private List<Participante> lstParticipante;
     private List<RedEvaluacion> lstRedEvaluacion;
     private List<Cuestionario> lstCuestionario;
     private List<CuestionarioEvaluado> lstCuestionarioEvaluado;
     private List<Relacion> lstRelacion;
     private List<RelacionParticipante> lstRelacionParticipante;
-    
-    /***************/
+
+    /**
+     * ************
+     */
     /* SEGUIMIENTO */
-    /***************/
+    /**
+     * ************
+     */
     private Integer intPorcentajeGeneral;
     private List<Evaluado> lstParticipantesIniciados;
     private List<RelacionEvaluadoEvaluador> lstRelacionEvaluadoEvaluador;
 
     private StreamedContent fileIndividual;
-    
+
     private Boolean flagDescargaFisico = Boolean.FALSE;
     private Boolean flagFiltrarRed = Boolean.FALSE;
     private Boolean flagComunicar = Boolean.TRUE;
+
+    private Integer idParametroElegido;
+    private LinkedHashMap<String, String> mapItemsParametros;
+
+    public Integer getIdParametroElegido() {
+        return idParametroElegido;
+    }
+
+    public void setIdParametroElegido(Integer idParametroElegido) {
+        this.idParametroElegido = idParametroElegido;
+    }
+
+    public LinkedHashMap<String, String> getMapItemsParametros() {
+        return mapItemsParametros;
+    }
+
+    public void setMapItemsParametros(LinkedHashMap<String, String> mapItemsParametros) {
+        this.mapItemsParametros = mapItemsParametros;
+    }
+
+    public RadarChartModel getRadarGrupo() {
+        return radarGrupo;
+    }
+
+    public void setRadarGrupo(RadarChartModel radarGrupo) {
+        this.radarGrupo = radarGrupo;
+    }
 
     public Boolean getFlagComunicar() {
         return flagComunicar;
@@ -116,7 +163,7 @@ public class SeguimientoProyectoView implements Serializable{
     public void setFlagFiltrarRed(Boolean flagFiltrarRed) {
         this.flagFiltrarRed = flagFiltrarRed;
     }
-    
+
     public Boolean getFlagDescargaFisico() {
         return flagDescargaFisico;
     }
@@ -124,7 +171,7 @@ public class SeguimientoProyectoView implements Serializable{
     public void setFlagDescargaFisico(Boolean flagDescargaFisico) {
         this.flagDescargaFisico = flagDescargaFisico;
     }
-    
+
     public StreamedContent getFileIndividual() {
         return fileIndividual;
     }
@@ -132,7 +179,7 @@ public class SeguimientoProyectoView implements Serializable{
     public void setFileIndividual(StreamedContent fileIndividual) {
         this.fileIndividual = fileIndividual;
     }
-    
+
     public Integer getIntIdEstadoProyecto() {
         return intIdEstadoProyecto;
     }
@@ -164,7 +211,7 @@ public class SeguimientoProyectoView implements Serializable{
     public void setLstParticipantesIniciados(List<Evaluado> lstParticipantesIniciados) {
         this.lstParticipantesIniciados = lstParticipantesIniciados;
     }
-    
+
     public List<RelacionParticipante> getLstRelacionParticipante() {
         return lstRelacionParticipante;
     }
@@ -284,7 +331,7 @@ public class SeguimientoProyectoView implements Serializable{
     public void setLstRelacion(List<Relacion> lstRelacion) {
         this.lstRelacion = lstRelacion;
     }
-    
+
     @PostConstruct
     public void init() {
 
@@ -296,64 +343,67 @@ public class SeguimientoProyectoView implements Serializable{
         intCantPartParam = 0;
         intCantPartCuesNoEje = 0;
         intCantPartCuesEje = 0;
-        
+
         Integer idProyecto = Utilitarios.obtenerProyecto().getIntIdProyecto();
-        
+
         ProyectoDAO objProyectoDAO = new ProyectoDAO();
         Proyecto objProyecto = objProyectoDAO.obtenProyecto(Utilitarios.obtenerProyecto().getIntIdProyecto());
-        
+
         intIdEstadoProyecto = objProyecto.getPoIdEstado();
-                
-        if(objProyecto.getPoIdEstado().equals(Constantes.INT_ET_ESTADO_PROYECTO_EN_EJECUCION) || 
-           objProyecto.getPoIdEstado().equals(Constantes.INT_ET_ESTADO_PROYECTO_TERMINADO)){
-            boProyectoEjecutado = Boolean.TRUE; 
-        }else{
+
+        if (objProyecto.getPoIdEstado().equals(Constantes.INT_ET_ESTADO_PROYECTO_EN_EJECUCION)
+                || objProyecto.getPoIdEstado().equals(Constantes.INT_ET_ESTADO_PROYECTO_TERMINADO)) {
+            boProyectoEjecutado = Boolean.TRUE;
+        } else {
             boProyectoEjecutado = Boolean.FALSE;
         }
-        
-        
+
         /* DATOS DE PARTICIPANTES */
         ParticipanteDAO objParticipanteDAO = new ParticipanteDAO();
         lstParticipante = objParticipanteDAO.obtenListaParticipanteXProyecto(idProyecto);
-        
+
         /* DATOS DE EVALUADORES */
         RedEvaluacionDAO objRedEvaluacionDAO = new RedEvaluacionDAO();
         lstRedEvaluacion = objRedEvaluacionDAO.obtenerListaEvaluadores(idProyecto);
-        
+
         /* DATOS DE CUESTIONARIOS */
         CuestionarioDAO objCuestionarioDAO = new CuestionarioDAO();
         lstCuestionario = objCuestionarioDAO.obtenListaCuestionario(idProyecto);
         lstCuestionarioEvaluado = objCuestionarioDAO.obtenListaRelacionCuestionarioEvaluado(idProyecto);
-        
+
         /* DATOS DE RELACIONES CON EVALUADOS */
         RelacionParticipanteDAO objRelacionParticipanteDAO = new RelacionParticipanteDAO();
         lstRelacionParticipante = objRelacionParticipanteDAO.obtenListaRelParticipanteXProyecto(idProyecto);
-                
+
         /* DATOS DE RELACIONES */
         RelacionDAO objRelacionDAO = new RelacionDAO();
         lstRelacion = objRelacionDAO.obtenListaRelacionPorProyecto(idProyecto);
-        
-        if(!lstParticipante.isEmpty()){
-            cargarDatosDeParticipantes(lstParticipante,lstCuestionarioEvaluado);
+
+        if (!lstParticipante.isEmpty()) {
+            cargarDatosDeParticipantes(lstParticipante, lstCuestionarioEvaluado);
         }
-                
-        if(!lstCuestionarioEvaluado.isEmpty()){
+
+        if (!lstCuestionarioEvaluado.isEmpty()) {
             cargarDatosDeCuestinarioEvaluado(lstCuestionarioEvaluado);
         }
-        
-        
+
+        /* POBLAR PARAMETROS */
+        poblarParametros();
+
+        /* POBLAR RADAR */
+        createRadarModel();
+
         /* SEGUIMIENTO */
-        
         lstParticipantesIniciados = new ArrayList();
-        
+
         Evaluado objEvaluado;
-        
-        for(Participante objParticipante : lstParticipante){
-            if( objParticipante.getPaIdEstado().equals(Constantes.INT_ET_ESTADO_EVALUADO_EN_EJECUCION) ||
-                objParticipante.getPaIdEstado().equals(Constantes.INT_ET_ESTADO_EVALUADO_TERMINADO)){
-                
+
+        for (Participante objParticipante : lstParticipante) {
+            if (objParticipante.getPaIdEstado().equals(Constantes.INT_ET_ESTADO_EVALUADO_EN_EJECUCION)
+                    || objParticipante.getPaIdEstado().equals(Constantes.INT_ET_ESTADO_EVALUADO_TERMINADO)) {
+
                 objEvaluado = new Evaluado();
-                
+
                 objEvaluado.setPaIdParticipantePk(objParticipante.getPaIdParticipantePk());
                 objEvaluado.setPaIdEstado(objParticipante.getPaIdEstado());
                 objEvaluado.setPaStrEstado(EHCacheManager.obtenerDescripcionElemento(objParticipante.getPaIdEstado()));
@@ -366,385 +416,425 @@ public class SeguimientoProyectoView implements Serializable{
                 objEvaluado.setPaTxNombreCargo(objParticipante.getPaTxNombreCargo());
                 objEvaluado.setBdPorcentajeAvance(BigDecimal.ZERO);
                 objEvaluado.setBoCheckFilterSeg(Boolean.FALSE);
-                
-                for(CuestionarioEvaluado objCuestionarioEvaluado : lstCuestionarioEvaluado){
-                    if(objCuestionarioEvaluado.getId().getPaIdParticipanteFk().equals(objEvaluado.getPaIdParticipantePk())){
-                        for(Cuestionario objCuestionario : lstCuestionario){
-                            if(objCuestionario.getCuIdCuestionarioPk().equals(objCuestionarioEvaluado.getId().getCuIdCuestionarioFk())){
+
+                for (CuestionarioEvaluado objCuestionarioEvaluado : lstCuestionarioEvaluado) {
+                    if (objCuestionarioEvaluado.getId().getPaIdParticipanteFk().equals(objEvaluado.getPaIdParticipantePk())) {
+                        for (Cuestionario objCuestionario : lstCuestionario) {
+                            if (objCuestionario.getCuIdCuestionarioPk().equals(objCuestionarioEvaluado.getId().getCuIdCuestionarioFk())) {
                                 objEvaluado.setStrDescCuestionario(objCuestionario.getCuTxDescripcion());
                             }
                         }
                     }
                 }
-                
+
                 lstParticipantesIniciados.add(objEvaluado);
             }
         }
-        
+
         Map map = buscaEvaluacionesTerminadas();
         cargarEvaluaciones(map);
-        
-        if(!lstParticipantesIniciados.isEmpty()){
+
+        if (!lstParticipantesIniciados.isEmpty()) {
             calcularPorcentajes(map);
         }
-        
+
     }
-    
-    private void calcularPorcentajes(Map map){
-    
-    /* Coloca porcentajes a evaluados */
-        for (Evaluado objEvaluado : lstParticipantesIniciados){
-        
+
+    private void poblarParametros() {
+
+        Integer idProyecto = Utilitarios.obtenerProyecto().getIntIdProyecto();
+        ParametroDAO objParametroDAO = new ParametroDAO();
+        List<Parametro> lstParametros = objParametroDAO.obtenListaParametros(idProyecto);
+
+        this.mapItemsParametros = new LinkedHashMap<>();
+        this.mapItemsParametros.put("Relaciones", "0");
+
+        for (Parametro objParametro : lstParametros) {
+
+            String strDesc;
+            if (objParametro.getPaIdTipoParametro().equals(Constantes.INT_ET_TIPO_PARAMETRO_SEXO)) {
+                this.mapItemsParametros.put("Sexo", objParametro.getPaIdParametroPk().toString());
+            } else if (objParametro.getPaIdTipoParametro().equals(Constantes.INT_ET_TIPO_PARAMETRO_EDAD)) {
+                this.mapItemsParametros.put("Edad", objParametro.getPaIdParametroPk().toString());
+            } else if (objParametro.getPaIdTipoParametro().equals(Constantes.INT_ET_TIPO_PARAMETRO_TIEMPO)) {
+                this.mapItemsParametros.put("Tiempo", objParametro.getPaIdParametroPk().toString());
+            } else if (objParametro.getPaIdTipoParametro().equals(Constantes.INT_ET_TIPO_PARAMETRO_NIVEL)) {
+                this.mapItemsParametros.put("Nivel", objParametro.getPaIdParametroPk().toString());
+            } else if (objParametro.getPaIdTipoParametro().equals(Constantes.INT_ET_TIPO_PARAMETRO_AREA)) {
+                this.mapItemsParametros.put("Area", objParametro.getPaIdParametroPk().toString());
+            }
+
+        }
+    }
+
+    private void calcularPorcentajes(Map map) {
+
+        /* General */
+        int terminados = 0;
+        int total = 0;
+
+        /* Coloca porcentajes a evaluados */
+        for (Evaluado objEvaluado : lstParticipantesIniciados) {
+
             int i = 0;
             int c = 0;
-                        
+
             Iterator it = map.entrySet().iterator();
-        
+
             while (it.hasNext()) {
-              Map.Entry entry = (Map.Entry) it.next();
+                Map.Entry entry = (Map.Entry) it.next();
 
-              if(entry.getValue().equals(objEvaluado.getPaIdParticipantePk())){
-                  i++;
-              }
-
-            }
-            
-            for(RelacionEvaluadoEvaluador objRelacionEvaluadoEvaluador : lstRelacionEvaluadoEvaluador){
-            
-                if(objRelacionEvaluadoEvaluador.getIntIdEvaluado().equals(objEvaluado.getPaIdParticipantePk())){
-                    c++;
+                if (entry.getValue().equals(objEvaluado.getPaIdParticipantePk())) {
+                    i++;
+                    terminados++;
                 }
-                
+
             }
-            
-            objEvaluado.setBdPorcentajeAvance(new BigDecimal(Math.floor(i*100/c)));
-        
+
+            for (RelacionEvaluadoEvaluador objRelacionEvaluadoEvaluador : lstRelacionEvaluadoEvaluador) {
+
+                if (objRelacionEvaluadoEvaluador.getIntIdEvaluado().equals(objEvaluado.getPaIdParticipantePk())) {
+                    c++;
+                    total++;
+                }
+
+            }
+
+            objEvaluado.setBdPorcentajeAvance(new BigDecimal(Math.floor(i * 100 / c)));
+            this.intPorcentajeGeneral = new BigDecimal(Math.floor(terminados * 100 / total)).toBigIntegerExact().intValue();
+
         }
-    
+
     }
-    
-    private void cargarEvaluaciones(Map map){
-        
+
+    private void cargarEvaluaciones(Map map) {
+
         lstRelacionEvaluadoEvaluador = new ArrayList<>();
-        
-        for(RelacionParticipante objRelacionParticipante : lstRelacionParticipante){
-        
+
+        for (RelacionParticipante objRelacionParticipante : lstRelacionParticipante) {
+
             boolean apto = false;
             String strDescEvaluador = null;
-            
-            for(Participante objParticipante : lstParticipante){
-                if(objParticipante.getPaIdParticipantePk().equals(objRelacionParticipante.getId().getPaIdParticipanteFk())){
-                    if(!(objParticipante.getPaIdEstado().equals(Constantes.INT_ET_ESTADO_EVALUADO_REGISTRADO) ||
-                         objParticipante.getPaIdEstado().equals(Constantes.INT_ET_ESTADO_EVALUADO_EN_PARAMETRIZACION))){
-                        
+
+            for (Participante objParticipante : lstParticipante) {
+                if (objParticipante.getPaIdParticipantePk().equals(objRelacionParticipante.getId().getPaIdParticipanteFk())) {
+                    if (!(objParticipante.getPaIdEstado().equals(Constantes.INT_ET_ESTADO_EVALUADO_REGISTRADO)
+                            || objParticipante.getPaIdEstado().equals(Constantes.INT_ET_ESTADO_EVALUADO_EN_PARAMETRIZACION))) {
+
                         strDescEvaluador = objParticipante.getPaTxDescripcion();
                         apto = true;
                     }
                 }
             }
-            
-            if(apto){
-                
+
+            if (apto) {
+
                 RelacionEvaluadoEvaluador objRelacionEvaluadoEvaluador = new RelacionEvaluadoEvaluador();
 
                 objRelacionEvaluadoEvaluador.setStrDescEvaluado(strDescEvaluador);
-                
+
                 objRelacionEvaluadoEvaluador.setIntIdEvaluado(objRelacionParticipante.getId().getPaIdParticipanteFk());
                 objRelacionEvaluadoEvaluador.setIntIdEvaluador(objRelacionParticipante.getId().getReIdParticipanteFk());
                 objRelacionEvaluadoEvaluador.setIntIdRelacion(objRelacionParticipante.getId().getReIdRelacionFk());
 
-                String strKey = objRelacionEvaluadoEvaluador.getIntIdEvaluado()+ Constantes.strPipe + 
-                        objRelacionEvaluadoEvaluador.getIntIdEvaluador() + Constantes.strPipe +
-                        objRelacionEvaluadoEvaluador.getIntIdRelacion();
+                String strKey = objRelacionEvaluadoEvaluador.getIntIdEvaluado() + Constantes.strPipe
+                        + objRelacionEvaluadoEvaluador.getIntIdEvaluador() + Constantes.strPipe
+                        + objRelacionEvaluadoEvaluador.getIntIdRelacion();
 
                 objRelacionEvaluadoEvaluador.setBlEnvioCorreo(Boolean.TRUE);
-                
-                if(map.containsKey(strKey)){
+
+                if (map.containsKey(strKey)) {
                     objRelacionEvaluadoEvaluador.setBlEvaluacionTerminada(Boolean.TRUE);
                     objRelacionEvaluadoEvaluador.setBlEnvioCorreo(Boolean.FALSE);
                 }
 
-                for(Relacion objRelacion : lstRelacion){
-                    if(objRelacion.getReIdRelacionPk().equals(objRelacionEvaluadoEvaluador.getIntIdRelacion())){
+                for (Relacion objRelacion : lstRelacion) {
+                    if (objRelacion.getReIdRelacionPk().equals(objRelacionEvaluadoEvaluador.getIntIdRelacion())) {
                         objRelacionEvaluadoEvaluador.setStrDescRelacion(objRelacion.getReTxNombre());
+                        objRelacionEvaluadoEvaluador.setStrColorRelacion(objRelacion.getReColor());
                     }
                 }
 
-                for(RedEvaluacion objRedEvaluacion : lstRedEvaluacion){
-                    if(objRedEvaluacion.getReIdParticipantePk().equals(objRelacionEvaluadoEvaluador.getIntIdEvaluador())){
+                for (RedEvaluacion objRedEvaluacion : lstRedEvaluacion) {
+                    if (objRedEvaluacion.getReIdParticipantePk().equals(objRelacionEvaluadoEvaluador.getIntIdEvaluador())) {
                         objRelacionEvaluadoEvaluador.setStrDescEvaluador(objRedEvaluacion.getReTxDescripcion());
                         objRelacionEvaluadoEvaluador.setStrCorreoEvaluador(objRedEvaluacion.getReTxCorreo());
                     }
                 }
-                
+
                 lstRelacionEvaluadoEvaluador.add(objRelacionEvaluadoEvaluador);
- 
-                
+
             }
         }
-        
+
         /* Carga autoevaluaciones */
-        
-        for(Participante objParticipante : lstParticipante){
-        
-            if(objParticipante.getPaInRedCargada().equals(true) && objParticipante.getPaInRedVerificada().equals(true) &&
-               (objParticipante.getPaIdEstado().equals(Constantes.INT_ET_ESTADO_EVALUADO_EN_EJECUCION) || 
-                objParticipante.getPaIdEstado().equals(Constantes.INT_ET_ESTADO_EVALUADO_TERMINADO))){
-                
-                if(objParticipante.getPaInAutoevaluar().equals(true)){
-                
+        for (Participante objParticipante : lstParticipante) {
+
+            if (objParticipante.getPaInRedCargada().equals(true) && objParticipante.getPaInRedVerificada().equals(true)
+                    && (objParticipante.getPaIdEstado().equals(Constantes.INT_ET_ESTADO_EVALUADO_EN_EJECUCION)
+                    || objParticipante.getPaIdEstado().equals(Constantes.INT_ET_ESTADO_EVALUADO_TERMINADO))) {
+
+                if (objParticipante.getPaInAutoevaluar().equals(true)) {
+
                     RelacionEvaluadoEvaluador objRelacionEvaluadoEvaluador = new RelacionEvaluadoEvaluador();
 
                     objRelacionEvaluadoEvaluador.setIntIdEvaluado(objParticipante.getPaIdParticipantePk());
                     objRelacionEvaluadoEvaluador.setIntIdEvaluador(null);
                     objRelacionEvaluadoEvaluador.setIntIdRelacion(null);
 
-                    String strKey = objRelacionEvaluadoEvaluador.getIntIdEvaluado()+ Constantes.strPipe + 
-                            objRelacionEvaluadoEvaluador.getIntIdEvaluador() + Constantes.strPipe +
-                            objRelacionEvaluadoEvaluador.getIntIdRelacion();
+                    String strKey = objRelacionEvaluadoEvaluador.getIntIdEvaluado() + Constantes.strPipe
+                            + objRelacionEvaluadoEvaluador.getIntIdEvaluador() + Constantes.strPipe
+                            + objRelacionEvaluadoEvaluador.getIntIdRelacion();
 
                     objRelacionEvaluadoEvaluador.setBlEnvioCorreo(Boolean.TRUE);
-                    
-                    if(map.containsKey(strKey)){
+
+                    if (map.containsKey(strKey)) {
                         objRelacionEvaluadoEvaluador.setBlEvaluacionTerminada(Boolean.TRUE);
                         objRelacionEvaluadoEvaluador.setBlEnvioCorreo(Boolean.FALSE);
                     }
 
-                    objRelacionEvaluadoEvaluador.setStrDescRelacion("Uno mismo");
+                    objRelacionEvaluadoEvaluador.setStrDescRelacion("AUTOEVALUACIÓN");
 
                     objRelacionEvaluadoEvaluador.setStrDescEvaluador(objParticipante.getPaTxDescripcion());
                     objRelacionEvaluadoEvaluador.setStrDescEvaluado(objParticipante.getPaTxDescripcion());
                     objRelacionEvaluadoEvaluador.setStrCorreoEvaluador(objParticipante.getPaTxCorreo());
-                    
+
                     lstRelacionEvaluadoEvaluador.add(objRelacionEvaluadoEvaluador);
-                    
-                    
+
                 }
-            
+
             }
-            
+
         }
-        
+
     }
-    
+
     private void cargarDatosDeCuestinarioEvaluado(List<CuestionarioEvaluado> lstCuestionarioEvaluado) {
-        
-        for (CuestionarioEvaluado objCuestionarioEvaluado : lstCuestionarioEvaluado){
-            
-            if(objCuestionarioEvaluado.getCeIdEstado().equals(Constantes.INT_ET_ESTADO_CUES_EVA_REGISTRADO)){
+
+        for (CuestionarioEvaluado objCuestionarioEvaluado : lstCuestionarioEvaluado) {
+
+            if (objCuestionarioEvaluado.getCeIdEstado().equals(Constantes.INT_ET_ESTADO_CUES_EVA_REGISTRADO)) {
                 intCantPartCuesNoEje++;
             }
-            if(objCuestionarioEvaluado.getCeIdEstado().equals(Constantes.INT_ET_ESTADO_CUES_EVA_EN_EJECUCION)){
+            if (objCuestionarioEvaluado.getCeIdEstado().equals(Constantes.INT_ET_ESTADO_CUES_EVA_EN_EJECUCION)) {
                 intCantPartCuesEje++;
             }
         }
-        
+
     }
-    
+
     private void cargarDatosDeParticipantes(List<Participante> lstParticipantes, List<CuestionarioEvaluado> lstCuestionarioEvaluado) {
-        
-        for (Participante objParticipante : lstParticipantes){
+
+        for (Participante objParticipante : lstParticipantes) {
 
             intCantPartTodos++;
-            
-            if(objParticipante.getPaIdEstado().equals(Constantes.INT_ET_ESTADO_EVALUADO_REGISTRADO)){
+
+            if (objParticipante.getPaIdEstado().equals(Constantes.INT_ET_ESTADO_EVALUADO_REGISTRADO)) {
                 intCantPartRegistrados++;
             }
-            
-            if(objParticipante.getPaIdEstado().equals(Constantes.INT_ET_ESTADO_EVALUADO_EN_EJECUCION)){
+
+            if (objParticipante.getPaIdEstado().equals(Constantes.INT_ET_ESTADO_EVALUADO_EN_EJECUCION)) {
                 intCantPartEjecucion++;
             }
 
-            if(objParticipante.getPaIdEstado().equals(Constantes.INT_ET_ESTADO_EVALUADO_EN_PARAMETRIZACION)){
+            if (objParticipante.getPaIdEstado().equals(Constantes.INT_ET_ESTADO_EVALUADO_EN_PARAMETRIZACION)) {
                 intCantPartParam++;
             }
-                        
-            if(objParticipante.getPaInRedVerificada().equals(Boolean.TRUE)){
+
+            if (objParticipante.getPaInRedVerificada().equals(Boolean.TRUE)) {
                 intCantPartVeri++;
             }
-            
-            if(objParticipante.getPaIdEstado().equals(Constantes.INT_ET_ESTADO_EVALUADO_EN_PARAMETRIZACION) &&
-                objParticipante.getPaInRedVerificada().equals(Boolean.TRUE)){
-                
-                for(CuestionarioEvaluado objCuestionarioEvaluado: lstCuestionarioEvaluado){
-                    if(objCuestionarioEvaluado.getId().getPaIdParticipanteFk().equals(objParticipante.getPaIdParticipantePk())){
+
+            if (objParticipante.getPaIdEstado().equals(Constantes.INT_ET_ESTADO_EVALUADO_EN_PARAMETRIZACION)
+                    && objParticipante.getPaInRedVerificada().equals(Boolean.TRUE)) {
+
+                for (CuestionarioEvaluado objCuestionarioEvaluado : lstCuestionarioEvaluado) {
+                    if (objCuestionarioEvaluado.getId().getPaIdParticipanteFk().equals(objParticipante.getPaIdParticipantePk())) {
                         intCantPartSel++;
                     }
                 }
             }
 
         }
-        
+
     }
-    
-    public boolean verificaNotificaciones(){
-        
+
+    public boolean verificaNotificaciones() {
+
         MensajeDAO objMensajeDAO = new MensajeDAO();
         Mensaje objMensajeA = objMensajeDAO.obtenMensaje(Utilitarios.obtenerProyecto().getIntIdProyecto(), Constantes.INT_ET_NOTIFICACION_CONVOCATORIA);
         Mensaje objMensajeB = objMensajeDAO.obtenMensaje(Utilitarios.obtenerProyecto().getIntIdProyecto(), Constantes.INT_ET_NOTIFICACION_INSTRUCCIONES);
         Mensaje objMensajeC = objMensajeDAO.obtenMensaje(Utilitarios.obtenerProyecto().getIntIdProyecto(), Constantes.INT_ET_NOTIFICACION_AGRADECIMIENTO);
-        
-        if(objMensajeA==null || objMensajeB==null || objMensajeC==null){
-            return false;
-        }
-        
-        return true;
-    
+
+        return !(objMensajeA == null || objMensajeB == null || objMensajeC == null);
+
     }
-    
-    public void iniciarProceso(){
-        
-        if(verificaNotificaciones()){
-    
+
+    public void iniciarProceso() {
+
+        if (verificaNotificaciones()) {
+
             init();
 
             ProyectoDAO objProyectoDAO = new ProyectoDAO();
 
-            List lstNotificaciones = objProyectoDAO.iniciarProyecto(lstParticipante,lstRedEvaluacion,lstCuestionario,lstCuestionarioEvaluado,lstRelacion,lstRelacionParticipante);
+            List lstNotificaciones = objProyectoDAO.iniciarProyecto(lstParticipante, lstRedEvaluacion, lstCuestionario, lstCuestionarioEvaluado, lstRelacion, lstRelacionParticipante);
 
-            if(!lstNotificaciones.isEmpty()){
+            if (!lstNotificaciones.isEmpty()) {
                 Proyecto objProyecto = objProyectoDAO.obtenProyecto(Utilitarios.obtenerProyecto().getIntIdProyecto());
 
-                if(!objProyecto.getPoIdEstado().equals(Constantes.INT_ET_ESTADO_PROYECTO_EN_EJECUCION)){
+                if (!objProyecto.getPoIdEstado().equals(Constantes.INT_ET_ESTADO_PROYECTO_EN_EJECUCION)) {
                     objProyecto.setPoFeEjecucion(new Date());
                     objProyecto.setPoIdEstado(Constantes.INT_ET_ESTADO_PROYECTO_EN_EJECUCION);
                     objProyectoDAO.actualizaProyecto(objProyecto);
 
-                    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Iniciar proyecto", "El proyecto fue creado exitosamente");
+                    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "El proyecto fue creado exitosamente", null);
                     FacesContext.getCurrentInstance().addMessage(null, message);
                 }
-            }else{
-                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Iniciar proyecto", "Ocurrio un error al iniciar el proyecto");
+            } else {
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Ocurrio un error al iniciar el proyecto", null);
                 FacesContext.getCurrentInstance().addMessage(null, message);
             }
 
             init();
-        }else{
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Iniciar proyecto", "No se han redactado todos los comunicados para iniciar el proyecto. Por favor volver al paso anterior");
+        } else {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "No se han redactado todos los comunicados para iniciar el proyecto. Por favor volver al paso anterior", null);
             FacesContext.getCurrentInstance().addMessage(null, message);
         }
-        
+
     }
-    
-    public void actListaEvaluadores(){
-        
+
+    public void actListaEvaluadores() {
+
         Map map = buscaEvaluacionesTerminadas();
-        
+
         cargarEvaluaciones(map);
-                
+
         List<RelacionEvaluadoEvaluador> lstTemp = new ArrayList<>();
-        
-        for(RelacionEvaluadoEvaluador obj : lstRelacionEvaluadoEvaluador){
-        
-            for(Evaluado objEvaluado : lstParticipantesIniciados){
-            
-                if(obj.getIntIdEvaluado().equals(objEvaluado.getPaIdParticipantePk()) && objEvaluado.getBoCheckFilterSeg()){
-                    
+
+        for (RelacionEvaluadoEvaluador obj : lstRelacionEvaluadoEvaluador) {
+
+            for (Evaluado objEvaluado : lstParticipantesIniciados) {
+
+                if (obj.getIntIdEvaluado().equals(objEvaluado.getPaIdParticipantePk()) && objEvaluado.getBoCheckFilterSeg()) {
+
                     lstTemp.add(obj);
-                    
+
                 }
-                
+
             }
-        
+
         }
-        
+
         lstRelacionEvaluadoEvaluador = lstTemp;
-        
+
     }
 
     private Map buscaEvaluacionesTerminadas() {
-        
+
         Map map = new HashMap();
-        
+
         ResultadoDAO objResultadoDAO = new ResultadoDAO();
-        
+
         List lstTerminados = objResultadoDAO.obtenListaResultadoGeneral(Utilitarios.obtenerProyecto().getIntIdProyecto());
-        
-        if(!lstTerminados.isEmpty()){
+
+        if (!lstTerminados.isEmpty()) {
 
             Iterator itLstTerminados = lstTerminados.iterator();
 
-            while(itLstTerminados.hasNext()){
+            while (itLstTerminados.hasNext()) {
 
                 Object[] obj = (Object[]) itLstTerminados.next();
 
                 String strKey = obj[0] + Constantes.strPipe + obj[1] + Constantes.strPipe + obj[2];
 
                 map.put(strKey, obj[0]);
-                
+
             }
         }
-        
+
         return map;
-        
+
     }
 
-    
-    public void descargarFisico(){
-        
+    public void descargarFisico() {
+
         boolean flag = false;
-        
+
         List<String> lstArchivos = new ArrayList<>();
-        
-        for(Evaluado objEvaluado : lstParticipantesIniciados){
-        
-            if(objEvaluado.isBlManual()){
-                flag = true;
-                CuestionarioFisico objCuestionarioFisico = new CuestionarioFisico();
-                try {
-                    String archivo = objCuestionarioFisico.build(objEvaluado);
-                    lstArchivos.add(archivo);
-                } catch (IOException ex) {
-                    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_FATAL, "Descargar evaluación", "Ocurrio un error al descarga la evaluación");
-                    FacesContext.getCurrentInstance().addMessage(null, message);
-                    log.error(ex);
-                }
+
+        for (Evaluado objEvaluado : lstParticipantesIniciados) {
+
+            //if (objEvaluado.isBlManual()) {
+            flag = true;
+            CuestionarioFisico objCuestionarioFisico = new CuestionarioFisico();
+            try {
+                String archivo = objCuestionarioFisico.build(objEvaluado);
+                lstArchivos.add(archivo);
+            } catch (IOException ex) {
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_FATAL, "Ocurrio un error al descarga la evaluación", null);
+                FacesContext.getCurrentInstance().addMessage(null, message);
+                log.error(ex);
             }
+            //}
         }
-        
-        if(!flag){
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Descargar evaluación", "Debe seleccionar al menos un evaluado");
+
+        if (!flag) {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Debe seleccionar al menos un evaluado", null);
             FacesContext.getCurrentInstance().addMessage(null, message);
-        }else{
-        
-            if(!lstArchivos.isEmpty()){
-                try {        
-                    String ZipName = "Evaluaciones_" + Constantes.STR_EXTENSION_ZIP;
+        } else {
+
+            if (!lstArchivos.isEmpty()) {
+                try {
+                    String ZipName = "Evaluaciones_" + Utilitarios.formatearFecha(Utilitarios.getCurrentDate(), Constantes.DDMMYYYYHH24MISS) + Constantes.STR_EXTENSION_ZIP;
                     File objFile = new File(Constantes.STR_INBOX_DEFINITIVO + File.separator + ZipName);
+                    File directory = new File(Constantes.STR_INBOX_DEFINITIVO);
+
+                    if (!directory.exists()) {
+                        directory.mkdir();
+                    }
+
                     FileOutputStream salida;
                     salida = new FileOutputStream(objFile);
                     Utilitarios.zipArchivosCualquiera(lstArchivos, salida);
                     InputStream stream = new FileInputStream(objFile.getAbsolutePath());
-                    fileIndividual = new DefaultStreamedContent(stream, "application/zip", ZipName);
-                    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Descargar evaluación", "Evaluación descargada");
+
+                    fileIndividual = DefaultStreamedContent.builder()
+                            .name(ZipName)
+                            .contentType("application/zip")
+                            .stream(() -> stream)
+                            //.stream(() -> FacesContext.getCurrentInstance().getExternalContext().getResourceAsStream(objFile.getAbsolutePath()))
+                            .build();
+
+                    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Evaluación descargada", null);
                     FacesContext.getCurrentInstance().addMessage(null, message);
                 } catch (FileNotFoundException ex) {
                     log.error(ex);
-                    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_FATAL, "Descargar evaluación", "No se pudo generar documento. Comuniquese con el proveedor");
+                    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_FATAL, "No se pudo generar documento. Comuniquese con el proveedor", null);
                     FacesContext.getCurrentInstance().addMessage(null, message);
                 }
-            }else{
-                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Descargar evaluación", "No se pudo generar documento. Comuniquese con el proveedor");
+            } else {
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "No se pudo generar documento. Comuniquese con el proveedor", null);
                 FacesContext.getCurrentInstance().addMessage(null, message);
             }
         }
-                
-    }
-    
-    public void revertirEvaluado(Evaluado objEvaluado){
 
-        Session sesion = HibernateUtil.getSessionFactory().openSession(); 
-        Transaction tx = sesion.beginTransaction(); 
-        
+    }
+
+    public void revertirEvaluado(Evaluado objEvaluado) {
+
+        Session sesion = HibernateUtil.getSessionFactory().openSession();
+        Transaction tx = sesion.beginTransaction();
+
         try {
-            
+
             boolean correcto;
             /* ACTUALIZA EL ESTADO DEL CUESTIONARIO */
             CuestionarioDAO objCuestionarioDAO = new CuestionarioDAO();
 
-            correcto = objCuestionarioDAO.actualizaEstadoCuestionarioXEvaluado(objEvaluado, Utilitarios.obtenerProyecto().getIntIdProyecto(),Constantes.INT_ET_ESTADO_CUES_EVA_REGISTRADO,sesion);
+            correcto = objCuestionarioDAO.actualizaEstadoCuestionarioXEvaluado(objEvaluado, Utilitarios.obtenerProyecto().getIntIdProyecto(), Constantes.INT_ET_ESTADO_CUES_EVA_REGISTRADO, sesion);
 
-            if(correcto){
+            if (correcto) {
                 /* ACTUALIZA EL ESTADO DEL EVALUADO */
                 ParticipanteDAO objParticipanteDAO = new ParticipanteDAO();
 
@@ -752,125 +842,122 @@ public class SeguimientoProyectoView implements Serializable{
 
                 objParticipante.setPaIdEstado(Constantes.INT_ET_ESTADO_EVALUADO_EN_PARAMETRIZACION);
 
-                objParticipanteDAO.actualizaParticipante(objParticipante,sesion);
+                objParticipanteDAO.actualizaParticipante(objParticipante, sesion);
 
             }
-            
-            if(correcto){
+
+            if (correcto) {
                 tx.commit();
-            }else{
+            } else {
                 tx.rollback();
             }
-            
+
         } catch (Exception e) {
             log.error(e);
             tx.rollback();
         }
-        
+
         init();
-    
+
     }
-    
-    public void retirarRelacion(RelacionEvaluadoEvaluador objRelacionEvaluadoEvaluador){
-    
+
+    public void retirarRelacion(RelacionEvaluadoEvaluador objRelacionEvaluadoEvaluador) {
+
         RelacionParticipanteDAO objRelacionParticipanteDAO = new RelacionParticipanteDAO();
-        
+
         RelacionParticipante objRelacionParticipante = new RelacionParticipante();
-        
+
         RelacionParticipanteId objRelacionParticipanteId = new RelacionParticipanteId();
-        
+
         objRelacionParticipanteId.setPaIdParticipanteFk(objRelacionEvaluadoEvaluador.getIntIdEvaluado());
         objRelacionParticipanteId.setReIdParticipanteFk(objRelacionEvaluadoEvaluador.getIntIdEvaluador());
         objRelacionParticipanteId.setReIdRelacionFk(objRelacionEvaluadoEvaluador.getIntIdRelacion());
-        
+
         objRelacionParticipante.setId(objRelacionParticipanteId);
-        
+
         objRelacionParticipanteDAO.eliminaRelacionParticipante(objRelacionParticipante);
         /* VERIFICA SI NO TIENE OTRAS RELACIONES, SINO CAMBIA DE ESTADO A REGISTRADO */
         //FALTA
-        
-        
+
         init();
-    
-    }    
-    
 
+    }
 
-    public void terminarProceso(){
-    
+    public void terminarProceso() {
+
         ProyectoDAO objProyectoDAO = new ProyectoDAO();
-        
+
         objProyectoDAO.terminarProyecto(Utilitarios.obtenerProyecto().getIntIdProyecto());
-        
+
         FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Terminar proyecto", "El proyecto fue concluido exitosamente");
         FacesContext.getCurrentInstance().addMessage(null, message);
         init();
-        
+
     }
-    
-    
-    public void realizaEvaluacion(RelacionEvaluadoEvaluador objRelacionEvaluadoEvaluador){
-            try {
-            
+
+    public void realizaEvaluacion(RelacionEvaluadoEvaluador objRelacionEvaluadoEvaluador) {
+        try {
+
             ProyectoInfo redSeleccionada = new ProyectoInfo();
             redSeleccionada.setBoDefineArtificio(Boolean.TRUE);
             redSeleccionada.setIntIdProyecto(Utilitarios.obtenerProyecto().getIntIdProyecto());
-            
+
             ParticipanteDAO objParticipanteDAO = new ParticipanteDAO();
             Participante objParticipante = objParticipanteDAO.obtenParticipante(Long.valueOf(objRelacionEvaluadoEvaluador.getIntIdEvaluado()));
-            
+
             redSeleccionada.setIntIdEvaluado(objParticipante.getPaIdParticipantePk());
             redSeleccionada.setStrCorreoEvaluado(objParticipante.getPaTxCorreo());
             redSeleccionada.setStrDescEvaluado(objParticipante.getPaTxDescripcion());
             redSeleccionada.setStrCorreoEvaluador(objRelacionEvaluadoEvaluador.getStrCorreoEvaluador());
-            
+            redSeleccionada.setStrNombreEvaluado(objRelacionEvaluadoEvaluador.getStrDescEvaluado());
+            redSeleccionada.setStrNombreEvaluador(objRelacionEvaluadoEvaluador.getStrDescEvaluador());
+            redSeleccionada.setStrRelacion(objRelacionEvaluadoEvaluador.getStrDescRelacion());
+
             HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
             session.removeAttribute("evalInfo");
             session.setAttribute("evalInfo", redSeleccionada);
-            
+
             FacesContext.getCurrentInstance().getExternalContext().redirect("ejecutarEvaluacion.jsf");
-            
+
         } catch (IOException ex) {
             log.debug(ex);
         }
-        
-    
+
     }
 
-    
-    public void generaExcel(){
+    public void generaExcel() {
 
-        HSSFWorkbook xlsEvaluados = new HSSFWorkbook(); 
+        HSSFWorkbook xlsEvaluados = new HSSFWorkbook();
 
         HSSFSheet hoja = xlsEvaluados.createSheet("Seguimiento");
 
         HSSFRow row = hoja.createRow(0);
 
         int c = 0;
-        
+
         HSSFCell cell0 = row.createCell(c);
         HSSFRichTextString texto0 = new HSSFRichTextString("Evaluado");
         cell0.setCellValue(texto0);
 
         c++;
-        
+
         HSSFCell cell1 = row.createCell(c);
         HSSFRichTextString texto1 = new HSSFRichTextString("Evaluador");
         cell1.setCellValue(texto1);
 
-        c++;    
-        
+        c++;
+
         HSSFCell cell2 = row.createCell(c);
         HSSFRichTextString texto2 = new HSSFRichTextString("Relacion");
         cell2.setCellValue(texto2);
-        
-        c++;    
+
+        c++;
         HSSFCell cell3 = row.createCell(c);
         HSSFRichTextString texto3 = new HSSFRichTextString("Termino evaluacion");
         cell3.setCellValue(texto3);
 
         int i = 1;
-        for (RelacionEvaluadoEvaluador objRelacionEvaluadoEvaluador : lstRelacionEvaluadoEvaluador){
+        for (RelacionEvaluadoEvaluador objRelacionEvaluadoEvaluador : lstRelacionEvaluadoEvaluador) {
 
             HSSFRow nextrow = hoja.createRow(i);
 
@@ -881,29 +968,29 @@ public class SeguimientoProyectoView implements Serializable{
             nextrow.createCell(r).setCellValue(objRelacionEvaluadoEvaluador.getStrDescEvaluador());
             r++;
             nextrow.createCell(r).setCellValue(objRelacionEvaluadoEvaluador.getStrDescRelacion());
-            
+
             r++;
-            if(objRelacionEvaluadoEvaluador.getBlEvaluacionTerminada()!=null){
-                if(objRelacionEvaluadoEvaluador.getBlEvaluacionTerminada()){
+            if (objRelacionEvaluadoEvaluador.getBlEvaluacionTerminada() != null) {
+                if (objRelacionEvaluadoEvaluador.getBlEvaluacionTerminada()) {
                     nextrow.createCell(r).setCellValue("SI");
-                }else{
+                } else {
                     nextrow.createCell(r).setCellValue("NO");
                 }
-            }else{
+            } else {
                 nextrow.createCell(r).setCellValue("NO");
             }
-            
+
             i++;
-            
+
         }
-        
+
         hoja.autoSizeColumn(0);
         hoja.autoSizeColumn(1);
         hoja.autoSizeColumn(2);
         hoja.autoSizeColumn(3);
 
         try {
-            
+
             FacesContext facesContext = FacesContext.getCurrentInstance();
             ExternalContext externalContext = facesContext.getExternalContext();
             externalContext.setResponseContentType("application/vnd.ms-excel");
@@ -917,92 +1004,186 @@ public class SeguimientoProyectoView implements Serializable{
         }
     }
 
-    public void enviarRecordatorio(){
-    
+    public void enviarRecordatorio() {
+
         boolean validaAlMenosUno = false;
-        for(RelacionEvaluadoEvaluador objRelacionEvaluadoEvaluador : lstRelacionEvaluadoEvaluador){
-            if(objRelacionEvaluadoEvaluador.getBlEnvioCorreo()){
+        for (RelacionEvaluadoEvaluador objRelacionEvaluadoEvaluador : lstRelacionEvaluadoEvaluador) {
+            if (objRelacionEvaluadoEvaluador.getBlEvaluacionTerminada() == null || objRelacionEvaluadoEvaluador.getBlEvaluacionTerminada().equals(false)) {
                 validaAlMenosUno = true;
                 continue;
             }
         }
-        
-        if(validaAlMenosUno){
+
+        if (validaAlMenosUno) {
             NotificacionesDAO objNotificacionesDAO = new NotificacionesDAO();
             try {
-                if(objNotificacionesDAO.guardaNotificacionesEvaluadores(lstRelacionEvaluadoEvaluador)){
-                    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Envío de notificaciones", "Se enviaron las convocatorias correctamente");
+                if (objNotificacionesDAO.guardaNotificacionesEvaluadores(lstRelacionEvaluadoEvaluador)) {
+                    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Se enviaron las convocatorias correctamente", null);
                     FacesContext.getCurrentInstance().addMessage(null, message);
-                }else{
-                    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_FATAL, "Envío de notificaciones", "Ocurrió un error al enviar las convocatorias");            
-                    FacesContext.getCurrentInstance().addMessage(null, message);            
+                } else {
+                    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_FATAL, "Ocurrió un error al enviar las convocatorias", null);
+                    FacesContext.getCurrentInstance().addMessage(null, message);
                 }
             } catch (HibernateException ex) {
                 log.error(ex);
             } catch (Exception ex) {
                 log.error(ex);
             }
-        }else{
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Envío de notificaciones", "Se debe seleccionar al menos un evaluado");
-            FacesContext.getCurrentInstance().addMessage(null, message);        
+        } else {
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Se debe seleccionar al menos un evaluado", null);
+            FacesContext.getCurrentInstance().addMessage(null, message);
         }
-            
+
     }
 
-    public void actCheckCorreo(RelacionEvaluadoEvaluador objRelacionEvaluadoEvaluador){
-        
+    public void actCheckCorreo(RelacionEvaluadoEvaluador objRelacionEvaluadoEvaluador) {
+
         RelacionEvaluadoEvaluador objRelacionEvaluadoEvaluadorT = lstRelacionEvaluadoEvaluador.get(lstRelacionEvaluadoEvaluador.indexOf(objRelacionEvaluadoEvaluador));
 
-        if(objRelacionEvaluadoEvaluadorT!=null){
-        
+        if (objRelacionEvaluadoEvaluadorT != null) {
+
             objRelacionEvaluadoEvaluadorT.setBlEnvioCorreo(objRelacionEvaluadoEvaluador.getBlEnvioCorreo());
-            
+
         }
-        
+
     }
 
-    public void putFlagDescargaFisico(){
-        
-        for(Evaluado objEvaluado : lstParticipantesIniciados){
-            if(flagDescargaFisico){
+    public void putFlagDescargaFisico() {
+
+        for (Evaluado objEvaluado : lstParticipantesIniciados) {
+            if (flagDescargaFisico) {
                 objEvaluado.setBlManual(Boolean.TRUE);
-            }else{
+            } else {
                 objEvaluado.setBlManual(Boolean.FALSE);
             }
-            
+
         }
-        
-    }
-    
-    public void putFlagFiltrarRed(){
-        
-        for(Evaluado objEvaluado : lstParticipantesIniciados){
-            if(flagFiltrarRed){
-                objEvaluado.setBoCheckFilterSeg(Boolean.TRUE);
-            }else{
-                objEvaluado.setBoCheckFilterSeg(Boolean.FALSE);
-            }
-            
-        }
-        
-        actListaEvaluadores();
-                
+
     }
 
-    public void putFlagComunicar(){
-        
-        for(RelacionEvaluadoEvaluador objRelacionEvaluadoEvaluador : lstRelacionEvaluadoEvaluador){
-            if(objRelacionEvaluadoEvaluador.getBlEvaluacionTerminada()==null || objRelacionEvaluadoEvaluador.getBlEvaluacionTerminada().equals(Boolean.FALSE)){
-                if(flagComunicar){
-                    objRelacionEvaluadoEvaluador.setBlEnvioCorreo(Boolean.TRUE);    
-                }else{
+    public void onRowSelect(SelectEvent<Evaluado> event) {
+
+        lstParticipantesIniciados.forEach(objEvaluado -> {
+            objEvaluado.setBoCheckFilterSeg(Boolean.FALSE);
+        });
+
+        event.getObject().setBoCheckFilterSeg(Boolean.TRUE);
+
+        actListaEvaluadores();
+
+        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Se filtró la red de " + event.getObject().getPaTxDescripcion(), null);
+        FacesContext.getCurrentInstance().addMessage(null, message);
+
+    }
+
+    public void onRowUnselect(UnselectEvent<Evaluado> event) {
+
+        lstParticipantesIniciados.forEach(objEvaluado -> {
+            objEvaluado.setBoCheckFilterSeg(Boolean.TRUE);
+        });
+
+        actListaEvaluadores();
+
+        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Se quitó el filtro del evaluado " + event.getObject().getPaTxDescripcion(), null);
+        FacesContext.getCurrentInstance().addMessage(null, message);
+    }
+
+    public void putFlagFiltrarRed() {
+
+        for (Evaluado objEvaluado : lstParticipantesIniciados) {
+            if (flagFiltrarRed) {
+                objEvaluado.setBoCheckFilterSeg(Boolean.TRUE);
+            } else {
+                objEvaluado.setBoCheckFilterSeg(Boolean.FALSE);
+            }
+
+        }
+
+        actListaEvaluadores();
+
+    }
+
+    public void putFlagComunicar() {
+
+        for (RelacionEvaluadoEvaluador objRelacionEvaluadoEvaluador : lstRelacionEvaluadoEvaluador) {
+            if (objRelacionEvaluadoEvaluador.getBlEvaluacionTerminada() == null || objRelacionEvaluadoEvaluador.getBlEvaluacionTerminada().equals(Boolean.FALSE)) {
+                if (flagComunicar) {
+                    objRelacionEvaluadoEvaluador.setBlEnvioCorreo(Boolean.TRUE);
+                } else {
                     objRelacionEvaluadoEvaluador.setBlEnvioCorreo(Boolean.FALSE);
                 }
             }
-            
+
         }
-        
+
     }
 
-    
+    public void createRadarModel() {
+        radarGrupo = new RadarChartModel();
+        ChartData data = new ChartData();
+
+        RadarChartDataSet radarDataSet = new RadarChartDataSet();
+        radarDataSet.setLabel("My First Dataset");
+        radarDataSet.setFill(true);
+        radarDataSet.setBackgroundColor("rgba(255, 99, 132, 0.2)");
+        radarDataSet.setBorderColor("rgb(255, 99, 132)");
+        radarDataSet.setPointBackgroundColor("rgb(255, 99, 132)");
+        radarDataSet.setPointBorderColor("#fff");
+        radarDataSet.setPointHoverBackgroundColor("#fff");
+        radarDataSet.setPointHoverBorderColor("rgb(255, 99, 132)");
+        List<Number> dataVal = new ArrayList<>();
+        dataVal.add(65);
+        dataVal.add(59);
+        dataVal.add(90);
+        dataVal.add(81);
+        dataVal.add(56);
+        dataVal.add(55);
+        dataVal.add(40);
+        radarDataSet.setData(dataVal);
+
+        RadarChartDataSet radarDataSet2 = new RadarChartDataSet();
+        radarDataSet2.setLabel("My Second Dataset");
+        radarDataSet2.setFill(true);
+        radarDataSet2.setBackgroundColor("rgba(54, 162, 235, 0.2)");
+        radarDataSet2.setBorderColor("rgb(54, 162, 235)");
+        radarDataSet2.setPointBackgroundColor("rgb(54, 162, 235)");
+        radarDataSet2.setPointBorderColor("#fff");
+        radarDataSet2.setPointHoverBackgroundColor("#fff");
+        radarDataSet2.setPointHoverBorderColor("rgb(54, 162, 235)");
+        List<Number> dataVal2 = new ArrayList<>();
+        dataVal2.add(28);
+        dataVal2.add(48);
+        dataVal2.add(40);
+        dataVal2.add(19);
+        dataVal2.add(96);
+        dataVal2.add(27);
+        dataVal2.add(100);
+        radarDataSet2.setData(dataVal2);
+
+        data.addChartDataSet(radarDataSet);
+        data.addChartDataSet(radarDataSet2);
+
+        List<String> labels = new ArrayList<>();
+        labels.add("Eating");
+        labels.add("Drinking");
+        labels.add("Sleeping");
+        labels.add("Designing");
+        labels.add("Coding");
+        labels.add("Cycling");
+        labels.add("Running");
+        data.setLabels(labels);
+
+        /* Options */
+        RadarChartOptions options = new RadarChartOptions();
+        org.primefaces.model.charts.optionconfig.elements.Elements elements = new org.primefaces.model.charts.optionconfig.elements.Elements();
+        ElementsLine elementsLine = new ElementsLine();
+        elementsLine.setTension(0);
+        elementsLine.setBorderWidth(3);
+        elements.setLine(elementsLine);
+        options.setElements(elements);
+
+        radarGrupo.setOptions(options);
+        radarGrupo.setData(data);;
+    }
+
 }

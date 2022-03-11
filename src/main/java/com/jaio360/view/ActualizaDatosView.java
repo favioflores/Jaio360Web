@@ -16,20 +16,25 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.RequestScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.inject.Named;
 import javax.servlet.http.HttpSession;
+import javax.validation.constraints.Email;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
-import org.primefaces.model.UploadedFile;
+import org.primefaces.model.file.UploadedFile;
 
 @ManagedBean(name = "actualizaDatosView")
 @ViewScoped
+//@Named
+//@RequestScoped
 public class ActualizaDatosView implements Serializable{
     
     private static Log log = LogFactory.getLog(ActualizaDatosView.class);
@@ -45,6 +50,7 @@ public class ActualizaDatosView implements Serializable{
     /* PERSONALES */
     private Integer idUsuario;
     private String strNombre;
+    @Email(message = "debe ser un mail válido")
     private String strCorreo;
     private Integer pais;    
     private Integer ciudad;
@@ -244,7 +250,7 @@ public class ActualizaDatosView implements Serializable{
 
         Usuario objUsuario = objUsuarioDAO.obtenUsuario(Utilitarios.obtenerUsuario().getIntUsuarioPk());
 
-        objUsuario.setUsBlImagenEmpresa(objUploadedFile.getContents());
+        objUsuario.setUsBlImagenEmpresa(objUploadedFile.getContent());
 
         boolean correcto = objUsuarioDAO.actualizaUsuario(objUsuario);
         
@@ -324,6 +330,9 @@ public class ActualizaDatosView implements Serializable{
         objUsuarioDAO.actualizaUsuario(objUsuario);
         
         refrescarUsuarioSession(objUsuario);
+        
+        FacesContext context = FacesContext.getCurrentInstance();
+        context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,"Actualización de datos",  "Se realizó la actualización correctamente"));
     }
 
     public void actualizaContraseña(){
@@ -348,6 +357,9 @@ public class ActualizaDatosView implements Serializable{
                     
                     FacesContext context = FacesContext.getCurrentInstance();
                     context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,"Cambio de contraseña",  "Contraseña actualizada"));
+                }else{
+                    FacesContext context = FacesContext.getCurrentInstance();
+                    context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,"Cambio de contraseña",  "La contraseña actual es incorrecta"));  
                 }
 
             }
@@ -365,7 +377,7 @@ public class ActualizaDatosView implements Serializable{
         Usuario objUsuario = objUsuarioDAO.obtenUsuario(Utilitarios.obtenerUsuario().getIntUsuarioPk());
         
         objUsuario.setUsTxDescripcionEmpresa(strRazonSocial);
-        objUsuario.setUsIdTipoCuenta(intIdTipoDocumento);
+        objUsuario.setUsIdTipoDocumento(intIdTipoDocumento);
         objUsuario.setUsTxDocumento(strDocumento);
         
         objUsuarioDAO.actualizaUsuario(objUsuario);

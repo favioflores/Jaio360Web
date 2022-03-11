@@ -31,7 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
 
 @ManagedBean(name = "usuarioSesion")
 @ViewScoped
@@ -92,7 +92,7 @@ public class UsuarioSesion implements Serializable{
         
         HttpServletRequest  request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
         String ipAddress = request.getRemoteAddr();
-
+        /*
         if (!ipAddress.equals("127.0.0.1")) {
             if(validaConexionGoogle()){
                 if(captchaInvalido(captha)){
@@ -106,14 +106,15 @@ public class UsuarioSesion implements Serializable{
             }
         }else{
             blValido = true;
-        }
+        }*/
         
-        if(blValido){
+        if(true){
+        //if(blValido){
          
             try {
 
             if(usuario.isEmpty() || contraseña.isEmpty()){
-                message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error de inicio de sesion", "Usuario y contraseña requeridos");
+                message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Usuario y contraseña requeridos", null);
             }else{
                 UsuarioDAO objUsuarioDAO = new UsuarioDAO();
 
@@ -125,7 +126,7 @@ public class UsuarioSesion implements Serializable{
 
                     usuario = Constantes.strVacio;
                     contraseña = Constantes.strVacio;
-                    message = new FacesMessage(FacesMessage.SEVERITY_WARN, "Error de inicio de sesion", "Usuario o contraseña incorrectos");
+                    message = new FacesMessage(FacesMessage.SEVERITY_ERROR,"Usuario o contraseña incorrectos",null);
 
                 }else if(!contraseña.trim().equals(objEncryptDecrypt.decrypt(objUsuario.getUsTxContrasenia()))){
 
@@ -135,7 +136,7 @@ public class UsuarioSesion implements Serializable{
                     usuarioInfo = new UsuarioInfo(objUsuario);
 
                     registraHistorialAcceso(objUsuario.getUsIdCuentaPk(), true, new Date(), null, null);
-                    message = new FacesMessage(FacesMessage.SEVERITY_WARN, "Error de inicio de sesion", "Usuario o contraseña incorrectos");
+                    message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Usuario o contraseña incorrectos",null);
 
                 } else {
 
@@ -231,7 +232,7 @@ public class UsuarioSesion implements Serializable{
                     .getExternalContext().getRequestParameterMap();
             String captha = params.get("g-recaptcha-response");
 
-            if(captchaInvalido(captha)){
+            if(false){
                 message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Captcha invalido");
             }else{
 
@@ -299,16 +300,15 @@ public class UsuarioSesion implements Serializable{
         options.put("contentWidth", 400);
         //options.put("style", "max-width: 400px;");
             
-        RequestContext.getCurrentInstance().openDialog("clave", options, null);
+        PrimeFaces.current().dialog().openDynamic("clave", options, null);
     }
     
     public void ingresaSistema(){
         try {
-            FacesContext.getCurrentInstance().getExternalContext().redirect("principal.jsf"); 
+            FacesContext.getCurrentInstance().getExternalContext().redirect("home.jsf"); 
         } catch (IOException ex) {
             log.error(ex);
         }
-        
     }
 
     private boolean captchaInvalido(String str) throws Exception {

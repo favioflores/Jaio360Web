@@ -4,60 +4,221 @@
                 xmlns:f="http://java.sun.com/jsf/core"
                 xmlns:p="http://primefaces.org/ui" 
                 xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
-                template="principalEvaluacion.xhtml" >
-    
-<ui:define name="htmlEvaluacion">
+                template="../templates/templateWorkspace.xhtml" >
 
-            
-            
-    <h:form id="formEjecutarEvaluacion" >
-
-        
+    <ui:define name="cabecera">
+        <!--
                 <h2>#{ejecutarEvaluacionView.strDescCuestionario}</h2>
-                
+                <p:spacer/>
                 <h3>#{ejecutarEvaluacionView.strDescEvaluado}</h3>
+        -->
+    </ui:define>
+    <ui:define name="content">
 
-                <h3>Instrucciones básicas</h3>  
-                <p:outputLabel value="Para ver todas las preguntas desplázate hacia abajo y culmina la evaluación presionando el botón 'Terminar'. En caso no tengas una respuesta, no dudes en continuar y completar la evaluación." />
-                
-                <!--
-                <h:inputHidden id="txt2" value="#{ejecutarEvaluacionView.number2}" />
-                <p:slider for="txt2" step="1" onSlide=""  maxValue="6"  >
-                    <p:ajax event="slideEnd" />
-                </p:slider>
--->                
-                <div style="height:10px" />
-                <p:outputPanel binding="#{ejecutarEvaluacionView.objOutputPanelCerrada}" />
-                <div style="height:20px" />
-<c:if test="#{ejecutarEvaluacionView.lstComponenteAbierta.size()>0}">
-                <h3>Preguntas abiertas</h3>  
-                <p:outputLabel value="Da tu opinión sobre estos puntos:" /> 
-                <div style="height:30px" />
-                <p:outputPanel binding="#{ejecutarEvaluacionView.objOutputPanelAbierta}" />
-</c:if>                
-                <h:panelGrid style="width: 100%; text-align: center;" border="0" columns="1" >
-                    <p:commandButton id="btnGuardar" value="Terminar evaluación" oncomplete="PF('dlg').show();" class="ExageraBoton" />  
-                </h:panelGrid>
-        
-        <p:dialog header="Instrucciones personales"  visible="true" width="280" height="300" position="left,bottom" widgetVar="dlgInstrucciones" minimizable="true" closable="false" maximizable="true">
-            <h:outputText value="#{ejecutarEvaluacionView.strInstrucciones}" escape="false" />
-        </p:dialog>    
-</h:form>
-        <p:dialog header="Te agradecemos tu tiempo" modal="true" fitViewport="true" appendTo="@(body)" widgetVar="dlg" resizable="false" style="max-width: 700px;" >
-            <h:panelGrid id="panel" columns="1" border="0" cellpadding="5" style="width: 100%;">
-                <h:outputText value="#{ejecutarEvaluacionView.strAgradecimiento}" escape="false" />
-                <f:facet name="header">
-                    <center>
-                        <p>¿Quieres terminar tu evaluación?</p>
-                        <p:commandButton value="Si" actionListener="#{ejecutarEvaluacionView.guardarResultado()}" />
-                        <p:commandButton value="No" oncomplete="PF('dlg').hide();" />
-                    </center>
-                </f:facet>  
-            </h:panelGrid>
+
+
+        <h:form id="formEjecutarEvaluacion" >
+
+            <p:growl life="4000" showSummary="true" />
+
+            <br/>
+
+            <center>
+                <p:card style="max-width: 900px; text-align:left ">
+                    <f:facet name="title">
+
+                        <h5>#{ejecutarEvaluacionView.strDescEvaluado}</h5>  
+
+                        <H6>Pregunta #{ejecutarEvaluacionView.intNroPreguntasActual +1}/#{ejecutarEvaluacionView.intNroTotalPreguntas}</H6>
+                        <p:progressBar value="#{(ejecutarEvaluacionView.intNroPreguntasActual +1) / (ejecutarEvaluacionView.intNroTotalPreguntas)*100}" 
+                                       />
+                    </f:facet>
+
+                    <!-- PREGUNTAS CERRADAS -->
+
+                    <c:if test="#{ejecutarEvaluacionView.isPreguntaCerradaActual}" >
+
+                        <c:if  test="#{ejecutarEvaluacionView.intNroPreguntasActual.intValue() le ejecutarEvaluacionView.lstPreguntasCerradas.size()}" >
+                            <div class="p-field p-col-12 p-md-12">
+                                <h3>#{ejecutarEvaluacionView.strDescripcionPreguntaCerradaActual}</h3>
+                                Por favor seleccione una de las siguientes respuestas:
+                            </div>
+
+                            <div class="p-field p-col-12 p-md-12">
+                                <!--
+                                <p:selectOneRadio id="lstRespuestasBase" value="#{ejecutarEvaluacionView.intRptaSeleccionada}" onclick="grabarRespuestaCerradaActual()"  unselectable="true" columns="1" layout="grid" >
+                                    <f:selectItems value="#{ejecutarEvaluacionView.mapRespuestas}" />
+                                </p:selectOneRadio>
+                                -->
+                                <p:outputPanel id="customPanel" style="margin-bottom:10px">
+                                    <p:selectOneRadio id="lstRespuestas" value="#{ejecutarEvaluacionView.intRptaSeleccionada}" 
+                                                      onclick="grabarRespuestaCerradaActual()" 
+                                                      unselectable="true" layout="custom" >
+                                        <f:selectItems value="#{ejecutarEvaluacionView.mapRespuestas}" />
+                                    </p:selectOneRadio>
+
+                                    <h:panelGrid columns="4" cellpadding="5">
+                                        <c:forEach var="counter" begin="0" end="#{ejecutarEvaluacionView.lstDetalleMetrica.size()-1}">
+                                            <p:commandButton value="#{counter+1}" iconPos="right" styleClass="ui-button-outlined" 
+                                                             update="@form"
+                                                             actionListener="#{ejecutarEvaluacionView.pressButtonRadio(ejecutarEvaluacionView.lstDetalleMetrica.get(counter).getDeIdDetalleEscalaPk())}" />
+                                            <p:hotkey bind="#{counter+1}" update="@form" actionListener="#{ejecutarEvaluacionView.pressButtonRadio(ejecutarEvaluacionView.lstDetalleMetrica.get(counter).getDeIdDetalleEscalaPk())}"/>
+                                            <p:radioButton id="rb#{counter}"  for="lstRespuestas" itemIndex="#{counter}"/>
+                                            <h:outputLabel for="opl#{counter}" value="#{ejecutarEvaluacionView.lstDetalleMetrica.get(counter).getDeTxValor()}"/>
+                                        </c:forEach>
+                                    </h:panelGrid>
+                                </p:outputPanel>
+
+
+                            </div>
+
+
+
+                            <c:forEach var="counter" begin="0" end="#{ejecutarEvaluacionView.lstCompComentario.size() - 1}">
+                                <div class="p-field">
+                                    <p:spacer/>
+                                    <span class="ui-float-label">
+
+                                        <p:inputTextarea style="width: 100%;" autoResize="true" maxlength="500" counter="display#{counter}" counterTemplate="{0} caracteres restantes."
+                                                         value="#{ejecutarEvaluacionView.strRptaComentario[counter]}" />
+                                        <p:outputLabel for="@previous" value="#{ejecutarEvaluacionView.lstCompComentario.get(counter).getCoTxDescripcion()}"/>
+                                        <h:outputText id="display#{counter}" class="p-d-block" />
+                                    </span>
+                                </div>        
+                            </c:forEach>
+
+                        </c:if>
+
+                    </c:if>
+
+                    <c:if test="#{ejecutarEvaluacionView.isPreguntaCerradaActual==false}" >
+
+                        <c:if  test="#{ejecutarEvaluacionView.intNroPreguntasActual.intValue() le (ejecutarEvaluacionView.lstPreguntasCerradas.size() + ejecutarEvaluacionView.lstPreguntasAbiertas.size())}" >
+                            <div class="p-field p-col-12 p-md-12">
+                                Por favor responde las siguientes preguntas:
+                            </div>
+
+                            <div class="p-field p-col-12 p-md-12">
+                                <span class="ui-float-label">
+                                    <p:inputTextarea style="width: 100%;" autoResize="true" maxlength="500" counter="display" counterTemplate="{0} caracteres restantes."
+                                                     value="#{ejecutarEvaluacionView.strRptaPreguntaAbierta}" />
+                                    <p:outputLabel for="@previous" value="#{ejecutarEvaluacionView.strDescripcionPreguntaAbiertaActual}" />
+                                    <h:outputText id="display" class="p-d-block" />
+                                </span>
+                            </div>
+
+                        </c:if>
+
+                    </c:if>
+
+                    <f:facet name="footer">
+                        <div class="ui-fluid p-formgrid p-grid">
+                            <div class="p-field p-col" style="text-align:left;">
+                                <!--<c:if test="#{ejecutarEvaluacionView.isPreguntaCerradaActual}" >-->
+                                <p:commandButton icon="pi pi-arrow-left" value="Anterior (Ctrl+A)" update="@form" style="width: 200px;" 
+                                                 actionListener="#{ejecutarEvaluacionView.previaPregunta()}" 
+                                                 rendered="#{ejecutarEvaluacionView.intNroPreguntasActual.intValue()>0?true:false}" />
+                                <p:hotkey bind="ctrl+a" update="@form" 
+                                          rendered="#{ejecutarEvaluacionView.intNroPreguntasActual.intValue()>0?true:false}" 
+                                          actionListener="#{ejecutarEvaluacionView.previaPregunta()}"/>
+                                <!--</c:if>-->
+                            </div>
+                            <div class="p-field p-col" style="text-align:right;">
+                                <!--<c:if test="#{ejecutarEvaluacionView.isPreguntaCerradaActual}" >-->
+                                <p:commandButton icon="pi pi-arrow-right" value="Siguiente (Ctrl+S)" update="@form" style="width: 200px;" 
+                                                 actionListener="#{ejecutarEvaluacionView.siguientePregunta()}"
+                                                 rendered="#{ejecutarEvaluacionView.intNroPreguntasActual.intValue()==ejecutarEvaluacionView.intNroTotalPreguntas.intValue()-1?false:true}"
+                                                 />
+                                <p:hotkey bind="ctrl+s" update="@form" 
+                                          rendered="#{ejecutarEvaluacionView.intNroPreguntasActual.intValue()==ejecutarEvaluacionView.intNroTotalPreguntas.intValue()-1?false:true}"
+                                          actionListener="#{ejecutarEvaluacionView.siguientePregunta()}"/>
+                                <p:commandButton icon="pi pi-save" value="Finalizar (Ctrl+Enter)" update="@form" style="width: 200px;" 
+                                                 actionListener="#{ejecutarEvaluacionView.guardarResultado()}"
+                                                 rendered="#{ejecutarEvaluacionView.intNroPreguntasActual.intValue()==ejecutarEvaluacionView.intNroTotalPreguntas.intValue()-1?true:false}"
+                                                 >
+                                    <p:confirm header="Confirmación" message="¿Deseas finalizar la evaluación?" icon="pi pi-info-circle" />
+                                </p:commandButton>
+                                <p:hotkey bind="ctrl+enter" update="@form" 
+                                          rendered="#{ejecutarEvaluacionView.intNroPreguntasActual.intValue()==ejecutarEvaluacionView.intNroTotalPreguntas.intValue()-1?true:false}"
+                                          actionListener="#{ejecutarEvaluacionView.siguientePregunta()}"/>
+                                <!--</c:if>-->
+                            </div>
+                        </div>
+                    </f:facet>
+                </p:card>
+
+                <p:remoteCommand name="grabarRespuestaCerradaActual" update="@form" actionListener="#{ejecutarEvaluacionView.grabarRespuestaCerradaActual()}" />
+
+
+
+                <!-- PREGUNTAS ABIERTAS -->
+
+
+                <p:spacer/>
+            </center>
+
+
+
+
+
+
+            <!--
+                        <div style="height:10px" />
+                        <p:outputPanel binding="#{ejecutarEvaluacionView.objOutputPanelCerrada}" />
+                        <div style="height:20px" />
+                        <c:if test="#{ejecutarEvaluacionView.lstComponenteAbierta.size()>0}">
+                            <h3>Preguntas abiertas</h3>  
+                            <p:outputLabel value="Da tu opinión sobre estos puntos:" /> 
+                            <div style="height:30px" />
+                            <p:outputPanel binding="#{ejecutarEvaluacionView.objOutputPanelAbierta}" />
+                        </c:if>                
+                        <h:panelGrid style="width: 100%; text-align: center;" border="0" columns="1" >
+                            <p:commandButton id="btnGuardar" value="Finalizar" oncomplete="PF('dlg').show();" class="ExageraBoton" />  
+                        </h:panelGrid>
+            -->
+
+
+        </h:form>
+
+        <p:dialog header="Bienvenida"  
+                  visible="true" 
+                  hideEffect="drop"
+                  showEffect="drop"
+                  widgetVar="dlgInstrucciones" 
+                  minimizable="false"
+                  responsive="true"
+                  resizable="true"
+                  closable="true" 
+                  modal="true"
+                  closeOnEscape="true"
+                  fitViewport="true"
+                  maximizable="false">
+            <p:scrollPanel style="height:500px; border: 0px;" >
+                <h:outputText value="#{ejecutarEvaluacionView.strInstrucciones}" escape="false" />
+            </p:scrollPanel>
+            <f:facet name="footer">
+                <center>
+                    <p:commandButton value="Cerrar instrucciones" type="button" onclick="PF('dlgInstrucciones').hide()" />
+                </center>
+            </f:facet>  
         </p:dialog>
 
-    
-    <p:growl sticky="true" showDetail="true" showSummary="true" autoUpdate="false" />
+        <p:dialog header="Te agradecemos tu tiempo" modal="true" 
+                  fitViewport="true" 
+                  appendTo="@(body)" 
+                  widgetVar="dlg" 
+                  closeOnEscape="true"
+                  resizable="false" >
+            <h:outputText value="#{ejecutarEvaluacionView.strAgradecimiento}" escape="false" />
+            <f:facet name="footer">
+                <center>
+                    <p:commandButton value="Salir" actionListener="#{ejecutarEvaluacionView.salir()}" />
+                </center>
+            </f:facet>  
+        </p:dialog>
 
-</ui:define>
+
+
+
+    </ui:define>
 </ui:composition>

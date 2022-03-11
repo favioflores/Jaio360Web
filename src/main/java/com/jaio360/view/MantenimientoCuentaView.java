@@ -27,7 +27,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang.SerializationUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
 
 @ManagedBean(name = "mantenimientoCuentaView")
@@ -213,7 +213,7 @@ public class MantenimientoCuentaView implements Serializable{
         //options.put("contentHeight", 500);
         //options.put("style", "width: auto !important");
          
-        RequestContext.getCurrentInstance().openDialog("crearUsuario", options, null);
+        PrimeFaces.current().dialog().openDynamic("crearUsuario", options, null);
     }
     
     
@@ -241,7 +241,7 @@ public class MantenimientoCuentaView implements Serializable{
                 Map<String,Object> options = new HashMap<>();
                 options.put("modal", true);
                 options.put("resizable", false);
-                RequestContext.getCurrentInstance().openDialog("crearUsuario", options, null);
+                PrimeFaces.current().dialog().openDynamic("crearUsuario", options, null);
             
            /* } catch (IOException ex) {
                 log.debug(ex);

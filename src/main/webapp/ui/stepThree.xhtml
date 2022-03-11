@@ -1,0 +1,305 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                template="../templates/templateWorkspace.xhtml">    
+
+    <ui:define name="head"> 
+    </ui:define>
+
+    <ui:define name="cabecera">
+        <ui:include src="cabecera.xhtml" />
+    </ui:define>
+    <ui:define name="helpSteps">
+
+        <h:form id="formPrincipalProyecto">
+
+            <div class="p-field">
+                <center>
+                    <!--<p:commandButton value="Ocultar pasos de ayuda" type="submit" update="formPrincipalProyecto" /> -->
+                </center>
+                <p:steps readonly="false" activeIndex="#{stepThreeView.activeIndex}" >
+                    <p:menuitem value="Configurar base"         actionListener="#{stepThreeView.goToStep(1)}"/>
+                    <p:menuitem value="Cargar evaluación"       actionListener="#{stepThreeView.goToStep(2)}"/>
+                    <p:menuitem value="Asignar evaluaciones"    actionListener="#{stepThreeView.goToStep(3)}"/>
+                    <p:menuitem value="Preparar comunicados"       actionListener="#{stepThreeView.goToStep(4)}"/>
+                    <p:menuitem value="Ejecución"               actionListener="#{stepThreeView.goToStep(5)}"/>
+                </p:steps></div>
+            <p:spacer/>
+            <div class="p-field">
+                <center>
+                    <p:commandButton value="Regresar" type="submit" actionListener="#{stepThreeView.backStep()}" update="formPrincipalProyecto" styleClass="ui-button-secondary" icon="pi pi-angle-left" />
+                    <p:spacer/>
+                    <p:commandButton value="Siguiente" type="submit" actionListener="#{stepThreeView.nextStep()}" update="formPrincipalProyecto" styleClass="ui-button-secondary" icon="pi pi-angle-right" />                   
+                </center>
+            </div>
+
+        </h:form>   
+
+    </ui:define>
+
+    <ui:define name="content">
+
+        <p:panel>
+            <h:form id="form" >
+
+                <p:growl life="4000" showSummary="true" />
+
+
+
+                <p:card id="panelMetrica" >  
+
+                    <h3>Asignar evaluaciones a evaluados</h3>
+
+                    <div class="ui-fluid p-formgrid p-grid">
+
+                        <div class="p-field p-col-12 p-md-12">
+                            <p:outputLabel value="Define que cuestionario le corresponde a cada uno de los evaluados." />
+                        </div>
+                    </div>
+                    <div class="ui-fluid p-formgrid p-grid">
+
+                        <div class="p-field p-col-12 p-md-8">
+                            <p:card>
+
+                                <h3>Seleccione a los evaluados</h3>
+
+                                <p:dataTable 
+                                    id="tablaEvaluados"
+                                    var="evaluado" 
+                                    widgetVar="tablaEvaluados"
+                                    value="#{defineCuesEvaView.lstEvaluados}" 
+                                    rows="10"
+                                    paginator="true" 
+                                    size="small"
+                                    paginatorPosition="bottom"
+                                    stripedRows="true"
+                                    rowsPerPageTemplate="5,10,{ShowAll|'All'}"
+                                    sortMode="single"
+                                    paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                    emptyMessage="No se encontró ningun registro"
+                                    selection="#{defineCuesEvaView.lstSelectedEvaluados}"
+                                    rowKey="#{evaluado.intIdEvaluado}"
+                                    rowIndexVar="index" >  
+
+                                    <f:facet name="header">
+                                        <div class="p-d-flex p-ai-center p-jc-between">
+                                            <span>Lista de evaluados</span>
+                                        </div>
+
+                                    </f:facet>
+
+                                    <p:column headerText="Cargo" filterBy="#{evaluado.strCargo}" groupRow="true" sortOrder="asc" sortPriority="1" >
+                                        <h:outputText value="#{evaluado.strCargo}" />
+                                        <!--<p:tag value="#{evaluado.strCargo}" style="background-color: ##{evaluado.strCargo};" />-->
+                                    </p:column>
+
+                                    <p:column style="width: 60px;">
+                                        <f:facet name="header">
+                                            <h:outputText value="#" />
+                                        </f:facet>
+                                        <h:outputText 
+                                            value="#{index + 1}" />
+                                    </p:column> 
+
+                                    <p:column headerText="Nombre completo" filterBy="#{evaluado.strDescNombre}" sortOrder="asc" sortPriority="2" >
+                                        <h:outputText value="#{evaluado.strDescNombre}" />
+                                    </p:column>
+
+                                    <p:column headerText="Cuestionario" filterBy="#{evaluado.strCuestionarioDesc}" sortOrder="asc" sortPriority="3" >
+                                        <center>
+                                            <h:outputText value="#{evaluado.strCuestionarioDesc}" />
+                                        </center>
+                                    </p:column>
+                                    <p:column>
+                                        <center>
+                                            <p:tag icon="pi pi-#{evaluado.intIdCuestionario!=null?'check':'exclamation-circle'}" severity="#{evaluado.intIdCuestionario!=null?'success':'warning'}" value="#{evaluado.intIdCuestionario!=null?'Asignado':'Sin asignar'}"  />
+                                        </center>
+                                    </p:column>D
+                                    <!--
+                                        <p:column headerText="Correo electronico" >
+                                            <h:outputText value="#{evaluado.strCorreo}" />
+                                        </p:column>
+    
+                                        <p:column headerText="Estado evaluado" style="text-align: center;" >
+                                            <h:outputText value="#{evaluado.strEstadoEvaluado}" />
+                                        </p:column> 
+        
+                                        <p:column headerText="Estado seleccion" style="text-align: center;" >
+                                            <h:outputText value="#{evaluado.strEstadoSel}" />
+                                        </p:column>
+    
+                                    <p:column headerText="Cuestionario">
+                                        <h:selectOneMenu value="#{evaluado.intIdCuestionario}" disabled="${evaluado.intIdEstadoSel==65?true:false}" style="width:100%" >
+                                            <f:selectItems value="#{defineCuesEvaView.lstCuestionarios}" var="cues" itemLabel="#{cues.cuTxDescripcion}" itemValue="#{cues.cuIdCuestionarioPk}" />
+                                            <p:ajax update="idEvaluados" />
+                                        </h:selectOneMenu>
+                                    </p:column>
+                                    -->
+                                    <p:column selectionMode="multiple" style="width:30px;text-align:center"/>
+
+                                </p:dataTable>
+
+                            </p:card>
+
+                        </div>
+                        <div class="p-field p-col-12 p-md-4">
+                            <p:card>
+                                <h3>Asigna una evaluación</h3>
+
+                                <div class="p-field">
+                                    <p:selectOneMenu value="#{defineCuesEvaView.idCuestionario}" style="width:100%" 
+                                                     disabled="#{defineCuesEvaView.intCantidadPendientesAsignar.intValue()>0?false:true}">
+                                        <f:selectItem itemLabel="Seleccione un cuestionario" itemValue="" noSelectionOption="true"/>
+                                        <f:selectItems value="#{defineCuesEvaView.mapItemsCuestionarios}" />
+                                    </p:selectOneMenu>
+                                </div>
+                                <div class="p-field">
+                                    <p:commandButton id="btnAddAsignado" 
+                                                     value="Asignar cuestionario a los seleccionados" 
+                                                     type="submit"
+                                                     update="@form"
+                                                     actionListener="#{defineCuesEvaView.addEvaluadoToCuestionario()}"
+                                                     disabled="#{defineCuesEvaView.intCantidadPendientesAsignar.intValue()>0?false:true}"
+                                                     icon="pi pi-plus" />
+                                </div>
+                                <div class="p-field">
+                                    <p:commandButton id="btnDeleteAsignado" 
+                                                     value="Desasignar cuestionario" 
+                                                     type="submit"
+                                                     update="@form"
+                                                     disabled="#{defineCuesEvaView.intCantidadAsignados.intValue()>0?false:true}"
+                                                     actionListener="#{defineCuesEvaView.deleteAsignadoOfCuestionario()}"
+                                                     icon="pi pi-times" 
+                                                     styleClass="ui-button-danger"  />
+                                </div>
+
+                                <div class="p-field">
+                                    <p:panel header="Resumen de asignación">
+                                        <p:panelGrid columns="2"  layout="flex" >
+
+                                            <h:outputText value="Evaluados sin asignar"/>
+                                            <h:outputText value="#{defineCuesEvaView.intCantidadPendientesAsignar}"/>
+
+                                            <h:outputText value="Evaluados asignados"/>
+                                            <h:outputText value="#{defineCuesEvaView.intCantidadAsignados}"/>
+
+                                        </p:panelGrid>
+                                    </p:panel>
+                                </div>
+                                <div class="p-field">
+                                    <p:commandButton id="btnGuardarAsignacion" 
+                                                     value="Guardar asignación" 
+                                                     type="submit"
+                                                     update="@form"
+                                                     actionListener="#{defineCuesEvaView.guardarRelacionCuestionarios()}"
+                                                     disabled="#{defineCuesEvaView.intCantidadAsignados.intValue()==0?true:false}"
+                                                     icon="pi pi-save" >
+                                        <c:choose>
+                                            <c:when test="#{defineCuesEvaView.intCantidadPendientesAsignar.toString()=='0'}">
+                                                <p:confirm header="Confirmación" message="¿Estás seguro que deseas guardar la asignación?" icon="pi pi-info-circle"  />
+                                            </c:when>
+                                            <c:otherwise>
+                                                <p:confirm header="Confirmación" message="¿Estás seguro que deseas guardar la asignación? Tiene #{defineCuesEvaView.intCantidadAsignados} evaluados asignados." icon="pi pi-info-circle"  />                                            
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </p:commandButton>
+
+                                </div>
+                            </p:card>
+
+                        </div>
+
+                    </div>
+
+                    <div class="p-field p-col-12 p-md-12">
+                        <p:card>
+
+                            <h3>Asignaciones guardadas</h3>
+
+                            <p:dataTable 
+                                id="tablaEvaluadosAsignados"
+                                var="evaluado" 
+                                widgetVar="tablaEvaluadosAsignados"
+                                value="#{defineCuesEvaView.lstEvaluadosAsignados}" 
+                                rows="10"
+                                paginator="true" 
+                                size="small"
+                                paginatorPosition="bottom"
+                                stripedRows="true"
+                                rowsPerPageTemplate="5,10,{ShowAll|'All'}"
+                                sortMode="single"
+                                paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                emptyMessage="No se encontró ningun registro"
+                                rowKey="#{evaluado.intIdEvaluado}"
+                                rowIndexVar="index">  
+
+                                <f:facet name="header">
+                                    <div class="p-d-flex p-ai-center p-jc-between">
+                                        <span>Lista de evaluados asignados</span>
+                                    </div>
+
+                                </f:facet>
+
+                                <p:column headerText="Cuestionario" filterBy="#{evaluado.strCuestionarioDesc}" groupRow="true"  sortOrder="asc" sortPriority="3" >
+                                    <center>
+                                        <h:outputText value="#{evaluado.strCuestionarioDesc}" />
+                                    </center>
+                                </p:column>
+
+                                <p:column style="width: 40px;">
+                                    <f:facet name="header">
+                                        <h:outputText value="#" />
+                                    </f:facet>
+                                    <h:outputText 
+                                        value="#{index + 1}" />
+                                </p:column> 
+                                <p:column headerText="Nombre completo" filterBy="#{evaluado.strDescNombre}" sortOrder="asc" sortPriority="2" >
+                                    <h:outputText value="#{evaluado.strDescNombre}" />
+                                    <div class="p-text-italic p-text-light ">
+                                        <h:outputText value="Cargo: #{evaluado.strCargo}" />
+                                    </div>
+                                </p:column>
+
+
+
+                                <p:column style="width: 100px;">
+                                    <center>
+                                        <!--<p:button icon="pi pi-check"  disabled="true" styleClass="ui-button-success"/>
+                                        <p:spacer/>-->
+                                        <p:commandButton icon="pi pi-trash" styleClass="rounded-button ui-button-danger ui-button-outlined" />
+                                    </center>
+                                </p:column>
+                                <!--
+                                    <p:column headerText="Correo electronico" >
+                                        <h:outputText value="#{evaluado.strCorreo}" />
+                                    </p:column>
+    
+                                    <p:column headerText="Estado evaluado" style="text-align: center;" >
+                                        <h:outputText value="#{evaluado.strEstadoEvaluado}" />
+                                    </p:column> 
+    
+                                    <p:column headerText="Estado seleccion" style="text-align: center;" >
+                                        <h:outputText value="#{evaluado.strEstadoSel}" />
+                                    </p:column>
+    
+                                <p:column headerText="Cuestionario">
+                                    <h:selectOneMenu value="#{evaluado.intIdCuestionario}" disabled="${evaluado.intIdEstadoSel==65?true:false}" style="width:100%" >
+                                        <f:selectItems value="#{defineCuesEvaView.lstCuestionarios}" var="cues" itemLabel="#{cues.cuTxDescripcion}" itemValue="#{cues.cuIdCuestionarioPk}" />
+                                        <p:ajax update="idEvaluados" />
+                                    </h:selectOneMenu>
+                                </p:column>
+                                -->
+
+                            </p:dataTable>
+
+                        </p:card>
+
+                    </div>
+                </p:card>
+            </h:form>
+        </p:panel>
+    </ui:define>
+</ui:composition>

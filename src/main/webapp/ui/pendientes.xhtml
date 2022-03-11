@@ -1,106 +1,86 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:f="http://java.sun.com/jsf/core"
       xmlns:p="http://primefaces.org/ui" 
       xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 <h:body>
     <h:form id="frmListados">
+
         
-        <p:growl id="growl" showDetail="true" autoUpdate="true" />
-        <p:accordionPanel id="listados" >
+        <p:growl id="growl" showDetail="true" skipDetailIfEqualsSummary="true" />
+        <p:accordionPanel id="listados" widgetVar="basic" >
+         
         <c:if test="#{(menuPrincipal.usuarioInfo.boEsAdministrador == true ||
                        menuPrincipal.usuarioInfo.boEsUsuarioMaestro == true) and
                        listasPrincipalView.cantidadLstProyectos>=0}">
             <p:tab id="lstPendientes" title="#{msg['pendientes.proyectos.titulo']}" >
-            <h:panelGrid columns="1" cellpadding="5" border="0" style="width: 100%;"  >
-                <h:outputText value="#{msg['pendientes.proyectos.parrafo']}" />
-                <!-- <p:commandButton value="#{msg['pendientes.proyectos.btn.nuevo']}" immediate="true"  onclick="PF('dlg5').show();" /> -->
-                <p:commandButton value="#{msg['pendientes.proyectos.btn.nuevo']}" actionListener="#{crearProyecto.abrirPanel}" > 
+
+                <p:outputLabel value="#{msg['pendientes.proyectos.parrafo']}" class="p-m-2" />
+                <br/>
+                <p:commandButton value="#{msg['pendientes.proyectos.btn.nuevo']}" actionListener="#{crearProyecto.abrirPanel}" class="p-m-2" > 
                     <p:ajax event="dialogReturn" listener="#{crearProyecto.proyectoCreado()}" update="listados" />
                     <p:ajax event="dialogReturn" listener="#{listasPrincipalView.buscarProyectos()}" update="listados" />
                 </p:commandButton>
                 
-                <p:panel widgetVar="pnlFiltros" header="Filtro de búsqueda"  toggleable="true" >
-                <h:panelGrid columns="6" >
+                <p:panel widgetVar="pnlFiltros" header="Filtro de búsqueda"  toggleable="false" class="p-m-2" >
+                <div class="ui-fluid">
+                    <div class="p-field p-grid">
                     
-                    <p:outputLabel for="txtDescripion" value="Nombre del proyecto :" />
-                    <p:inputText id="txtDescripion" value="#{listasPrincipalView.txtDescripcion}" maxlength="100" size="50" />
-                    <p:column/>
-                    <p:column/>
-                    <p:column/>
-                    <p:column/>
+                        <p:outputLabel for="txtDescripion" value="Nombre del proyecto :" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0" />
+                        <div class="p-col-12 p-md-10">
+                        <p:inputText id="txtDescripion" value="#{listasPrincipalView.txtDescripcion}" maxlength="100" size="50" />
+                        </div>
+                    </div>
+                    <div class="p-field p-grid">
+                        <p:outputLabel for="idTipoProyecto" value="Tipo de proyecto :" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0" />
+                        <div class="p-col-12 p-md-10">
+                        <p:selectOneMenu id="idTipoProyecto"  value="#{listasPrincipalView.idTipoProyecto}" >
+                            <f:selectItems value="#{listasPrincipalView.lstMetodologias}" itemLabel="#{label}" itemValue="#{value}" />
+                        </p:selectOneMenu> 
+                        </div>
 
-                    <p:outputLabel for="idTipoProyecto" value="Tipo de proyecto :" />
-                    <p:selectOneMenu id="idTipoProyecto"  value="#{listasPrincipalView.idTipoProyecto}" >
-                        <f:selectItems value="#{listasPrincipalView.lstMetodologias}" itemLabel="#{label}" itemValue="#{value}" />
-                    </p:selectOneMenu> 
-                    <p:column/>
-                    <p:column/>
-                    <p:column/>
-                    <p:column/>
-
-                    <p:outputLabel for="idEstadoProyecto" value="Estado de proyecto :" />
-                    <p:selectOneMenu id="idEstadoProyecto" value="#{listasPrincipalView.idEstadoProyecto}" >
-                        <f:selectItems value="#{listasPrincipalView.lstEstados}" itemLabel="#{label}" itemValue="#{value}" />
-                    </p:selectOneMenu> 
-                    <p:column/>
-                    <p:column/>
-                    <p:column/>
-                    <p:column/>
-                    
-
-                    <p:outputLabel for="maskr1" value="Fecha creación inicial :" />
-                    <p:calendar id="maskr1" value="#{listasPrincipalView.txtFechaRegistroInicial}"  pattern="dd/MM/yyyy" navigator="true" locale="es" mask="true" showOn="button" />
-                    <p:outputLabel for="maskr2" value="Fecha creación final :" />
-                    <p:calendar id="maskr2" value="#{listasPrincipalView.txtFechaRegistroFinal}" pattern="dd/MM/yyyy" navigator="true" locale="es" mask="true" showOn="button" />
-                    <p:column/>
-                    <p:column/>
-                    <!--
-                    <p:outputLabel for="maske1" value="Fecha ejecución inicial :" />
-                    <p:calendar id="maske1" value="#{listasPrincipalView.txtFechaEjecucionInicial}"  pattern="dd/MM/yyyy" navigator="true" locale="es" mask="true" showOn="button" />
-                    <p:outputLabel for="maske2" value="Fecha ejecución final :" />
-                    <p:calendar id="maske2" value="#{listasPrincipalView.txtFechaEjecucionFinal}" pattern="dd/MM/yyyy" navigator="true" locale="es" mask="true" showOn="button" />
-                    <p:column/>
-                    <p:column/>
-                    -->
-
-                    <p:outputLabel value="Ver ocultos :" />
-                    <p:inputSwitch value="#{listasPrincipalView.blOcultos}" />
-                       <!-- <p:ajax listener="#{listasPrincipalView.buscarOcultos}" update=":frmListados:" />
-                    </p:inputSwitch>
-                       -->
-                    <p:column/>
-                    <p:column/>
-                    <p:column/>
-                    <p:column/>
-                    
-                    <p:column colspan="6" >
-                        <p:commandButton value="Buscar" actionListener="#{listasPrincipalView.buscarProyectos()}" update=":frmListados:" />
-                        <p:commandButton value="Limpiar" actionListener="#{listasPrincipalView.limpiarFiltro()}" update=":frmListados:" />
-                    </p:column>
-                    
-                </h:panelGrid>
+                    </div>
+                    <div class="p-field p-grid">
+                        <p:outputLabel for="idEstadoProyecto" value="Estado de proyecto :" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0" />
+                        <div class="p-col-12 p-md-10">
+                        <p:selectOneMenu id="idEstadoProyecto" value="#{listasPrincipalView.idEstadoProyecto}" >
+                            <f:selectItems value="#{listasPrincipalView.lstEstados}" itemLabel="#{label}" itemValue="#{value}" />
+                        </p:selectOneMenu> 
+                        </div>
+                    </div>
+                    <div class="p-field p-grid">
+                        <p:outputLabel for="maskr1" value="Fecha creación inicial :"  class="p-col-12 p-mb-2 p-md-2 p-mb-md-0" />
+                        <div class="p-col-12 p-md-10">
+                        <p:calendar id="maskr1" value="#{listasPrincipalView.txtFechaRegistroInicial}"  pattern="dd/MM/yyyy" navigator="true" locale="es" mask="true" showOn="button" />
+                        </div>
+                    </div>
+                    <div class="p-field p-grid">
+                        <p:outputLabel for="maskr2" value="Fecha creación final :"  class="p-col-12 p-mb-2 p-md-2 p-mb-md-0" />
+                        <div class="p-col-12 p-md-10">
+                        <p:calendar id="maskr2" value="#{listasPrincipalView.txtFechaRegistroFinal}" pattern="dd/MM/yyyy" navigator="true" locale="es" mask="true" showOn="button" />
+                        </div>
+                    </div>
+                    <div class="p-field p-grid">
+                        <p:outputLabel value="Ver ocultos :"  class="p-col-12 p-mb-2 p-md-2 p-mb-md-0" />
+                        <div class="p-col-12 p-md-10">
+                            <p:toggleSwitch value="#{listasPrincipalView.blOcultos}" />
+                        </div>
+                        
+                    </div>
+                    <div class="p-grid">
+                        <div class="p-col-6">
+                            <p:commandButton value="Buscar" actionListener="#{listasPrincipalView.buscarProyectos()}" update=":frmListados:" />
+                        </div>
+                        <div class="p-col-6">
+                            <p:commandButton value="Limpiar" actionListener="#{listasPrincipalView.limpiarFiltro()}" update=":frmListados:"  />
+                        </div>
+                    </div>
+                            
+                </div>
                 </p:panel>
-                <!--
-                <p:dataTable 
-                            id="idProyectos"
-                            var="pro"
-                            value="#{listasPrincipalView.lstProyectos}" 
-                            rows="15"
-                            paginator="true" 
-                            paginatorPosition="bottom"
-                            paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                            rowsPerPageTemplate="5,10,15" 
-                            filteredValue="#{listasPrincipalView.filtroProyectos}"
-                            widgetVar="proyectosTabla"
-                            emptyMessage="#{msg['pendientes.proy.lst.sin']}" 
-                            rowKey="#{pro.intIdProyecto}"
-                            style="height: 100%;"
-                            editable="true" >    
-                -->
+
                 <p:dataTable 
                             id="idProyectos"
                             var="pro"
@@ -113,17 +93,10 @@
                             widgetVar="proyectosTabla"
                             emptyMessage="#{msg['pendientes.proy.lst.sin']}" 
                             style="height: 100%;"
-                            editable="true" >    
+                            editable="true" class="p-m-2" >    
 
                     <p:ajax event="rowEdit" listener="#{listasPrincipalView.actualizarProyecto}" update=":frmListados:listados:idProyectos" />
 
-                    <f:facet name="header">
-                        <!--
-                        <p:outputPanel>
-                            <p:inputText id="globalFilter" onkeyup="PF('proyectosTabla').filter();" style="width:200px" placeholder="#{msg['pendientes.proy.lst.buscar']}"/>
-                        </p:outputPanel>
-                        -->
-                    </f:facet>
                     <f:facet name="footer">
                         En total tienes #{listasPrincipalView.lstProyectos.size()} proyecto(s).
                     </f:facet>
@@ -179,12 +152,7 @@
                             <p:confirm header="Confirmacion" message="¿Estás seguro que deseas borrar este proyecto? Recuerda que el contenido, la información y los posibles avances no podrán recuperarse." icon="ui-icon-alert" />
                         </p:commandButton>
                     </p:column>
-                    
-                    <!--
-                    <p:column headerText="Ocultar" style="width:50px;text-align: center;">
-                        <p:outputLabel value="#{pro.boOculto}" />
-                    </p:column>
-                    -->
+
                     <p:column headerText="Ocultar" style="width:50px;text-align: center;">
                         <p:selectBooleanCheckbox value="#{pro.boOculto}" >
                             <p:ajax update=":frmListados:" listener="#{listasPrincipalView.ocultarProyecto(pro)}" />
@@ -192,7 +160,6 @@
                     </p:column>
 
                 </p:dataTable>
-            </h:panelGrid>
         </p:tab>
         </c:if>
         <c:if test="#{(menuPrincipal.usuarioInfo.boEsAdministrador == true ||
@@ -242,7 +209,7 @@
                        menuPrincipal.usuarioInfo.boEsUsuarioEvaluado == true ||
                        menuPrincipal.usuarioInfo.boEsUsuarioEvaluador == true) and
                        listasPrincipalView.cantidadLstRedes>0}">
-            <p:tab title="#{msg['pendientes.redes.titulo']}">
+            <p:tab title="#{msg['pendientes.redes.titulo']}" >
                 <h:panelGrid columns="1" cellpadding="10">
                     <h:outputText value="#{msg['pendientes.redes.parrafo']}" />
 
@@ -297,6 +264,7 @@
             </h:outputLabel>
         </h:panelGrid>
     </c:if>
+
 
 </h:form>
 

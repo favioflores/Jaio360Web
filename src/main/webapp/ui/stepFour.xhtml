@@ -1,0 +1,346 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                template="../templates/templateWorkspace.xhtml">    
+
+    <ui:define name="head"> 
+    </ui:define>
+
+    <ui:define name="cabecera">
+        <ui:include src="cabecera.xhtml" />
+    </ui:define>
+    <ui:define name="helpSteps">
+
+        <h:form id="formPrincipalProyecto">
+
+            <div class="p-field">
+                <center>
+                    <!--<p:commandButton value="Ocultar pasos de ayuda" type="submit" update="formPrincipalProyecto" /> -->
+                </center>
+                <p:steps readonly="false" activeIndex="#{stepFourView.activeIndex}" >
+                    <p:menuitem value="Configurar base"         actionListener="#{stepFourView.goToStep(1)}"/>
+                    <p:menuitem value="Cargar evaluación"       actionListener="#{stepFourView.goToStep(2)}"/>
+                    <p:menuitem value="Asignar evaluaciones"    actionListener="#{stepFourView.goToStep(3)}"/>
+                    <p:menuitem value="Preparar comunicados"       actionListener="#{stepFourView.goToStep(4)}"/>
+                    <p:menuitem value="Ejecución"               actionListener="#{stepFourView.goToStep(5)}"/>
+                </p:steps></div>
+            <p:spacer/>
+            <div class="p-field">
+                <center>
+                    <p:commandButton value="Regresar" type="submit" actionListener="#{stepFourView.backStep()}" update="formPrincipalProyecto" styleClass="ui-button-secondary" icon="pi pi-angle-left" />
+                    <p:spacer/>
+                    <p:commandButton value="Siguiente" type="submit" actionListener="#{stepFourView.nextStep()}" update="formPrincipalProyecto" styleClass="ui-button-secondary" icon="pi pi-angle-right" />                   
+                </center>
+            </div>
+
+
+        </h:form>  
+
+    </ui:define>
+
+    <ui:define name="content">
+
+        <p:panel>  
+            <p:card>
+
+                <h3>Configuración de notificaciones</h3>
+
+                <div class="ui-fluid p-formgrid p-grid">
+
+                    <div class="p-field p-col-12 p-md-12">
+                        <p:outputLabel value="Personaliza el contenido de las notificaciones del proceso." />
+                    </div>
+                </div>
+
+                <p:tabView cache="true" >
+
+                    <p:tab title="Convocatoria" >
+
+                        <h:form>
+
+                            <p:growl life="4000" showSummary="true" />
+
+                            <div class="ui-fluid p-formgrid p-grid">
+
+                                <div class="p-field p-col-12 p-md-12">
+                                    <p:outputLabel value="Este comunicado será enviado vía correo a la lista de evaluadores del proceso convocándolos para rendir sus evaluaciones." />
+                                </div>
+                            </div>
+                            <div class="ui-fluid p-formgrid p-grid">
+
+                                <div class="p-field p-col-12 p-md-6">
+                                    <p:card>
+
+                                        <h4>Personalización</h4>
+
+                                        <div class="p-field">
+                                            <p:outputLabel for="strAsuntoConvocatoria" value="Asunto del correo" />
+                                            <p:inputText id="strAsuntoConvocatoria" value="#{redactarMensajesView.strAsuntoConvocatoria}" 
+                                                         required="true" maxlength="200" requiredMessage="Debe ingresar un asunto" 
+                                                         >
+                                            </p:inputText>
+                                            <small class="p-d-block">Indicar el asunto que aparecerá en el correo de la convocatoria.</small>
+                                        </div>
+                                        <div class="p-field">
+                                            <p:outputLabel for="strTituloConvocatoria" value="Título del cuerpo " />
+                                            <p:inputText id="strTituloConvocatoria" value="#{redactarMensajesView.strTituloConvocatoria}" 
+                                                         required="true" maxlength="200" requiredMessage="Debe ingresar un título" 
+                                                         >
+                                            </p:inputText>
+                                            <small class="p-d-block">Indicar el título que tendrá la convocatoria.</small>
+                                        </div>
+                                        <div class="p-field">
+                                            <p:outputLabel for="strParrafoConvocatoria" value="Contenido del párrafo" />
+                                            <p:textEditor id="strParrafoConvocatoria" value="#{redactarMensajesView.strParrafoConvocatoria}" 
+                                                          required="true" requiredMessage="Debe ingresar el contenido del párrafo del correo" 
+                                                          >
+                                                <f:facet name="toolbar">
+                                                    <span class="ql-formats">
+                                                        <button class="ql-bold"></button>
+                                                        <button class="ql-italic"></button>
+                                                        <button class="ql-underline"></button>
+                                                        <button class="ql-strike"></button>
+                                                    </span>
+                                                    <span class="ql-formats">
+                                                        <select class="ql-size"></select>
+                                                    </span>
+                                                </f:facet>
+                                            </p:textEditor>
+                                            <small class="p-d-block">Ingresa el contenido del parrafo que aparecerá en el correo.</small>
+                                        </div>
+                                        <div class="p-field">
+                                            <p:commandButton value="Preview" styleClass="ui-button-warning" update="@form" icon="pi pi-eye" actionListener="#{redactarMensajesView.armarTemplateConvocatoria(true)}">
+                                            </p:commandButton>
+                                        </div>   
+                                        <!--
+                                        <div class="p-field">
+                                            <p:commandButton value="Restaurar" styleClass="ui-button-secondary" update="@form" icon="pi pi-undo" actionListener="#{redactarMensajesView.armarTemplateConvocatoria(true)}">
+                                            </p:commandButton>
+                                        </div>   
+                                        -->
+                                        <div class="p-field">
+                                            <p:commandButton value="Guardar" update="@form" icon="pi pi-save" actionListener="#{redactarMensajesView.guardarNotificacion(redactarMensajesView.ID_CONVOCATORIA)}">
+                                            </p:commandButton>
+                                        </div>
+                                    </p:card>
+                                    <p:divider/>
+                                    <p:card>
+                                        <h4>Prueba de envío de correo</h4>
+
+                                        <div class="p-field">
+
+                                            <p:outputLabel for="correoExtra" value="Correo electrónico" />
+                                            <p:inputText id="correoExtra" widgetVar="correoExtra" 
+                                                         required="true" value="#{redactarMensajesView.correoExtra}" 
+                                                         maxlength="150"  >
+                                                <f:validator validatorId="validarCorreo" /> 
+                                            </p:inputText>
+                                        </div>
+                                        <div class="p-field">
+                                            <!--<p:commandButton value="Agregar" actionListener="#{redactarMensajesView.agregaCorreoExtra}" process="@this,correoExtra" update="@form" />-->
+                                            <p:commandButton 
+                                                actionListener="#{redactarMensajesView.enviarmeMensajeria}" 
+                                                icon="pi pi-send" 
+                                                value="Enviar correo de prueba" update="@form" />
+                                        </div>
+
+                                    </p:card>
+                                </div>
+                                <div class="p-field p-col-12 p-md-6">
+                                    <p:card id="cardPreviewConvocatoriaTemplate">
+                                        <h4>Vista previa</h4>
+
+                                        <div>
+                                            <p:outputLabel id="outconvoper" value="#{redactarMensajesView.strPreviewConvocatoriaTemplate}" escape="false" />
+                                        </div>
+                                    </p:card>
+                                </div>
+                            </div>
+
+                        </h:form>
+
+                    </p:tab>
+                    <p:tab title="Bienvenida">
+
+                        <h:form>
+
+                            <p:growl life="4000" showSummary="true" />
+
+                            <div class="ui-fluid p-formgrid p-grid">
+
+                                <div class="p-field p-col-12 p-md-12">
+                                    <p:outputLabel value="Este comunicado se le mostrará al evaluador previo a iniciar su evaluación. Indica los puntos que requiere tener presente mientras realiza la evaluación." />
+                                </div>
+                            </div>
+                            <div class="ui-fluid p-formgrid p-grid">
+
+                                <div class="p-field p-col-12 p-md-6">
+                                    <p:card>
+                                        <h4>Personalización</h4>
+
+                                        <div class="p-field">
+                                            <p:outputLabel for="strBienvenidaRecomendaciones" value="Recomendaciones para la evaluación" />
+                                            <p:textEditor id="strBienvenidaRecomendaciones" value="#{redactarMensajesView.strBienvenidaRecomendaciones}" 
+                                                          required="true" requiredMessage="Debe ingresar el contenido del párrafo de recomendaciones" >
+                                                <f:facet name="toolbar">
+                                                    <span class="ql-formats">
+                                                        <button class="ql-bold"></button>
+                                                        <button class="ql-italic"></button>
+                                                        <button class="ql-underline"></button>
+                                                        <button class="ql-strike"></button>
+                                                    </span>
+                                                    <span class="ql-formats">
+                                                        <select class="ql-size"></select>
+                                                    </span>
+                                                </f:facet>
+                                            </p:textEditor>
+                                            <small class="p-d-block">Ingresa el contenido del parrafo que aparecerá sobre las recomendaciones para la evaluación.</small>
+                                        </div>
+
+                                        <div class="p-field">
+                                            <p:outputLabel for="strBienvenidaConfidencialidad" value="Acerca de la confidencialidad" />
+                                            <p:textEditor id="strBienvenidaConfidencialidad" value="#{redactarMensajesView.strBienvenidaConfidencialidad}" 
+                                                          required="true" requiredMessage="Debe ingresar el contenido del párrafo de confidencialidad" >
+                                                <f:facet name="toolbar">
+                                                    <span class="ql-formats">
+                                                        <button class="ql-bold"></button>
+                                                        <button class="ql-italic"></button>
+                                                        <button class="ql-underline"></button>
+                                                        <button class="ql-strike"></button>
+                                                    </span>
+                                                    <span class="ql-formats">
+                                                        <select class="ql-size"></select>
+                                                    </span>
+                                                </f:facet>
+                                            </p:textEditor>
+                                            <small class="p-d-block">Ingresa el contenido del parrafo que aparecerá sobre la confidencialidad.</small>
+                                        </div>
+
+                                        <div class="p-field">
+                                            <p:outputLabel for="strBienvenidaAtentamente" value="Agradecimiento" />
+                                            <p:textEditor id="strBienvenidaAtentamente" value="#{redactarMensajesView.strBienvenidaAgradecimiento}" 
+                                                          required="true" requiredMessage="Debe ingresar el nombre del anfitrion" 
+                                                          >
+                                                <f:facet name="toolbar">
+                                                    <span class="ql-formats">
+                                                        <button class="ql-bold"></button>
+                                                        <button class="ql-italic"></button>
+                                                        <button class="ql-underline"></button>
+                                                        <button class="ql-strike"></button>
+                                                    </span>
+                                                    <span class="ql-formats">
+                                                        <select class="ql-size"></select>
+                                                    </span>
+                                                </f:facet>
+                                            </p:textEditor>
+                                            <small class="p-d-block">Ingresa un agradecimiento por el tiempo y dedicación de la evaluación.</small>
+                                        </div>
+
+                                        <div class="p-field">
+                                            <p:commandButton value="Preview" styleClass="ui-button-warning" update="@form" icon="pi pi-eye" actionListener="#{redactarMensajesView.armarTemplateBienvenida(true)}">
+                                            </p:commandButton>
+                                        </div>   
+                                        <!--
+                                        <div class="p-field">
+                                            <p:commandButton value="Restaurar" styleClass="ui-button-secondary" update="@form" icon="pi pi-undo" actionListener="#{redactarMensajesView.armarTemplateBienvenida(true)}">
+                                            </p:commandButton>
+                                        </div>   
+                                        -->
+                                        <div class="p-field">
+                                            <p:commandButton value="Guardar" update="@form" icon="pi pi-save" actionListener="#{redactarMensajesView.guardarNotificacion(redactarMensajesView.ID_INSTRUCCIONES)}">
+                                            </p:commandButton>
+                                        </div>
+
+
+                                    </p:card>
+                                </div>
+                                <div class="p-field p-col-12 p-md-6">
+                                    <p:card id="cardPreviewBienvenidaTemplate">
+                                        <h4>Vista previa</h4>
+
+                                        <div>
+                                            <p:outputLabel id="outconvoper" value="#{redactarMensajesView.strPreviewBienvenidaTemplate}" escape="false" />
+                                        </div>
+                                    </p:card>
+                                </div>
+                            </div>
+
+                        </h:form>
+
+                    </p:tab>
+                    <p:tab title="Agradecimiento">
+                        <h:form>
+
+                            <p:growl life="4000" showSummary="true" />
+
+                            <div class="ui-fluid p-formgrid p-grid">
+
+                                <div class="p-field p-col-12 p-md-12">
+                                    <p:outputLabel value="Este comunicado se le mostrará al evaluador al finalizar su evaluación." />
+                                </div>
+                            </div>
+                            <div class="ui-fluid p-formgrid p-grid">
+
+                                <div class="p-field p-col-12 p-md-6">
+                                    <p:card>
+                                        <h4>Personalización</h4>
+
+                                        <div class="p-field">
+                                            <p:outputLabel for="strAgradecimiento" value="Agradecimiento" />
+                                            <p:textEditor id="strAgradecimiento" value="#{redactarMensajesView.strAgradecimiento}" 
+                                                          required="true" requiredMessage="Debe ingresar el agradecimiento" 
+                                                          >
+                                                <f:facet name="toolbar">
+                                                    <span class="ql-formats">
+                                                        <button class="ql-bold"></button>
+                                                        <button class="ql-italic"></button>
+                                                        <button class="ql-underline"></button>
+                                                        <button class="ql-strike"></button>
+                                                    </span>
+                                                    <span class="ql-formats">
+                                                        <select class="ql-size"></select>
+                                                    </span>
+                                                </f:facet>
+                                            </p:textEditor>
+                                            <small class="p-d-block">Ingresa un agradecimiento por el tiempo y dedicación de la evaluación.</small>
+                                        </div>
+
+                                        <div class="p-field">
+                                            <p:commandButton value="Preview" styleClass="ui-button-warning" update="@form" icon="pi pi-eye" actionListener="#{redactarMensajesView.armarTemplateAgradecimiento(true)}">
+                                            </p:commandButton>
+                                        </div>   
+                                        <!--
+                                        <div class="p-field">
+                                            <p:commandButton value="Restaurar" styleClass="ui-button-secondary" update="@form" icon="pi pi-undo" actionListener="#{redactarMensajesView.armarTemplateAgradecimiento(true)}">
+                                            </p:commandButton>
+                                        </div>   
+                                        -->
+                                        <div class="p-field">
+                                            <p:commandButton value="Guardar" update="@form" icon="pi pi-save" actionListener="#{redactarMensajesView.guardarNotificacion(redactarMensajesView.ID_AGRADECIMIENTO)}">
+                                            </p:commandButton>
+                                        </div>
+
+
+                                    </p:card>
+                                </div>
+                                <div class="p-field p-col-12 p-md-6">
+                                    <p:card id="cardPreviewAgradecimientoTemplate">
+                                        <h4>Vista previa</h4>
+
+                                        <div>
+                                            <p:outputLabel id="outconvoper" value="#{redactarMensajesView.strPreviewAgradecimientoTemplate}" escape="false" />
+                                        </div>
+                                    </p:card>
+                                </div>
+                            </div>
+
+                        </h:form>
+                    </p:tab>
+                </p:tabView>
+            </p:card>
+        </p:panel>
+    </ui:define>
+</ui:composition>

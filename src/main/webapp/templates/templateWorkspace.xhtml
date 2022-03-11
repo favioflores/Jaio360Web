@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <f:view contentType="text/html">
+
+        <h:head>
+            <f:facet name="first">
+                <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+                <title>Jaio 360</title>
+                <link rel="shortcut icon" type="image/png" href="#{request.contextPath}/images/favicon.png" />
+            </f:facet>
+
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/resources/showcase/css/primeflex.css" />
+            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/resources/showcase/css/flags/flags.css" />
+
+            <h:outputScript name="jquery/jquery.js" library="primefaces"/>
+            <h:outputScript name="jquery/jquery-plugins.js" library="primefaces"/>
+            <ui:insert name="head"/>
+
+        </h:head>
+
+        <h:body>
+
+            <ui:insert name="cabecera"></ui:insert>
+            <ui:insert name="helpSteps"></ui:insert>
+            <ui:insert name="content"></ui:insert>
+
+            <p:confirmDialog global="true" showEffect="drop" hideEffect="drop" responsive="true" width="400"  >
+                <p:commandButton type="button" value="#{msg['cabecera.logout.confirmacion.si']}" styleClass="ui-confirmdialog-yes" />
+                <p:commandButton type="button" value="#{msg['cabecera.logout.confirmacion.no']}" styleClass="ui-confirmdialog-no" />
+            </p:confirmDialog>
+
+            <h:form prependId="false">
+
+                <p:idleMonitor timeout="3600000" >
+                    <p:ajax event="idle" listener="#{usuarioSesion.timeout()}" oncomplete="PF('timeoutDlg').show();"/>
+                </p:idleMonitor>
+
+                <p:dialog header="Aviso de cierre de sesión" widgetVar="timeoutDlg" hideEffect="drop" showEffect="drop" width="400" closable="false" maximizable="false" resizable="false" draggable="false" closeOnEscape="false" modal="true" >
+
+                    <div class="ui-fluid">
+
+                        <div class="p-field">
+                            <p:outputLabel value="Por seguridad su sesión fue cerrada tras 60 minutos de inactividad." />
+                        </div>
+                        <div class="p-field">
+                            <p:button outcome="iniciar" value="Ok" />         
+                        </div>
+                    </div>
+
+                </p:dialog> 
+
+            </h:form>
+
+            <p:ajaxStatus onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" />
+
+            <p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false">
+                <h5>Procesando</h5>
+                <p:progressBar id="progressBarIndeterminate" style="height:10px;" mode="indeterminate"/>
+            </p:dialog>
+
+        </h:body>
+
+    </f:view>
+</html>
