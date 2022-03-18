@@ -14,28 +14,23 @@
     </ui:define>
     <ui:define name="helpSteps">
 
-        <h:form id="formPrincipalProyecto">
-
-            <h2>Espacio de trabajo del proyecto: #{stepSixView.objProyectoInfo.strDescNombre}</h2>
+        <h:form id="formPrincipalProyecto" enctype="multipart/form-data" >
 
             <div class="p-field">
-                <center>
-                    <p:commandButton value="Ocultar pasos de ayuda" type="submit" update="formPrincipalProyecto" />
-                </center>
                 <p:steps readonly="false" activeIndex="#{stepSixView.activeIndex}" >
                     <p:menuitem value="Configurar base"         actionListener="#{stepSixView.goToStep(1)}"/>
                     <p:menuitem value="Cargar evaluación"       actionListener="#{stepSixView.goToStep(2)}"/>
-                    <p:menuitem value="Mapear evaluaciones"     actionListener="#{stepSixView.goToStep(3)}"/>
-                    <p:menuitem value="Armar comunicados"       actionListener="#{stepSixView.goToStep(4)}"/>
-                    <p:menuitem value="Poner en marcha"         actionListener="#{stepSixView.goToStep(5)}"/>
-                    <p:menuitem value="Generar reportes"        actionListener="#{stepSixView.goToStep(6)}"/>
+                    <p:menuitem value="Asignar evaluaciones"    actionListener="#{stepSixView.goToStep(3)}"/>
+                    <p:menuitem value="Preparar comunicados"    actionListener="#{stepSixView.goToStep(4)}"/>
+                    <p:menuitem value="Ejecución"               actionListener="#{stepSixView.goToStep(5)}"/>
+                    <p:menuitem value="Análisis"                actionListener="#{stepSixView.goToStep(6)}"/>
                 </p:steps></div>
             <p:spacer/>
             <div class="p-field">
                 <center>
-                    <p:commandButton value="Regresar" type="submit" actionListener="#{stepSixView.backStep()}" update="formPrincipalProyecto" styleClass="ui-button-secondary" />
+                    <p:commandButton value="Regresar" type="submit" actionListener="#{stepSixView.backStep()}" update="formPrincipalProyecto" styleClass="ui-button-secondary" icon="pi pi-angle-left" />
                     <p:spacer/>
-                    <p:commandButton value="Siguiente" type="submit" actionListener="#{stepSixView.nextStep()}" update="formPrincipalProyecto" styleClass="ui-button-secondary" disabled="true" />                   
+                    <p:commandButton value="Siguiente" type="submit" actionListener="#{stepSixView.nextStep()}" update="formPrincipalProyecto" styleClass="ui-button-secondary" icon="pi pi-angle-right"  disabled="true"/>                   
                 </center>
             </div>
 
@@ -45,5 +40,212 @@
 
     <ui:define name="content">
 
+        <p:panel>
+            <h:form id="form" >
+
+                <p:growl life="4000" showSummary="true" />
+
+                <p:card>
+
+                    <h3>Análisis y resultados individuales</h3><!-- comment -->
+
+                    <div class="ui-fluid p-formgrid p-grid">
+
+                        <div class="p-field p-col-12 p-md-12">
+                            <p:outputLabel value="Genera informes personales de las personas evaluadas." />
+                        </div>
+                    </div>
+                    <div class="ui-fluid p-formgrid p-grid">
+
+                        <div class="p-field p-col-12 p-md-5">
+
+                            <p:card>
+                                <h4>Lista de evaluados</h4>
+                                <p:dataTable id="checkboxDT3"
+                                             widgetVar="checkboxDT3"
+                                             var="evaluado" 
+                                             value="#{generaReportesView.lstEvaluados}" 
+                                             selection="#{generaReportesView.lstEvaluadosSeleccionados}" 
+                                             rowKey="#{evaluado.paIdParticipantePk}" 
+                                             rows="15"
+                                             size="small"
+                                             paginator="true"
+                                             stripedRows="true"
+                                             paginatorPosition="bottom"
+                                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                             rowsPerPageTemplate="5,10,15"
+                                             rowIndexVar="index"
+                                             emptyMessage="No se encontraron evaluados">
+
+                                    <!--
+                                    <f:facet name="header">
+                                        <p:outputPanel style="text-align: right;" >
+                                            <h:outputText value="Busca en todas las etiquetas : " />
+                                            <p:inputText id="globalFilter" onkeyup="PF('checkboxDT3').filter()" style="width:150px" placeholder="Ingresa un texto"/>
+                                        </p:outputPanel>
+                                    </f:facet>
+                                    --> 
+                                    <p:column style="width: 40px;">
+                                        <f:facet name="header">
+                                            <h:outputText value="#" />
+                                        </f:facet>
+                                        <h:outputText 
+                                            value="#{index + 1}" />
+                                    </p:column> 
+
+                                    <p:column selectionMode="multiple" style="width:35px;text-right" />
+
+                                    <p:column headerText="Descripción" >
+                                        <h:outputText value="#{evaluado.paTxDescripcion}" />
+                                    </p:column>
+
+                                    <p:column headerText="Correo" >
+                                        <h:outputText value="#{evaluado.paTxCorreo}" />
+                                    </p:column>
+
+                                </p:dataTable>
+                            </p:card>
+                        </div>
+                        <div class="p-field p-col-12 p-md-4">
+                            <p:card>
+                                <h4>Modelos disponibles</h4>
+                                <p:dataTable id="checkboxDT1" 
+                                             var="parte" 
+                                             size="small"
+                                             stripedRows="true"
+                                             value="#{generaReportesView.lstContenidoIndividual}" 
+                                             selection="#{generaReportesView.lstSeleccionadosIndividual}" 
+                                             rowKey="#{parte.intModeloPk}" >
+
+                                    <p:column selectionMode="multiple" style="width:35px;text-right"/>
+
+                                    <p:column headerText="Descripción">
+                                        <h:outputText value="#{parte.strDescModelo}" />
+                                    </p:column>
+                                    <!--
+                                    <p:column headerText="Tipo de archivo">
+                                        <h:outputText value="#{parte.strTipoArchivo}" />
+                                    </p:column>
+            
+                                    <p:column headerText="Id" style="width: 20px; text-align: center;">
+                                        <h:outputText value="#{parte.intModeloPk}" />
+                                    </p:column>
+                                    -->
+                                </p:dataTable>
+                            </p:card>
+                        </div>
+
+                        <div class="p-field p-col-12 p-md-3">
+                            <p:card>
+                                <h4>Opciones</h4>
+                                <div class="p-field">
+                                    <p:commandButton value="Generar informe individual" ajax="true" update="@form" actionListener="#{generaReportesView.generarReporteIndividual}" />
+                                </div>
+                                <div class="p-field">
+                                    <p:commandButton value="Descargar informe individual" ajax="false" disabled="#{generaReportesView.fileIndividual==null?true:false}" update="@this" >
+                                        <p:fileDownload value="#{generaReportesView.fileIndividual}" />
+                                    </p:commandButton>
+                                </div>
+                                <div class="p-field">
+                                    <p:commandButton value="Descargar plan de accion" ajax="false" styleClass="ui-button-warning" >
+                                        <p:fileDownload value="#{generaReportesView.planAccion}" />
+                                    </p:commandButton>
+                                </div>
+                            </p:card>
+                        </div>
+                    </div>
+                </p:card>
+            </h:form>
+
+            <p:divider/>
+            
+            <h:form>
+                <p:card>
+                    <h3>Análisis y resultados grupales</h3><!-- comment -->
+
+                    <div class="ui-fluid p-formgrid p-grid">
+
+                        <div class="p-field p-col-12 p-md-12">
+                            <p:outputLabel value="Genera informes grupales del proceso." />
+                        </div>
+                    </div>
+                    <div class="ui-fluid p-formgrid p-grid">
+
+                        <div class="p-field p-col-12 p-md-5">
+                            <p:card>
+                                <h4>Lista de cuestionarios</h4>
+                                <p:dataTable id="dtCuestionarios"
+                                             widgetVar="dtCuestionarios"
+                                             var="cuestionario" 
+                                             value="#{generaReportesView.lstCuestionarios}" 
+                                             selection="#{generaReportesView.lstCuestionariosSeleccionados}" 
+                                             rowKey="#{cuestionario.cuIdCuestionarioPk}" 
+                                             rows="15"
+                                             paginator="true"
+                                             size="small"
+                                             stripedRows="false"
+                                             paginatorPosition="bottom"
+                                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                             rowsPerPageTemplate="5,10,15"
+                                             emptyMessage="No se encontraron cuestionarios"
+                                             rowIndexVar="index" >
+
+                                    <p:column style="width: 40px;">
+                                        <f:facet name="header">
+                                            <h:outputText value="#" />
+                                        </f:facet>
+                                        <h:outputText 
+                                            value="#{index + 1}" />
+                                    </p:column> 
+                                    <p:column selectionMode="multiple" style="width:35px;text-right" />
+
+                                    <p:column headerText="Descripción" >
+                                        <h:outputText value="#{cuestionario.cuTxDescripcion}" />
+                                    </p:column>
+
+
+                                </p:dataTable>
+                            </p:card>
+                        </div>
+                        <div class="p-field p-col-12 p-md-4">
+
+                            <p:card>
+                                <h4>Modelos disponibles</h4>
+                                <p:dataTable id="checkboxDT2" 
+                                             var="parte" 
+                                             size="small"
+                                             stripedRows="true"
+                                             value="#{generaReportesView.lstContenidoGrupal}" 
+                                             selection="#{generaReportesView.lstSeleccionadosGrupal}" 
+                                             rowKey="#{parte.intModeloPk}" style="margin-bottom:0" >
+
+                                    <p:column selectionMode="multiple" style="width:35px;text-align:center"/>
+                                    <p:column headerText="Descripción">
+                                        <h:outputText value="#{parte.strDescModelo}" />
+                                    </p:column>
+
+                                </p:dataTable>
+                            </p:card>
+                        </div>
+
+                        <div class="p-field p-col-12 p-md-3">
+                            <p:card>
+                                <h4>Opciones</h4>
+                                <div class="p-field">
+                                    <p:commandButton value="Generar informe grupal" ajax="true" update="@form" actionListener="#{generaReportesView.generarReporteGrupal}" />
+                                </div>
+                                <div class="p-field">
+                                    <p:commandButton value="Descargar informe grupal" ajax="false" disabled="#{generaReportesView.fileGrupal==null?true:false}" update="@this" >
+                                        <p:fileDownload value="#{generaReportesView.fileGrupal}" />
+                                    </p:commandButton>
+                                </div>
+                            </p:card>
+                        </div>
+                    </div>
+                </p:card>
+
+            </h:form>
+
+        </p:panel>
     </ui:define>
 </ui:composition>

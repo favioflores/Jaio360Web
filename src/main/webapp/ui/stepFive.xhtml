@@ -32,15 +32,16 @@
                     <p:menuitem value="Configurar base"         actionListener="#{stepFiveView.goToStep(1)}"/>
                     <p:menuitem value="Cargar evaluación"       actionListener="#{stepFiveView.goToStep(2)}"/>
                     <p:menuitem value="Asignar evaluaciones"    actionListener="#{stepFiveView.goToStep(3)}"/>
-                    <p:menuitem value="Preparar comunicados"       actionListener="#{stepFiveView.goToStep(4)}"/>
+                    <p:menuitem value="Preparar comunicados"    actionListener="#{stepFiveView.goToStep(4)}"/>
                     <p:menuitem value="Ejecución"               actionListener="#{stepFiveView.goToStep(5)}"/>
+                    <p:menuitem value="Análisis"                actionListener="#{stepFiveView.goToStep(6)}"/>
                 </p:steps></div>
             <p:spacer/>
             <div class="p-field">
                 <center>
                     <p:commandButton value="Regresar" type="submit" actionListener="#{stepFiveView.backStep()}" update="formPrincipalProyecto" styleClass="ui-button-secondary" icon="pi pi-angle-left" />
                     <p:spacer/>
-                    <p:commandButton value="Siguiente" type="submit" actionListener="#{stepFiveView.nextStep()}" update="formPrincipalProyecto" styleClass="ui-button-secondary" icon="pi pi-angle-right" disabled="true" />                   
+                    <p:commandButton value="Siguiente" type="submit" actionListener="#{stepFiveView.nextStep()}" update="formPrincipalProyecto" styleClass="ui-button-secondary" icon="pi pi-angle-right" />                   
                 </center>
             </div>
 

@@ -249,7 +249,7 @@ public class CuestionarioDAO implements Serializable
         
             iniciaOperacion(); 
             
-            Query query = sesion.createQuery("from Cuestionario c where c.proyecto.poIdProyectoPk = ? and c.cuIdEstado = ? order c.cuTxDescripcion asc ");
+            Query query = sesion.createQuery("from Cuestionario c where c.proyecto.poIdProyectoPk = ? and c.cuIdEstado = ? order by c.cuTxDescripcion asc ");
             query.setInteger(0, intIdProyecto);
             query.setInteger(1, intEstadoCuestionario);
             

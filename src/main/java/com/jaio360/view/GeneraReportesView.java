@@ -488,13 +488,13 @@ public class GeneraReportesView implements Serializable{
 
                     if(flag){
                         log.debug("Archivo zipeado correctamente");
-                        //InputStream stream = new FileInputStream(objFile.getAbsolutePath());
+                        InputStream stream = new FileInputStream(objFile.getAbsolutePath());
                         //fileGrupal = new DefaultStreamedContent(stream, "application/zip", ZipName);
 
                         fileGrupal = DefaultStreamedContent.builder()
                         .name(ZipName)
                         .contentType("application/zip")
-                        .stream(() -> FacesContext.getCurrentInstance().getExternalContext().getResourceAsStream(objFile.getAbsolutePath()))
+                        .stream(() -> stream)
                         .build();
 
                     }else{
@@ -917,13 +917,13 @@ public class GeneraReportesView implements Serializable{
 
                     if(flag){
                         log.debug("Archivo zipeado correctamente");
-                        //InputStream stream = new FileInputStream(objFile.getAbsolutePath());
+                        InputStream stream = new FileInputStream(objFile.getAbsolutePath());
                         //fileIndividual = new DefaultStreamedContent().getStream().stream, "application/zip");
                         
                         fileIndividual = DefaultStreamedContent.builder()
                         .name(ZipName)
                         .contentType("application/zip")
-                        .stream(() -> FacesContext.getCurrentInstance().getExternalContext().getResourceAsStream(objFile.getAbsolutePath()))
+                        .stream(() -> stream)
                         .build();
 
                     }else{
