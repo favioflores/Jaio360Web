@@ -16,8 +16,10 @@ public class Tarifa  implements java.io.Serializable {
      private Integer taIdTarifaPk;
      private String taTxDescripcion;
      private BigDecimal taDePrecio;
+     private int taIdTipoTarifa;
      private Date taFeCreacion;
      private int taIdEstado;
+     private String taTxPrefijo;
      private Set contratos = new HashSet(0);
 
     public Tarifa() {
@@ -41,6 +43,15 @@ public class Tarifa  implements java.io.Serializable {
     public Integer getTaIdTarifaPk() {
         return this.taIdTarifaPk;
     }
+
+    public String getTaTxPrefijo() {
+        return taTxPrefijo;
+    }
+
+    public void setTaTxPrefijo(String taTxPrefijo) {
+        this.taTxPrefijo = taTxPrefijo;
+    }
+    
     
     public void setTaIdTarifaPk(Integer taIdTarifaPk) {
         this.taIdTarifaPk = taIdTarifaPk;
@@ -81,8 +92,13 @@ public class Tarifa  implements java.io.Serializable {
         this.contratos = contratos;
     }
 
+    public int getTaIdTipoTarifa() {
+        return taIdTipoTarifa;
+    }
 
-
+    public void setTaIdTipoTarifa(int taIdTipoTarifa) {
+        this.taIdTipoTarifa = taIdTipoTarifa;
+    }
 
 }
 

@@ -26,10 +26,20 @@ public class Participante  implements java.io.Serializable {
      private Integer paNrTiempoTrabajo;
      private String paTxOcupacion;
      private String paTxAreaNegocio;
+     private Integer paNrAnalisisDescarga;
+     
      private Set relacionParticipantes = new HashSet(0);
      private Set cuestionarioEvaluados = new HashSet(0);
 
     public Participante() {
+    }
+
+    public Integer getPaNrAnalisisDescarga() {
+        return paNrAnalisisDescarga;
+    }
+
+    public void setPaNrAnalisisDescarga(Integer paNrAnalisisDescarga) {
+        this.paNrAnalisisDescarga = paNrAnalisisDescarga;
     }
 
 	

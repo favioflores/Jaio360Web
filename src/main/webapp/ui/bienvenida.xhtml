@@ -14,6 +14,9 @@
             }
         </style>
     </ui:define>
+    <ui:define name="cabecera">
+        <ui:include src="cabecera.xhtml" />
+    </ui:define>
     <ui:define name="content">
 
         <!--
@@ -111,7 +114,7 @@
             <p:progressBar id="progressBarIndeterminate" style="height:10px;" mode="indeterminate"/>
         </p:dialog>
 
-        <p:dialog widgetVar="dlgEvaluaciones" header="Lista de evaluaciones" style="max-width: 90%; "  draggable="false" closable="false" hideEffect="drop" showEffect="drop"  resizable="false" >
+        <p:dialog widgetVar="dlgEvaluaciones" header="Lista de evaluaciones pendientes" style="max-width: 90%; "  draggable="false" closable="false" hideEffect="drop" showEffect="drop"  resizable="false" >
             <h:form>
                 <p:panel>
                     <p:dataTable var="eva" value="#{listasPrincipalView.lstEvaluaciones}"
@@ -138,18 +141,28 @@
                         <p:column headerText="Correo">
                             <h:outputText value="#{eva.strCorreoEvaluado}" /> 
                         </p:column>
+                        <!--
                         <p:column headerText="Relación">
                             <p:tag value="#{eva.strRelacion}" style=" background-color: #{rel.strRelacionColor};" />
                         </p:column>
+                        -->
                         <p:column headerText="Proyecto">
                             <h:outputText value="#{eva.strDescNombre}" /> 
                         </p:column>
                         <p:column>
                             <p:commandButton type="submit" 
                                              actionListener="#{listasPrincipalView.irEvaluacion(eva)}" 
-                                             value="Evaluar" />
+                                             value="Click para evaluar" />
                         </p:column>
+
+                        <f:facet name="footer">
+                            <p:commandButton type="submit" value="Regresar a la bienvenida" 
+                                             oncomplete="PF('dlgBienvenida').show()" 
+                                             onclick="PF('dlgEvaluaciones').hide()" 
+                                             ajax="true" icon="pi pi-arrow-left" /> 
+                        </f:facet>
                     </p:dataTable>
+
                     <br/>
                     <center>
                         <p:graphicImage value="../images/logoJaio360.jpg" width="130" height="50" />

@@ -404,6 +404,45 @@ public class ResultadoDAO implements Serializable{
         return listaResultado;
     }
     
+public List listaItemsAltoPromedioMismo(Integer intEvaluadoPk) throws HibernateException { 
+        
+        List listaResultado = null;  
+
+        try{
+            
+            iniciaOperacion(); 
+            Query query = sesion.createSQLQuery(
+" select coc.CU_ID_CUESTIONARIO_FK,                                                 " +
+"        coc.CO_TX_DESCRIPCION as cuestionario,                                     " +
+"        cop.CO_TX_DESCRIPCION as pregunta,                                         " +
+"        AVG(dm.DE_NU_ORDEN + 1)                                                    " +
+"   from proyecto po,                                                               " +
+"        resultado res,                                                             " +
+"        detalle_metrica dm,                                                        " +
+"        componente cop,                                                            " +
+"        componente coc                                                             " +
+"  where po.PO_ID_PROYECTO_PK = ?                                                   " +
+"    and res.PO_ID_PROYECTO_FK = po.PO_ID_PROYECTO_PK                               " +
+"    and res.PA_ID_PARTICIPANTE_FK = ?                                              " +
+"    and dm.DE_ID_DETALLE_ESCALA_PK = res.DE_ID_DETALLE_ESCALA_FK                   " +
+"    and res.CO_ID_COMPONENTE_FK = cop.CO_ID_COMPONENTE_PK                          " +
+"    and coc.CO_ID_COMPONENTE_PK = cop.CO_ID_COMPONENTE_REF_FK                      " +
+"    and res.RE_ID_RELACION_FK is null                                          " +
+"  GROUP BY coc.CU_ID_CUESTIONARIO_FK ,coc.CO_TX_DESCRIPCION, cop.CO_TX_DESCRIPCION " +
+"  ORDER BY 4 desc ");
+            
+            query.setInteger(0, Utilitarios.obtenerProyecto().getIntIdProyecto());
+            query.setInteger(1, intEvaluadoPk);
+            
+            listaResultado = query.list();
+            
+        } finally { 
+            sesion.close(); 
+        }  
+
+        return listaResultado;
+    }
+    
     public List listaGrupalSumarioCategoriaGeneral(DatosReporte objDatosReporte) throws HibernateException { 
         
         List listaResultado = null;  
@@ -489,7 +528,45 @@ public class ResultadoDAO implements Serializable{
         return listaResultado;
     
     }
-      
+       public List listaItemsBajaPromedioMismo(Integer intEvaluadoPk) throws HibernateException { 
+        
+        List listaResultado = null;  
+
+        try{
+            
+            iniciaOperacion(); 
+            Query query = sesion.createSQLQuery(
+" select coc.CU_ID_CUESTIONARIO_FK,                                                 " +
+"        coc.CO_TX_DESCRIPCION as cuestionario,                                     " +
+"        cop.CO_TX_DESCRIPCION as pregunta,                                         " +
+"        AVG(dm.DE_NU_ORDEN + 1)                                                    " +
+"   from proyecto po,                                                               " +
+"        resultado res,                                                             " +
+"        detalle_metrica dm,                                                        " +
+"        componente cop,                                                            " +
+"        componente coc                                                             " +
+"  where po.PO_ID_PROYECTO_PK = ?                                                   " +
+"    and res.PO_ID_PROYECTO_FK = po.PO_ID_PROYECTO_PK                               " +
+"    and res.PA_ID_PARTICIPANTE_FK = ?                                              " +
+"    and dm.DE_ID_DETALLE_ESCALA_PK = res.DE_ID_DETALLE_ESCALA_FK                   " +
+"    and res.CO_ID_COMPONENTE_FK = cop.CO_ID_COMPONENTE_PK                          " +
+"    and coc.CO_ID_COMPONENTE_PK = cop.CO_ID_COMPONENTE_REF_FK                      " +
+"    and res.RE_ID_RELACION_FK is null                                          " +
+"  GROUP BY coc.CU_ID_CUESTIONARIO_FK ,coc.CO_TX_DESCRIPCION, cop.CO_TX_DESCRIPCION " +
+"  ORDER BY 4 asc ");
+            
+            query.setInteger(0, Utilitarios.obtenerProyecto().getIntIdProyecto());
+            query.setInteger(1, intEvaluadoPk);
+
+            listaResultado = query.list();
+
+        } finally { 
+            sesion.close(); 
+        }  
+
+        return listaResultado;
+    
+    }
       public List listaReporteSumarioMismo(Componente objComponente, Integer intEvaluadoPk) throws HibernateException { 
         
         List listaResultado = null;  

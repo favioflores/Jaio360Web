@@ -330,8 +330,10 @@ public class NotificacionesDAO implements Serializable {
         LinkedHashMap<String, String> mapCuentas = new LinkedHashMap<>();
 
         for (RelacionEvaluadoEvaluador objRelacionEvaluadoEvaluador : lstRelacionEvaluadoEvaluador) {
-            if (!mapCuentas.containsKey(objRelacionEvaluadoEvaluador.getStrCorreoEvaluador())) {
-                mapCuentas.put(objRelacionEvaluadoEvaluador.getStrCorreoEvaluador(), objRelacionEvaluadoEvaluador.getStrDescEvaluador());
+            if (objRelacionEvaluadoEvaluador.getBlEvaluacionTerminada() == null || objRelacionEvaluadoEvaluador.getBlEvaluacionTerminada().equals(false)) {
+                if (!mapCuentas.containsKey(objRelacionEvaluadoEvaluador.getStrCorreoEvaluador())) {
+                    mapCuentas.put(objRelacionEvaluadoEvaluador.getStrCorreoEvaluador(), objRelacionEvaluadoEvaluador.getStrDescEvaluador());
+                }
             }
         }
 
@@ -341,7 +343,7 @@ public class NotificacionesDAO implements Serializable {
             Usuario objUsuario;
             Object obj;
 
-            for (Map.Entry<String,String> entry : mapCuentas.entrySet()){
+            for (Map.Entry<String, String> entry : mapCuentas.entrySet()) {
 
                 obj = objUsuarioDAO.obtenUsuario(entry.getKey(), sesion);
 
@@ -353,7 +355,7 @@ public class NotificacionesDAO implements Serializable {
                     strNotificacionPer = strNotificacionPer.replace("$TIEMPO", Utilitarios.obtieneFechaSistema(Constantes.FORMAT_DATE_FULL));
                     strNotificacionPer = strNotificacionPer.replace("$CUENTA", entry.getKey());
                     strNotificacionPer = strNotificacionPer.replace("$CLAVE", objEncryptDecrypt.decrypt(objUsuario.getUsTxContrasenia()));
-                    strNotificacionPer = strNotificacionPer.replace("$URL", "http://www.jaio360-app.com");
+                    strNotificacionPer = strNotificacionPer.replace("$URL", "https://www.jaio360-app.com");
                     strNotificacionPer = strNotificacionPer.replace("$TITULO", Utilitarios.decodeUTF8(objMensaje.getMeTxConvocatoriaTitulo()));
                     strNotificacionPer = strNotificacionPer.replace("$PARRAFO", Utilitarios.decodeUTF8(objMensaje.getMeTxConvocatoriaParrafo()));
 

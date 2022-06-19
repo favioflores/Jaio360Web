@@ -11,6 +11,7 @@
 
     <ui:define name="cabecera">
         <ui:include src="cabecera.xhtml" />
+        <p:staticMessage severity="info" summary="INFO" detail="El proyecto actual es: #{stepTwoView.objProyectoInfo.strDescNombre}" style="width: 100%; margin-top: 5px; margin-left: 2px; margin-right: 2px;"/>
     </ui:define>
     <ui:define name="helpSteps">
 
@@ -75,18 +76,32 @@
 
                                 <p:spacer/>
 
-                                <c:forEach var="counter" begin="1" end="#{crearCuestionarioView.intRangos}">
-                                    <div class="p-field">
-                                        <span class="ui-float-label">
+                                <div class="ui-fluid p-formgrid p-grid">
 
-                                            <p:inputText required="true" label="aqui" value="#{crearCuestionarioView.strRptaDesc[counter-1]}" >
-                                                <p:ajax event="blur" listener="#{crearCuestionarioView.addMetrica(counter-1)}" update="formMetrica" />
-                                            </p:inputText>
-                                            <p:outputLabel for="@previous" value="Etiqueta de respuesta nro. #{counter}"/>
-                                        </span>
-                                    </div>        
-                                </c:forEach>
+                                    <div class="p-field p-col-12 p-md-12">
 
+                                        <c:forEach var="counter" begin="1" end="#{crearCuestionarioView.intRangos}">
+
+                                            <div class="p-field p-grid">
+                                                <div class="p-col-10">
+                                                    <span class="ui-float-label">
+                                                        <p:inputText id="idRpta#{counter-1}" required="true" requiredMessage="Debe ingresar algún dato" value="#{crearCuestionarioView.strRptaDesc[counter-1]}" >
+                                                        <!--p:ajax event="blur" process="@this" immediate="true"  update="formMetrica" /-->
+                                                    </p:inputText>
+                                                    <p:outputLabel for="@previous" value="Etiqueta de respuesta nro. #{counter}"/>
+                                                    </span>
+                                                </div>
+                                                <div class="p-col-2">
+                                                    <p:commandButton type="submit" process=":formMetrica:idRpta#{counter-1},@this" 
+                                                                     update="formMetrica" actionListener="#{crearCuestionarioView.addMetrica(counter-1)}" icon="pi pi-save" />
+                                                </div>
+
+                                            </div>
+
+                                        </c:forEach>
+
+                                    </div>
+                                </div>
                             </p:card>
 
                         </div>
@@ -326,7 +341,7 @@
                                         <p:column headerText="Tipo elemento" groupRow="true" style="width: 150px;" >
                                             <p:button value="#{cuesprev.strDato1}" style="height: 100%;" styleClass="ui-button-#{cuesprev.strDato3}" disabled="true" />
                                         </p:column>
-
+                                        <!--
                                         <p:column style="width: 60px;">
                                             <f:facet name="header">
                                                 <h:outputText value="#" />
@@ -334,6 +349,7 @@
                                             <h:outputText 
                                                 value="#{index + 1}" />
                                         </p:column> 
+                                        -->
 
                                         <p:column headerText="Descripción" >
                                             <h:outputText value="#{cuesprev.strDato2}" />
@@ -371,7 +387,7 @@
                                             <p:button value="#{cues.strTipo}" style="height: 100%;" styleClass="ui-button-#{cues.strColor}" disabled="true" />
                                         </p:column>
 
-
+                                        <!--
                                         <p:column style="width: 60px;">
                                             <f:facet name="header">
                                                 <h:outputText value="#" />
@@ -379,6 +395,7 @@
                                             <h:outputText 
                                                 value="#{index + 1}" />
                                         </p:column> 
+                                        -->
 
                                         <p:column headerText="Descripción" >
                                             <h:outputText value="#{cues.strDescripción}" />

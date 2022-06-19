@@ -15,7 +15,6 @@ import com.jaio360.utils.Constantes;
 import com.jaio360.utils.Utilitarios;
 import java.io.IOException;
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -30,7 +29,7 @@ import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpSession;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.primefaces.event.RowEditEvent;
+import org.primefaces.event.CellEditEvent;
 
 /**
  *
@@ -72,6 +71,43 @@ public class ListasPrincipalView implements Serializable {
     private Date txtFechaEjecucionFinal;
     private boolean blOcultos = false;
     private LinkedHashMap<String, String> mapRelacion;
+
+    private int intLicenciasRequeridas;
+    private int intLicenciasDisponibles;
+    private int intLicenciasReservadas;
+    private boolean blLicenciasReservadas;
+
+    public boolean isBlLicenciasReservadas() {
+        return blLicenciasReservadas;
+    }
+
+    public void setBlLicenciasReservadas(boolean blLicenciasReservadas) {
+        this.blLicenciasReservadas = blLicenciasReservadas;
+    }
+
+    public int getIntLicenciasRequeridas() {
+        return intLicenciasRequeridas;
+    }
+
+    public void setIntLicenciasRequeridas(int intLicenciasRequeridas) {
+        this.intLicenciasRequeridas = intLicenciasRequeridas;
+    }
+
+    public int getIntLicenciasDisponibles() {
+        return intLicenciasDisponibles;
+    }
+
+    public void setIntLicenciasDisponibles(int intLicenciasDisponibles) {
+        this.intLicenciasDisponibles = intLicenciasDisponibles;
+    }
+
+    public int getIntLicenciasReservadas() {
+        return intLicenciasReservadas;
+    }
+
+    public void setIntLicenciasReservadas(int intLicenciasReservadas) {
+        this.intLicenciasReservadas = intLicenciasReservadas;
+    }
 
     public List<SelectItem> getLstEstados() {
         return lstEstados;
@@ -270,6 +306,8 @@ public class ListasPrincipalView implements Serializable {
         }
     }
 
+    
+
     public void buscarProyectos() {
 
         poblarListaProyectos(Utilitarios.obtenerUsuario());
@@ -409,22 +447,21 @@ public class ListasPrincipalView implements Serializable {
                 } else {
                     objProyectoInfo.setStrRelacion("AUTOEVALUACIÓN");
                 }
-            
+
                 /*
                 objProyectoInfo.setIntIdMetodologia(objProyecto[6]);
                 objProyectoInfo.setStrDescMetodologia(objEHCacheManager.obtenerDescripcionElemento(objProyecto[6]));
                 objProyectoInfo.setIntIdEstado(objProyecto[3]);
                 objProyectoInfo.setStrDescEstado(objEHCacheManager.obtenerDescripcionElemento(objProyecto[3]));
                 objProyectoInfo.setDtFechaCreacion(objProyecto[4]);*/
-
                 lstEvaluaciones.add(objProyectoInfo);
+            }
+
+            this.lstEvaluaciones = lstEvaluaciones;
         }
-
-        this.lstEvaluaciones = lstEvaluaciones;
     }
-}
 
-public void irRed(ProyectoInfo objProyectoInfo) {
+    public void irRed(ProyectoInfo objProyectoInfo) {
 
         try {
 
@@ -467,7 +504,7 @@ public void irRed(ProyectoInfo objProyectoInfo) {
             session.removeAttribute("evalInfo");
             session.setAttribute("evalInfo", objProyectoInfo);
             FacesContext.getCurrentInstance().getExternalContext().redirect("ejecutarEvaluacion.jsf");
-            
+
         } catch (IOException ex) {
             log.error(ex);
         }
@@ -482,40 +519,46 @@ public void irRed(ProyectoInfo objProyectoInfo) {
 
             objProyectoDAO.eliminaProyecto(intIdProyecto);
 
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Borrar proyecto", "El proyecto se eliminó correctamente");
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "El proyecto se eliminó correctamente", null);
             FacesContext.getCurrentInstance().addMessage(null, message);
 
             buscarProyectos();
 
         } catch (Exception ex) {
             log.error(ex);
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_FATAL, "Borrar proyecto", "Ocurrio un error al realizar esta accion. Por favor comunicate con el administrador");
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_FATAL, "Ocurrio un error al realizar esta accion. Por favor comunicate con el administrador", null);
             FacesContext.getCurrentInstance().addMessage(null, message);
         }
 
     }
 
-    public void actualizarProyecto(RowEditEvent event) {
+    public void actualizarProyecto(CellEditEvent event) {
 
         try {
-            ProyectoInfo objProyectoInfo = (ProyectoInfo) event.getObject();
 
-            ProyectoDAO objProyectoDAO = new ProyectoDAO();
+            if (Utilitarios.noEsNuloOVacio(event.getNewValue())) {
+                ProyectoInfo objProyectoInfo = this.lstProyectos.get(event.getRowIndex());
 
-            Proyecto objProyecto = objProyectoDAO.obtenProyecto(objProyectoInfo.getIntIdProyecto());
+                ProyectoDAO objProyectoDAO = new ProyectoDAO();
 
-            objProyecto.setPoTxDescripcion(objProyectoInfo.getStrDescNombre());
-            objProyecto.setPoIdMetodologia(objProyectoInfo.getIntIdMetodologia());
-            objProyecto.setPoTxMotivo(objProyectoInfo.getStrMotivo());
+                Proyecto objProyecto = objProyectoDAO.obtenProyecto(objProyectoInfo.getIntIdProyecto());
 
-            objProyectoDAO.actualizaProyecto(objProyecto);
+                objProyecto.setPoTxDescripcion(event.getNewValue().toString());
+                //objProyecto.setPoIdMetodologia(objProyectoInfo.getIntIdMetodologia());
+                //objProyecto.setPoTxMotivo(objProyectoInfo.getStrMotivo());
 
-            FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Modificación de proyecto", objProyecto.getPoTxDescripcion() + " " + objProyecto.getPoIdMetodologia());
-            FacesContext.getCurrentInstance().addMessage(null, msg);
-            init();
+                objProyectoDAO.actualizaProyecto(objProyecto);
+
+                FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Se actualizó el proyecto correctamente", null);
+                FacesContext.getCurrentInstance().addMessage(null, msg);
+                init();
+            } else {
+                FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Debe ingresar un valor", null);
+                FacesContext.getCurrentInstance().addMessage(null, msg);
+            }
         } catch (Exception e) {
             log.error(e);
-            FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Modificación de proyecto", "Ocurrio un error en la actualización");
+            FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Ocurrio un error en la actualización", null);
             FacesContext.getCurrentInstance().addMessage(null, msg);
         }
     }
@@ -526,13 +569,16 @@ public void irRed(ProyectoInfo objProyectoInfo) {
             ProyectoDAO objProyectoDAO = new ProyectoDAO();
             Proyecto objProyecto = objProyectoDAO.obtenProyecto(objProyectoInfo.getIntIdProyecto());
 
-            if (objProyectoInfo.isBoOculto()) {
+            //if (objProyectoInfo.isBoOculto()) {
+            objProyecto.setPoInOculto(Boolean.TRUE);
+            objProyectoInfo.setBoOculto(true);
+            lstProyectos.remove(objProyectoInfo);
 
-                objProyecto.setPoInOculto(Boolean.TRUE);
-                objProyectoInfo.setBoOculto(true);
-                lstProyectos.remove(objProyectoInfo);
-                FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Modificación de proyecto", "El proyecto se ocultó correctamente");
-                FacesContext.getCurrentInstance().addMessage(null, msg);
+            objProyectoDAO.actualizaProyecto(objProyecto);
+
+            FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "El proyecto se ocultó correctamente", null);
+            FacesContext.getCurrentInstance().addMessage(null, msg);
+            /*
             } else {
 
                 objProyecto.setPoInOculto(Boolean.FALSE);
@@ -540,9 +586,7 @@ public void irRed(ProyectoInfo objProyectoInfo) {
                 lstProyectos.remove(objProyectoInfo);
                 FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Modificación de proyecto", "El proyecto se habilitó correctamente");
                 FacesContext.getCurrentInstance().addMessage(null, msg);
-            }
-
-            objProyectoDAO.actualizaProyecto(objProyecto);
+            }*/
 
         } catch (Exception e) {
             log.error(e);

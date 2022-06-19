@@ -583,7 +583,7 @@ public class crearCuestionarioView implements Serializable {
             
             loadRango();
 
-            FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "La respuesta número " + idNuOrden+1 + " se agregó correctamente", null);
+            FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "La respuesta número " + (idNuOrden+1) + " se agregó correctamente", null);
             FacesContext.getCurrentInstance().addMessage(null, msg);
 
         } catch (Exception e) {

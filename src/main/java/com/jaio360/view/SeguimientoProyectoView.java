@@ -1,6 +1,7 @@
 package com.jaio360.view;
 
 import com.jaio360.application.EHCacheManager;
+import com.jaio360.dao.ContratoDAO;
 import com.jaio360.dao.CuestionarioDAO;
 import com.jaio360.dao.MensajeDAO;
 import com.jaio360.dao.NotificacionesDAO;
@@ -14,6 +15,7 @@ import com.jaio360.dao.ResultadoDAO;
 import com.jaio360.domain.Evaluado;
 import com.jaio360.domain.ProyectoInfo;
 import com.jaio360.domain.RelacionEvaluadoEvaluador;
+import com.jaio360.orm.Contrato;
 import com.jaio360.orm.Cuestionario;
 import com.jaio360.orm.CuestionarioEvaluado;
 import com.jaio360.orm.HibernateUtil;
@@ -25,6 +27,7 @@ import com.jaio360.orm.RedEvaluacion;
 import com.jaio360.orm.Relacion;
 import com.jaio360.orm.RelacionParticipante;
 import com.jaio360.orm.RelacionParticipanteId;
+import com.jaio360.orm.Tarifa;
 import com.jaio360.report.CuestionarioFisico;
 import com.jaio360.utils.Constantes;
 import com.jaio360.utils.Utilitarios;
@@ -91,6 +94,11 @@ public class SeguimientoProyectoView implements Serializable {
     private Integer intCantPartSel;
     private Integer intCantPartCuesNoEje;
     private Integer intCantPartCuesEje;
+    private Integer intLicenciasIndividuales;
+    private Integer intLicenciasMasivas;
+    private Integer intLicenciasIndividualesRequerido;
+    private Integer intLicenciasMasivasRequerido;
+    private boolean blLicenciasOK;
 
     private RadarChartModel radarGrupo;
 
@@ -128,6 +136,30 @@ public class SeguimientoProyectoView implements Serializable {
         return idParametroElegido;
     }
 
+    public Integer getIntLicenciasIndividualesRequerido() {
+        return intLicenciasIndividualesRequerido;
+    }
+
+    public void setIntLicenciasIndividualesRequerido(Integer intLicenciasIndividualesRequerido) {
+        this.intLicenciasIndividualesRequerido = intLicenciasIndividualesRequerido;
+    }
+
+    public Integer getIntLicenciasMasivasRequerido() {
+        return intLicenciasMasivasRequerido;
+    }
+
+    public boolean isBlLicenciasOK() {
+        return blLicenciasOK;
+    }
+
+    public void setBlLicenciasOK(boolean blLicenciasOK) {
+        this.blLicenciasOK = blLicenciasOK;
+    }
+
+    public void setIntLicenciasMasivasRequerido(Integer intLicenciasMasivasRequerido) {
+        this.intLicenciasMasivasRequerido = intLicenciasMasivasRequerido;
+    }
+
     public void setIdParametroElegido(Integer idParametroElegido) {
         this.idParametroElegido = idParametroElegido;
     }
@@ -138,6 +170,22 @@ public class SeguimientoProyectoView implements Serializable {
 
     public void setMapItemsParametros(LinkedHashMap<String, String> mapItemsParametros) {
         this.mapItemsParametros = mapItemsParametros;
+    }
+
+    public Integer getIntLicenciasIndividuales() {
+        return intLicenciasIndividuales;
+    }
+
+    public void setIntLicenciasIndividuales(Integer intLicenciasIndividuales) {
+        this.intLicenciasIndividuales = intLicenciasIndividuales;
+    }
+
+    public Integer getIntLicenciasMasivas() {
+        return intLicenciasMasivas;
+    }
+
+    public void setIntLicenciasMasivas(Integer intLicenciasMasivas) {
+        this.intLicenciasMasivas = intLicenciasMasivas;
     }
 
     public RadarChartModel getRadarGrupo() {
@@ -343,6 +391,7 @@ public class SeguimientoProyectoView implements Serializable {
         intCantPartParam = 0;
         intCantPartCuesNoEje = 0;
         intCantPartCuesEje = 0;
+        intPorcentajeGeneral = 0;
 
         Integer idProyecto = Utilitarios.obtenerProyecto().getIntIdProyecto();
 
@@ -392,6 +441,8 @@ public class SeguimientoProyectoView implements Serializable {
 
         /* POBLAR RADAR */
         createRadarModel();
+
+        calcularLicencias();
 
         /* SEGUIMIENTO */
         lstParticipantesIniciados = new ArrayList();
@@ -688,7 +739,7 @@ public class SeguimientoProyectoView implements Serializable {
                     objProyecto.setPoIdEstado(Constantes.INT_ET_ESTADO_PROYECTO_EN_EJECUCION);
                     objProyectoDAO.actualizaProyecto(objProyecto);
 
-                    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "El proyecto fue creado exitosamente", null);
+                    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "El proyecto fue iniciado exitosamente", null);
                     FacesContext.getCurrentInstance().addMessage(null, message);
                 }
             } else {
@@ -889,7 +940,7 @@ public class SeguimientoProyectoView implements Serializable {
 
         objProyectoDAO.terminarProyecto(Utilitarios.obtenerProyecto().getIntIdProyecto());
 
-        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Terminar proyecto", "El proyecto fue concluido exitosamente");
+        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "El proyecto fue terminado exitosamente", null);
         FacesContext.getCurrentInstance().addMessage(null, message);
         init();
 
@@ -1032,6 +1083,31 @@ public class SeguimientoProyectoView implements Serializable {
         } else {
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Se debe seleccionar al menos un evaluado", null);
             FacesContext.getCurrentInstance().addMessage(null, message);
+        }
+
+    }
+
+    public void enviarRecordatorioPersonal(RelacionEvaluadoEvaluador objRelacionEvaluadoEvaluador) {
+
+        NotificacionesDAO objNotificacionesDAO = new NotificacionesDAO();
+        try {
+
+            List<RelacionEvaluadoEvaluador> lstEvaluadoEvaluadors = new ArrayList<>();
+
+            lstEvaluadoEvaluadors.add(objRelacionEvaluadoEvaluador);
+
+            if (objNotificacionesDAO.guardaNotificacionesEvaluadores(lstEvaluadoEvaluadors)) {
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Se envió el recordatorio correctamente", null);
+                FacesContext.getCurrentInstance().addMessage(null, message);
+            } else {
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_FATAL, "Ocurrió un error al enviar el recordatorio", null);
+                FacesContext.getCurrentInstance().addMessage(null, message);
+            }
+
+        } catch (HibernateException ex) {
+            log.error(ex);
+        } catch (Exception ex) {
+            log.error(ex);
         }
 
     }
@@ -1184,6 +1260,154 @@ public class SeguimientoProyectoView implements Serializable {
 
         radarGrupo.setOptions(options);
         radarGrupo.setData(data);;
+    }
+
+    public void calcularLicencias() {
+        try {
+            this.intLicenciasIndividuales = 0;
+            this.intLicenciasMasivas = 0;
+            this.intLicenciasIndividualesRequerido = 0;
+            this.intLicenciasMasivasRequerido = 0;
+
+            Integer intIndividualesRequerido = 0;
+            Integer intMasivasRequerido = 0;
+            this.blLicenciasOK = false;
+
+            //Integer idTipoTarifaProyecto = null;
+            //Calcular licencias requeridas para el proyecto
+            ProyectoInfo objProyectoInfo = Utilitarios.obtenerProyecto();
+
+            //Participantes
+            ParticipanteDAO objParticipanteDAO = new ParticipanteDAO();
+            List lstParticipanteRedEvaluacion = objParticipanteDAO.obtenerNroParticipantes(objProyectoInfo.getIntIdProyecto());
+            Iterator itLstParticipanteRedEvaluacion = lstParticipanteRedEvaluacion.iterator();
+
+            while (itLstParticipanteRedEvaluacion.hasNext()) {
+
+                Object[] obj = (Object[]) itLstParticipanteRedEvaluacion.next();
+
+                Integer nroEvaluadores = Integer.parseInt(obj[1].toString());
+
+                if (nroEvaluadores > 20) {
+                    intMasivasRequerido++;
+                } else {
+                    intIndividualesRequerido++;
+                }
+
+            }
+
+            this.intLicenciasIndividualesRequerido = intIndividualesRequerido;
+            this.intLicenciasMasivasRequerido = intMasivasRequerido;
+
+            //Obtener licencias disponibles
+            ContratoDAO objContratoDAO = new ContratoDAO();
+            List<Contrato> lstContratosConfirmados = objContratoDAO.obtenListaContratoPorUsuario(Utilitarios.obtenerUsuario().getIntUsuarioPk());
+
+            for (Contrato objContrato : lstContratosConfirmados) {
+
+                Tarifa objTarifa = objContrato.getTarifa();
+                if (objTarifa.getTaIdTipoTarifa() == Constantes.INT_ET_TIPO_TARIFA_INDIVIDUAL) {
+                    this.intLicenciasIndividuales = objContrato.getCoNuLicenciaDisponible();
+                } else {
+                    this.intLicenciasMasivas = objContrato.getCoNuLicenciaDisponible();
+                }
+            }
+
+            //Validar si las licencias estan ok
+            if(this.intLicenciasIndividuales >= this.intLicenciasIndividualesRequerido &&
+                    this.intLicenciasMasivas >= this.intLicenciasMasivasRequerido){
+                blLicenciasOK = true;
+            }else{
+                blLicenciasOK = false;
+            }
+            
+        } catch (Exception e) {
+            log.error(e);
+        }
+    }
+
+    public void reservarLicencias() {
+        try {
+            calcularLicencias();
+            boolean blLicenciasOk = true;
+
+            ContratoDAO objContratoDAO = new ContratoDAO();
+            List<Contrato> lstContratosConfirmados = objContratoDAO.obtenListaContratoPorUsuario(Utilitarios.obtenerUsuario().getIntUsuarioPk());
+
+            /**
+             * INDIVIDUALES
+             */
+            if (this.intLicenciasIndividualesRequerido > 0) {
+
+                for (Contrato objContrato : lstContratosConfirmados) {
+                    if (objContrato.getTarifa().getTaIdTipoTarifa() == Constantes.INT_ET_TIPO_TARIFA_INDIVIDUAL) {
+                        Integer intLicDisponibles = objContrato.getCoNuLicenciaDisponible();
+                        if (intLicDisponibles == this.intLicenciasIndividualesRequerido) {
+                            objContrato.setCoNuLicenciaDisponible(intLicDisponibles - this.intLicenciasIndividualesRequerido);
+                            objContrato.setCoNuLicenciaReservada(objContrato.getCoNuLicenciaReservada() + intLicenciasIndividualesRequerido);
+                            this.intLicenciasIndividualesRequerido = 0;
+                        } else if (intLicDisponibles > this.intLicenciasIndividualesRequerido) {
+                            intLicDisponibles = intLicDisponibles - this.intLicenciasIndividualesRequerido;
+                            objContrato.setCoNuLicenciaDisponible(intLicDisponibles);
+                            objContrato.setCoNuLicenciaReservada(objContrato.getCoNuLicenciaReservada() + this.intLicenciasIndividualesRequerido);
+                            this.intLicenciasIndividualesRequerido = 0;
+                        } else {
+                            this.intLicenciasIndividualesRequerido = this.intLicenciasIndividualesRequerido - intLicDisponibles;
+                            objContrato.setCoNuLicenciaDisponible(0);
+                            objContrato.setCoNuLicenciaReservada(objContrato.getCoNuLicenciaReservada() + intLicDisponibles);
+                        }
+                    }
+                }
+            }
+
+            /**
+             * MASIVAS
+             */
+            if (this.intLicenciasMasivasRequerido > 0) {
+                for (Contrato objContrato : lstContratosConfirmados) {
+                    if (objContrato.getTarifa().getTaIdTipoTarifa() == Constantes.INT_ET_TIPO_TARIFA_MASIVO) {
+                        Integer intLicDisponibles = objContrato.getCoNuLicenciaDisponible();
+                        if (intLicDisponibles == this.intLicenciasMasivasRequerido) {
+                            objContrato.setCoNuLicenciaDisponible(intLicDisponibles - this.intLicenciasMasivasRequerido);
+                            objContrato.setCoNuLicenciaReservada(this.intLicenciasMasivasRequerido);
+                            this.intLicenciasMasivasRequerido = 0;
+                        } else if (intLicDisponibles > this.intLicenciasMasivasRequerido) {
+                            intLicDisponibles = intLicDisponibles - this.intLicenciasMasivasRequerido;
+                            objContrato.setCoNuLicenciaDisponible(intLicDisponibles);
+                            objContrato.setCoNuLicenciaReservada(this.intLicenciasMasivasRequerido);
+                            this.intLicenciasMasivasRequerido = 0;
+                        } else {
+                            this.intLicenciasMasivasRequerido = this.intLicenciasMasivasRequerido - intLicDisponibles;
+                            objContrato.setCoNuLicenciaDisponible(0);
+                            objContrato.setCoNuLicenciaReservada(intLicDisponibles);
+                        }
+                    }
+                }
+            }
+
+            if (this.intLicenciasIndividualesRequerido == 0 && this.intLicenciasMasivasRequerido == 0) {
+                try {
+
+                    for (Contrato objContrato : lstContratosConfirmados) {
+                        objContratoDAO.actualizaContrato(objContrato);
+                    }
+                    iniciarProceso();
+                } catch (Exception e) {
+                    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Ocurrió un problema. Por favor probar nuevamente", null);
+                    FacesContext.getCurrentInstance().addMessage(null, message);
+                }
+
+            } else {
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "No hay licencias disponibles para iniciar el proceso. Por favor comunicarse con nosotros", null);
+                FacesContext.getCurrentInstance().addMessage(null, message);
+            }
+
+        } catch (Exception e) {
+            log.error(e);
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Ocurrió un problema. Por favor probar nuevamente", null);
+            FacesContext.getCurrentInstance().addMessage(null, message);
+        }
+
     }
 
 }

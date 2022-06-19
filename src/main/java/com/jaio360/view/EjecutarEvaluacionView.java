@@ -321,6 +321,28 @@ public class EjecutarEvaluacionView implements Serializable {
 
     }
 
+    public void ultimaPregunta() {
+
+        if (this.intNroPreguntasActual < lstPreguntasCerradas.size()) {
+            isPreguntaCerradaActual = true;
+            //guardar respuesta a pregunta cerrada respondida
+            grabarRespuestaCerradaActual();
+        } else {
+            isPreguntaCerradaActual = false;
+            //guardar respuesta a pregunta cerrada respondida
+            grabarRespuestaAbiertaActual();
+        }
+
+        if (this.intNroPreguntasActual < lstPreguntasCerradas.size() - 1) {
+            isPreguntaCerradaActual = true;
+        } else {
+            isPreguntaCerradaActual = false;
+        }
+
+        guardarResultado();
+
+    }
+
     public void previaPregunta() {
 
         if (this.intNroPreguntasActual < lstPreguntasCerradas.size()) {
@@ -378,6 +400,10 @@ public class EjecutarEvaluacionView implements Serializable {
         //Obtener respuesta previamente respondida
         this.strDescripcionPreguntaAbiertaActual = lstPreguntasAbiertas.get(this.intNroPreguntasActual - this.lstPreguntasCerradas.size()).getStrDescripcion();
 
+        if (Utilitarios.noEsNuloOVacio(lstPreguntasAbiertas.get(this.intNroPreguntasActual - this.lstPreguntasCerradas.size()).getStrRespuesta())) {
+            this.strRptaPreguntaAbierta = lstPreguntasAbiertas.get(this.intNroPreguntasActual - this.lstPreguntasCerradas.size()).getStrRespuesta();
+        }
+
     }
 
     public void grabarRespuestaCerradaActual() {
@@ -412,7 +438,6 @@ public class EjecutarEvaluacionView implements Serializable {
         }
     }
 
-   
     public EjecutarEvaluacionView() {
 
         try {
@@ -421,8 +446,7 @@ public class EjecutarEvaluacionView implements Serializable {
 
             if (objProyectoInfo.isBoDefineArtificio()) {
                 strDescEvaluado = "Usted está evaluando a "
-                        + objProyectoInfo.getStrNombreEvaluado() + " (" + objProyectoInfo.getStrRelacion() + ") como "
-                        + objProyectoInfo.getStrNombreEvaluador();
+                        + objProyectoInfo.getStrNombreEvaluado();
             } else {
                 strDescEvaluado = "Usted está evaluando a " + objProyectoInfo.getStrNombreEvaluado();
             }
@@ -523,7 +547,7 @@ public class EjecutarEvaluacionView implements Serializable {
                 UsuarioInfo objUsuarioInfo = Utilitarios.obtenerUsuario();
                 try {
                     if (objUsuarioInfo.isBoEsAdministrador() || objUsuarioInfo.isBoEsUsuarioMaestro()) {
-                        FacesContext.getCurrentInstance().getExternalContext().redirect("principal.jsf");
+                        FacesContext.getCurrentInstance().getExternalContext().redirect("stepFive.jsf");
                     } else {
                         FacesContext.getCurrentInstance().getExternalContext().redirect("bienvenida.jsf");
                     }
@@ -550,9 +574,9 @@ public class EjecutarEvaluacionView implements Serializable {
             if (session.getAttribute("evalInfo") == null) {
                 if (objUsuarioInfo.isBoEsAdministrador() || objUsuarioInfo.isBoEsUsuarioMaestro()) {
                     if (objProyectoInfo.isBoDefineArtificio()) {
-                        FacesContext.getCurrentInstance().getExternalContext().redirect("seguimientoProyecto.jsf");
+                        FacesContext.getCurrentInstance().getExternalContext().redirect("stepFive.jsf");
                     } else {
-                        FacesContext.getCurrentInstance().getExternalContext().redirect("principal.jsf");
+                        FacesContext.getCurrentInstance().getExternalContext().redirect("bienvenida.jsf");
                     }
                 } else {
                     FacesContext.getCurrentInstance().getExternalContext().redirect("bienvenida.jsf");
@@ -560,65 +584,7 @@ public class EjecutarEvaluacionView implements Serializable {
             } else {
 
 
-                /*
-                List<UIComponent> lstTabs = objOutputPanelCerrada.getChildren();
-
-                for (UIComponent c : lstTabs) {
-
-                    HtmlPanelGrid ojHtmlPanelGrid = (HtmlPanelGrid) c;
-
-                    List<UIComponent> lstComp = ojHtmlPanelGrid.getChildren();
-
-                    for (UIComponent s : lstComp) {
-                        if (s instanceof SelectOneRadio) {
-                            SelectOneRadio componente = (SelectOneRadio) s;
-
-                            if (Utilitarios.noEsNuloOVacio(componente.getValue()) && !componente.getValue().toString().equals("-1")) {
-                                String idDetalleMetrica = (String) (componente.getValue());
-                                String idComponentePk = componente.getId().substring(2);
-                                guardarResultadoEval(idComponentePk, idDetalleMetrica, null, idProyecto, IdEvaluado, null);
-                            }
-                        } else if (s instanceof InputTextarea) {
-
-                            InputTextarea input = (InputTextarea) s;
-
-                            String ssdf = (String) input.getValue();
-                            if (Utilitarios.noEsNuloOVacio(input.getValue())) {
-                                String id = input.getId();
-                                String idComponentePk = id.substring(id.indexOf("_") + 1);
-                                String idComponentePreguntaPk = id.substring(3, id.indexOf("_"));
-                                guardarResultadoEval(idComponentePk, null, input.getValue().toString(), idProyecto, IdEvaluado, idComponentePreguntaPk);
-                            }
-
-                        }
-                    }
-                }
-
-               
-                List<UIComponent> lstAbiertas = objOutputPanelAbierta.getChildren();
-
-                for (UIComponent c : lstAbiertas) {
-
-                    HtmlPanelGrid objHtmlPanelGridAbierta = (HtmlPanelGrid) c;
-
-                    for (UIComponent s : objHtmlPanelGridAbierta.getChildren()) {
-
-                        if (s instanceof InputTextarea) {
-
-                            InputTextarea input = (InputTextarea) s;
-
-                            if (Utilitarios.noEsNuloOVacio(input.getValue())) {
-                                String id = input.getId();
-
-                                String idComponentePk = id.substring(id.indexOf("_") + 1);
-                                this.guardarResultadoEval(idComponentePk, null, input.getValue().toString(), idProyecto, IdEvaluado, null);
-                            }
-
-                        }
-                    }
-                }
-                 */
- /* GUARDA RESPUESTAS PREGUNTAS CERRADAS */
+                /* GUARDA RESPUESTAS PREGUNTAS CERRADAS */
                 for (PreguntaCerradaBean objPreguntaCerradaBean : this.lstPreguntasCerradas) {
                     if (objPreguntaCerradaBean.isBlRespondido()) {
                         guardarResultadoEval(objPreguntaCerradaBean.getId().toString(), objPreguntaCerradaBean.getIdRespuesta().toString(), null, idProyecto, IdEvaluado, null);
@@ -655,11 +621,6 @@ public class EjecutarEvaluacionView implements Serializable {
 
                 blTerminado = true;
 
-                salir();
-
-                session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
-                session.removeAttribute("evalInfo");
-
             }
         } catch (IOException ex) {
             log.debug(ex);
@@ -675,11 +636,16 @@ public class EjecutarEvaluacionView implements Serializable {
                 if (objProyectoInfo.isBoDefineArtificio()) {
                     FacesContext.getCurrentInstance().getExternalContext().redirect("stepFive.jsf");
                 } else {
-                    FacesContext.getCurrentInstance().getExternalContext().redirect("principal.jsf");
+                    FacesContext.getCurrentInstance().getExternalContext().redirect("bienvenida.jsf");
                 }
             } else {
                 FacesContext.getCurrentInstance().getExternalContext().redirect("bienvenida.jsf");
             }
+            
+            HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
+            session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
+            session.removeAttribute("evalInfo");
+
         } catch (IOException ex) {
             log.debug(ex);
         }

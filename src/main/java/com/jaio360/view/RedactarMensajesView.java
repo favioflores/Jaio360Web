@@ -282,21 +282,33 @@ public class RedactarMensajesView extends VelocityViewServlet implements Seriali
 
         for (Mensaje objMensaje : lstMensajes) {
             if (objMensaje.getMeIdTipoMensaje().equals(Constantes.INT_ET_NOTIFICACION_CONVOCATORIA)) {
-                blConvocatoria = true;
-                strPreviewConvocatoriaTemplate = Utilitarios.decodeUTF8(objMensaje.getMeTxCuerpo());
-                strAsuntoConvocatoria = objMensaje.getMeTxAsunto();
-                strTituloConvocatoria = Utilitarios.decodeUTF8(objMensaje.getMeTxConvocatoriaTitulo());
-                strParrafoConvocatoria = Utilitarios.decodeUTF8(objMensaje.getMeTxConvocatoriaParrafo());
+                try {
+                    blConvocatoria = true;
+                    strPreviewConvocatoriaTemplate = Utilitarios.decodeUTF8(objMensaje.getMeTxCuerpo());
+                    strAsuntoConvocatoria = objMensaje.getMeTxAsunto();
+                    strTituloConvocatoria = Utilitarios.decodeUTF8(objMensaje.getMeTxConvocatoriaTitulo());
+                    strParrafoConvocatoria = Utilitarios.decodeUTF8(objMensaje.getMeTxConvocatoriaParrafo());
+                } catch (Exception e) {
+                    blConvocatoria = false;
+                }
             } else if (objMensaje.getMeIdTipoMensaje().equals(Constantes.INT_ET_NOTIFICACION_INSTRUCCIONES)) {
-                blBienvenida = true;
-                strPreviewBienvenidaTemplate = Utilitarios.decodeUTF8(objMensaje.getMeTxCuerpo());
-                strBienvenidaRecomendaciones = Utilitarios.decodeUTF8(objMensaje.getMeTxBienvenidaRecomendacion());
-                strBienvenidaConfidencialidad = Utilitarios.decodeUTF8(objMensaje.getMeTxBienvenidaConfidencialidad());
-                strBienvenidaAgradecimiento = Utilitarios.decodeUTF8(objMensaje.getMeTxBienvenidaAgradecimiento());
+                try {
+                    blBienvenida = true;
+                    strPreviewBienvenidaTemplate = Utilitarios.decodeUTF8(objMensaje.getMeTxCuerpo());
+                    strBienvenidaRecomendaciones = Utilitarios.decodeUTF8(objMensaje.getMeTxBienvenidaRecomendacion());
+                    strBienvenidaConfidencialidad = Utilitarios.decodeUTF8(objMensaje.getMeTxBienvenidaConfidencialidad());
+                    strBienvenidaAgradecimiento = Utilitarios.decodeUTF8(objMensaje.getMeTxBienvenidaAgradecimiento());
+                } catch (Exception e) {
+                    blBienvenida = false;
+                }
             } else if (objMensaje.getMeIdTipoMensaje().equals(Constantes.INT_ET_NOTIFICACION_AGRADECIMIENTO)) {
-                blAgradecimiento = true;
-                strPreviewAgradecimientoTemplate = Utilitarios.decodeUTF8(objMensaje.getMeTxCuerpo());
-                strAgradecimiento = Utilitarios.decodeUTF8(objMensaje.getMeTxAgradecimiento());
+                try {
+                    blAgradecimiento = true;
+                    strPreviewAgradecimientoTemplate = Utilitarios.decodeUTF8(objMensaje.getMeTxCuerpo());
+                    strAgradecimiento = Utilitarios.decodeUTF8(objMensaje.getMeTxAgradecimiento());
+                } catch (Exception e) {
+                    blAgradecimiento = false;
+                }
 
             }
         }
@@ -308,7 +320,7 @@ public class RedactarMensajesView extends VelocityViewServlet implements Seriali
         if (objProyecto.getPoIdEstado().equals(Constantes.INT_ET_ESTADO_PROYECTO_TERMINADO)) {
             blProyectoTerminado = true;
         }
-        
+
         this.correoExtra = Utilitarios.obtenerUsuario().getStrEmail();
 
         intIdEstadoProyecto = objProyecto.getPoIdEstado();
@@ -338,6 +350,7 @@ public class RedactarMensajesView extends VelocityViewServlet implements Seriali
     }
 
     private void setDataConvocatoria() {
+        this.strAsuntoConvocatoria = "Evaluación de desempeño";
         this.strTituloConvocatoria = "Proceso de evaluación";
         this.strParrafoConvocatoria = "<p>Hemos iniciado el proceso de cierre de la Evaluación de Desempeño 2021 en la empresa, así que, necesitamos que contestes las encuestas que te han sido asignadas. Por favor, da clic en el botón de abajo para ingresar a las encuestas. Muchas gracias por tu participación!</p><p>Utiliza el usuario y contraseña que te compartimos e ingresa al JAIO360.</p><p>A partir de este momento puedes entrar a contestar las evaluaciones que tienes asignadas.</p>";
     }
@@ -491,24 +504,24 @@ public class RedactarMensajesView extends VelocityViewServlet implements Seriali
         try {
 
             if (Utilitarios.noEsNuloOVacio(this.correoExtra)) {
-                
+
                 NotificacionesDAO objNotificacionesDAO = new NotificacionesDAO();
-                
+
                 lstCorreosExtra = new ArrayList<>();
-                
+
                 lstCorreosExtra.add(this.correoExtra);
-                
+
                 if (objNotificacionesDAO.guardarmeComunicados(lstCorreosExtra, strPreviewConvocatoriaTemplate)) {
                     FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Se enviará la notificación al correo " + correoExtra, null);
                     FacesContext.getCurrentInstance().addMessage(null, message);
-                    
+
                     this.correoExtra = Constantes.strVacio;
-                            
+
                 } else {
                     FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "No esta disponible el envio de correos. Por favor comunicate con el administrador", null);
                     FacesContext.getCurrentInstance().addMessage(null, message);
                 }
-                
+
             } else {
                 FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "El correo ingresado es inválido. Por favor ingresar un correo válido", null);
                 FacesContext.getCurrentInstance().addMessage(null, message);
@@ -605,8 +618,10 @@ public class RedactarMensajesView extends VelocityViewServlet implements Seriali
 
                     armarTemplateConvocatoria(true);
 
-                    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Template de convocatoria se guardó correctamente", null);
-                    FacesContext.getCurrentInstance().addMessage(null, message);
+                    if (blConvocatoria) {
+                        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Template de convocatoria se guardó correctamente", null);
+                        FacesContext.getCurrentInstance().addMessage(null, message);
+                    }
 
                 }
             } else if (strIdNotificacion.equals(this.ID_INSTRUCCIONES)) {
@@ -655,9 +670,10 @@ public class RedactarMensajesView extends VelocityViewServlet implements Seriali
 
                     armarTemplateBienvenida(true);
 
-                    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Template de bienvenida se guardó correctamente", null);
-                    FacesContext.getCurrentInstance().addMessage(null, message);
-
+                    if (blBienvenida) {
+                        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Template de bienvenida se guardó correctamente", null);
+                        FacesContext.getCurrentInstance().addMessage(null, message);
+                    }
                 }
             } else if (strIdNotificacion.equals(this.ID_AGRADECIMIENTO)) {
 
@@ -699,9 +715,10 @@ public class RedactarMensajesView extends VelocityViewServlet implements Seriali
 
                     armarTemplateAgradecimiento(true);
 
-                    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Template de agradecimiento se guardó correctamente", null);
-                    FacesContext.getCurrentInstance().addMessage(null, message);
-
+                    if (blAgradecimiento) {
+                        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Template de agradecimiento se guardó correctamente", null);
+                        FacesContext.getCurrentInstance().addMessage(null, message);
+                    }
                 }
             }
 

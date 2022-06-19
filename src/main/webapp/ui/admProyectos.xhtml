@@ -18,7 +18,7 @@
 
             <div class="p-grid">
 
-                <div class="p-col-12 p-md-6 p-lg-5">
+                <div class="p-col-12 p-md-12 p-lg-12">
 
                     <h:form id="crearProyecto">
                         <p:growl life="4000" showSummary="true" />
@@ -65,87 +65,94 @@
 
                 </div>
 
-                <div class="p-col-12 p-md-6 p-lg-7">
-
-                    <h:form id="frmListados">
-                        <!-- <p:outputLabel value="#{msg['pendientes.proyectos.parrafo']}" class="p-m-2" /> -->
-
-                        <p:card>
+                <div class="p-col-12 p-md-12 p-lg-12">
 
 
-                            <h3>Lista de proyectos</h3>
-                            <!--
-                            <div class="ui-fluid">
-                                <div class="p-field p-grid">
-    
-                                    <p:outputLabel for="txtDescripion" value="Nombre del proyecto :" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0" />
-                                    <div class="p-col-12 p-md-10">
-                                        <p:inputText id="txtDescripion" value="#{listasPrincipalView.txtDescripcion}" maxlength="100" size="50" />
-                                    </div>
-                                </div>
-                                <div class="p-field p-grid">
-                                    <p:outputLabel for="idTipoProyecto" value="Tipo de proyecto :" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0" />
-                                    <div class="p-col-12 p-md-10">
-                                        <p:selectOneMenu id="idTipoProyecto"  value="#{listasPrincipalView.idTipoProyecto}" >
-                                            <f:selectItems value="#{listasPrincipalView.lstMetodologias}" itemLabel="#{label}" itemValue="#{value}" />
-                                        </p:selectOneMenu> 
-                                    </div>
-    
-                                </div>
-                                <div class="p-field p-grid">
-                                    <p:outputLabel for="idEstadoProyecto" value="Estado de proyecto :" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0" />
-                                    <div class="p-col-12 p-md-10">
-                                        <p:selectOneMenu id="idEstadoProyecto" value="#{listasPrincipalView.idEstadoProyecto}" >
-                                            <f:selectItems value="#{listasPrincipalView.lstEstados}" itemLabel="#{label}" itemValue="#{value}" />
-                                        </p:selectOneMenu> 
-                                    </div>
-                                </div>
-                                <div class="p-field p-grid">
-                                    <p:outputLabel for="maskr1" value="Fecha creación inicial :"  class="p-col-12 p-mb-2 p-md-2 p-mb-md-0" />
-                                    <div class="p-col-12 p-md-10">
-                                        <p:calendar id="maskr1" value="#{listasPrincipalView.txtFechaRegistroInicial}"  pattern="dd/MM/yyyy" navigator="true" locale="es" mask="true" showOn="button" />
-                                    </div>
-                                </div>
-                                <div class="p-field p-grid">
-                                    <p:outputLabel for="maskr2" value="Fecha creación final :"  class="p-col-12 p-mb-2 p-md-2 p-mb-md-0" />
-                                    <div class="p-col-12 p-md-10">
-                                        <p:calendar id="maskr2" value="#{listasPrincipalView.txtFechaRegistroFinal}" pattern="dd/MM/yyyy" navigator="true" locale="es" mask="true" showOn="button" />
-                                    </div>
-                                </div>
-                                <div class="p-field p-grid">
-                                    <p:outputLabel value="Ver ocultos :"  class="p-col-12 p-mb-2 p-md-2 p-mb-md-0" />
-                                    <div class="p-col-12 p-md-10">
-                                        <p:toggleSwitch value="#{listasPrincipalView.blOcultos}" />
-                                    </div>
-    
-                                </div>
-                                <div class="p-grid">
-                                    <div class="p-col-6">
-                                        <p:commandButton value="Buscar" actionListener="#{listasPrincipalView.buscarProyectos()}" update=":frmListados:" />
-                                    </div>
-                                    <div class="p-col-6">
-                                        <p:commandButton value="Limpiar" actionListener="#{listasPrincipalView.limpiarFiltro()}" update=":frmListados:"  />
-                                    </div>
-                                </div>
-    
-                            </div>-->
+    <!-- <p:outputLabel value="#{msg['pendientes.proyectos.parrafo']}" class="p-m-2" /> -->
 
-                            <div class="product card">
+                    <p:card id="cardLstProyectos" >
+
+
+
+                        <h3>Lista de proyectos</h3>
+                        <!--
+                        <div class="ui-fluid">
+                            <div class="p-field p-grid">
+
+                                <p:outputLabel for="txtDescripion" value="Nombre del proyecto :" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0" />
+                                <div class="p-col-12 p-md-10">
+                                    <p:inputText id="txtDescripion" value="#{listasPrincipalView.txtDescripcion}" maxlength="100" size="50" />
+                                </div>
+                            </div>
+                            <div class="p-field p-grid">
+                                <p:outputLabel for="idTipoProyecto" value="Tipo de proyecto :" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0" />
+                                <div class="p-col-12 p-md-10">
+                                    <p:selectOneMenu id="idTipoProyecto"  value="#{listasPrincipalView.idTipoProyecto}" >
+                                        <f:selectItems value="#{listasPrincipalView.lstMetodologias}" itemLabel="#{label}" itemValue="#{value}" />
+                                    </p:selectOneMenu> 
+                                </div>
+
+                            </div>
+                            <div class="p-field p-grid">
+                                <p:outputLabel for="idEstadoProyecto" value="Estado de proyecto :" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0" />
+                                <div class="p-col-12 p-md-10">
+                                    <p:selectOneMenu id="idEstadoProyecto" value="#{listasPrincipalView.idEstadoProyecto}" >
+                                        <f:selectItems value="#{listasPrincipalView.lstEstados}" itemLabel="#{label}" itemValue="#{value}" />
+                                    </p:selectOneMenu> 
+                                </div>
+                            </div>
+                            <div class="p-field p-grid">
+                                <p:outputLabel for="maskr1" value="Fecha creación inicial :"  class="p-col-12 p-mb-2 p-md-2 p-mb-md-0" />
+                                <div class="p-col-12 p-md-10">
+                                    <p:calendar id="maskr1" value="#{listasPrincipalView.txtFechaRegistroInicial}"  pattern="dd/MM/yyyy" navigator="true" locale="es" mask="true" showOn="button" />
+                                </div>
+                            </div>
+                            <div class="p-field p-grid">
+                                <p:outputLabel for="maskr2" value="Fecha creación final :"  class="p-col-12 p-mb-2 p-md-2 p-mb-md-0" />
+                                <div class="p-col-12 p-md-10">
+                                    <p:calendar id="maskr2" value="#{listasPrincipalView.txtFechaRegistroFinal}" pattern="dd/MM/yyyy" navigator="true" locale="es" mask="true" showOn="button" />
+                                </div>
+                            </div>
+                            <div class="p-field p-grid">
+                                <p:outputLabel value="Ver ocultos :"  class="p-col-12 p-mb-2 p-md-2 p-mb-md-0" />
+                                <div class="p-col-12 p-md-10">
+                                    <p:toggleSwitch value="#{listasPrincipalView.blOcultos}" />
+                                </div>
+
+                            </div>
+                            <div class="p-grid">
+                                <div class="p-col-6">
+                                    <p:commandButton value="Buscar" actionListener="#{listasPrincipalView.buscarProyectos()}" update=":frmListados:" />
+                                </div>
+                                <div class="p-col-6">
+                                    <p:commandButton value="Limpiar" actionListener="#{listasPrincipalView.limpiarFiltro()}" update=":frmListados:"  />
+                                </div>
+                            </div>
+
+                        </div>-->
+
+                        <div class="product card">
+                            <h:form id="frmListados">
+                                <p:growl id="growlLstProyectos" life="4000" showSummary="true" />
                                 <p:dataTable
                                     id="idProyectos"
                                     var="pro"
                                     value="#{listasPrincipalView.lstProyectos}" 
                                     rows="5"
                                     paginator="true" 
+                                    editable="true"
+                                    editMode="cell"
+                                    editInitEvent="dblclick" 
                                     paginatorPosition="bottom"
-                                    paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
-                                    rowsPerPageTemplate="5,10,15" 
+                                    paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                    rowsPerPageTemplate="5,10,{ShowAll|'All'}"
                                     widgetVar="proyectosTabla"
                                     style="height: 100%;"
                                     rowIndexVar="index"
                                     size="small"
                                     >    
 
+                                    <!--
                                     <f:facet name="header">
                                         <div class="p-d-flex p-ai-center p-jc-between">
                                             <span></span>
@@ -155,6 +162,9 @@
                                         </div>
 
                                     </f:facet>
+                                    -->
+
+                                    <p:ajax event="cellEdit" listener="#{listasPrincipalView.actualizarProyecto}" update="frmListados:idProyectos,frmListados:growlLstProyectos"/>
 
                                     <!--
                                     <p:ajax event="rowEdit" listener="#{listasPrincipalView.actualizarProyecto}" update=":frmListados:idProyectos" />
@@ -163,6 +173,7 @@
                                         En total tienes #{listasPrincipalView.lstProyectos.size()} proyecto(s).
                                     </f:facet>
                                     -->
+
                                     <p:column style="width: 50px;" > 
                                         <f:facet name="header">
                                             <h:outputText value="#" />
@@ -171,11 +182,15 @@
                                             value="#{index + 1}" />
                                     </p:column>
 
-                                    <p:column headerText="Nombre" sortBy="#{pro.strDescNombre}" filterBy="#{pro.strDescNombre}"  >
+                                    <p:column headerText="Nombre" sortBy="#{pro.strDescNombre}"   >
 
                                         <p:cellEditor>
-                                            <f:facet name="output"><h:outputText id="nombre" title="#{pro.strMotivo}" value="#{pro.strDescNombre}"  /></f:facet>
-                                            <f:facet name="input"><p:inputText value="#{pro.strDescNombre}" style="width: 100%;" /></f:facet>
+                                            <f:facet name="output">
+                                                <h:outputText value="#{pro.strDescNombre}"  />
+                                            </f:facet>
+                                            <f:facet name="input">
+                                                <p:inputText value="#{pro.strDescNombre}" style="width: 100%;" />
+                                            </f:facet>
                                         </p:cellEditor>
 
                                     </p:column>
@@ -189,29 +204,35 @@
                                                                         </p:cellEditor>
                                                                     </p:column>
                                     -->
-                                    <p:column headerText="#{msg['pendientes.proy.lst.est']}" sortBy="#{pro.strDescEstado}" filterBy="#{pro.strDescEstado}" style="text-align: center;">
+                                    <p:column headerText="#{msg['pendientes.proy.lst.est']}" sortBy="#{pro.strDescEstado}" style="text-align: center;">
                                         <p:tag value="#{pro.strDescEstado}" ></p:tag>
                                     </p:column>
 
-                                    <p:column field="dtFechaCreacion" headerText="#{msg['pendientes.proy.lst.fecOpe']}" filterBy="#{pro.dtFechaCreacion}" sortBy="#{pro.dtFechaCreacion}">                                   
+                                    <p:column  headerText="#{msg['pendientes.proy.lst.fecOpe']}"  sortBy="#{pro.dtFechaCreacion}">        
+                                        <h:outputText value="#{pro.dtFechaCreacion}"  />
                                     </p:column>
 
 
                                     <p:column>
                                         <p:commandButton icon="pi pi-sign-in" styleClass="ui-button-outlined rounded-button " actionListener="#{listasPrincipalView.cargarProyecto(pro)}" immediate="true" />
                                         <p:spacer/> 
-                                        <p:commandButton icon="pi pi-trash" styleClass="ui-button-outlined rounded-button ui-button-danger" update=":frmListados:" immediate="true" actionListener="#{listasPrincipalView.borrarProyecto(pro.intIdProyecto)}" disabled="#{pro.intIdEstado==34 or pro.intIdEstado==37?true:false}" >
+                                        <p:commandButton icon="pi pi-trash" styleClass="ui-button-outlined rounded-button ui-button-danger" update=":frmListados:" immediate="true" actionListener="#{listasPrincipalView.borrarProyecto(pro.intIdProyecto)}" 
+                                                         disabled="#{pro.intIdEstado==34 or pro.intIdEstado==37?true:false}" >
                                             <p:confirm header="Confirmacion" message="¿Estás seguro que deseas borrar este proyecto? Recuerda que el contenido, la información y los posibles avances no podrán recuperarse." icon="pi pi-info-circle"  />
                                         </p:commandButton>
                                         <p:spacer/> 
-                                        <p:commandButton icon="pi pi-folder" styleClass="ui-button-outlined rounded-button ui-button-success" actionListener="#{listasPrincipalView.ocultarProyecto(pro)}" />
+                                        <p:commandButton icon="pi pi-folder" styleClass="ui-button-outlined rounded-button ui-button-success" 
+                                                         actionListener="#{listasPrincipalView.ocultarProyecto(pro)}"  update=":frmListados:"
+                                                         disabled="#{!(pro.intIdEstado==201 or pro.intIdEstado==37)?true:false}" />
                                     </p:column>
 
                                 </p:dataTable>
+                            </h:form>
+                        </div>
 
-                            </div>
-                        </p:card>
-                    </h:form>
+
+                    </p:card>
+
 
                 </div>
 

@@ -10,6 +10,7 @@ import com.jaio360.orm.RedEvaluacion;
 import com.jaio360.orm.Relacion;
 import com.jaio360.utils.Constantes;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.logging.Log;
@@ -19,25 +20,25 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
-public class ParticipanteDAO implements Serializable
-{  
-    private Session sesion; 
-    private Transaction tx;  
+public class ParticipanteDAO implements Serializable {
+
+    private Session sesion;
+    private Transaction tx;
 
     private Log log = LogFactory.getLog(ParticipanteDAO.class);
 
     public ParticipanteDAO() {
         this.sesion = HibernateUtil.getSessionFactory().openSession();
     }
-    
-    public boolean guardaParticipante(List<Evaluado> lstEvaluados, Integer intIdProyecto) throws HibernateException { 
-        
+
+    public boolean guardaParticipante(List<Evaluado> lstEvaluados, Integer intIdProyecto) throws HibernateException {
+
         boolean correcto = true;
-                
-        try { 
-            
-            iniciaOperacion(); 
-            
+
+        try {
+
+            iniciaOperacion();
+
             /* BORRA LOS PARTICIPANTES EN ESTADO REGISTRADO Y SUS RELACIONES */
             Query query = sesion.createQuery("delete from Participante p where p.proyecto.poIdProyectoPk = ? and p.paIdEstado not in (?,?,?) ");
             query.setInteger(0, intIdProyecto);
@@ -45,22 +46,22 @@ public class ParticipanteDAO implements Serializable
             query.setInteger(2, Constantes.INT_ET_ESTADO_EVALUADO_EN_PARAMETRIZACION);
             query.setInteger(3, Constantes.INT_ET_ESTADO_EVALUADO_TERMINADO);
             query.executeUpdate();
-            
+
             Proyecto objProyecto = new Proyecto();
             objProyecto.setPoIdProyectoPk(intIdProyecto);
 
             Participante objParticipante;
-            
-            for (Evaluado obj : lstEvaluados){  
-                
-                if( obj.getPaIdEstado().equals(Constantes.INT_ET_ESTADO_EVALUADO_EN_EJECUCION) ||
-                    obj.getPaIdEstado().equals(Constantes.INT_ET_ESTADO_EVALUADO_EN_PARAMETRIZACION) ||
-                    obj.getPaIdEstado().equals(Constantes.INT_ET_ESTADO_EVALUADO_TERMINADO)){
+
+            for (Evaluado obj : lstEvaluados) {
+
+                if (obj.getPaIdEstado().equals(Constantes.INT_ET_ESTADO_EVALUADO_EN_EJECUCION)
+                        || obj.getPaIdEstado().equals(Constantes.INT_ET_ESTADO_EVALUADO_EN_PARAMETRIZACION)
+                        || obj.getPaIdEstado().equals(Constantes.INT_ET_ESTADO_EVALUADO_TERMINADO)) {
                     continue;
                 }
-                
+
                 objParticipante = new Participante();
-                
+
                 objParticipante.setPaIdTipoParticipante(Constantes.INT_ET_TIPO_PARTICIPANTE_EVALUADO);
                 objParticipante.setPaIdEstado(Constantes.INT_ET_ESTADO_EVALUADO_REGISTRADO);
                 objParticipante.setPaInAutoevaluar(obj.isPaInAutoevaluar());
@@ -77,287 +78,299 @@ public class ParticipanteDAO implements Serializable
                 objParticipante.setProyecto(objProyecto);
 
                 sesion.save(objParticipante);
-                
+
             }
 
-            tx.commit(); 
-            
-        } catch (HibernateException he) { 
-            manejaExcepcion(he); 
+            tx.commit();
+
+        } catch (HibernateException he) {
+            manejaExcepcion(he);
             log.error(he);
             correcto = false;
-        } finally { 
-            sesion.close(); 
-        }  
+        } finally {
+            sesion.close();
+        }
 
-        return correcto; 
-    }  
-    
-    public boolean revertirEvaluadoRed(Integer intIdEvaluado) throws HibernateException { 
-        
+        return correcto;
+    }
+
+    public boolean revertirEvaluadoRed(Integer intIdEvaluado) throws HibernateException {
+
         boolean correcto = true;
-                
-        try { 
-            
+
+        try {
+
             Participante objParticipante = obtenParticipante(intIdEvaluado);
             objParticipante.setPaIdEstado(Constantes.INT_ET_ESTADO_EVALUADO_REGISTRADO);
             objParticipante.setPaInRedCargada(false);
             objParticipante.setPaInRedVerificada(false);
-            
-            iniciaOperacion(); 
-            
+
+            iniciaOperacion();
+
             /* BORRA LOS PARTICIPANTES EN ESTADO REGISTRADO Y SUS RELACIONES */
             //Query query = sesion.createSQLQuery("delete from relacion_participante where PA_ID_PARTICIPANTE_FK = ? ");
             //query.setInteger(0, intIdEvaluado);
             //query.executeUpdate();
-            
             sesion.update(objParticipante);
-            
-            tx.commit(); 
-            
-        } catch (HibernateException he) { 
-            manejaExcepcion(he); 
+
+            tx.commit();
+
+        } catch (HibernateException he) {
+            manejaExcepcion(he);
             log.error(he);
             correcto = false;
-        } finally { 
-            sesion.close(); 
-        }  
+        } finally {
+            sesion.close();
+        }
 
-        return correcto; 
-    }  
+        return correcto;
+    }
 
-    public boolean actualizaParticipante(Participante participante) throws HibernateException { 
-        
+    public boolean actualizaParticipante(Participante participante) throws HibernateException {
+
         boolean correcto = true;
-        try { 
-            iniciaOperacion(); 
-            sesion.update(participante); 
-            tx.commit(); 
+        try {
+            iniciaOperacion();
+            sesion.update(participante);
+            tx.commit();
             //tx.rollback();
-        } catch (HibernateException he) { 
-            manejaExcepcion(he); 
+        } catch (HibernateException he) {
+            manejaExcepcion(he);
             correcto = false;
-        } finally { 
-            sesion.close(); 
-        } 
-        
-        return correcto;
-    }  
-    
-    public boolean actualizaParticipante(Participante participante,Session sesion) throws HibernateException { 
-        
-        boolean correcto = true;
-        try { 
-            sesion.update(participante); 
-        } catch (HibernateException he) { 
-            correcto = false;
-        } 
-        
-        return correcto;
-    }  
+        } finally {
+            sesion.close();
+        }
 
-    public void eliminaParticipanteRelaciones(Participante participante) throws HibernateException 
-    { 
-        try 
-        { 
-            iniciaOperacion(); 
+        return correcto;
+    }
+
+    public boolean actualizaParticipante(Participante participante, Session sesion) throws HibernateException {
+
+        boolean correcto = true;
+        try {
+            sesion.update(participante);
+        } catch (HibernateException he) {
+            correcto = false;
+        }
+
+        return correcto;
+    }
+
+    public void eliminaParticipanteRelaciones(Participante participante) throws HibernateException {
+        try {
+            iniciaOperacion();
             /* BORRA LOS PARTICIPANTES EN ESTADO REGISTRADO Y SUS RELACIONES */
             Query query = sesion.createSQLQuery("delete from relacion_participante where PA_ID_PARTICIPANTE_FK = ? ");
             query.setInteger(0, participante.getPaIdParticipantePk());
             query.executeUpdate();
-            
-            sesion.delete(participante); 
-            tx.commit(); 
-        } catch (HibernateException he) 
-        { 
-            manejaExcepcion(he); 
-            log.error(he); 
-        } finally 
-        { 
-            sesion.close(); 
-        } 
-    }  
-                
-    public void eliminaParticipante(Participante participante) throws HibernateException 
-    { 
-        try 
-        { 
-            iniciaOperacion(); 
-            sesion.delete(participante); 
-            tx.commit(); 
-        } catch (HibernateException he) 
-        { 
-            manejaExcepcion(he); 
-            log.error(he); 
-        } finally 
-        { 
-            sesion.close(); 
-        } 
-    }  
 
-    public Participante obtenParticipante(long idParticipante) throws HibernateException 
-    { 
-        Participante participante = null;  
-        try 
-        { 
-            iniciaOperacion(); 
-            participante = (Participante) sesion.get(Participante.class, (int)idParticipante); 
-        } finally 
-        { 
-            sesion.close(); 
-        }  
+            sesion.delete(participante);
+            tx.commit();
+        } catch (HibernateException he) {
+            manejaExcepcion(he);
+            log.error(he);
+        } finally {
+            sesion.close();
+        }
+    }
 
-        return participante; 
-    }  
+    public void eliminaParticipante(Participante participante) throws HibernateException {
+        try {
+            iniciaOperacion();
+            sesion.delete(participante);
+            tx.commit();
+        } catch (HibernateException he) {
+            manejaExcepcion(he);
+            log.error(he);
+        } finally {
+            sesion.close();
+        }
+    }
 
-    public List<Participante> obtenListaParticipanteXProyecto(Integer intProyectoPk) throws HibernateException 
-    { 
-        List<Participante> listaParticipante = null;  
+    public Participante obtenParticipante(long idParticipante) throws HibernateException {
+        Participante participante = null;
+        try {
+            iniciaOperacion();
+            participante = (Participante) sesion.get(Participante.class, (int) idParticipante);
+        } finally {
+            sesion.close();
+        }
 
-        try 
-        { 
-            iniciaOperacion(); 
-            Query query = sesion.createQuery("from Participante p where p.proyecto.poIdProyectoPk = ? "); 
-            
+        return participante;
+    }
+
+    public List<Participante> obtenListaParticipanteXProyecto(Integer intProyectoPk) throws HibernateException {
+        List<Participante> listaParticipante = null;
+
+        try {
+            iniciaOperacion();
+            Query query = sesion.createQuery("from Participante p where p.proyecto.poIdProyectoPk = ? ");
+
             query.setInteger(0, intProyectoPk);
-            
+
             listaParticipante = query.list();
-            
-        } finally 
-        { 
-            sesion.close(); 
-        }  
 
-        return listaParticipante; 
-    }  
-    
-    public List<Participante> obtenListaParticipanteXEstado(Integer intProyectoPk, Integer intEstadoParticipante1, Integer intEstadoParticipante2) throws HibernateException { 
-        List<Participante> listaParticipante = new ArrayList<>();  
+        } finally {
+            sesion.close();
+        }
 
-        try 
-        { 
-            iniciaOperacion(); 
+        return listaParticipante;
+    }
+
+    public List<Participante> obtenListaParticipanteXEstado(Integer intProyectoPk, Integer intEstadoParticipante1, Integer intEstadoParticipante2) throws HibernateException {
+        List<Participante> listaParticipante = new ArrayList<>();
+
+        try {
+            iniciaOperacion();
             String str = "from Participante p where p.proyecto.poIdProyectoPk = ? and p.paIdEstado in (?,?) ";
-            
-            Query query = sesion.createQuery(str); 
-            
+
+            Query query = sesion.createQuery(str);
+
             query.setInteger(0, intProyectoPk);
             query.setInteger(1, intEstadoParticipante1);
             query.setParameter(2, intEstadoParticipante2);
-            
+
             listaParticipante = query.list();
-            
-        } finally 
-        { 
-            sesion.close(); 
-        }  
 
-        return listaParticipante; 
-    }  
+        } finally {
+            sesion.close();
+        }
 
-    private void iniciaOperacion() throws HibernateException 
-    { 
-        sesion = HibernateUtil.getSessionFactory().openSession(); 
-        tx = sesion.beginTransaction(); 
-    }  
+        return listaParticipante;
+    }
 
-    private void manejaExcepcion(HibernateException he) throws HibernateException 
-    { 
-        tx.rollback(); 
-        throw new HibernateException("Ocurrió un error en la capa de acceso a datos", he); 
-    } 
-    
-    public Integer guardaParticipante(Participante objParticipante) throws HibernateException 
-    { 
-        Integer id = 0;  
+    private void iniciaOperacion() throws HibernateException {
+        sesion = HibernateUtil.getSessionFactory().openSession();
+        tx = sesion.beginTransaction();
+    }
 
-        try 
-        { 
-            iniciaOperacion(); 
-            id = (Integer)sesion.save(objParticipante);
-            tx.commit(); 
-        } catch (HibernateException he) 
-        { 
-            manejaExcepcion(he); 
-            throw he; 
-        } finally 
-        { 
-            sesion.close(); 
-        }  
+    private void manejaExcepcion(HibernateException he) throws HibernateException {
+        tx.rollback();
+        throw new HibernateException("Ocurrió un error en la capa de acceso a datos", he);
+    }
 
-        return id; 
-    } 
-    
-    public Participante obtenParticipantePorProyecto(Integer intProyectoPk, String strMail) throws HibernateException { 
-        
-        Participante objParticipante = null;  
+    public Integer guardaParticipante(Participante objParticipante) throws HibernateException {
+        Integer id = 0;
 
-        try { 
-            
-            iniciaOperacion(); 
+        try {
+            iniciaOperacion();
+            id = (Integer) sesion.save(objParticipante);
+            tx.commit();
+        } catch (HibernateException he) {
+            manejaExcepcion(he);
+            throw he;
+        } finally {
+            sesion.close();
+        }
 
-            Query query = sesion.createQuery("from Participante p where p.proyecto.poIdProyectoPk = ? and p.paTxCorreo = ? "); 
-            
+        return id;
+    }
+
+    public Participante obtenParticipantePorProyecto(Integer intProyectoPk, String strMail) throws HibernateException {
+
+        Participante objParticipante = null;
+
+        try {
+
+            iniciaOperacion();
+
+            Query query = sesion.createQuery("from Participante p where p.proyecto.poIdProyectoPk = ? and p.paTxCorreo = ? ");
+
             query.setInteger(0, intProyectoPk);
             query.setString(1, strMail);
-            
+
             objParticipante = (Participante) query.uniqueResult();
-            
-        } finally { 
-            sesion.close(); 
-        }  
 
-        return objParticipante; 
-    }  
-    
-    public List<Participante> obtenListaParticipanteConfirmados(Integer intProyectoPk) throws HibernateException{ 
+        } finally {
+            sesion.close();
+        }
+
+        return objParticipante;
+    }
+
+    public List obtenerNroParticipantes(Integer intProyectoPk) throws HibernateException {
+
+        try {
+            
+            iniciaOperacion();
+
+            String sql = 
+"  select idParticipante, sum(cantidad_participantes) from ( " +
+"select p.PA_ID_PARTICIPANTE_PK as idParticipante, " +
+"1 as cantidad_participantes " +
+"from jaio.participante p " +
+"where p.PA_ID_ESTADO in (72) " +
+"and p.PO_ID_PROYECTO_FK = :intProyectoPk " +
+"and p.PA_IN_AUTOEVALUAR = true " +
+"union ALL " +
+"select p.PA_ID_PARTICIPANTE_PK as idParticipante, " +
+"count(rp.RE_ID_PARTICIPANTE_FK) as cantidad_participantes " +
+"from jaio.participante p, jaio.relacion_participante rp " +
+"where p.PA_ID_ESTADO in (72) " +
+"and p.PO_ID_PROYECTO_FK = :intProyectoPk " +
+"and p.PA_ID_PARTICIPANTE_PK = rp.PA_ID_PARTICIPANTE_FK " +
+"and rp.RP_ID_ESTADO = 79 group by p.PA_ID_PARTICIPANTE_PK ) datos group by idParticipante ";
+
+            Query query = sesion.createSQLQuery(sql);
+
+            query.setInteger("intProyectoPk", intProyectoPk);
+           
+            return query.list();
+            
+        } finally {
+            sesion.close();
+        }
         
-        List<Participante> listaParticipante = null;  
+    }
 
-        try { 
-            iniciaOperacion(); 
-            Query query = sesion.createQuery("from Participante p where p.proyecto.poIdProyectoPk = ? and p.paInRedCargada = ? and p.paInRedVerificada = ? and p.paIdEstado = ? "); 
-            
+    public List<Participante> obtenListaParticipanteConfirmados(Integer intProyectoPk) throws HibernateException {
+
+        List<Participante> listaParticipante = null;
+
+        try {
+            iniciaOperacion();
+            Query query = sesion.createQuery("from Participante p where p.proyecto.poIdProyectoPk = ? and p.paInRedCargada = ? and p.paInRedVerificada = ? and p.paIdEstado = ? ");
+
             query.setInteger(0, intProyectoPk);
             query.setBoolean(1, true);
             query.setBoolean(2, true);
-            query.setInteger(3, Constantes.INT_ET_ESTADO_EVALUADO_EN_PARAMETRIZACION); 
-                    
-            listaParticipante = query.list();
-            
-        } finally { 
-            sesion.close(); 
-        }  
+            query.setInteger(3, Constantes.INT_ET_ESTADO_EVALUADO_EN_PARAMETRIZACION);
 
-        return listaParticipante; 
-        
-    } 
+            listaParticipante = query.list();
+
+        } finally {
+            sesion.close();
+        }
+
+        return listaParticipante;
+
+    }
 
     public boolean actualizarParticipantesRegistrados(Integer intIdProyecto, List<Participante> lstParticipantes) {
-        
-        boolean correcto = true;
-        
-        try{ 
 
-            iniciaOperacion(); 
-            
-            for (Participante objParticipante : lstParticipantes){
-            
+        boolean correcto = true;
+
+        try {
+
+            iniciaOperacion();
+
+            for (Participante objParticipante : lstParticipantes) {
+
                 objParticipante.setPaIdEstado(Constantes.INT_ET_ESTADO_EVALUADO_EN_PARAMETRIZACION);
                 sesion.update(objParticipante);
-            
+
             }
-            
-            tx.commit();  
-            
-        } catch (HibernateException he){ 
-            manejaExcepcion(he); 
+
+            tx.commit();
+
+        } catch (HibernateException he) {
+            manejaExcepcion(he);
             correcto = false;
-        } finally { 
-            sesion.close(); 
-        } 
-        
+        } finally {
+            sesion.close();
+        }
+
         return correcto;
     }
-    
+
 }

@@ -11,6 +11,7 @@
 
     <ui:define name="cabecera">
         <ui:include src="cabecera.xhtml" />
+        <p:staticMessage severity="info" summary="INFO" detail="El proyecto actual es: #{stepSixView.objProyectoInfo.strDescNombre}" style="width: 100%; margin-top: 5px; margin-left: 2px; margin-right: 2px;"/>
     </ui:define>
     <ui:define name="helpSteps">
 
@@ -57,10 +58,10 @@
                     </div>
                     <div class="ui-fluid p-formgrid p-grid">
 
-                        <div class="p-field p-col-12 p-md-5">
+                        <div class="p-field p-col-12 p-md-12">
 
                             <p:card>
-                                <h4>Lista de evaluados</h4>
+                                <h4>Selección de evaluados</h4>
                                 <p:dataTable id="checkboxDT3"
                                              widgetVar="checkboxDT3"
                                              var="evaluado" 
@@ -102,11 +103,19 @@
                                     <p:column headerText="Correo" >
                                         <h:outputText value="#{evaluado.paTxCorreo}" />
                                     </p:column>
+                                    
+                                    <p:column headerText="Nro de evaluadores">
+                                        <h:outputText value="#{parte.strTipoArchivo}" />
+                                    </p:column>
+                                    
+                                    <p:column headerText="Evaluaciones resueltas">
+                                        <h:outputText value="#{parte.strTipoArchivo}" />
+                                    </p:column>
 
                                 </p:dataTable>
                             </p:card>
                         </div>
-                        <div class="p-field p-col-12 p-md-4">
+                        <div class="p-field p-col-12 p-md-12">
                             <p:card>
                                 <h4>Modelos disponibles</h4>
                                 <p:dataTable id="checkboxDT1" 
@@ -119,9 +128,10 @@
 
                                     <p:column selectionMode="multiple" style="width:35px;text-right"/>
 
-                                    <p:column headerText="Descripción">
+                                    <p:column headerText="Evaluado">
                                         <h:outputText value="#{parte.strDescModelo}" />
                                     </p:column>
+
                                     <!--
                                     <p:column headerText="Tipo de archivo">
                                         <h:outputText value="#{parte.strTipoArchivo}" />
@@ -135,7 +145,7 @@
                             </p:card>
                         </div>
 
-                        <div class="p-field p-col-12 p-md-3">
+                        <div class="p-field p-col-12 p-md-12">
                             <p:card>
                                 <h4>Opciones</h4>
                                 <div class="p-field">

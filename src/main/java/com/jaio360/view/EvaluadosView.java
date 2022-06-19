@@ -740,7 +740,8 @@ public class EvaluadosView implements Serializable {
 
         }
 
-        /****
+        /**
+         * **
          * CARGA RELACIONES
          */
         this.lstRelacionBean = new ArrayList();
@@ -772,6 +773,16 @@ public class EvaluadosView implements Serializable {
 
             lstRelacionBean.add(objRelacionBean);
         }
+        
+        if(!lstEvaluado.isEmpty()){
+            
+        }
+        
+        if(!lstEvaluadores.isEmpty()&& lstRelacionBean.isEmpty()){
+            
+        }
+                
+                
 
     }
 
@@ -2715,6 +2726,25 @@ public class EvaluadosView implements Serializable {
                         procesaFilaRelacionesAvanzado(row, objvalidaTextoIngresado, objvalidaCorreo);
                     }
 
+                    /**
+                     * PROCESAR AUTOEVALUACIONES
+                     */
+                    boolean blAlMenosUnAutoevaluado = false;
+                    for (EvaluadoAvan objEvaluadoAvan : this.lstAvanPersonas) {
+
+                        if (!mapPerEvaluados.containsKey(Utilitarios.limpiarTexto(objEvaluadoAvan.getPaTxCorreo()))) {
+                            mapPerEvaluados.put(Utilitarios.limpiarTexto(objEvaluadoAvan.getPaTxCorreo()), objEvaluadoAvan.getPaTxCorreo());
+                        }
+                        
+                        if (objEvaluadoAvan.isPaInAutoevaluar()) {
+                            blAlMenosUnAutoevaluado = true;
+                        }
+                    }
+
+                    if (this.lstRelacionAvanzadas.size() == 0 && !blAlMenosUnAutoevaluado) {
+                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Se debe indicar al menos una persona a evaluar. Favor colocar a una persona con el indicador de AUTOEVALUACIÓN o configurar la hoja \"Red de Evaluación\""));
+                    }
+
                 }
 
                 fileAvanzado = null;
@@ -2902,7 +2932,7 @@ public class EvaluadosView implements Serializable {
                     }
                 }
 
-                //TIEMPO EN LA EMPRESA
+                //NIVEL OCUPACIONAL
                 if (blHabilitarNivelOcupacional) {
                     try {
                         c++;
@@ -3013,13 +3043,14 @@ public class EvaluadosView implements Serializable {
                 /**
                  * **********************************
                  */
+                /*
                 try {
                     rowIteratorRelacion.next();
                 } catch (Exception e) {
                     log.debug(e);
                     lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Libro \"Red de evaluación\" no tiene información"));
                 }
-
+                 */
                 try {
                     rowIteratorPersonas.next();
                 } catch (Exception e) {
@@ -3400,42 +3431,44 @@ public class EvaluadosView implements Serializable {
         try {
 
             if (blRegistroOK) {
-                String strKey = Utilitarios.limpiarTexto(strCorreoEvaluado)
-                        + Utilitarios.limpiarTexto(strCorreoEvaluador);
 
-                if (mapRelacionesPersonasAvanzado.containsKey(strKey)) {
-                    this.lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Fila " + (row.getRowNum() + 1) + " del libro \"Red de Evaluación\" se encuentra duplicado, favor de revisar la combinación evaluado, evaluador y su relación"));
+                if (Utilitarios.limpiarTexto(strCorreoEvaluado).equals(Utilitarios.limpiarTexto(strCorreoEvaluador))) {
+
+                    this.lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Fila " + (row.getRowNum() + 1) + " del libro \"Red de Evaluación\" no está permitido. Por favor colocar la marca de AUTOEVALUACIÓN del evaluado en el libro de \"Personas\""));
+
                 } else {
 
-                    if (!mapPerEvaluados.containsKey(Utilitarios.limpiarTexto(strCorreoEvaluado))) {
-                        mapPerEvaluados.put(Utilitarios.limpiarTexto(strCorreoEvaluado), strCorreoEvaluado);
-                    }
-                    if (!mapPerEvaluadores.containsKey(Utilitarios.limpiarTexto(strCorreoEvaluador))) {
-                        mapPerEvaluadores.put(Utilitarios.limpiarTexto(strCorreoEvaluador), strCorreoEvaluador);
-                    }
+                    String strKey = Utilitarios.limpiarTexto(strCorreoEvaluado)
+                            + Utilitarios.limpiarTexto(strCorreoEvaluador);
 
-                    RelacionAvanzada objRelacionAvanzada = new RelacionAvanzada();
-                    objRelacionAvanzada.setStrEvaluado(strCorreoEvaluado);
-                    objRelacionAvanzada.setStrEvaluadoDesc(((EvaluadoAvan) mapPersonasAvanzado.get(Utilitarios.limpiarTexto(strCorreoEvaluado))).getPaTxDescripcion());
-                    objRelacionAvanzada.setStrEvaluador(strCorreoEvaluador);
-                    objRelacionAvanzada.setStrEvaluadorDesc(((EvaluadoAvan) mapPersonasAvanzado.get(Utilitarios.limpiarTexto(strCorreoEvaluador))).getPaTxDescripcion());
-                    objRelacionAvanzada.setStrRelacion(strRelacion);
-                    objRelacionAvanzada.setStrRelacionAbreviatura(mapRelacionesAbrev.get(Utilitarios.limpiarTexto(strRelacion)).toString());
-                    objRelacionAvanzada.setStrRelacionColor(((RelacionBean) mapRelacionesAvanzado.get(Utilitarios.limpiarTexto(strRelacion))).getStrColor());
+                    if (mapRelacionesPersonasAvanzado.containsKey(strKey)) {
+                        this.lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), "Fila " + (row.getRowNum() + 1) + " del libro \"Red de Evaluación\" se encuentra duplicado, favor de revisar la combinación evaluado, evaluador y su relación"));
+                    } else {
 
-                    mapRelacionesPersonasAvanzado.put(strKey, objRelacionAvanzada);
-                    lstRelacionAvanzadas.add(objRelacionAvanzada);
+                        if (!mapPerEvaluados.containsKey(Utilitarios.limpiarTexto(strCorreoEvaluado))) {
+                            mapPerEvaluados.put(Utilitarios.limpiarTexto(strCorreoEvaluado), strCorreoEvaluado);
+                        }
+                        if (!mapPerEvaluadores.containsKey(Utilitarios.limpiarTexto(strCorreoEvaluador))) {
+                            mapPerEvaluadores.put(Utilitarios.limpiarTexto(strCorreoEvaluador), strCorreoEvaluador);
+                        }
+
+                        RelacionAvanzada objRelacionAvanzada = new RelacionAvanzada();
+                        objRelacionAvanzada.setStrEvaluado(strCorreoEvaluado);
+                        objRelacionAvanzada.setStrEvaluadoDesc(((EvaluadoAvan) mapPersonasAvanzado.get(Utilitarios.limpiarTexto(strCorreoEvaluado))).getPaTxDescripcion());
+                        objRelacionAvanzada.setStrEvaluador(strCorreoEvaluador);
+                        objRelacionAvanzada.setStrEvaluadorDesc(((EvaluadoAvan) mapPersonasAvanzado.get(Utilitarios.limpiarTexto(strCorreoEvaluador))).getPaTxDescripcion());
+                        objRelacionAvanzada.setStrRelacion(strRelacion);
+                        objRelacionAvanzada.setStrRelacionAbreviatura(mapRelacionesAbrev.get(Utilitarios.limpiarTexto(strRelacion)).toString());
+                        objRelacionAvanzada.setStrRelacionColor(((RelacionBean) mapRelacionesAvanzado.get(Utilitarios.limpiarTexto(strRelacion))).getStrColor());
+
+                        mapRelacionesPersonasAvanzado.put(strKey, objRelacionAvanzada);
+                        lstRelacionAvanzadas.add(objRelacionAvanzada);
+
+                    }
 
                 }
 
-            }/*else{
-            String strKey = Utilitarios.limpiarTexto(strCorreo);
-            if(mapRelacionesPersonasAvanzado.containsKey(strKey)){
-                this.lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(),"Fila "+(row.getRowNum()+1)+" del libro \"Red de Evaluación\" se encuentra duplicado, favor de revisar la combinación evaluado, evaluador y su relación"));
-            }else{
-                this.lstErrorAvan.addAll(lstErrorAvan);
             }
-        }*/
 
         } catch (Exception e) {
             log.error(e);
@@ -3529,7 +3562,7 @@ public class EvaluadosView implements Serializable {
         }
 
         FacesContext.getCurrentInstance().addMessage(null, message);
-        
+
         init();
     }
 

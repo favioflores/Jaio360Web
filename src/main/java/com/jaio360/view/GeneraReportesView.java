@@ -19,7 +19,9 @@ import com.jaio360.report.ReporteIndividualPreguntasAbiertas;
 import com.jaio360.report.ReporteIndividualCalificacionXCategoria;
 import com.jaio360.report.ReporteIndividualCalificacionXCategoriaMismo;
 import com.jaio360.report.ReporteIndividualItemsAltaCalificacion;
+import com.jaio360.report.ReporteIndividualItemsAltaCalificacionMismo;
 import com.jaio360.report.ReporteIndividualItemsBajaCalificacion;
+import com.jaio360.report.ReporteIndividualItemsBajaCalificacionMismo;
 import com.jaio360.report.ReporteIndividualSumarioCategoria;
 import com.jaio360.report.ReporteIndividualSumarioCategoriaMismo;
 import com.jaio360.report.ReporteTodasRespuestas;
@@ -229,17 +231,19 @@ public class GeneraReportesView implements Serializable{
         
         agregarDescripciones();
         
-        lstContenidoIndividual.add(new ModeloContenido(1,"Sumario de categoria","",strDescripcionesIndividual[1],"PDF"));
-        lstContenidoIndividual.add(new ModeloContenido(2,"Sumario de categoria - Mismo/Otro","",strDescripcionesIndividual[2],"PDF"));
-        lstContenidoIndividual.add(new ModeloContenido(3,"Calificaciones por item - Por categoria (Desglozado)","",strDescripcionesIndividual[3],"PDF"));
+        lstContenidoIndividual.add(new ModeloContenido(1,"Sumario de categoría","",strDescripcionesIndividual[1],"PDF"));
+        lstContenidoIndividual.add(new ModeloContenido(2,"Sumario de categoría - Mismo/Otros","",strDescripcionesIndividual[2],"PDF"));
+        lstContenidoIndividual.add(new ModeloContenido(3,"Calificaciones por item - Por categoría (Desglosado)","",strDescripcionesIndividual[3],"PDF"));
         lstContenidoIndividual.add(new ModeloContenido(4,"Calificaciones por item - Promedio","",strDescripcionesIndividual[4],"PDF"));
-        lstContenidoIndividual.add(new ModeloContenido(5,"Items con más alta calificación","",strDescripcionesIndividual[5],"PDF"));
-        lstContenidoIndividual.add(new ModeloContenido(6,"Items con más baja calificación","",strDescripcionesIndividual[6],"PDF"));
-        lstContenidoIndividual.add(new ModeloContenido(7,"Preguntas abiertas","",strDescripcionesIndividual[7],"PDF"));
+        lstContenidoIndividual.add(new ModeloContenido(5,"Items con más alta calificación - Otros","",strDescripcionesIndividual[5],"PDF"));
+        lstContenidoIndividual.add(new ModeloContenido(6,"Items con más baja calificación - Otros","",strDescripcionesIndividual[6],"PDF"));
+        lstContenidoIndividual.add(new ModeloContenido(7,"Items con más alta calificación - Mismo","",strDescripcionesIndividual[7],"PDF"));
+        lstContenidoIndividual.add(new ModeloContenido(8,"Items con más baja calificación - Mismo","",strDescripcionesIndividual[8],"PDF"));
+        lstContenidoIndividual.add(new ModeloContenido(9,"Preguntas abiertas","",strDescripcionesIndividual[9],"PDF"));
         
-        lstContenidoGrupal.add(new ModeloContenido(8,"Todas las respuestas","",strDescripcionesGrupal[8],"EXCEL"));
-        lstContenidoGrupal.add(new ModeloContenido(9,"Sumario por categorias","",strDescripcionesGrupal[0],"PDF"));
-        lstContenidoGrupal.add(new ModeloContenido(10,"Nivel de participación","",strDescripcionesGrupal[0],"PDF"));
+        lstContenidoGrupal.add(new ModeloContenido(10,"Todas las respuestas","",strDescripcionesGrupal[8],"EXCEL"));
+        lstContenidoGrupal.add(new ModeloContenido(11,"Sumario por categorías","",strDescripcionesGrupal[0],"PDF"));
+        lstContenidoGrupal.add(new ModeloContenido(12,"Nivel de participación","",strDescripcionesGrupal[0],"PDF"));
         //Resultados Generales - Competencias y preguntas
         /*
         lstContenidoGrupal.add(new ModeloContenido(11,"Promedio general por competencia","",strDescripcionesGrupal[0],"PDF"));
@@ -761,24 +765,10 @@ public class GeneraReportesView implements Serializable{
                             lstTemporales.add(objDatosReporteR);
                             lstTemporales.add(objDatosReporte);
 
-                        }else if(objModeloContenido.getIntModeloPk().equals(Constantes.INT_REPORTE_INDIVIDUAL_ITEM_ALTA_CALIFICACION)){
+                        }else if(objModeloContenido.getIntModeloPk().equals(Constantes.INT_REPORTE_INDIVIDUAL_ITEM_ALTA_CALIFICACION_OTROS)){
                             
                             List<DatosReporte> lstTemp = new ArrayList();
-/*                            
-                            DatosReporte objDatosReporteC = (DatosReporte) SerializationUtils.clone(objDatosReporte);
-
-                            String strNTempC = Utilitarios.reemplazar(objParticipante.getPaTxDescripcion()," ","C_");
-                            String strFC = Utilitarios.formatearFecha(Utilitarios.getCurrentDate(),Constantes.DDMMYYYYHH24MISS)+"_" +
-                                           Utilitarios.generateRandom(strNTempC);
-                        
-                            objDatosReporteC.setStrID(strNTempC+"_"+objModeloContenido.getIntModeloPk() +"_"+ strFC);
-                            objDatosReporteC.setStrNombreEvaluado(objParticipante.getPaTxDescripcion());
-                        
-                            ReporteIndividualCaratula objReporteC = new ReporteIndividualCaratula();
-                            objDatosReporteC.setStrID(objReporteC.build(objDatosReporteC));
-                            objDatosReporteC.setBlDefinitivo(false);
-                            lstTemp.add(objDatosReporteC);
-*/
+                            
                             DatosReporte objDatosReporteR = (DatosReporte) SerializationUtils.clone(objDatosReporte);
 
                             String strNTempR = Utilitarios.reemplazar(objParticipante.getPaTxDescripcion()," ","R_");
@@ -797,28 +787,13 @@ public class GeneraReportesView implements Serializable{
                             objDatosReporte.setStrID(Utilitarios.combinaReportesPDF(lstTemp, objDatosReporte));
                             objDatosReporte.setBlDefinitivo(true);
                             
-//                            lstTemporales.add(objDatosReporteC);
                             lstTemporales.add(objDatosReporteR);
                             lstTemporales.add(objDatosReporte);
 
-                        }else if(objModeloContenido.getIntModeloPk().equals(Constantes.INT_REPORTE_INDIVIDUAL_ITEM_BAJA_CALIFICACION)){
+                        }else if(objModeloContenido.getIntModeloPk().equals(Constantes.INT_REPORTE_INDIVIDUAL_ITEM_BAJA_CALIFICACION_OTROS)){
                             
                             List<DatosReporte> lstTemp = new ArrayList();
-/*                            
-                            DatosReporte objDatosReporteC = (DatosReporte) SerializationUtils.clone(objDatosReporte);
 
-                            String strNTempC = Utilitarios.reemplazar(objParticipante.getPaTxDescripcion()," ","C_");
-                            String strFC = Utilitarios.formatearFecha(Utilitarios.getCurrentDate(),Constantes.DDMMYYYYHH24MISS)+"_" +
-                                           Utilitarios.generateRandom(strNTempC);
-                        
-                            objDatosReporteC.setStrID(strNTempC+"_"+objModeloContenido.getIntModeloPk() +"_"+ strFC);
-                            objDatosReporteC.setStrNombreEvaluado(objParticipante.getPaTxDescripcion());
-                        
-                            ReporteIndividualCaratula objReporteC = new ReporteIndividualCaratula();
-                            objDatosReporteC.setStrID(objReporteC.build(objDatosReporteC));
-                            objDatosReporteC.setBlDefinitivo(false);
-                            lstTemp.add(objDatosReporteC);
-*/
                             DatosReporte objDatosReporteR = (DatosReporte) SerializationUtils.clone(objDatosReporte);
 
                             String strNTempR = Utilitarios.reemplazar(objParticipante.getPaTxDescripcion()," ","R_");
@@ -837,10 +812,58 @@ public class GeneraReportesView implements Serializable{
                             objDatosReporte.setStrID(Utilitarios.combinaReportesPDF(lstTemp, objDatosReporte));
                             objDatosReporte.setBlDefinitivo(true);
                             
-//                            lstTemporales.add(objDatosReporteC);
+                            lstTemporales.add(objDatosReporteR);
+                            lstTemporales.add(objDatosReporte);
+                        }else if(objModeloContenido.getIntModeloPk().equals(Constantes.INT_REPORTE_INDIVIDUAL_ITEM_ALTA_CALIFICACION_MISMO)){
+                            
+                            List<DatosReporte> lstTemp = new ArrayList();
+                            
+                            DatosReporte objDatosReporteR = (DatosReporte) SerializationUtils.clone(objDatosReporte);
+
+                            String strNTempR = Utilitarios.reemplazar(objParticipante.getPaTxDescripcion()," ","R_");
+                            String strFR = Utilitarios.formatearFecha(Utilitarios.getCurrentDate(),Constantes.DDMMYYYYHH24MISS)+"_" +
+                                           Utilitarios.generateRandom(strNTempR);
+                        
+                            objDatosReporteR.setStrID(strNTempR+"_"+objModeloContenido.getIntModeloPk() +"_"+ strFR);
+                            objDatosReporteR.setStrNombreEvaluado(objParticipante.getPaTxDescripcion());
+
+                            
+                            ReporteIndividualItemsAltaCalificacionMismo objReporteR = new ReporteIndividualItemsAltaCalificacionMismo();
+                            objDatosReporteR.setStrID(objReporteR.build(objDatosReporteR, map, objParticipante.getPaIdParticipantePk()));
+                            objDatosReporteR.setBlDefinitivo(false);
+                            lstTemp.add(objDatosReporteR);
+                            
+                            objDatosReporte.setStrID(Utilitarios.combinaReportesPDF(lstTemp, objDatosReporte));
+                            objDatosReporte.setBlDefinitivo(true);
+                            
                             lstTemporales.add(objDatosReporteR);
                             lstTemporales.add(objDatosReporte);
 
+                        }else if(objModeloContenido.getIntModeloPk().equals(Constantes.INT_REPORTE_INDIVIDUAL_ITEM_BAJA_CALIFICACION_MISMO)){
+                            
+                            List<DatosReporte> lstTemp = new ArrayList();
+
+                            DatosReporte objDatosReporteR = (DatosReporte) SerializationUtils.clone(objDatosReporte);
+
+                            String strNTempR = Utilitarios.reemplazar(objParticipante.getPaTxDescripcion()," ","R_");
+                            String strFR = Utilitarios.formatearFecha(Utilitarios.getCurrentDate(),Constantes.DDMMYYYYHH24MISS)+"_" +
+                                           Utilitarios.generateRandom(strNTempR);
+                        
+                            objDatosReporteR.setStrID(strNTempR+"_"+objModeloContenido.getIntModeloPk() +"_"+ strFR);
+                            objDatosReporteR.setStrNombreEvaluado(objParticipante.getPaTxDescripcion());
+
+                            
+                            ReporteIndividualItemsBajaCalificacionMismo objReporteR = new ReporteIndividualItemsBajaCalificacionMismo();
+                            objDatosReporteR.setStrID(objReporteR.build(objDatosReporteR, map, objParticipante.getPaIdParticipantePk()));
+                            objDatosReporteR.setBlDefinitivo(false);
+                            lstTemp.add(objDatosReporteR);
+                            
+                            objDatosReporte.setStrID(Utilitarios.combinaReportesPDF(lstTemp, objDatosReporte));
+                            objDatosReporte.setBlDefinitivo(true);
+                            
+                            lstTemporales.add(objDatosReporteR);
+                            lstTemporales.add(objDatosReporte);
+                            
                         }else if(objModeloContenido.getIntModeloPk().equals(Constantes.INT_REPORTE_INDIVIDUAL_PREGUNTAS_ABIERTAS)){
 
                             List<DatosReporte> lstTemp = new ArrayList();

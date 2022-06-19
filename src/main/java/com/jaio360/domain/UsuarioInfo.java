@@ -124,6 +124,7 @@ public class UsuarioInfo implements Serializable{
         this.intIdDocumentoEmpresa = objUsuario.getUsIdTipoDocumento();
         this.strDocumentoEmpresa = objUsuario.getUsTxDocumento();
         this.intIdCiudad = objUsuario.getUbigeo().getUbIdUbigeoPk();
+        this.usuario = objUsuario;
         this.strFechaRegistro = Utilitarios.formatearFecha(objUsuario.getUsFeRegistro(),Constantes.DDMMYYYY);
         
         if(objUsuario.getUsIdTipoCuenta().equals(Constantes.INT_ET_TIPO_USUARIO_ADMINISTRADOR)){

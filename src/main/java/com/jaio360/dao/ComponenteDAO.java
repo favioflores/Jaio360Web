@@ -325,7 +325,7 @@ public class ComponenteDAO implements Serializable
 "           and dm.DE_ID_DETALLE_ESCALA_PK = res.DE_ID_DETALLE_ESCALA_FK                         " +
 "           and cop.CO_ID_COMPONENTE_PK = res.CO_ID_COMPONENTE_FK                                " +
 "	    and cat.CO_ID_COMPONENTE_PK = cop.CO_ID_COMPONENTE_REF_FK                     " +
-                    " and res.RE_ID_PARTICIPANTE_FK is not null " +
+                    //" and res.RE_ID_PARTICIPANTE_FK is not null " +
 "	    and cat.CO_ID_TIPO_COMPONENTE = :idTipo                                            " +
 "           and cat.CU_ID_CUESTIONARIO_FK = :idCuestionario                                                  "
                     + " and res.PA_ID_PARTICIPANTE_FK = :idParticipant ";

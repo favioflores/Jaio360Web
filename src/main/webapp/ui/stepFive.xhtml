@@ -22,6 +22,7 @@
 
     <ui:define name="cabecera">
         <ui:include src="cabecera.xhtml" />
+        <p:staticMessage severity="info" summary="INFO" detail="El proyecto actual es: #{stepFiveView.objProyectoInfo.strDescNombre}" style="width: 100%; margin-top: 5px; margin-left: 2px; margin-right: 2px;"/>
     </ui:define>
     <ui:define name="helpSteps">
 
@@ -71,48 +72,120 @@
                         <div class="p-field p-col-12 p-md-4">
                             <p:card>
                                 <h4>Monitoreo de proyecto</h4>
+                                <div class="p-field p-formgrid p-grid">
+                                    <div class="p-field p-col">
+                                        <p:card>
+                                            <f:facet name="subtitle">
+                                                <center>
+                                                    Licencias individuales
+                                                </center>
+                                            </f:facet>
+                                            <div class="p-field p-formgrid p-grid">
+                                                <div class="p-col" style="text-align: center;" >
+                                                    <p:outputLabel value="#{seguimientoProyectoView.intLicenciasIndividuales}" />
+                                                </div>
+                                                <div style="text-align: center" >
+                                                    <p:divider layout="vertical" />
+                                                </div>
+                                                <div class="p-col" style="text-align: center;">
+                                                    <p:outputLabel value="#{seguimientoProyectoView.intLicenciasIndividualesRequerido}" />
+                                                </div>
+                                            </div>
+                                            <div class="p-field p-formgrid p-grid">
+                                                <div class="p-col" style="text-align: center;">
+                                                    <p:outputLabel value="Disponibles" />
+                                                </div>
+                                                <div>
 
+                                                </div>
+                                                <div class="p-col" style="text-align: center;">
+                                                    <p:outputLabel value="Requerido" />
+                                                </div>
+                                            </div>
+                                            <p:staticMessage severity="error" summary="ERROR" 
+                                                             rendered="#{!seguimientoProyectoView.blLicenciasOK}"
+                                                             detail="Las licencias no son suficiente" style="width: 100%; margin-top: 5px; margin-left: 2px; margin-right: 2px;"/>
+                                        </p:card>
+                                    </div>
+                                    <div class="p-field p-col">
+                                        <p:card>
+                                            <f:facet name="subtitle">
+                                                <center>
+                                                    Licencias masivas
+                                                </center>
+                                            </f:facet>
+                                            <div class="p-field p-formgrid p-grid">
+                                                <div class="p-col" style="text-align: center;" >
+                                                    <p:outputLabel value="#{seguimientoProyectoView.intLicenciasMasivas}" />
+                                                </div>
+                                                <div style="text-align: center" >
+                                                    <p:divider layout="vertical" />
+                                                </div>
+                                                <div class="p-col" style="text-align: center;">
+                                                    <p:outputLabel value="#{seguimientoProyectoView.intLicenciasMasivasRequerido}" />
+                                                </div>
+                                            </div>
+                                            <div class="p-field p-formgrid p-grid">
+                                                <div class="p-col" style="text-align: center;">
+                                                    <p:outputLabel value="Disponibles" />
+                                                </div>
+                                                <div>
+
+                                                </div>
+                                                <div class="p-col" style="text-align: center;">
+                                                    <p:outputLabel value="Requerido" />
+                                                </div>
+                                            </div>
+                                        </p:card>
+                                    </div>
+                                </div>
                                 <div class="p-field">
                                     <p:commandButton id="btnAddAsignado" 
                                                      value="Iniciar el proceso" 
                                                      type="submit"
                                                      update="@form"
-                                                     actionListener="#{seguimientoProyectoView.iniciarProceso}" 
+                                                     onclick="PF('dlgLicencias').show()"
                                                      disabled="#{seguimientoProyectoView.intCantPartCuesNoEje>0?false:true}"
                                                      icon="pi pi-play">
-                                        <p:confirm header="Confirmacion" message="¿Estas seguro de iniciar el proceso?" icon="pi pi-info-circle" />
+
                                     </p:commandButton>
+                                                                                         <!--actionListener="#{seguimientoProyectoView.iniciarProceso}" 
+                                                     <p:confirm header="Confirmacion" message="¿Estas seguro de iniciar el proceso?" icon="pi pi-info-circle" />-->
                                 </div>
 
                                 <div class="p-field">
                                     <p:commandButton id="btnGuardarFinalizar" 
-                                                     value="Finalizar proceso" 
+                                                     value="Finalizar el proceso" 
                                                      type="submit"
+                                                     actionListener="#{seguimientoProyectoView.terminarProceso()}" 
+                                                     disabled="#{seguimientoProyectoView.intIdEstadoProyecto==37?true:seguimientoProyectoView.boProyectoEjecutado==true?false:true}"
                                                      update="@form"
                                                      icon="pi pi-save" >
 
                                     </p:commandButton>
 
                                 </div>
-
-                                <div class="p-field">
-                                    <p:commandButton id="btnGuardarAsignacion" 
-                                                     value="Anular proceso" 
-                                                     type="submit"
-                                                     update="@form"
-                                                     icon="pi pi-times" 
-                                                     styleClass="ui-button-danger">
-
-                                    </p:commandButton>
-
-                                </div>
-
+                                <!--
+                                                                <div class="p-field">
+                                                                    <p:commandButton id="btnGuardarAsignacion" 
+                                                                                     value="Anular proceso" 
+                                                                                     type="submit"
+                                                                                     update="@form"
+                                                                                     disabled="#{seguimientoProyectoView.intCantPartCuesNoEje>0?true:false}"
+                                                                                     icon="pi pi-times" 
+                                                                                     styleClass="ui-button-danger">
+                                
+                                                                    </p:commandButton>
+                                
+                                                                </div>
+                                -->
 
                                 <div class="p-field">
                                     <p:commandButton id="btnAddAsignado1" 
                                                      value="Enviar recordatorios" 
                                                      type="submit"
                                                      update="@form"
+                                                     disabled="#{seguimientoProyectoView.intIdEstadoProyecto==37?true:seguimientoProyectoView.boProyectoEjecutado==true?false:true}"
                                                      icon="pi pi-send"
                                                      actionListener="#{seguimientoProyectoView.enviarRecordatorio()}"
                                                      styleClass="ui-button-warning">
@@ -121,11 +194,32 @@
                                 </div>
                                 <div class="p-field">
                                     <p:commandButton actionListener="#{seguimientoProyectoView.descargarFisico}" 
-                                                     value="Descargar evaluaciones" 
+                                                     value="Descargar hojas de evaluaciones " 
                                                      icon="pi pi-download"
                                                      ajax="false"
-                                                     styleClass="ui-button-secondary"
-                                                     disabled="#{seguimientoProyectoView.intIdEstadoProyecto==37}" >
+                                                     disabled="#{seguimientoProyectoView.intIdEstadoProyecto==37?true:seguimientoProyectoView.boProyectoEjecutado==true?false:true}"
+                                                     styleClass="ui-button-secondary">
+                                        <p:fileDownload value="#{seguimientoProyectoView.fileIndividual}" />
+                                    </p:commandButton>
+                                </div>
+                                <div class="p-field">
+                                    <!--
+                                    <p:commandButton actionListener="#{seguimientoProyectoView.descargarFisico}" 
+                                                     value="Descargar avance" 
+                                                     icon="pi pi-download"
+                                                     ajax="false"
+                                                     disabled="#{seguimientoProyectoView.intCantPartCuesNoEje>0?true:false}"
+                                                     styleClass="ui-button-secondary">
+                                        <p:fileDownload value="#{seguimientoProyectoView.fileIndividual}" />
+                                    </p:commandButton>
+                                    -->
+
+                                    <p:commandButton value="Descargar avance" ajax="false" 
+                                                     actionListener="#{seguimientoProyectoView.generaExcel}" 
+                                                     disabled="#{(seguimientoProyectoView.boProyectoEjecutado==true and seguimientoProyectoView.lstParticipantesIniciados.size()>0)?false:true}"
+                                                     update="@this"
+                                                     icon="pi pi-download"
+                                                     styleClass="ui-button-secondary">
                                         <p:fileDownload value="#{seguimientoProyectoView.fileIndividual}" />
                                     </p:commandButton>
                                 </div>
@@ -136,17 +230,18 @@
                                 <div class="p-field">
                                     <p:progressBar value="#{seguimientoProyectoView.intPorcentajeGeneral}" labelTemplate="#{seguimientoProyectoView.intPorcentajeGeneral}%" id="IdPorcentajeGeneral" />
                                 </div>
-
-                                <p:divider/>                            
-                                <h4>Avance agrupado</h4>
-                                <div class="p-field">
-                                    <p:selectOneMenu value="#{seguimientoProyectoView.idParametroElegido}" style="width:100%" >
-                                        <f:selectItems value="#{seguimientoProyectoView.mapItemsParametros}" />
-                                    </p:selectOneMenu>
-                                </div>
-                                <div class="p-field">
-                                    <p:radarChart model="#{seguimientoProyectoView.radarGrupo}"/>
-                                </div>
+                                <!--
+                                                                <p:divider/>                            
+                                                                <h4>Avance agrupado</h4>
+                                                                <div class="p-field">
+                                                                    <p:selectOneMenu value="#{seguimientoProyectoView.idParametroElegido}" style="width:100%" >
+                                                                        <f:selectItems value="#{seguimientoProyectoView.mapItemsParametros}" />
+                                                                    </p:selectOneMenu>
+                                                                </div>
+                                                                <div class="p-field">
+                                                                    <p:radarChart model="#{seguimientoProyectoView.radarGrupo}"/>
+                                                                </div>
+                                -->
 
                                 <p:divider/>                            
 
@@ -259,16 +354,16 @@
                                     <p:column headerText="Evaluador" sortBy="#{red.strDescEvaluador}" groupRow="true" sortPriority="0" sortOrder="asc">
                                         <h:outputText value="#{red.strDescEvaluador}" />
                                     </p:column>                
-                                    <p:column headerText="Relacion" sortBy="#{red.strDescRelacion}">
+                                    <p:column headerText="Relación" sortBy="#{red.strDescRelacion}">
                                         <!--<h:outputText value="#{red.strDescRelacion}" />-->
 
-                                        <p:tag value="#{red.strDescRelacion}" style=" background-color: ##{red.strColorRelacion};" />
+                                        <p:tag value="#{red.strDescRelacion}" style=" background-color: #{red.strColorRelacion};" />
                                     </p:column>
-                                    <!--
-                                    <p:column headerText="Correo" sortBy="#{red.strCorreoEvaluador}">
+
+                                    <p:column headerText="Email" sortBy="#{red.strCorreoEvaluador}">
                                         <h:outputText value="#{red.strCorreoEvaluador}" />
                                     </p:column>    
-                                    -->
+
                                     <p:column headerText="Evaluado" sortBy="#{red.strDescEvaluado}" groupRow="true" >
                                         <h:outputText value="#{red.strDescEvaluado}" />
                                     </p:column>
@@ -284,6 +379,12 @@
                                         </p:commandButton>
                                     </p:column>
 
+                                    <p:column headerText="Enviar recordatorio" style="text-align:center" >
+                                        <p:commandButton actionListener="#{seguimientoProyectoView.enviarRecordatorioPersonal(red)}" icon="pi pi-send" styleClass="rounded-button ui-button-outlined" disabled="#{red.blEvaluacionTerminada==true or seguimientoProyectoView.intIdEstadoProyecto==37}" update="@form" >
+                                            <p:confirm header="Confirmacion" message="Esta seguro que quieres enviar un recordatorio de esta evaluación?" icon="ui-icon-alert" />
+                                        </p:commandButton>
+                                    </p:column>
+
                                 </p:dataTable>
 
                             </p:card>
@@ -295,6 +396,74 @@
                 </p:card>
             </p:panel>
         </h:form>
+
+        <p:dialog widgetVar="dlgLicencias" header="Reserva de licencias" width="500"
+                  draggable="false" closable="true" hideEffect="drop" closeOnEscape="true" showEffect="drop" 
+                  modal="true"
+                  resizable="false" >
+            <h:form>
+                <p:panel>
+
+                    <p:growl id="growlFormUduario" showDetail="false" life="4000" />
+
+                    <div class="ui-fluid p-formgrid p-grid">
+
+                        <div class="p-field p-col-12 p-md-12">
+                            <div class="p-field">
+                                <p:outputLabel value="Usted requiere el siguiente número de licencias para ejecutar este proceso:"></p:outputLabel>
+                            </div>
+                            <div class="p-field">
+                                <p:card>
+                                    <div class="p-field p-formgrid p-grid">
+                                        <div class="p-col" style="text-align: center;" >
+                                            <p:outputLabel value="#{seguimientoProyectoView.intLicenciasIndividualesRequerido}" />
+                                        </div>
+                                        <div style="text-align: center" >
+                                            <p:divider layout="vertical" />
+                                        </div>
+                                        <div class="p-col" style="text-align: center;">
+                                            <p:outputLabel value="#{seguimientoProyectoView.intLicenciasMasivasRequerido}" />
+                                        </div>
+                                    </div>
+                                    <div class="p-field p-formgrid p-grid">
+                                        <div class="p-col" style="text-align: center;">
+                                            <p:outputLabel value="Individuales" />
+                                        </div>
+                                        <div>
+
+                                        </div>
+                                        <div class="p-col" style="text-align: center;">
+                                            <p:outputLabel value="Masivas" />
+                                        </div>
+                                    </div>
+                                </p:card>
+                            </div>
+                            <div class="p-field">
+                                <p:outputLabel value="¿Desea realizar la reservar para ejecutar este proyecto?" ></p:outputLabel>
+                            </div>
+                        </div>      
+                    </div>
+                    <div class="p-col-12 p-col-12 p-md-12">
+                        <div class="p-field p-formgrid p-grid">
+                            <div class="p-field p-col">
+                                <p:commandButton value="Aceptar" style="width: 100%;"  icon="pi pi-lock" update="form"
+                                                 actionListener="#{seguimientoProyectoView.reservarLicencias}" oncomplete="PF('dlgLicencias').hide()" />
+                            </div>
+                            <div class="p-field p-col">
+                                <p:commandButton value="Declinar" styleClass="ui-button-danger" 
+                                                 style="width: 100%;"
+                                                 icon="pi pi-times"  onclick="PF('dlgLicencias').hide()" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <br/>
+                    <center>
+                        <p:graphicImage value="../images/logoJaio360.jpg" width="130" height="50" />
+                    </center>
+                </p:panel>
+            </h:form>
+        </p:dialog>        
 
     </ui:define>
 </ui:composition>

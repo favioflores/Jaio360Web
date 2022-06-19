@@ -25,9 +25,7 @@
             <p:outputLabel value="Personaliza los comunicados que apareceran durante el proyecto. Recuerda que debes redactar la convocatoria, las instrucciones y el agradecimiento." />
             <p:row/>
             -->
-            <p:growl id="growl" showDetail="true" life="4000" sticky="false" />
-
-
+            <p:growl id="growl" life="4000" sticky="false" />
 
             <h:form id="frmPersonal">
 
@@ -96,11 +94,13 @@
                         <div class="p-field p-col-12 p-md-12">
                             <p:outputLabel value="La contraseña ingresada no debe ser mayor a 20 dígitos." />        
                         </div>
+                        <!--
                         <div class="p-field p-col-12 p-md-4">
                             <p:outputLabel for="@next" value="Contraseña actual"/>
                             <p:password id="strPassActual" value="#{actualizaDatosView.strContrasenia}" label="Contraseña actual" maxlength="20" required="true" requiredMessage="Debe ingresar su contraseña actual" />
                             <p:message for="strPassActual" />
                         </div>
+                        -->
                         <div class="p-field p-col-12 p-md-4">
                             <p:outputLabel for="@next" value="Nueva contraseña"/> 
                             <p:password id="strPassNuevo" value="#{actualizaDatosView.strContraseniaNueva}" match="strPassReNuevo"  label="Contraseña nueva" feedback="true" maxlength="20" required="true" requiredMessage="Debe ingresar una contraseña" validatorMessage="Debe repetir la misma contraseña" />

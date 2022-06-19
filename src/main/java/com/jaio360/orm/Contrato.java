@@ -13,35 +13,13 @@ public class Contrato  implements java.io.Serializable {
      private Integer coIdContratoPk;
      private Usuario usuario;
      private Tarifa tarifa;
-     private String coIdTipoContrato;
      private Date coFeCreacion;
      private Integer coNuLicenciaTotal;
      private Integer coNuLicenciaDisponible;
-     private Date coFeCulminacion;
+     private Integer coNuLicenciaReservada;
      private Integer coIdEstado;
 
     public Contrato() {
-    }
-
-	
-    public Contrato(Usuario usuario, Tarifa tarifa, String coIdTipoContrato, Date coFeCreacion, Integer coNuLicenciaTotal, Integer coNuLicenciaDisponible, Integer coIdEstado) {
-        this.usuario = usuario;
-        this.tarifa = tarifa;
-        this.coIdTipoContrato = coIdTipoContrato;
-        this.coFeCreacion = coFeCreacion;
-        this.coNuLicenciaTotal = coNuLicenciaTotal;
-        this.coNuLicenciaDisponible = coNuLicenciaDisponible;
-        this.coIdEstado = coIdEstado;
-    }
-    public Contrato(Usuario usuario, Tarifa tarifa, String coIdTipoContrato, Date coFeCreacion, Integer coNuLicenciaTotal, Integer coNuLicenciaDisponible, Date coFeCulminacion, Integer coIdEstado) {
-       this.usuario = usuario;
-       this.tarifa = tarifa;
-       this.coIdTipoContrato = coIdTipoContrato;
-       this.coFeCreacion = coFeCreacion;
-       this.coNuLicenciaTotal = coNuLicenciaTotal;
-       this.coNuLicenciaDisponible = coNuLicenciaDisponible;
-       this.coFeCulminacion = coFeCulminacion;
-       this.coIdEstado = coIdEstado;
     }
    
     public Integer getCoIdContratoPk() {
@@ -65,13 +43,6 @@ public class Contrato  implements java.io.Serializable {
     public void setTarifa(Tarifa tarifa) {
         this.tarifa = tarifa;
     }
-    public String getCoIdTipoContrato() {
-        return this.coIdTipoContrato;
-    }
-    
-    public void setCoIdTipoContrato(String coIdTipoContrato) {
-        this.coIdTipoContrato = coIdTipoContrato;
-    }
     public Date getCoFeCreacion() {
         return this.coFeCreacion;
     }
@@ -93,13 +64,6 @@ public class Contrato  implements java.io.Serializable {
     public void setCoNuLicenciaDisponible(Integer coNuLicenciaDisponible) {
         this.coNuLicenciaDisponible = coNuLicenciaDisponible;
     }
-    public Date getCoFeCulminacion() {
-        return this.coFeCulminacion;
-    }
-    
-    public void setCoFeCulminacion(Date coFeCulminacion) {
-        this.coFeCulminacion = coFeCulminacion;
-    }
     public Integer getCoIdEstado() {
         return this.coIdEstado;
     }
@@ -108,8 +72,13 @@ public class Contrato  implements java.io.Serializable {
         this.coIdEstado = coIdEstado;
     }
 
+    public Integer getCoNuLicenciaReservada() {
+        return coNuLicenciaReservada;
+    }
 
-
+    public void setCoNuLicenciaReservada(Integer coNuLicenciaReservada) {
+        this.coNuLicenciaReservada = coNuLicenciaReservada;
+    }
 
 }
 

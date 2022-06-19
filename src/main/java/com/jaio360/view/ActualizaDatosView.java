@@ -35,24 +35,25 @@ import org.primefaces.model.file.UploadedFile;
 @ViewScoped
 //@Named
 //@RequestScoped
-public class ActualizaDatosView implements Serializable{
-    
+public class ActualizaDatosView implements Serializable {
+
     private static Log log = LogFactory.getLog(ActualizaDatosView.class);
-    
-    private String pNombre = "[A-Za-z0-9]"; 
-    private String pCorreo = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";;
+
+    private String pNombre = "[A-Za-z0-9]";
+    private String pCorreo = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+    ;
     
     private List<Ubigeo> lstPaises;
     private List<Ubigeo> lstCiudades;
-    private List<Tema> lstTemas; 
+    private List<Tema> lstTemas;
     private List<Documento> lstTipoDocumento;
-    
+
     /* PERSONALES */
     private Integer idUsuario;
     private String strNombre;
     @Email(message = "debe ser un mail válido")
     private String strCorreo;
-    private Integer pais;    
+    private Integer pais;
     private Integer ciudad;
     /*
     private String cmbTema;
@@ -64,22 +65,21 @@ public class ActualizaDatosView implements Serializable{
     public void setCmbTema(String cmbTema) {
         this.cmbTema = cmbTema;
     }
-    */
-        
-    /* CONTRASEÑA */
+     */
+
+ /* CONTRASEÑA */
     private String strContrasenia;
     private String strContraseniaNueva;
     private String strContraseniaReNueva;
-    
+
     /* EMPRESA */
     private String strRazonSocial;
     private String strDocumento;
     private Integer intIdTipoDocumento;
-    
+
     /* LOGO */
     private StreamedContent grafico;
 
-    
     public StreamedContent getGrafico() {
         return grafico;
     }
@@ -111,7 +111,7 @@ public class ActualizaDatosView implements Serializable{
     public void setLstTipoDocumento(List<Documento> lstTipoDocumento) {
         this.lstTipoDocumento = lstTipoDocumento;
     }
-    
+
     public List<Tema> getLstTemas() {
         return lstTemas;
     }
@@ -199,7 +199,7 @@ public class ActualizaDatosView implements Serializable{
     public void setStrDocumento(String strDocumento) {
         this.strDocumento = strDocumento;
     }
-    
+
     public Integer getPais() {
         return pais;
     }
@@ -241,11 +241,11 @@ public class ActualizaDatosView implements Serializable{
     public void setGraphicText(DefaultStreamedContent graphicText) {
         this.graphicText = graphicText;
     }
-    
+
     public void handleFileUpload(FileUploadEvent event) {
-        
+
         UploadedFile objUploadedFile = event.getFile();
-            
+
         UsuarioDAO objUsuarioDAO = new UsuarioDAO();
 
         Usuario objUsuario = objUsuarioDAO.obtenUsuario(Utilitarios.obtenerUsuario().getIntUsuarioPk());
@@ -253,141 +253,137 @@ public class ActualizaDatosView implements Serializable{
         objUsuario.setUsBlImagenEmpresa(objUploadedFile.getContent());
 
         boolean correcto = objUsuarioDAO.actualizaUsuario(objUsuario);
-        
-        if(correcto){
+
+        if (correcto) {
             FacesContext context = FacesContext.getCurrentInstance();
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,"Actualizacion de logo",  "Logo actualizado correctamente"));
-        }else{
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Actualizacion de logo", "Logo actualizado correctamente"));
+        } else {
             FacesContext context = FacesContext.getCurrentInstance();
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,"Actualizacion de logo",  "Ocurrio un error al actualizar el logo"));
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Actualizacion de logo", "Ocurrio un error al actualizar el logo"));
         }
 
-    }   
-    
+    }
+
     @PostConstruct
-    public void init(){
-    
+    public void init() {
+
         lstPaises = new ArrayList<>();
         lstCiudades = new ArrayList<>();
         lstTipoDocumento = new ArrayList<>();
-        
+
         idUsuario = Utilitarios.obtenerUsuario().getIntUsuarioPk();
-        
+
         UsuarioInfo objUsuarioInfo = Utilitarios.obtenerUsuario();
-        
+
         strNombre = objUsuarioInfo.getStrDescripcion();
         strCorreo = objUsuarioInfo.getStrEmail();
         strRazonSocial = objUsuarioInfo.getStrEmpresaDesc();
         strDocumento = objUsuarioInfo.getStrDocumentoEmpresa();
         intIdTipoDocumento = objUsuarioInfo.getIntIdDocumentoEmpresa();
         ciudad = objUsuarioInfo.getIntIdCiudad();
-        
+
         List<Elemento> lstElementos = EHCacheManager.obtenerElementosPorDefinicion(Constantes.INT_DT_TIPO_DOCUMENTO);
-        
+
         for (Elemento objElemento : lstElementos) {
             Documento objDocumento = new Documento();
             objDocumento.setIdTipoDocumento(objElemento.getElIdElementoPk());
             objDocumento.setStrDescDocumento(objElemento.getElTxDescripcion());
             lstTipoDocumento.add(objDocumento);
         }
-        
+
         UbigeoDAO objUbigeoDAO = new UbigeoDAO();
-        
+
         Ubigeo objUbigeo = objUbigeoDAO.obtenUbigeo(ciudad);
-        
+
         pais = objUbigeo.getUbigeo().getUbIdUbigeoPk();
-                
+
         lstPaises = objUbigeoDAO.obtenListaUbigeo(Constantes.INT_ET_TIPO_UBIGEO_PAIS, null);
         lstCiudades = objUbigeoDAO.obtenListaUbigeo(Constantes.INT_ET_TIPO_UBIGEO_DEPARTAMENTO, objUbigeo.getUbigeo().getUbIdUbigeoPk());
-        
 
-        
-        
         //cargarTemas();
     }
-    
-    public void cargaCiudades(){
-        
+
+    public void cargaCiudades() {
+
         lstCiudades = new ArrayList<>();
         UbigeoDAO objUbigeoDAO = new UbigeoDAO();
-        lstCiudades = objUbigeoDAO.obtenListaUbigeo(Constantes.INT_ET_TIPO_UBIGEO_DEPARTAMENTO, pais); 
-    
+        lstCiudades = objUbigeoDAO.obtenListaUbigeo(Constantes.INT_ET_TIPO_UBIGEO_DEPARTAMENTO, pais);
+
     }
-  
-    public void actualizaPersonales(){
-    
+
+    public void actualizaPersonales() {
+
         UsuarioDAO objUsuarioDAO = new UsuarioDAO();
-        
+
         Usuario objUsuario = objUsuarioDAO.obtenUsuario(Utilitarios.obtenerUsuario().getIntUsuarioPk());
-        
+
         Ubigeo objUbigeo = new Ubigeo();
         objUbigeo.setUbIdUbigeoPk(ciudad);
-                
+
         objUsuario.setUsTxNombreRazonsocial(strNombre);
         objUsuario.setUbigeo(objUbigeo);
         objUsuario.setUsTxDocumento(strDocumento);
-        
+
         objUsuarioDAO.actualizaUsuario(objUsuario);
-        
+
         refrescarUsuarioSession(objUsuario);
-        
+
         FacesContext context = FacesContext.getCurrentInstance();
-        context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,"Actualización de datos",  "Se realizó la actualización correctamente"));
+        context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Actualización de datos", "Se realizó la actualización correctamente"));
     }
 
-    public void actualizaContraseña(){
-        
+    public void actualizaContraseña() {
+
         try {
-        
-            if(!strContraseniaNueva.equals(strContraseniaReNueva)){
+
+            if (!strContraseniaNueva.equals(strContraseniaReNueva)) {
                 FacesContext context = FacesContext.getCurrentInstance();
-                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,"Cambio de contraseña",  "La confirmacion de nueva contraseña no coincide"));
-            }else{
+                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Cambio de contraseña", "La confirmacion de nueva contraseña no coincide"));
+            } else {
 
                 UsuarioDAO objUsuarioDAO = new UsuarioDAO();
 
                 Usuario objUsuario = objUsuarioDAO.iniciaSesion(Utilitarios.obtenerUsuario().getStrEmail());
 
-                 EncryptDecrypt objEncryptDecrypt = new EncryptDecrypt();
+                EncryptDecrypt objEncryptDecrypt = new EncryptDecrypt();
 
-                if(strContrasenia.equals(objEncryptDecrypt.decrypt(objUsuario.getUsTxContrasenia()))){
-                    
-                    objUsuario.setUsTxContrasenia(objEncryptDecrypt.encrypt(strContrasenia));
-                    objUsuarioDAO.actualizaUsuario(objUsuario);
-                    
-                    FacesContext context = FacesContext.getCurrentInstance();
-                    context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,"Cambio de contraseña",  "Contraseña actualizada"));
-                }else{
-                    FacesContext context = FacesContext.getCurrentInstance();
-                    context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,"Cambio de contraseña",  "La contraseña actual es incorrecta"));  
-                }
+                //if(strContrasenia.equals(objEncryptDecrypt.decrypt(objUsuario.getUsTxContrasenia()))){
+                objUsuario.setUsTxContrasenia(objEncryptDecrypt.encrypt(strContraseniaNueva));
+                objUsuarioDAO.actualizaUsuario(objUsuario);
+
+                FacesContext context = FacesContext.getCurrentInstance();
+                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Cambio de contraseña", "Contraseña actualizada"));
+                //}else{
+                //    FacesContext context = FacesContext.getCurrentInstance();
+                //    context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,"Cambio de contraseña",  "La contraseña actual es incorrecta"));  
+                //}
 
             }
         } catch (Exception e) {
             log.error(e);
             FacesContext context = FacesContext.getCurrentInstance();
-                    context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,"Cambio de contraseña",  "La confirmacion de nueva contraseña no coincide"));
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Cambio de contraseña", "La confirmacion de nueva contraseña no coincide"));
         }
     }
 
-    public void actualizaEmpresa(){
-        
+    public void actualizaEmpresa() {
+
         UsuarioDAO objUsuarioDAO = new UsuarioDAO();
-        
+
         Usuario objUsuario = objUsuarioDAO.obtenUsuario(Utilitarios.obtenerUsuario().getIntUsuarioPk());
-        
+
         objUsuario.setUsTxDescripcionEmpresa(strRazonSocial);
         objUsuario.setUsIdTipoDocumento(intIdTipoDocumento);
         objUsuario.setUsTxDocumento(strDocumento);
-        
+
         objUsuarioDAO.actualizaUsuario(objUsuario);
-        
+
         refrescarUsuarioSession(objUsuario);
-    
+
     }
-    
-    private void cargarTemas(){
-    
+
+    private void cargarTemas() {
+
         lstTemas = new ArrayList<>();
         lstTemas.add(new Tema(0, "Afterdark", "afterdark"));
         lstTemas.add(new Tema(1, "Afternoon", "afternoon"));
@@ -440,17 +436,14 @@ public class ActualizaDatosView implements Serializable{
             objPreferenciasView.changeTheme();
         }
     }
-    */
+     */
+    private void refrescarUsuarioSession(Usuario objUsuario) {
 
-
-    private void refrescarUsuarioSession(Usuario objUsuario){
-    
         UsuarioInfo usuarioInfo = new UsuarioInfo(objUsuario);
 
         HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
-        session.removeAttribute("usuarioInfo"); 
+        session.removeAttribute("usuarioInfo");
         session.setAttribute("usuarioInfo", usuarioInfo);
-                
+
     }
 }
-

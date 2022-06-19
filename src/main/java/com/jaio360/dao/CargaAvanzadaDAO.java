@@ -53,7 +53,7 @@ public class CargaAvanzadaDAO implements Serializable {
         try {
 
             iniciaOperacion();
-            
+
             Query query1 = sesion.createSQLQuery("delete from relacion_participante where pa_id_participante_fk in ( select pa_id_Participante_pk from participante where po_id_proyecto_fk = ? ) ");
             Query query2 = sesion.createSQLQuery("delete from relacion where po_id_proyecto_fk = ? ");
             Query query3 = sesion.createSQLQuery("delete from participante where po_id_proyecto_fk = ? ");
@@ -63,7 +63,7 @@ public class CargaAvanzadaDAO implements Serializable {
             query2.setInteger(0, objProyecto.getPoIdProyectoPk());
             query3.setInteger(0, objProyecto.getPoIdProyectoPk());
             query4.setInteger(0, objProyecto.getPoIdProyectoPk());
-            
+
             query1.executeUpdate();
             query2.executeUpdate();
             query3.executeUpdate();
@@ -71,7 +71,7 @@ public class CargaAvanzadaDAO implements Serializable {
 
             tx.commit();
             correcto = true;
-            
+
         } catch (HibernateException he) {
             manejaExcepcion(he);
             log.error(he);
@@ -161,24 +161,27 @@ public class CargaAvanzadaDAO implements Serializable {
             // GUARDA RED
             for (RelacionAvanzada objRelacionAvanzada : lstRelacionAvanzadas) {
 
-                RelacionParticipanteId objRelacionParticipanteId = new RelacionParticipanteId();
+                if (!Utilitarios.limpiarTexto(objRelacionAvanzada.getStrEvaluado()).equals(Utilitarios.limpiarTexto(objRelacionAvanzada.getStrEvaluador()))) {
 
-                Participante objParticipante = (Participante) mParticipante.get(Utilitarios.limpiarTexto(objRelacionAvanzada.getStrEvaluado()));
-                RedEvaluacion objRedEvaluacion = (RedEvaluacion) mRedEvaluacion.get(Utilitarios.limpiarTexto(objRelacionAvanzada.getStrEvaluador()));
-                Relacion objRelacion = (Relacion) mRelacion.get(Utilitarios.limpiarTexto(objRelacionAvanzada.getStrRelacion()));
+                    RelacionParticipanteId objRelacionParticipanteId = new RelacionParticipanteId();
 
-                objRelacionParticipanteId.setPaIdParticipanteFk(objParticipante.getPaIdParticipantePk());
-                objRelacionParticipanteId.setReIdParticipanteFk(objRedEvaluacion.getReIdParticipantePk());
-                objRelacionParticipanteId.setReIdRelacionFk(objRelacion.getReIdRelacionPk());
+                    Participante objParticipante = (Participante) mParticipante.get(Utilitarios.limpiarTexto(objRelacionAvanzada.getStrEvaluado()));
+                    RedEvaluacion objRedEvaluacion = (RedEvaluacion) mRedEvaluacion.get(Utilitarios.limpiarTexto(objRelacionAvanzada.getStrEvaluador()));
+                    Relacion objRelacion = (Relacion) mRelacion.get(Utilitarios.limpiarTexto(objRelacionAvanzada.getStrRelacion()));
 
-                RelacionParticipante objRelacionParticipante = new RelacionParticipante();
-                objRelacionParticipante.setParticipante(objParticipante);
-                objRelacionParticipante.setRedEvaluacion(objRedEvaluacion);
-                objRelacionParticipante.setRelacion(objRelacion);
-                objRelacionParticipante.setId(objRelacionParticipanteId);
-                objRelacionParticipante.setRpIdEstado(Constantes.INT_ET_ESTADO_RELACION_EDO_EDOR_REGISTRADO);
+                    objRelacionParticipanteId.setPaIdParticipanteFk(objParticipante.getPaIdParticipantePk());
+                    objRelacionParticipanteId.setReIdParticipanteFk(objRedEvaluacion.getReIdParticipantePk());
+                    objRelacionParticipanteId.setReIdRelacionFk(objRelacion.getReIdRelacionPk());
 
-                sesion.save(objRelacionParticipante);
+                    RelacionParticipante objRelacionParticipante = new RelacionParticipante();
+                    objRelacionParticipante.setParticipante(objParticipante);
+                    objRelacionParticipante.setRedEvaluacion(objRedEvaluacion);
+                    objRelacionParticipante.setRelacion(objRelacion);
+                    objRelacionParticipante.setId(objRelacionParticipanteId);
+                    objRelacionParticipante.setRpIdEstado(Constantes.INT_ET_ESTADO_RELACION_EDO_EDOR_REGISTRADO);
+
+                    sesion.save(objRelacionParticipante);
+                }
 
             }
 

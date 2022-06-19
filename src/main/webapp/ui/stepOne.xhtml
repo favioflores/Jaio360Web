@@ -11,6 +11,7 @@
 
     <ui:define name="cabecera">
         <ui:include src="cabecera.xhtml" />
+        <p:staticMessage severity="info" summary="INFO" detail="El proyecto actual es: #{stepOneView.objProyectoInfo.strDescNombre}" style="width: 100%; margin-top: 5px; margin-left: 2px; margin-right: 2px;"/>
     </ui:define>
     <ui:define name="helpSteps">
 
@@ -362,7 +363,8 @@
                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                         currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords}"
                                         emptyMessage="No se encontró ningun registro" 
-                                        rendered="#{evaluadosView.lstAvanRelacion.size()>0}" >
+                                        rendered="#{evaluadosView.lstAvanRelacion.size()>0}"
+                                        >
 
                                         <f:facet name="header">
                                             Lista de relaciones encontradas
@@ -438,50 +440,109 @@
 
                             </div>
                         </c:if>
+                        <div class="p-field p-col-12 p-md-12">
+                            <h4>Lista de evaluados</h4>
+                            <p:card>
+                                <div class="p-field">
 
+                                    <p:dataTable 
+                                        id="lstEvaluados"
+                                        var="reg"
+                                        widgetVar="lstEvaluados"
+                                        resizableColumns="true"
+                                        value="#{evaluadosView.lstEvaluado}" 
+                                        rows="10"
+                                        rowsPerPageTemplate="5,10,{ShowAll|'All'}"
+                                        paginatorPosition="bottom"
+                                        stripedRows="true"
+                                        paginator="true" 
+                                        size="small"
+                                        paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                        emptyMessage="No se encontró ningun elemento"
+                                        rowIndexVar="index"
+                                        >
+
+                                        <p:column style="width: 40px;">
+                                            <f:facet name="header">
+                                                <h:outputText value="#" />
+                                            </f:facet>
+                                            <h:outputText 
+                                                value="#{index + 1}" />
+                                        </p:column> 
+
+                                        <p:column headerText="Descripción" sortBy="#{reg.paTxDescripcion}">
+                                            <h:outputText value="#{reg.paTxDescripcion}" />
+                                        </p:column>                           
+                                        <p:column headerText="Email" sortBy="#{reg.paTxCorreo}">
+                                            <h:outputText value="#{reg.paTxCorreo}" />
+                                        </p:column>    
+                                        <p:column headerText="Sexo" sortBy="#{reg.paTxSexo}" rendered="#{evaluadosView.blHabilitarSexo}" >
+                                            <h:outputText value="#{reg.paTxSexo}" />
+                                        </p:column>    
+                                        <p:column headerText="Edad" sortBy="#{reg.paNrEdad}" rendered="#{evaluadosView.blHabilitarEdad}"  >
+                                            <h:outputText value="#{reg.paNrEdad}"  />
+                                        </p:column>   
+                                        <p:column headerText="Tiempo en la empresa" sortBy="#{reg.paNrTiempoTrabajo}" rendered="#{evaluadosView.blHabilitarTiempoEmpresa}" >
+                                            <h:outputText value="#{reg.paNrTiempoTrabajo}" />
+                                        </p:column>    
+                                        <p:column headerText="Nivel ocupacional" sortBy="#{reg.paTxOcupacion}" rendered="#{evaluadosView.blHabilitarNivelOcupacional}">
+                                            <h:outputText value="#{reg.paTxOcupacion}" />
+                                        </p:column>  
+                                        <p:column headerText="Area de trabajo" sortBy="#{reg.paTxAreaNegocio}" rendered="#{evaluadosView.blHabilitarAreaNegocio}" >
+                                            <h:outputText value="#{reg.paTxAreaNegocio}" />
+                                        </p:column>  
+                                        <p:column headerText="Autoevaluar">
+                                            <p:selectBooleanCheckbox value="#{reg.paInAutoevaluar}" disabled="true" />
+                                        </p:column>
+
+                                    </p:dataTable>
+
+                                </div>
+
+                            </p:card>
+
+                        </div>
+
+
+                        
+                        <c:if test="#{evaluadosView.blCargarCorrectoAvan and evaluadosView.lstErrorAvan.size()==0}">
+                                    <p:commandButton value="Guardar carga de participantes y redes" 
+                                                     rendered="#{evaluadosView.blCargarCorrectoAvan}" 
+                                                     disabled="#{!evaluadosView.blCargarCorrectoAvan}" 
+                                                     actionListener="#{evaluadosView.cargarListaAvanzado()}"
+                                                     type="submit"
+                                                     style="width: 100%;" 
+                                                     update="formRed"
+                                                     icon="pi pi-save" /> 
+                                
+                        </c:if>
+
+                        <c:if test="#{evaluadosView.lstEvaluado.size()>0 and evaluadosView.lstEvaluadores.size()>0}">
+                                    <p:commandButton value="Eliminar carga de participantes y redes" 
+                                                     rendered="#{!(evaluadosView.lstEvaluado.size()>0 and evaluadosView.lstEvaluadores.size()>0) or !(evaluadosView.intIdEstadoProyecto == 37 or evaluadosView.intIdEstadoProyecto == 34)}" 
+                                                     disabled="#{!(evaluadosView.lstEvaluado.size()>0 and evaluadosView.lstEvaluadores.size()>0) or (evaluadosView.intIdEstadoProyecto == 37 or evaluadosView.intIdEstadoProyecto == 34)}" 
+                                                     styleClass="ui-button-danger"
+                                                     actionListener="#{evaluadosView.eliminarCargar()}"
+                                                     type="submit"
+                                                     update="formRed"
+                                                     icon="pi pi-times" /> 
+
+                        </c:if>
+                        <!--
+                                                <c:if test="#{evaluadosView.lstEvaluado.size()>0 and evaluadosView.lstEvaluadores.size()>0}">
+                                                    <div class="ui-fluid p-formgrid p-grid">
+                                                        <div class="p-field p-col-12 p-md-12">
+                                                            <p:commandButton value="Modificar carga de participantes y redes" 
+                                                                             rendered="#{evaluadosView.lstEvaluado.size()>0 and evaluadosView.lstEvaluadores.size()>0}" 
+                                                                             disabled="#{!(evaluadosView.intIdEstadoProyecto == 37 or evaluadosView.intIdEstadoProyecto == 34)}"  
+                                                                             process="@this" 
+                                                                             styleClass="ui-button-secondary"
+                                                                             icon="pi pi-pencil" /> 
+                                                        </div>
+                                                    </div>
+                                                </c:if>
+                        -->
                     </div>
-
-                    <c:if test="#{evaluadosView.blCargarCorrectoAvan and evaluadosView.lstErrorAvan.size()==0}">
-                        <div class="ui-fluid p-formgrid p-grid">
-                            <div class="p-field p-col-12 p-md-12">
-                                <p:commandButton value="Guardar carga de participantes y redes" 
-                                                 rendered="#{evaluadosView.blCargarCorrectoAvan}" 
-                                                 disabled="#{!evaluadosView.blCargarCorrectoAvan}" 
-                                                 actionListener="#{evaluadosView.cargarListaAvanzado()}"
-                                                 type="submit"
-                                                 update="formRed"
-                                                 icon="pi pi-save" /> 
-                            </div>
-                        </div>
-                    </c:if>
-
-                    <c:if test="#{evaluadosView.lstEvaluado.size()>0 and evaluadosView.lstEvaluadores.size()>0}">
-                        <div class="ui-fluid p-formgrid p-grid">
-                            <div class="p-field p-col-12 p-md-12">
-                                <p:commandButton value="Eliminar carga de participantes y redes" 
-                                                 rendered="#{!(evaluadosView.lstEvaluado.size()>0 and evaluadosView.lstEvaluadores.size()>0) or !(evaluadosView.intIdEstadoProyecto == 37 or evaluadosView.intIdEstadoProyecto == 34)}" 
-                                                 disabled="#{!(evaluadosView.lstEvaluado.size()>0 and evaluadosView.lstEvaluadores.size()>0) or (evaluadosView.intIdEstadoProyecto == 37 or evaluadosView.intIdEstadoProyecto == 34)}" 
-                                                 styleClass="ui-button-danger"
-                                                 actionListener="#{evaluadosView.eliminarCargar()}"
-                                                 type="submit"
-                                                 update="formRed"
-                                                 icon="pi pi-times" /> 
-                            </div>
-                        </div>
-                    </c:if>
-
-                    <c:if test="#{evaluadosView.lstEvaluado.size()>0 and evaluadosView.lstEvaluadores.size()>0}">
-                        <div class="ui-fluid p-formgrid p-grid">
-                            <div class="p-field p-col-12 p-md-12">
-                                <p:commandButton value="Modificar carga de participantes y redes" 
-                                                 rendered="#{evaluadosView.lstEvaluado.size()>0 and evaluadosView.lstEvaluadores.size()>0}" 
-                                                 disabled="#{!(evaluadosView.intIdEstadoProyecto == 37 or evaluadosView.intIdEstadoProyecto == 34)}"  
-                                                 process="@this" 
-                                                 styleClass="ui-button-secondary"
-                                                 icon="pi pi-pencil" /> 
-                            </div>
-                        </div>
-                    </c:if>
 
                 </p:card>
 

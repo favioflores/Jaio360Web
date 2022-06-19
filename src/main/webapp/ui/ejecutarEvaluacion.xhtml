@@ -7,11 +7,7 @@
                 template="../templates/templateWorkspace.xhtml" >
 
     <ui:define name="cabecera">
-        <!--
-                <h2>#{ejecutarEvaluacionView.strDescCuestionario}</h2>
-                <p:spacer/>
-                <h3>#{ejecutarEvaluacionView.strDescEvaluado}</h3>
-        -->
+        <ui:include src="cabecera.xhtml" />
     </ui:define>
     <ui:define name="content">
 
@@ -132,15 +128,13 @@
                                 <p:hotkey bind="ctrl+s" update="@form" 
                                           rendered="#{ejecutarEvaluacionView.intNroPreguntasActual.intValue()==ejecutarEvaluacionView.intNroTotalPreguntas.intValue()-1?false:true}"
                                           actionListener="#{ejecutarEvaluacionView.siguientePregunta()}"/>
-                                <p:commandButton icon="pi pi-save" value="Finalizar (Ctrl+Enter)" update="@form" style="width: 200px;" 
-                                                 actionListener="#{ejecutarEvaluacionView.guardarResultado()}"
+                                <p:commandButton icon="pi pi-save" value="Grabar respuestas" update="@form" style="width: 200px;" 
+                                                 actionListener="#{ejecutarEvaluacionView.ultimaPregunta()}" styleClass="ui-button-warning"
                                                  rendered="#{ejecutarEvaluacionView.intNroPreguntasActual.intValue()==ejecutarEvaluacionView.intNroTotalPreguntas.intValue()-1?true:false}"
+                                                 oncomplete="PF('dlgAgradecimiento').show();"
                                                  >
-                                    <p:confirm header="Confirmación" message="¿Deseas finalizar la evaluación?" icon="pi pi-info-circle" />
+                                    <!--p:confirm header="Confirmación" message="¿Deseas finalizar la evaluación?" icon="pi pi-info-circle" /-->
                                 </p:commandButton>
-                                <p:hotkey bind="ctrl+enter" update="@form" 
-                                          rendered="#{ejecutarEvaluacionView.intNroPreguntasActual.intValue()==ejecutarEvaluacionView.intNroTotalPreguntas.intValue()-1?true:false}"
-                                          actionListener="#{ejecutarEvaluacionView.siguientePregunta()}"/>
                                 <!--</c:if>-->
                             </div>
                         </div>
@@ -206,15 +200,17 @@
         <p:dialog header="Te agradecemos tu tiempo" modal="true" 
                   fitViewport="true" 
                   appendTo="@(body)" 
-                  widgetVar="dlg" 
-                  closeOnEscape="true"
+                  widgetVar="dlgAgradecimiento" 
+                  closeOnEscape="false"
+                  closable="false"
                   resizable="false" >
-            <h:outputText value="#{ejecutarEvaluacionView.strAgradecimiento}" escape="false" />
-            <f:facet name="footer">
+            <h:form>
+                <h:outputText value="#{ejecutarEvaluacionView.strAgradecimiento}" escape="false" />
+                <br/>
                 <center>
-                    <p:commandButton value="Salir" actionListener="#{ejecutarEvaluacionView.salir()}" />
+                <p:commandButton value="Salir de evaluación" actionListener="#{ejecutarEvaluacionView.salir()}" />
                 </center>
-            </f:facet>  
+            </h:form>
         </p:dialog>
 
 

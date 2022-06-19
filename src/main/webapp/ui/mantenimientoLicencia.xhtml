@@ -1,0 +1,181 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui" 
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                template="../templates/templateWorkspace.xhtml" >
+
+    <ui:define name="head"> 
+    </ui:define>
+
+    <ui:define name="cabecera">
+        <ui:include src="cabecera.xhtml" />
+    </ui:define>
+
+    <ui:define name="content">     
+        <p:panel>
+            
+            <h:form id="formUsuario">
+
+                <p:card id="cardFormUsuario">
+
+                    <h3>Lista de usuarios maestros</h3>
+
+                    <p:growl id="growlFormUduario" showDetail="false" life="4000" />
+
+                    <div class="ui-fluid p-formgrid p-grid">
+
+                        <div class="p-field p-col-12 p-md-12">
+                            <div class="p-field p-grid">
+                                <div class="p-col">
+                                    <p:outputLabel for="@next" value="Usuario maestro" />
+                                    <p:selectOneMenu id="idUsuario" value="#{mantenimientoLicenciaView.idUsuario}" required="true" requiredMessage="Debe seleccionar un usuario" filter="true" filterMatchMode="contains" >
+                                        <f:selectItem itemLabel="Selecciona un usuario" itemValue="" />
+                                        <f:selectItems value="#{mantenimientoLicenciaView.lstUsuarios}" var="usu" />
+                                        <p:ajax event="change" update="formContratos" listener="#{mantenimientoLicenciaView.verLicenciasAsignadas()}" />
+                                    </p:selectOneMenu>
+                                    <p:message for="idUsuario" display="text" style="width: 100%; margin: 0 0 0 0;" />
+                                </div>
+                            </div>
+                        </div>      
+                    </div>
+                </p:card>
+            </h:form>
+            <p:spacer/>
+            <h:form id="formAgregarLicencia">
+
+                <p:card id="cardFormUsuario">
+
+                    <h3>Registro de licencias</h3>
+
+                    <p:growl id="growlFormUduario" showDetail="false" life="4000" />
+
+                    <div class="ui-fluid p-formgrid p-grid">
+
+                        <div class="p-field p-col-12 p-md-4">
+                            <div class="p-field p-grid">
+                                <div class="p-col">
+                                    <p:outputLabel for="@next" value="Tarifa" />
+                                    <p:selectOneMenu id="idTarifa" value="#{mantenimientoLicenciaView.idTarifa}" required="true" requiredMessage="Debe seleccionar una tarifa" >
+                                        <f:selectItem itemLabel="Selecciona una tarifa" itemValue="" />
+                                        <f:selectItems value="#{mantenimientoLicenciaView.lstTarifas}" var="tar" />
+                                        <p:ajax event="change" listener="#{mantenimientoLicenciaView.calcularMontoBruto()}" immediate="true" process="@this" update="@form"/>
+                                    </p:selectOneMenu>
+                                    <p:message for="idTarifa" display="text" style="width: 100%; margin: 0 0 0 0;" />
+                                </div>
+                            </div>
+                        </div>      
+
+                        <div class="p-field p-col-12 p-md-4">
+                            <div class="p-field p-grid">
+                                <div class="p-col">
+                                    <p:outputLabel for="@next" value="Cantidad de licencias" />
+                                    <p:spinner id="idNroLicencias" value="#{mantenimientoLicenciaView.intCantidadLicencias}" required="true" min="0" prefix="" >
+                                        <p:ajax event="blur" update="@form" listener="#{mantenimientoLicenciaView.calcularMontoBruto()}" />
+                                    </p:spinner>
+                                    <p:message for="idNroLicencias" display="text" style="width: 100%; margin: 0 0 0 0;" />
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="p-field p-col-12 p-md-4">
+                            <div class="p-field p-grid">
+                                <div class="p-col">
+                                    <p:outputLabel for="@next" value="Monto Bruto" />
+                                    <p:inputText id="idMontoBruto" type="text" value="#{mantenimientoLicenciaView.strMontoBruto}" disabled="true" />
+                                    <p:message for="idMontoBruto" display="text" style="width: 100%; margin: 0 0 0 0;" />
+                                </div>
+                            </div>
+                        </div>     
+
+                        <div class="p-col-12 p-col-12 p-md-12">
+                            <div class="p-field p-formgrid p-grid">
+                                <div class="p-field p-col">
+                                    <p:commandButton value="Agregar licencia" update="formAgregarLicencia,formContratos" process="formAgregarLicencia" icon="pi pi-plus" 
+                                                     actionListener="#{mantenimientoLicenciaView.asignarLicencias}" />
+                                </div>
+                                <div class="p-field p-col">
+                                    <p:commandButton value="Limpiar" styleClass="ui-button-secondary" icon="pi pi-times" update="formAgregarLicencia" actionListener="#{mantenimientoLicenciaView.limpiarFormulario()}" />
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </p:card>
+
+            </h:form>
+
+            <p:spacer/>
+
+
+            <h:form id="formContratos">
+
+                <p:card id="panel">
+
+                    <h3>Historial de licencias asignadas</h3>
+
+
+                    <p:growl id="growlMntCuenta" showDetail="false" life="4000" />
+
+                    <div class="ui-fluid p-formgrid p-grid">
+
+
+                    </div>
+                    <div class="p-field p-col-12 p-md-12">
+                        <p:dataTable 
+                            id="lstContratos"
+                            var="contrato"
+                            value="#{mantenimientoLicenciaView.lstContratos}" 
+                            rows="5"
+                            size="small"
+                            paginator="true" 
+                            paginatorPosition="bottom"
+                            paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                            rowsPerPageTemplate="5,10,15"                                 
+                            widgetVar="lstContratos"
+                            emptyMessage="No se encontró ningun elemento"
+                            rowIndexVar="index"
+                            >    
+
+                            <p:column style="width: 40px;">
+                                <f:facet name="header">
+                                    <h:outputText value="#" />
+                                </f:facet>
+                                <h:outputText 
+                                    value="#{index + 1}" />
+                            </p:column> 
+
+                            <p:column  headerText="Fecha de registro">
+                                <h:outputText value="#{contrato.coFeCreacion}" />
+                            </p:column>
+                            <p:column  headerText="Licencias totales">
+                                <h:outputText value="#{contrato.coNuLicenciaTotal}" />
+                            </p:column>
+                            <p:column  headerText="Licencias disponibles">
+                                <h:outputText value="#{contrato.coNuLicenciaDisponible}" />
+                            </p:column>
+                            <p:column  headerText="Licencias reservadas">
+                                <h:outputText value="#{contrato.coNuLicenciaReservada}" />
+                            </p:column>
+                            <p:column  headerText="Precio">
+                                <h:outputText value="#{contrato.tarifa.taTxPrefijo.concat(contrato.tarifa.taDePrecio)}" />
+                            </p:column>
+                            <p:column  headerText="Tarifa">
+                                #{contrato.tarifa.taTxDescripcion}
+                            </p:column>
+
+                        </p:dataTable>
+
+                    </div>
+
+
+                </p:card>
+
+            </h:form>
+
+        </p:panel>
+    </ui:define>
+
+</ui:composition>

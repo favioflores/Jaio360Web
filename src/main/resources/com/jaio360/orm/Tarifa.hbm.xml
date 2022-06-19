@@ -20,7 +20,13 @@
         <property name="taIdEstado" type="int">
             <column name="TA_ID_ESTADO" not-null="true" />
         </property>
-        <set name="contratos" inverse="true">
+        <property name="taTxPrefijo" type="string">
+            <column name="TA_TX_PREFIJO" length="10" not-null="true" />
+        </property>
+        <property name="taIdTipoTarifa" type="int">
+            <column name="TA_ID_TIPO_TARIFA" not-null="true" />
+        </property>
+        <set name="contratos" inverse="true" lazy="true" >
             <key>
                 <column name="TA_ID_TARIFA_FK" not-null="true" />
             </key>

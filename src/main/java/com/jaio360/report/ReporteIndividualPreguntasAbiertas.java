@@ -110,7 +110,11 @@ public class ReporteIndividualPreguntasAbiertas implements Serializable {
                 strPreguntaTemp = obj[0].toString().trim();
                 
                 multiPageList.add(cmp.horizontalList().newRow(10));
-                multiPageList.add(cmp.horizontalList(cmp.text("\t- " + obj[1].toString().trim())));
+                if(Utilitarios.esNuloOVacio(obj[1])){
+                    multiPageList.add(cmp.horizontalList(cmp.text("\t- " + "Sin comentarios.")));
+                }else{
+                    multiPageList.add(cmp.horizontalList(cmp.text("\t- " + obj[1].toString().trim())));
+                }
             
             }
             

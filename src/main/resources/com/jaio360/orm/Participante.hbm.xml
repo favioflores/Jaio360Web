@@ -57,6 +57,9 @@
         <property name="paTxAreaNegocio" type="string">
             <column name="PA_TX_AREA_NEGOCIO" length="200" not-null="true" />
         </property>
+        <property name="paNrAnalisisDescarga" type="java.lang.Integer">
+            <column name="PA_NR_ANALISIS_DESCARGA" />
+        </property>
         
         <set name="relacionParticipantes" inverse="true">
             <key>

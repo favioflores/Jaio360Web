@@ -91,7 +91,7 @@ public class ReporteIndividualItemsAltaCalificacion implements Serializable  {
                 Object obj[] = (Object[]) itLstItems.next();
                 BigDecimal bdPunto = new BigDecimal(obj[3].toString()).setScale(2,RoundingMode.FLOOR);
                 
-                if(bdPromedio.compareTo(bdPunto) == Constantes.FIRST_EQUAL_SECOND || bdPromedio.compareTo(bdPunto) == Constantes.SECOND_GREATER && i <= 10){
+                if((bdPromedio.compareTo(bdPunto) == Constantes.FIRST_EQUAL_SECOND || bdPromedio.compareTo(bdPunto) == Constantes.SECOND_GREATER) && i <= 10){
                 
                     multiPageList.add(  cmp.horizontalList(
                                             cmp.verticalList(

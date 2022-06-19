@@ -11,6 +11,7 @@
 
     <ui:define name="cabecera">
         <ui:include src="cabecera.xhtml" />
+        <p:staticMessage severity="info" summary="INFO" detail="El proyecto actual es: #{stepFourView.objProyectoInfo.strDescNombre}" style="width: 100%; margin-top: 5px; margin-left: 2px; margin-right: 2px;"/>
     </ui:define>
     <ui:define name="helpSteps">
 
@@ -73,7 +74,7 @@
                             <div class="ui-fluid p-formgrid p-grid">
 
                                 <div class="p-field p-col-12 p-md-6">
-                                    <p:card>
+                                    <p:card id="cardConvocatoriaDatos">
 
                                         <h4>Personalización</h4>
 
@@ -113,7 +114,8 @@
                                             <small class="p-d-block">Ingresa el contenido del parrafo que aparecerá en el correo.</small>
                                         </div>
                                         <div class="p-field">
-                                            <p:commandButton value="Preview" styleClass="ui-button-warning" update="@form" icon="pi pi-eye" actionListener="#{redactarMensajesView.armarTemplateConvocatoria(true)}">
+                                            <p:commandButton value="Preview" styleClass="ui-button-warning" process="cardConvocatoriaDatos" update="@form"
+                                                             icon="pi pi-eye" actionListener="#{redactarMensajesView.armarTemplateConvocatoria(true)}">
                                             </p:commandButton>
                                         </div>   
                                         <!--
@@ -123,12 +125,12 @@
                                         </div>   
                                         -->
                                         <div class="p-field">
-                                            <p:commandButton value="Guardar" update="@form" icon="pi pi-save" actionListener="#{redactarMensajesView.guardarNotificacion(redactarMensajesView.ID_CONVOCATORIA)}">
+                                            <p:commandButton value="Guardar" process="cardConvocatoriaDatos" update="@form" icon="pi pi-save" actionListener="#{redactarMensajesView.guardarNotificacion(redactarMensajesView.ID_CONVOCATORIA)}">
                                             </p:commandButton>
                                         </div>
                                     </p:card>
                                     <p:divider/>
-                                    <p:card>
+                                    <p:card id="cardPruebaEnvioCorreo" >
                                         <h4>Prueba de envío de correo</h4>
 
                                         <div class="p-field">
@@ -144,7 +146,7 @@
                                             <!--<p:commandButton value="Agregar" actionListener="#{redactarMensajesView.agregaCorreoExtra}" process="@this,correoExtra" update="@form" />-->
                                             <p:commandButton 
                                                 actionListener="#{redactarMensajesView.enviarmeMensajeria}" 
-                                                icon="pi pi-send" 
+                                                icon="pi pi-send"  process="cardPruebaEnvioCorreo"
                                                 value="Enviar correo de prueba" update="@form" />
                                         </div>
 

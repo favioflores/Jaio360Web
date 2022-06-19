@@ -3,6 +3,7 @@ package com.jaio360.view;
 import com.jaio360.application.EHCacheManager;
 import com.jaio360.dao.UbigeoDAO;
 import com.jaio360.dao.UsuarioDAO;
+import com.jaio360.domain.UsuarioInfo;
 import com.jaio360.orm.Elemento;
 import com.jaio360.orm.Ubigeo;
 import com.jaio360.orm.Usuario;
@@ -11,8 +12,10 @@ import com.jaio360.utils.EncryptDecrypt;
 import com.jaio360.utils.Utilitarios;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -20,25 +23,25 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
+import javax.servlet.http.HttpSession;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.annotations.Proxy;
 import org.primefaces.PrimeFaces;
- 
- 
+
 /**
  *
- * @author 
+ * @author
  */
 @ManagedBean(name = "crearUsuario")
 @ViewScoped
-@Proxy(lazy=false)
-public class CrearUsuario implements Serializable{
-    
+@Proxy(lazy = false)
+public class CrearUsuario implements Serializable {
+
     private static Log log = LogFactory.getLog(CrearUsuario.class);
-    
+
     private static final long serialVersionUID = -1L;
-    
+
     private String strNombre;
     private String strDescripcion;
     private String strMetodologia;
@@ -47,16 +50,15 @@ public class CrearUsuario implements Serializable{
     private Integer intIdTipoDocumento;
     private Usuario usuarioForm;
     private List<SelectItem> lstEstados;
-    private List<SelectItem> lstTipoCuenta;    
-    private List<SelectItem> lstTipoDocumento;    
+    private List<SelectItem> lstTipoCuenta;
+    private List<SelectItem> lstTipoDocumento;
     private List<Ubigeo> lstPaises;
     private List<Ubigeo> lstCiudades;
-    private Integer pais;    
+    private Integer pais;
     private Integer ciudad;
-    
+
     private UsuarioDAO objUsuarioDAO = new UsuarioDAO();
-    
-    
+
     public String getStrNombre() {
         return strNombre;
     }
@@ -88,7 +90,7 @@ public class CrearUsuario implements Serializable{
     public void setIntIdEstado(Integer intIdEstado) {
         this.intIdEstado = intIdEstado;
     }
-        
+
     public List<SelectItem> getLstEstados() {
         return lstEstados;
     }
@@ -136,7 +138,7 @@ public class CrearUsuario implements Serializable{
     public void setUsuarioForm(Usuario usuarioForm) {
         this.usuarioForm = usuarioForm;
     }
-    
+
     public List<Ubigeo> getLstPaises() {
         return lstPaises;
     }
@@ -168,112 +170,107 @@ public class CrearUsuario implements Serializable{
     public void setCiudad(Integer ciudad) {
         this.ciudad = ciudad;
     }
-    
-        
-    @PostConstruct
-    public void init(){ 
-        
-        UbigeoDAO objUbigeoDAO = new UbigeoDAO();
-        
-        lstPaises = new ArrayList<>();
+
+    private void poblarPaises() {
         lstCiudades = new ArrayList<>();
-        
+
         usuarioForm = new Usuario();
         usuarioForm.setUbigeo(new Ubigeo());
-        
+
+        UbigeoDAO objUbigeoDAO = new UbigeoDAO();
+        lstPaises = new ArrayList<>();
         lstPaises = objUbigeoDAO.obtenListaUbigeo(Constantes.INT_ET_TIPO_UBIGEO_PAIS, null);
+    }
+
+    private void poblarEstados() {
+
         List<Elemento> lstElementos;
         Iterator itLstElementos;
-        
+
         lstElementos = EHCacheManager.obtenerElementosPorDefinicion(Constantes.INT_DT_ESTADO_USUARIO);
-        
+
         itLstElementos = lstElementos.iterator();
         lstEstados = new ArrayList<>();
-              
-        while(itLstElementos.hasNext()){
-            Elemento objElemento = (Elemento) itLstElementos.next(); 
-            
+
+        while (itLstElementos.hasNext()) {
+            Elemento objElemento = (Elemento) itLstElementos.next();
+
             SelectItem objSelectItem = new SelectItem();
             objSelectItem.setValue(objElemento.getElIdElementoPk());
             objSelectItem.setLabel(objElemento.getElTxDescripcion());
-            
+
             lstEstados.add(objSelectItem);
         }
-        
-        lstElementos = EHCacheManager.obtenerElementosPorDefinicion(Constantes.INT_DT_TIPO_CUENTA);
-        
-        itLstElementos = lstElementos.iterator();
-        lstTipoCuenta = new ArrayList<>();
-               
-        while(itLstElementos.hasNext()){
-            Elemento objElemento = (Elemento) itLstElementos.next(); 
-            
-            SelectItem objSelectItem = new SelectItem();
-            objSelectItem.setValue(objElemento.getElIdElementoPk());
-            objSelectItem.setLabel(objElemento.getElTxDescripcion());
-            
-            lstTipoCuenta.add(objSelectItem);
-        }
-        
-        lstElementos = EHCacheManager.obtenerElementosPorDefinicion(Constantes.INT_DT_TIPO_DOCUMENTO);
-        
-        itLstElementos = lstElementos.iterator();
-        lstTipoDocumento = new ArrayList<>();
-               
-        while(itLstElementos.hasNext()){
-            Elemento objElemento = (Elemento) itLstElementos.next(); 
-            
-            SelectItem objSelectItem = new SelectItem();
-            objSelectItem.setValue(objElemento.getElIdElementoPk());
-            objSelectItem.setLabel(objElemento.getElTxDescripcion());
-            
-            lstTipoDocumento.add(objSelectItem);
-        }
-        
-        Usuario usuario = Utilitarios.obtenerUsuarioSelecionado();
-        
-        if(usuario != null
-                && usuario.getUsIdCuentaPk() != null ){
-            usuarioForm = usuario;
-            
-            
-            EncryptDecrypt objEncryptDecrypt;
-            try {
-                objEncryptDecrypt = new EncryptDecrypt();
-                usuarioForm.setUsTxContrasenia(objEncryptDecrypt.decrypt(usuarioForm.getUsTxContrasenia()));
-            } catch (Exception e) {
-                log.error(e);
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,"Fallo!","Decriptación de clave"));
-            }   
-
-                    
-            ciudad = usuarioForm.getUbigeo().getUbIdUbigeoPk();
-            Ubigeo objUbigeo = objUbigeoDAO.obtenUbigeo(ciudad);
-            pais = objUbigeo.getUbigeo().getUbIdUbigeoPk();
-            
-            cargaCiudades();
-            //lstCiudades = objUbigeoDAO.obtenListaUbigeo(Constantes.INT_ET_TIPO_UBIGEO_DEPARTAMENTO, objUbigeo.getUbigeo().getUbIdUbigeoPk());
-        }
     }
-       
-    public void cargaCiudades(){
-        
+
+    private void poblarCiudades() {
+
         lstCiudades = new ArrayList<>();
         UbigeoDAO objUbigeoDAO = new UbigeoDAO();
-        lstCiudades = objUbigeoDAO.obtenListaUbigeo(Constantes.INT_ET_TIPO_UBIGEO_DEPARTAMENTO, pais); 
-    
+        lstCiudades = objUbigeoDAO.obtenListaUbigeo(Constantes.INT_ET_TIPO_UBIGEO_DEPARTAMENTO, pais);
+
     }
-    
+
+    private void poblarTipoCuentas() {
+
+        List<Elemento> lstElementos;
+        Iterator itLstElementos;
+        lstElementos = EHCacheManager.obtenerElementosPorDefinicion(Constantes.INT_DT_TIPO_CUENTA);
+
+        itLstElementos = lstElementos.iterator();
+        lstTipoCuenta = new ArrayList<>();
+
+        while (itLstElementos.hasNext()) {
+            Elemento objElemento = (Elemento) itLstElementos.next();
+
+            SelectItem objSelectItem = new SelectItem();
+            objSelectItem.setValue(objElemento.getElIdElementoPk());
+            objSelectItem.setLabel(objElemento.getElTxDescripcion());
+
+            lstTipoCuenta.add(objSelectItem);
+        }
+    }
+
+    private void poblarTipoDocumento() {
+
+        List<Elemento> lstElementos;
+        Iterator itLstElementos;
+        lstElementos = EHCacheManager.obtenerElementosPorDefinicion(Constantes.INT_DT_TIPO_DOCUMENTO);
+
+        itLstElementos = lstElementos.iterator();
+        lstTipoDocumento = new ArrayList<>();
+
+        while (itLstElementos.hasNext()) {
+            Elemento objElemento = (Elemento) itLstElementos.next();
+
+            SelectItem objSelectItem = new SelectItem();
+            objSelectItem.setValue(objElemento.getElIdElementoPk());
+            objSelectItem.setLabel(objElemento.getElTxDescripcion());
+
+            lstTipoDocumento.add(objSelectItem);
+        }
+    }
+
+    @PostConstruct
+    public void init() {
+
+        poblarEstados();
+        poblarPaises();
+        poblarTipoCuentas();
+        poblarTipoDocumento();
+
+    }
+
     public void guardarUsuario(ActionEvent event) {
-        
-        try{
-            
-            if(usuarioForm != null){
-                
+
+        try {
+
+            if (usuarioForm != null) {
+
                 String strErrores = esValido(usuarioForm);
-                
-                if(Utilitarios.esNuloOVacio(strErrores)){
-                
+
+                if (Utilitarios.esNuloOVacio(strErrores)) {
+
                     UsuarioDAO usuarioDAO = new UsuarioDAO();
                     Ubigeo ubigeo = new Ubigeo();
                     ubigeo.setUbIdUbigeoPk(pais);
@@ -283,50 +280,68 @@ public class CrearUsuario implements Serializable{
 
                     usuarioForm.setUsTxContrasenia(objEncryptDecrypt.encrypt(usuarioForm.getUsTxContrasenia()));
 
-                    if( usuarioForm.getUsIdCuentaPk() != null ){
+                    if (usuarioForm.getUsIdCuentaPk() != null) {
                         usuarioDAO.actualizaUsuario(usuarioForm);
-                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,"Confirmación",  "Se actualizo correctamente"));
-                        
-                    }else{
+                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Confirmación", "Se actualizo correctamente"));
+
+                    } else {
                         usuarioDAO.guardaUsuario(usuarioForm);
-                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,"Confirmación",  "Se guardo correctamente"));
+                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Confirmación", "Se guardo correctamente"));
                     }
                     usuarioForm = null;
                     //RequestContext.getCurrentInstance().closeDialog("crearUsuario");
                     PrimeFaces.current().dialog().closeDynamic("crearUsuario");
-                    
-                }else{
-                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,"Error", strErrores));
+
+                } else {
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", strErrores));
                 }
-                
+
             }
-           
-        }catch(Exception e){
+
+        } catch (Exception e) {
             log.error(e);
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,"Fallo!","Ocurrio un error al guardar el proyecto"));
-        }        
-        
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Fallo!", "Ocurrio un error al guardar el proyecto"));
+        }
+
     }
 
     private String esValido(Usuario usuarioForm) {
-        
+
         /* SI SE MODIFICA UNA CUENTA EXISTENTE */
-        if(Utilitarios.noEsNuloOVacio(usuarioForm.getUsIdCuentaPk())){
-            
+        if (Utilitarios.noEsNuloOVacio(usuarioForm.getUsIdCuentaPk())) {
+
             Usuario objUsuario = objUsuarioDAO.obtenUsuario(usuarioForm.getUsIdCuentaPk());
-            
-            if(!objUsuario.getUsIdMail().toUpperCase().equals(usuarioForm.getUsIdMail().toUpperCase())){
-                if(objUsuarioDAO.iniciaSesion(usuarioForm.getUsIdMail())!=null){
+
+            if (!objUsuario.getUsIdMail().toUpperCase().equals(usuarioForm.getUsIdMail().toUpperCase())) {
+                if (objUsuarioDAO.iniciaSesion(usuarioForm.getUsIdMail()) != null) {
                     return "El mail ingresado ya está siendo utilizado";
-                }            
+                }
             }
 
         }
-        
+
         /* SI SE CREA UNA CUENTA NUEVA*/
-        
         return Constantes.strVacio;
     }
 
-     
+    public void editarUsuario(UsuarioInfo usuario) {
+
+        if (usuario != null) {
+
+            //try{
+            HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
+            session.removeAttribute("usuarioSeleccionado");
+            session.setAttribute("usuarioSeleccionado", usuario.getUsuario());
+            //FacesContext.getCurrentInstance().getExternalContext().redirect("crearUsuario.jsf");
+            Map<String, Object> options = new HashMap<>();
+            options.put("modal", true);
+            options.put("resizable", false);
+            PrimeFaces.current().dialog().openDynamic("crearUsuario", options, null);
+
+            /* } catch (IOException ex) {
+                log.debug(ex);
+            }*/
+        }
+    }
+
 }

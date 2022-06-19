@@ -103,7 +103,7 @@ public class CuestionarioFisico implements Serializable {
             horResp.newRow();
 
             for (DetalleMetrica objDetalleMetrica : lstDetalleMetrica) {
-                horResp.add(cmp.text(objDetalleMetrica.getDeTxValor()).setStyle(ModeloGeneral.styleRptaManual));
+                horResp.add(cmp.text(objDetalleMetrica.getDeTxValor()).setStyle(ModeloGeneral.styleRptaManual).setStyle(ModeloGeneral.styleNegrita));
             }
 
             int i = 1;
@@ -112,11 +112,11 @@ public class CuestionarioFisico implements Serializable {
 
                 VerticalListBuilder objVL = cmp.verticalList();
 
-                objVL.add(cmp.text(i + ". " + objComponente.getCoTxDescripcion()), horResp);
+                objVL.add(cmp.text(objComponente.getCoTxDescripcion()), horResp);
 
                 for (Componente objComponenteC : lstCompComentario) {
                     objVL.add(cmp.verticalGap(5));
-                    objVL.add(cmp.text(objComponenteC.getCoTxDescripcion()).setStyle(ModeloGeneral.styleContenidoDatos).setStyle(ModeloGeneral.styleNegrita));
+                    objVL.add(cmp.text(objComponenteC.getCoTxDescripcion()).setStyle(ModeloGeneral.styleContenidoDatos));
                     objVL.add(cmp.text(Constantes.UNDERLINE_COMMENT));
                     objVL.add(cmp.verticalGap(5));
                 }
@@ -146,7 +146,7 @@ public class CuestionarioFisico implements Serializable {
         objVL.add(cmp.verticalGap(5));
 
         for (Componente objComponente : lstCompAbierta) {
-            objVL.add(cmp.text(i + ". " + objComponente.getCoTxDescripcion()));
+            objVL.add(cmp.text(objComponente.getCoTxDescripcion()));
             objVL.add(cmp.text(Constantes.UNDERLINE_COMMENT));
             i++;
         }

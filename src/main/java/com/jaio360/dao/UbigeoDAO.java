@@ -120,6 +120,24 @@ public class UbigeoDAO implements Serializable
 
         return listaUbigeo; 
     }  
+    
+    public Integer obtenPais(Integer intCiudad) throws HibernateException{ 
+        
+        try { 
+        
+            iniciaOperacion(); 
+            
+            Query query = sesion.createQuery("select u.ubigeo.ubIdUbigeoPk from Ubigeo u where u.ubIdUbigeoPk = ? "); 
+            
+            query.setInteger(0, intCiudad);  
+            
+            return (Integer) query.uniqueResult(); 
+        
+        } finally { 
+            sesion.close(); 
+        }  
+
+    }  
 
     private void iniciaOperacion() throws HibernateException 
     { 

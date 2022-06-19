@@ -11,6 +11,7 @@
 
     <ui:define name="cabecera">
         <ui:include src="cabecera.xhtml" />
+        <p:staticMessage severity="info" summary="INFO" detail="El proyecto actual es: #{stepThreeView.objProyectoInfo.strDescNombre}" style="width: 100%; margin-top: 5px; margin-left: 2px; margin-right: 2px;"/>
     </ui:define>
     <ui:define name="helpSteps">
 
@@ -265,14 +266,13 @@
                                 </p:column>
 
 
-
+<!--
                                 <p:column style="width: 100px;">
                                     <center>
-                                        <!--<p:button icon="pi pi-check"  disabled="true" styleClass="ui-button-success"/>
-                                        <p:spacer/>-->
                                         <p:commandButton icon="pi pi-trash" styleClass="rounded-button ui-button-danger ui-button-outlined" />
                                     </center>
                                 </p:column>
+    -->                            
                                 <!--
                                     <p:column headerText="Correo electronico" >
                                         <h:outputText value="#{evaluado.strCorreo}" />
