@@ -86,9 +86,9 @@
                                                 <div class="p-col-10">
                                                     <span class="ui-float-label">
                                                         <p:inputText id="idRpta#{counter-1}" required="true" requiredMessage="Debe ingresar algún dato" value="#{crearCuestionarioView.strRptaDesc[counter-1]}" >
-                                                        <!--p:ajax event="blur" process="@this" immediate="true"  update="formMetrica" /-->
-                                                    </p:inputText>
-                                                    <p:outputLabel for="@previous" value="Etiqueta de respuesta nro. #{counter}"/>
+                                                            <!--p:ajax event="blur" process="@this" immediate="true"  update="formMetrica" /-->
+                                                        </p:inputText>
+                                                        <p:outputLabel for="@previous" value="Etiqueta de respuesta nro. #{counter}"/>
                                                     </span>
                                                 </div>
                                                 <div class="p-col-2">
@@ -371,6 +371,8 @@
                                         rows="50"
                                         paginator="true" 
                                         size="small"
+                                        editable="true" 
+                                        editMode="row"
                                         stripedRows="true"
                                         rowIndexVar="index"
                                         stickyHeader="true" stickyTopAt=".layout-topbar"
@@ -378,6 +380,9 @@
                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                         currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords}"                                    
                                         emptyMessage="No se encontró ningun elemento" >                 
+
+                                        <p:ajax event="rowEdit" listener="#{importarCuestionariosView.onRowEdit}" />
+                                        <p:ajax event="rowEditCancel" listener="#{importarCuestionariosView.onRowCancel}" />
 
                                         <f:facet name="header">
                                             <p:outputLabel value="Lista de elementos del cuestionario #{importarCuestionariosView.strCuestionario}" style="text-align: left;" />
@@ -387,7 +392,6 @@
                                             <p:button value="#{cues.strTipo}" style="height: 100%;" styleClass="ui-button-#{cues.strColor}" disabled="true" />
                                         </p:column>
 
-                                        <!--
                                         <p:column style="width: 60px;">
                                             <f:facet name="header">
                                                 <h:outputText value="#" />
@@ -395,10 +399,22 @@
                                             <h:outputText 
                                                 value="#{index + 1}" />
                                         </p:column> 
-                                        -->
 
                                         <p:column headerText="Descripción" >
-                                            <h:outputText value="#{cues.strDescripción}" />
+                                            <!--
+                                                <h:outputText value="#{cues.strDescripcion}" />
+                                            -->
+                                            <p:cellEditor>
+                                                <f:facet name="output">
+                                                    <p:outputLabel value="#{cues.strDescripcion}"/>
+                                                </f:facet>
+                                                <f:facet name="input">
+                                                    <p:inputTextarea value="#{cues.strDescripcion}" />
+                                                </f:facet>
+                                            </p:cellEditor>
+                                        </p:column>
+                                        <p:column style="width:6rem">
+                                            <p:rowEditor editTitle="Edit Row" cancelTitle="Cancel Edit" saveTitle="Save Row"/>
                                         </p:column>
 
                                     </p:dataTable>

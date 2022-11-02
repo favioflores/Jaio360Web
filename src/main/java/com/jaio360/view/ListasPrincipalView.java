@@ -306,8 +306,6 @@ public class ListasPrincipalView implements Serializable {
         }
     }
 
-    
-
     public void buscarProyectos() {
 
         poblarListaProyectos(Utilitarios.obtenerUsuario());
@@ -576,7 +574,7 @@ public class ListasPrincipalView implements Serializable {
 
             objProyectoDAO.actualizaProyecto(objProyecto);
 
-            FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "El proyecto se ocultó correctamente", null);
+            FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "El proyecto fue archivado exitosamente", null);
             FacesContext.getCurrentInstance().addMessage(null, msg);
             /*
             } else {
@@ -634,7 +632,7 @@ public class ListasPrincipalView implements Serializable {
 
         Date fecha = Utilitarios.obtenerFechaHoraSistema();
         String dias = EHCacheManager.obtenerValor1Elemento(Constantes.ET_DIAS_BUSQUEDAS);
-
+        /*
         if (Utilitarios.noEsNuloOVacio(dias) && Utilitarios.isNumber(dias, true)) {
             txtFechaRegistroInicial = Utilitarios.sumarRestarDiasFecha(fecha, Utilitarios.aNumero(dias));
             txtFechaEjecucionInicial = Utilitarios.sumarRestarDiasFecha(fecha, Utilitarios.aNumero(dias));
@@ -646,6 +644,7 @@ public class ListasPrincipalView implements Serializable {
 
         txtFechaRegistroFinal = fecha;
         txtFechaEjecucionFinal = fecha;
+         */
 
         blOcultos = false;
 

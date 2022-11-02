@@ -222,7 +222,7 @@ public class MailSender extends Thread implements Serializable {
             props.put("mail.smtp.auth", "true");
             props.put("mail.smtp.port", strPuerto);
             props.put("mail.smtp.user", strUsuario);
-            //props.setProperty("mail.smtp.starttls.enable", "false");
+            props.setProperty("mail.smtp.starttls.enable", "true");
 
             //Session se = Session.getDefaultInstance(props, null);
             Session se = Session.getDefaultInstance(props,

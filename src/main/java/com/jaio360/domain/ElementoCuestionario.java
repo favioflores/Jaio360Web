@@ -1,12 +1,14 @@
 package com.jaio360.domain;
 
+import com.jaio360.orm.Componente;
 import java.io.Serializable;
 
 public class ElementoCuestionario implements Serializable{
     
     private String strTipo;
-    private String strDescripción;
+    private String strDescripcion;
     private String strColor;
+    private Componente objComponente;
 
     public String getStrTipo() {
         return strTipo;
@@ -16,12 +18,12 @@ public class ElementoCuestionario implements Serializable{
         this.strTipo = strTipo;
     }
 
-    public String getStrDescripción() {
-        return strDescripción;
+    public String getStrDescripcion() {
+        return strDescripcion;
     }
 
-    public void setStrDescripción(String strDescripción) {
-        this.strDescripción = strDescripción;
+    public void setStrDescripcion(String strDescripcion) {
+        this.strDescripcion = strDescripcion;
     }
 
     public String getStrColor() {
@@ -32,6 +34,12 @@ public class ElementoCuestionario implements Serializable{
         this.strColor = strColor;
     }
 
-    
-    
+    public Componente getObjComponente() {
+        return objComponente;
+    }
+
+    public void setObjComponente(Componente objComponente) {
+        this.objComponente = objComponente;
+    }
+
 }

@@ -1,4 +1,4 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+*<ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:ui="http://java.sun.com/jsf/facelets"
                 xmlns:h="http://java.sun.com/jsf/html"
                 xmlns:f="http://java.sun.com/jsf/core"
@@ -211,6 +211,10 @@
                                 <p:commandButton icon="pi pi-pencil" update="formUsuario" immediate="true" actionListener="#{mantenimientoCuentaView.editarUsuario(usu)}" >
                                 </p:commandButton>
                             </p:column>
+                            <p:column style="width:50px;text-align: center;">
+                                <p:commandButton icon="pi pi-lock" update="formUsuario" immediate="true" onclick="PF('dlgLicencias').hide()"  >
+                                </p:commandButton>
+                            </p:column>
                         </p:dataTable>
                     </div>
 
@@ -379,6 +383,73 @@
                         
             -->
         </p:panel>
+        <p:dialog widgetVar="dlgLicencias" header="Reserva de licencias" width="500"
+                  draggable="false" closable="true" hideEffect="drop" closeOnEscape="true" showEffect="drop" 
+                  modal="true"
+                  resizable="false" >
+            <h:form>
+                <p:panel>
+
+                    <p:growl id="growlFormUduario" showDetail="false" life="4000" />
+
+                    <div class="ui-fluid p-formgrid p-grid">
+
+                        <div class="p-field p-col-12 p-md-12">
+                            <div class="p-field">
+                                <p:outputLabel value="Usted requiere el siguiente número de licencias para ejecutar este proceso:"></p:outputLabel>
+                            </div>
+                            <div class="p-field">
+                                <p:card>
+                                    <div class="p-field p-formgrid p-grid">
+                                        <div class="p-col" style="text-align: center;" >
+                                            <p:outputLabel value="#{seguimientoProyectoView.intLicenciasIndividualesRequerido}" />
+                                        </div>
+                                        <div style="text-align: center" >
+                                            <p:divider layout="vertical" />
+                                        </div>
+                                        <div class="p-col" style="text-align: center;">
+                                            <p:outputLabel value="#{seguimientoProyectoView.intLicenciasMasivasRequerido}" />
+                                        </div>
+                                    </div>
+                                    <div class="p-field p-formgrid p-grid">
+                                        <div class="p-col" style="text-align: center;">
+                                            <p:outputLabel value="Individuales" />
+                                        </div>
+                                        <div>
+
+                                        </div>
+                                        <div class="p-col" style="text-align: center;">
+                                            <p:outputLabel value="Masivas" />
+                                        </div>
+                                    </div>
+                                </p:card>
+                            </div>
+                            <div class="p-field">
+                                <p:outputLabel value="¿Desea realizar la reservar para ejecutar este proyecto?" ></p:outputLabel>
+                            </div>
+                        </div>      
+                    </div>
+                    <div class="p-col-12 p-col-12 p-md-12">
+                        <div class="p-field p-formgrid p-grid">
+                            <div class="p-field p-col">
+                                <p:commandButton value="Aceptar" style="width: 100%;"  icon="pi pi-lock" update="form"
+                                                 actionListener="#{seguimientoProyectoView.reservarLicencias}" oncomplete="PF('dlgLicencias').hide()" />
+                            </div>
+                            <div class="p-field p-col">
+                                <p:commandButton value="Declinar" styleClass="ui-button-danger" 
+                                                 style="width: 100%;"
+                                                 icon="pi pi-times"  onclick="PF('dlgLicencias').hide()" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <br/>
+                    <center>
+                        <p:graphicImage value="../images/logoJaio360.jpg" width="130" height="50" />
+                    </center>
+                </p:panel>
+            </h:form>
+        </p:dialog>      
     </ui:define>
 
 </ui:composition>

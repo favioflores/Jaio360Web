@@ -133,7 +133,27 @@
 
                         <div class="product card">
                             <h:form id="frmListados">
+
                                 <p:growl id="growlLstProyectos" life="4000" showSummary="true" />
+
+
+                                <div class="ui-fluid p-formgrid p-grid">
+
+                                    <div class="p-field p-col-12 p-md-4">
+    
+                                            <div class="p-field p-formgrid p-grid">
+                                               <div class="p-col" style="text-align: left;" >
+                                                Ver proyectos archivados
+                                               </div>
+                                                <div class="p-col" style="text-align: left;" >
+                                                    <p:toggleSwitch id="switch" value="#{listasPrincipalView.blOcultos}" >
+                                                        <p:ajax listener="#{listasPrincipalView.buscarProyectos()}" update="idProyectos"/>
+                                                    </p:toggleSwitch>
+                                                </div>
+                                            </div>
+                                    </div>
+                                </div>
+
                                 <p:dataTable
                                     id="idProyectos"
                                     var="pro"

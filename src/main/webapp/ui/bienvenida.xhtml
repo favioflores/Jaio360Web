@@ -46,8 +46,7 @@
                         </h:form>
                     </c:if>
 
-                    <c:if test="#{menuPrincipal.usuarioInfo.boEsAdministrador != true and
-                                  listasPrincipalView.cantidadLstEvaluaciones>0}">
+                    <c:if test="#{listasPrincipalView.cantidadLstEvaluaciones>0}">
                         <c:if test="#{listasPrincipalView.cantidadLstEvaluaciones==1}">
                             <p style="text-align: justify">Actualmente tienes #{listasPrincipalView.lstEvaluaciones.size()} evaluación no resuelta.</p>
                         </c:if>

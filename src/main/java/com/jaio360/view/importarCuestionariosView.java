@@ -34,6 +34,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
+import org.primefaces.event.RowEditEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.model.file.UploadedFile;
@@ -404,14 +405,14 @@ public class importarCuestionariosView implements Serializable {
             while (itCategoria.hasNext()) {
 
                 Categorias objCat = (Categorias) itCategoria.next();
-                lstElementosDelCuestionarios.add(new DosDatos("Categoria", objCat.getStrCategoria(),null));
+                lstElementosDelCuestionarios.add(new DosDatos("Categoria", objCat.getStrCategoria(), null));
 
                 Iterator itPreguntasC = objCat.getLstPreguntasCerradas().iterator();
 
                 while (itPreguntasC.hasNext()) {
 
                     String strPreguntaC = (String) itPreguntasC.next();
-                    lstElementosDelCuestionarios.add(new DosDatos("Pregunta cerrada", strPreguntaC,"secondary"));
+                    lstElementosDelCuestionarios.add(new DosDatos("Pregunta cerrada", strPreguntaC, "secondary"));
                 }
 
             }
@@ -421,7 +422,7 @@ public class importarCuestionariosView implements Serializable {
             while (itComentarios.hasNext()) {
 
                 String strComment = (String) itComentarios.next();
-                lstElementosDelCuestionarios.add(new DosDatos("Comentario", strComment,"warning"));
+                lstElementosDelCuestionarios.add(new DosDatos("Comentario", strComment, "warning"));
 
             }
 
@@ -430,7 +431,7 @@ public class importarCuestionariosView implements Serializable {
             while (itPreguntasA.hasNext()) {
 
                 String strPreguntaA = (String) itPreguntasA.next();
-                lstElementosDelCuestionarios.add(new DosDatos("Pregunta abierta", strPreguntaA,"success"));
+                lstElementosDelCuestionarios.add(new DosDatos("Pregunta abierta", strPreguntaA, "success"));
 
             }
 
@@ -446,7 +447,7 @@ public class importarCuestionariosView implements Serializable {
     public void guardarImportacion() {
 
         try {
-            
+
             this.lstElementoCuestionario = new ArrayList();
 
             CuestionarioDAO objCuestionarioDAO = new CuestionarioDAO();
@@ -479,7 +480,7 @@ public class importarCuestionariosView implements Serializable {
         CuestionarioImportado objCuestionarioImportado;
 
         for (Cuestionario objCuestionario : lstCuestionario) {
-            
+
             blExistPrevImport = true;
 
             objCuestionarioImportado = new CuestionarioImportado();
@@ -528,7 +529,8 @@ public class importarCuestionariosView implements Serializable {
                     objElementoCuestionario.setStrColor("success");
                 }
 
-                objElementoCuestionario.setStrDescripción(objComponente.getCoTxDescripcion());
+                objElementoCuestionario.setStrDescripcion(objComponente.getCoTxDescripcion());
+                objElementoCuestionario.setObjComponente(objComponente);
 
                 lstElementoCuestionario.add(objElementoCuestionario);
 
@@ -546,16 +548,41 @@ public class importarCuestionariosView implements Serializable {
 
     public void eliminarCuestionario() {
         CuestionarioDAO objCuestionarioDAO = new CuestionarioDAO();
-        
+
         boolean correcto = objCuestionarioDAO.eliminaCuestionarioTotal();
 
         if (correcto) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Cuestionarios eliminados correctamente",null));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Cuestionarios eliminados correctamente", null));
             init();
         } else {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,"Ocurrio un error al eliminar los cuestionarios",null));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Ocurrio un error al eliminar los cuestionarios", null));
         }
 
     }
 
+    public void onRowEdit(RowEditEvent<ElementoCuestionario> event) {
+
+        try {
+            
+            Componente objComponente = event.getObject().getObjComponente();
+            objComponente.setCoTxDescripcion(event.getObject().getStrDescripcion());
+            
+            ComponenteDAO objComponenteDAO = new ComponenteDAO();
+            objComponenteDAO.actualizaComponente(objComponente);
+            
+            FacesMessage msg = new FacesMessage("El cuestionario fue actualizado exitosamente", null);
+            FacesContext.getCurrentInstance().addMessage(null, msg);
+            
+        } catch (Exception e) {
+            log.error(e);
+            FacesMessage msg = new FacesMessage("Ocurrió un error al actualizar el cuestionario", null);
+            FacesContext.getCurrentInstance().addMessage(null, msg);
+        }
+
+    }
+
+    public void onRowCancel(RowEditEvent<ElementoCuestionario> event) {
+        FacesMessage msg = new FacesMessage("Edit Cancelled", String.valueOf(event.getObject()));
+        FacesContext.getCurrentInstance().addMessage(null, msg);
+    }
 }

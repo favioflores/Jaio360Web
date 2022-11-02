@@ -192,8 +192,8 @@ public class ProyectoDAO implements Serializable
                                 
                             if(intIdProyecto != null) strCadena += " and poIdProyectoPk = ? ";
                             
-                            if(Utilitarios.noEsNuloOVacio(blocultos)){ 
-                                strCadena += " and poInOculto = "+blocultos;
+                            if(Utilitarios.noEsNuloOVacio(blocultos)){  
+                                strCadena += " and poInOculto = "+blocultos; 
                             }
                             if(Utilitarios.noEsNuloOVacio(txtDescripcion)){ 
                                 strCadena += " and poTxDescripcion like ? ";
@@ -207,7 +207,7 @@ public class ProyectoDAO implements Serializable
                             if(Utilitarios.noEsNuloOVacio(txtFechaRegistroInicial)){ 
                                 strCadena += " and poFeRegistro >= ? ";
                             }
-                            if(Utilitarios.noEsNuloOVacio(txtFechaRegistroFinal)){ 
+                            if(Utilitarios.noEsNuloOVacio(txtFechaRegistroFinal)){  
                                 strCadena += " and poFeRegistro <= ? ";
                             }
                             
