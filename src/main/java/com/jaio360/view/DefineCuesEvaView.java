@@ -32,9 +32,9 @@ import org.apache.commons.logging.LogFactory;
  */
 @ManagedBean(name = "defineCuesEvaView")
 @ViewScoped
-public class DefineCuesEvaView implements Serializable {
+public class DefineCuesEvaView extends BaseView implements Serializable {
 
-    private static Log log = LogFactory.getLog(DefineCuesEvaView.class);
+    private static final Log log = LogFactory.getLog(DefineCuesEvaView.class);
 
     private static final long serialVersionUID = -1L;
 

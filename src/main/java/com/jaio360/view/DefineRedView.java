@@ -34,9 +34,9 @@ import org.apache.commons.logging.LogFactory;
  */
 @ManagedBean(name = "defineRedView")
 @ViewScoped
-public class DefineRedView implements Serializable{
+public class DefineRedView extends BaseView implements Serializable{
     
-    private static Log log = LogFactory.getLog(DefineRedView.class);
+    private static final Log log = LogFactory.getLog(DefineRedView.class);
     
     private static final long serialVersionUID = -1L;
     

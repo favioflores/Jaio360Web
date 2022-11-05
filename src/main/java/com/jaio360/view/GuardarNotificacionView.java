@@ -22,7 +22,7 @@ import org.primefaces.PrimeFaces;
 
 @ManagedBean(name = "guardarNotificacionView")
 @ViewScoped
-public class GuardarNotificacionView implements Serializable {
+public class GuardarNotificacionView extends BaseView implements Serializable {
     private static final long serialVersionUID = -1L;
     
     private static Log log = LogFactory.getLog(GuardarNotificacionView.class);

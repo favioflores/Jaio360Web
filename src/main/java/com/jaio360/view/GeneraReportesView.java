@@ -60,7 +60,7 @@ import org.primefaces.model.StreamedContent;
  */
 @ManagedBean(name = "generaReportesView")
 @ViewScoped
-public class GeneraReportesView implements Serializable{
+public class GeneraReportesView extends BaseView implements Serializable{
     
     private static final Log log = LogFactory.getLog(GeneraReportesView.class);
     

@@ -23,14 +23,14 @@
         <table class="mytable" background="../images/fondos/macback.png" >
         </table>
 
-        <p:dialog id="dlgLogin" widgetVar="dlgLogin" header="Recuperar contraseña" visible="true" modal="false" closable="false" showEffect="drop" resizable="false" >
+        <p:dialog id="dlgLogin" widgetVar="dlgLogin" header="#{msg['clave.titulo.form']}" visible="true" modal="false" closable="false" showEffect="drop" resizable="false" >
             <h:form id="loginForm">
                 <p:panel>
                     <p:growl id="growl" sticky="false" showDetail="true" life="4000" />
 
                     <div class="ui-fluid">
                         <div class="p-field">
-                            <label for="usuario">#{msg['iniciar.input.usuario']}</label>
+                            <label for="usuario">#{msg['clave.input.msg.usuario']}</label>
                             <p:inputText id="usuario" value="#{usuarioSesion.usuario}" maxlength="50" >
                                 <f:validator validatorId="validarCorreo" /> 
                             </p:inputText>
@@ -40,10 +40,10 @@
                             <p:captcha label="Captcha"  class="g-recaptcha" />
                         </div>
                         <div class="p-field">
-                            <p:commandButton id="iniciar" update="datosLogin" value="Enviarmelo al correo" ajax="false" actionListener="#{usuarioSesion.enviarClaveCorreo()}" />
+                            <p:commandButton id="iniciar" update="datosLogin" value="#{msg['clave.input.btn.enviar']}" ajax="false" actionListener="#{usuarioSesion.enviarClaveCorreo()}" />
                         </div>
                         <div class="p-field">
-                            <p:commandButton id="salir" action="iniciar.xhtml?faces-redirect=true" immediate="true" value="Regresar" />
+                            <p:commandButton id="salir" action="iniciar.xhtml?faces-redirect=true" immediate="true" value="#{msg['clave.input.btn.regresar']}" />
                         </div>
                     </div>
                 </p:panel>

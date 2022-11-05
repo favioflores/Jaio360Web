@@ -13,7 +13,7 @@ import org.apache.commons.logging.LogFactory;
 
 @ManagedBean(name = "stepOneView")
 @ViewScoped
-public class stepOneView implements Serializable {
+public class stepOneView extends BaseView implements Serializable {
 
     private static Log log = LogFactory.getLog(stepOneView.class);
 

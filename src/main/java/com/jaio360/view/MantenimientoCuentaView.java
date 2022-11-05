@@ -37,7 +37,7 @@ import org.primefaces.event.SelectEvent;
 
 @ManagedBean(name = "mantenimientoCuentaView")
 @ViewScoped
-public class MantenimientoCuentaView implements Serializable {
+public class MantenimientoCuentaView extends BaseView implements Serializable {
 
     private static Log log = LogFactory.getLog(MantenimientoCuentaView.class);
 

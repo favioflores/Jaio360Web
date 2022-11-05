@@ -4,8 +4,7 @@
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:p="http://primefaces.org/ui" 
-      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+      xmlns:p="http://primefaces.org/ui" >
     <h:head/>
     <body>
         <ui:composition>
@@ -15,9 +14,9 @@
                     <f:facet name="options">
 
                         <div class="ui-input-icon-left p-mr-2">
-                            <p:outputLabel style="margin-right:30px;" value="Bienvenido #{menuPrincipal.usuarioInfo.strDescripcion}" />
+                            <p:outputLabel style="margin-right:30px;" value="#{msg['cabecera.bienvenido']} #{menuPrincipal.usuarioInfo.strDescripcion}" />
                         </div>
-                        <p:commandButton value="Cerrar sesión" id="btcerrarSesion" widgetVar="btcerrarSesion" styleClass="ui-button-secondary" icon="pi pi-fw pi-sign-out" actionListener="#{usuarioSesion.cerrarSesion}"  >
+                        <p:commandButton value="#{msg['cabecera.cerrar.sesion']}" id="btcerrarSesion" widgetVar="btcerrarSesion" styleClass="ui-button-secondary" icon="pi pi-fw pi-sign-out" actionListener="#{usuarioSesion.cerrarSesion}"  >
                             <p:confirm header="#{msg['cabecera.logout.confirmacion.title']}" icon="pi pi-info-circle" message="#{msg['cabecera.logout.confirmacion.mensaje']}" /> 
                         </p:commandButton>
                     </f:facet>

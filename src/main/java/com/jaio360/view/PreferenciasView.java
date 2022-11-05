@@ -9,7 +9,7 @@ import javax.faces.context.FacesContext;
 
 @ManagedBean
 @SessionScoped
-public class PreferenciasView implements Serializable {
+public class PreferenciasView extends BaseView implements Serializable {
 
 	//private String theme = "aristo"; //default
         private String theme = "bootstrap"; //default

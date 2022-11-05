@@ -68,14 +68,6 @@
 
                     </div>                    
 
-                    <!--
-                    <p:outputLabel value="Tema :"/>
-                    <p:themeSwitcher id="idTema" value="#{actualizaDatosView.cmbTema}" >
-                        <f:selectItem itemLabel="Elige tema" itemValue="" />
-                        <f:selectItems value="#{actualizaDatosView.lstTemas}" var="tema" itemLabel="#{tema.strNombre}" itemValue="#{tema.strImagen}" />
-                            <p:ajax  update="panel" listener="#{actualizaDatosView.actualizaTema}"/> 
-                    </p:themeSwitcher>
-                    -->
                     <p:commandButton type="submit" update="frmPersonal,growl" actionListener="#{actualizaDatosView.actualizaPersonales}"  value="Actualizar datos" />
 
                 </p:card>

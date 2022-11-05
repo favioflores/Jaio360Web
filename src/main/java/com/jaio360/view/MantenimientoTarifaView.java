@@ -27,7 +27,7 @@ import org.primefaces.event.RowEditEvent;
 
 @ManagedBean(name = "mantenimientoTarifaView")
 @ViewScoped
-public class MantenimientoTarifaView implements Serializable{
+public class MantenimientoTarifaView extends BaseView implements Serializable{
     
     private static Log log = LogFactory.getLog(MantenimientoTarifaView.class); 
     

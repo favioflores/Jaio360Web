@@ -36,15 +36,15 @@
                     <p:ajax event="idle" listener="#{usuarioSesion.timeout()}" oncomplete="PF('timeoutDlg').show();"/>
                 </p:idleMonitor>
 
-                <p:dialog header="Aviso de cierre de sesión" widgetVar="timeoutDlg" width="400" closable="false" maximizable="false" resizable="false" draggable="false" closeOnEscape="false" modal="true" >
+                <p:dialog header="#{msg['aviso.cierre']}" widgetVar="timeoutDlg" width="400" closable="false" maximizable="false" resizable="false" draggable="false" closeOnEscape="false" modal="true" >
 
                     <div class="ui-fluid">
 
                         <div class="p-field">
-                            <p:outputLabel value="Por seguridad su sesión fue cerrada tras 60 minutos de inactividad." class="p-m-2" />
+                            <p:outputLabel value="#{msg['aviso.texto.explicado']}" class="p-m-2" />
                         </div>
                         <div class="p-field">
-                            <p:button outcome="iniciar" value="Ok" class="p-m-2" />         
+                            <p:button outcome="iniciar" value="#{msg['aviso.ok']}" class="p-m-2" />         
                         </div>
                     </div>
 

@@ -40,9 +40,9 @@ import org.primefaces.PrimeFaces;
  */
 @ManagedBean(name = "crearProyecto")
 @ViewScoped
-public class CrearProyecto implements Serializable {
+public class CrearProyecto extends BaseView implements Serializable {
 
-    private static Log log = LogFactory.getLog(CrearProyecto.class);
+    private static final Log log = LogFactory.getLog(CrearProyecto.class);
 
     private static final long serialVersionUID = -1L;
 
@@ -129,8 +129,11 @@ public class CrearProyecto implements Serializable {
 
     public void proyectoCreado() {
 
+        mostrarAlerta(FacesMessage.SEVERITY_INFO, "El proyecto fue creado exitosamente", log, null);
+        /*
         FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "El proyecto fue creado exitosamente", null);
         FacesContext.getCurrentInstance().addMessage(null, message);
+        */
     }
 
     public void poblarMetodologias() {

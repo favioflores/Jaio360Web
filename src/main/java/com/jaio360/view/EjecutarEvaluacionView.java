@@ -45,7 +45,7 @@ import org.primefaces.component.outputpanel.OutputPanel;
  */
 @ManagedBean(name = "ejecutarEvaluacionView")
 @ViewScoped
-public class EjecutarEvaluacionView implements Serializable {
+public class EjecutarEvaluacionView extends BaseView implements Serializable {
 
     private static Log log = LogFactory.getLog(EjecutarEvaluacionView.class);
 

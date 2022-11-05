@@ -28,19 +28,19 @@
         <table class="mytable" background="../images/fondos/macback.png" >
         </table>
 
-        <p:dialog header="Bienvenido" widgetVar="dlgBienvenida" visible="true" width="400" fitViewport="true" modal="false" closable="false" showEffect="drop" resizable="false" >
+        <p:dialog header="#{msg['cabecera.bienvenido']}" widgetVar="dlgBienvenida" visible="true" width="400" fitViewport="true" modal="false" closable="false" showEffect="drop" resizable="false" >
             <h:form>
                 <p:panel id="panel1">
 
-                    <h4>¡Hola #{menuPrincipal.usuarioInfo.strDescripcion}!</h4>
-                    <p style="text-align: justify">El equipo de Jaio te da la bienvenida y te agradecemos por confiar en nosotros.</p>
+                    <h4>#{msg['bienvenida.hola']} #{menuPrincipal.usuarioInfo.strDescripcion},</h4>
+                    <p style="text-align: justify">#{msg['bienvenida.text1']}</p>
 
                     <c:if test="#{(menuPrincipal.usuarioInfo.boEsAdministrador == true ||
                                   menuPrincipal.usuarioInfo.boEsUsuarioMaestro == true) and
                                   listasPrincipalView.cantidadLstProyectos>=0}">
-                        <p style="text-align: justify">Para comenzar, recuerda que debes tener claro cual es nuestro proceso y siempre tener a la mano el manual del usuario en caso tengas dudas o consultas.</p>
+                        <p style="text-align: justify">#{msg['bienvenida.text2']}</p>
                         <h:form>
-                            <p:commandButton type="submit" value="Comenzar el día" actionListener="#{usuarioSesion.ingresaSistema}" immediate="true" process="@this" ajax="false" icon="pi pi-arrow-right" />
+                            <p:commandButton type="submit" value="#{msg['comenzar.dia']}" actionListener="#{usuarioSesion.ingresaSistema}" immediate="true" process="@this" ajax="false" icon="pi pi-arrow-right" />
                             <!--<p:commandButton value="Flujo del proceso" disabled="true" icon="ui-icon-arrowthickstop-1-s" />-->
                             <!--<p:commandButton value="Descargar manual de Jaio360" disabled="true" icon="ui-icon-arrowthickstop-1-s" />-->
                         </h:form>
@@ -48,46 +48,22 @@
 
                     <c:if test="#{listasPrincipalView.cantidadLstEvaluaciones>0}">
                         <c:if test="#{listasPrincipalView.cantidadLstEvaluaciones==1}">
-                            <p style="text-align: justify">Actualmente tienes #{listasPrincipalView.lstEvaluaciones.size()} evaluación no resuelta.</p>
+                            <p style="text-align: justify">#{msg['actualmente.tienes']} #{listasPrincipalView.lstEvaluaciones.size()} #{msg['bienvenida.eva.resuelta']}</p>
                         </c:if>
                         <c:if test="#{listasPrincipalView.cantidadLstEvaluaciones>1}">
-                            <p style="text-align: justify">Actualmente tienes #{listasPrincipalView.lstEvaluaciones.size()} evaluaciones no resueltas.</p>
+                            <p style="text-align: justify">#{msg['actualmente.tienes']} #{listasPrincipalView.lstEvaluaciones.size()} #{msg['bienvenida.eva.resueltas']}</p>
                         </c:if>
 
-                        <p:commandButton type="submit" value="Realizar evaluaciones" 
+                        <p:commandButton type="submit" value="#{msg['bienvenida.realizar.evaluaciones']}" 
                                          oncomplete="PF('dlgEvaluaciones').show()" onclick="PF('dlgBienvenida').hide()" ajax="true" icon="pi pi-check" />
 
                     </c:if>
 
-                    <!--
-                    <c:if test="#{menuPrincipal.usuarioInfo.boEsAdministrador != true and
-                                  listasPrincipalView.cantidadLstRedes>0}">
-                        <c:if test="#{listasPrincipalView.cantidadLstRedes==1}">
-                            <p style="text-align: justify">Actualmente tienes #{listasPrincipalView.lstRedes.size()} red pendiente por definir.</p>
-                        </c:if>
-                        <c:if test="#{listasPrincipalView.cantidadLstRedes>1}">
-                            <p style="text-align: justify">Actualmente tienes #{listasPrincipalView.lstRedes.size()} redes pendientes por definir.</p>
-                        </c:if>
-                        <p:dataGrid var="eva" value="#{listasPrincipalView.lstRedes}" columns="1" layout="grid" style="width: 100%;" 
-                                    rows="1" paginator="true"  paginatorPosition="top" 
-                                    paginatorTemplate="{CurrentPageReport} {PreviousPageLink} {NextPageLink} "  >
-
-                            <p:commandLink actionListener="#{listasPrincipalView.irRed(eva)}" >
-                            <h:panelGrid style="text-align:center; width: 100%;">
-                                <f:facet name="header">
-                    #{eva.strDescNombre} (Click aqui)
-                </f:facet>
-                <h:outputText value="#{eva.strMotivo}" /> 
-            </h:panelGrid>
-            </p:commandLink>
-        </p:dataGrid>
-    </c:if>
-                    -->
                     <c:if test="#{(menuPrincipal.usuarioInfo.boEsAdministrador == false and
                                   menuPrincipal.usuarioInfo.boEsUsuarioMaestro == false) and
                                   listasPrincipalView.cantidadLstEvaluaciones==0 }">
-                        <p>¡Muchas gracias! Usted no tiene trabajos pendientes!</p>
-                        <p:commandButton id="btcerrarSesion" widgetVar="btcerrarSesion" actionListener="#{usuarioSesion.cerrarSesion}" value="Cerrar sesión" >
+                        <p>#{msg['bienvenida.agradecimiento']}</p>
+                        <p:commandButton id="btcerrarSesion" widgetVar="btcerrarSesion" actionListener="#{usuarioSesion.cerrarSesion}" value="#{msg['cabecera.cerrar.sesionCerrar']}" >
                             <p:confirm header="#{msg['cabecera.logout.confirmacion.title']}" message="#{msg['cabecera.logout.confirmacion.mensaje']}" icon="pi pi-info-circle" /> 
                         </p:commandButton>
                         <p:confirmDialog global="true" >
@@ -96,7 +72,7 @@
                         </p:confirmDialog>
                     </c:if>
 
-                    <p style="text-align: justify" >Si tienes problemas o nuevas ideas no dudes en comunicarte con nuestro representante al correo  <a href="it.service@jaio360.com?Subject=Help" target="_top">it.service@jaio360.com</a></p>
+                    <p style="text-align: justify" >#{msg['bienvenida.contacto']} <a href="it.service@jaio360.com?Subject=Help" target="_top">it.service@jaio360.com</a></p>
 
                     <div class="text-center">
                         <p:graphicImage value="../images/logoJaio360.jpg" width="130" height="50" />
@@ -109,11 +85,11 @@
         <p:ajaxStatus onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" />
 
         <p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false">
-            <h5>Procesando</h5>
+            <h5>#{msg['processing']}</h5>
             <p:progressBar id="progressBarIndeterminate" style="height:10px;" mode="indeterminate"/>
         </p:dialog>
 
-        <p:dialog widgetVar="dlgEvaluaciones" header="Lista de evaluaciones pendientes" style="max-width: 90%; "  draggable="false" closable="false" hideEffect="drop" showEffect="drop"  resizable="false" >
+        <p:dialog widgetVar="dlgEvaluaciones" header="#{msg['lista.evaluaciones.pendientes']}" style="max-width: 90%; "  draggable="false" closable="false" hideEffect="drop" showEffect="drop"  resizable="false" >
             <h:form>
                 <p:panel>
                     <p:dataTable var="eva" value="#{listasPrincipalView.lstEvaluaciones}"
@@ -124,7 +100,7 @@
                                  paginator="true"  
                                  size="small"
                                  paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                 emptyMessage="No se encontró ningun elemento"
+                                 emptyMessage="#{msg['no.items']}"
                                  rowIndexVar="index"
                                  >
                         <p:column style="width: 40px;">
@@ -134,28 +110,23 @@
                             <h:outputText 
                                 value="#{index + 1}" />
                         </p:column> 
-                        <p:column headerText="Persona a evaluar">
+                        <p:column headerText="#{msg['persona.evaluar']}">
                             <h:outputText value="#{eva.strDescEvaluado}" /> 
                         </p:column>
-                        <p:column headerText="Correo">
+                        <p:column headerText="#{msg['correo']}">
                             <h:outputText value="#{eva.strCorreoEvaluado}" /> 
                         </p:column>
-                        <!--
-                        <p:column headerText="Relación">
-                            <p:tag value="#{eva.strRelacion}" style=" background-color: #{rel.strRelacionColor};" />
-                        </p:column>
-                        -->
-                        <p:column headerText="Proyecto">
+                        <p:column headerText="#{msg['project']}">
                             <h:outputText value="#{eva.strDescNombre}" /> 
                         </p:column>
                         <p:column>
                             <p:commandButton type="submit" 
                                              actionListener="#{listasPrincipalView.irEvaluacion(eva)}" 
-                                             value="Click para evaluar" />
+                                             value="#{msg['click.evaluar']}" />
                         </p:column>
 
                         <f:facet name="footer">
-                            <p:commandButton type="submit" value="Regresar a la bienvenida" 
+                            <p:commandButton type="submit" value="#{msg['back.to.welcome']}"
                                              oncomplete="PF('dlgBienvenida').show()" 
                                              onclick="PF('dlgEvaluaciones').hide()" 
                                              ajax="true" icon="pi pi-arrow-left" /> 

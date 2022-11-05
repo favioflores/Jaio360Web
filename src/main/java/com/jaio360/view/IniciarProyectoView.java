@@ -12,7 +12,7 @@ import org.apache.commons.logging.LogFactory;
 
 @ManagedBean(name = "iniciarProyectoView")
 @ViewScoped
-public class IniciarProyectoView implements Serializable{
+public class IniciarProyectoView extends BaseView implements Serializable{
     
     private static final long serialVersionUID = -1L;
     private static Log log = LogFactory.getLog(IniciarProyectoView.class);

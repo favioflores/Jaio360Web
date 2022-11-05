@@ -18,7 +18,7 @@
         <link type="text/css" rel="stylesheet" href="#{request.contextPath}/css/syntaxhighlighter/syntaxhighlighter.css" />
 
         <script type="text/javascript">
-            $(function() {$('.sidebar a').hover(function() {$(this).toggleClass('ui-state-hover');})});
+            $(function() {$('.sidebar a').hover(function() {$(this).toggleClass('ui-state-hover');});});
         </script>
         
         <script type="text/javascript">
@@ -28,7 +28,7 @@
 
             (function() {
               var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-              ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+              ga.src = ('https:' === document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
               var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
             })();
 

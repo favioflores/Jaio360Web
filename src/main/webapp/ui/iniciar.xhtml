@@ -7,16 +7,11 @@
                 template="../templates/templateLogin.xhtml">    
 
     <ui:define name="head"> 
-        <script src='https://www.google.com/recaptcha/api.js'></script>
         <style>
             .mytable {width: 100%; min-height: 100%; position: fixed; background-size: cover;}
 
             .text-center {
                 text-align: center;
-            }
-
-            .g-recaptcha {
-                display: inline-block;               
             }
         </style>
     </ui:define>
@@ -30,7 +25,7 @@
         <table class="mytable" background="../images/fondos/macback.png" >
         </table>
         
-        <p:dialog id="dlgLogin" widgetVar="dlgLogin" header="Iniciar sesión" visible="true" modal="false" closable="false" showEffect="drop" resizable="false" style="opacity: 1.0;">
+        <p:dialog id="dlgLogin" widgetVar="dlgLogin" header="#{msg['iniciar.titulo']}" visible="true" modal="false" closable="false" showEffect="drop" resizable="false" style="opacity: 1.0;">
             <h:form id="loginForm">
                 <p:panel id="panel">
                     <p:growl id="growl" sticky="false" life="4000" />
@@ -43,15 +38,14 @@
                             </p:inputText>
                         </div>
                         <div class="p-field">
-                            <label for="contrasena">#{msg['iniciar.input.contraseña']}</label>
+                            <label for="contrasena">#{msg['iniciar.input.contrasena']}</label>
                             <p:password id="contrasena" value="#{usuarioSesion.contraseña}"  inline="true" >
                                 <f:validator validatorId="validaContraseniaLogin" /> 
                             </p:password>
                         </div>
                         <div class="p-field">
                             <div class="text-center">
-                                <!--<div id="captcha1" class="g-recaptcha"  data-sitekey="6LeGgf4SAAAAAOxdlPnTNQht-IU5UTHQAVdBwvN8"></div>-->
-                                <p:captcha label="Captcha"  class="g-recaptcha" language="pe" />
+                                <!-- p:captcha label="Captcha"  language="pe" --> 
                             </div>
                         </div>
                         <div class="p-field">

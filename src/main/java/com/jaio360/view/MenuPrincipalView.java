@@ -14,7 +14,7 @@ import org.primefaces.model.menu.MenuModel;
 
 @ManagedBean(name = "menuPrincipal")
 @ViewScoped
-public class MenuPrincipalView implements Serializable {
+public class MenuPrincipalView extends BaseView implements Serializable {
 
     private MenuModel menuPrincipal;
     private UsuarioInfo usuarioInfo;
@@ -92,34 +92,34 @@ public class MenuPrincipalView implements Serializable {
         if (objUsuarioInfo.isBoEsAdministrador()) {
             //Home
             DefaultSubMenu home = agregarMenu("", "pi pi-fw pi-home", menuPrincipal);
-            agregarItem("Ir a principal", "home.jsf", "", home);
-            agregarItem("Ir a bienvenida", "bienvenida.jsf", "", home);
+            agregarItem(msg("ir.a.principal"), "home.jsf", "", home);
+            agregarItem(msg("ir.a.bienvenida"), "bienvenida.jsf", "", home);
             //Proyectos
-            DefaultSubMenu proyectos = agregarMenu("Proyectos", "pi pi-fw pi-briefcase", menuPrincipal);
-            agregarItem("Administrar proyectos", "admProyectos.jsf", "", proyectos);
+            DefaultSubMenu proyectos = agregarMenu(msg("projects"), "pi pi-fw pi-briefcase", menuPrincipal);
+            agregarItem(msg("administrar.proyectos"), "admProyectos.jsf", "", proyectos);
             //Datos de usuarios
-            DefaultSubMenu usuarios = agregarMenu("Usuarios", "pi pi-users", menuPrincipal);
-            agregarItem("Actualizar mis datos", "actMisDatos.jsf", "", usuarios);
-            agregarItem("Actualizar usuarios", "mantenimientoCuenta.jsf", "", usuarios);
-            agregarItem("Gestionar licencias", "mantenimientoLicencia.jsf", "", usuarios);
+            DefaultSubMenu usuarios = agregarMenu(msg("users"), "pi pi-users", menuPrincipal);
+            agregarItem(msg("actualizar.mis.datos"), "actMisDatos.jsf", "", usuarios);
+            agregarItem(msg("actualizar.usuarios"), "mantenimientoCuenta.jsf", "", usuarios);
+            agregarItem(msg("gestionar.licencias"), "mantenimientoLicencia.jsf", "", usuarios);
      
         }else if(objUsuarioInfo.isBoEsUsuarioMaestro()){
             //Home
             DefaultSubMenu home = agregarMenu("", "pi pi-fw pi-home", menuPrincipal);
-            agregarItem("Ir a principal", "home.jsf", "", home);
-            agregarItem("Ir a bienvenida", "bienvenida.jsf", "", home);
+            agregarItem(msg("ir.a.principal"), "home.jsf", "", home);
+            agregarItem(msg("ir.a.bienvenida"), "bienvenida.jsf", "", home);
             //Proyectos
-            DefaultSubMenu proyectos = agregarMenu("Proyectos", "pi pi-fw pi-briefcase", menuPrincipal);
-            agregarItem("Administrar proyectos", "admProyectos.jsf", "", proyectos);
+            DefaultSubMenu proyectos = agregarMenu(msg("projects"), "pi pi-fw pi-briefcase", menuPrincipal);
+            agregarItem(msg("administrar.proyectos"), "admProyectos.jsf", "", proyectos);
             //Datos de usuarios
-            DefaultSubMenu usuarios = agregarMenu("Usuarios", "pi pi-users", menuPrincipal);
-            agregarItem("Actualizar mis datos", "actMisDatos.jsf", "", usuarios);
+            DefaultSubMenu usuarios = agregarMenu(msg("users"), "pi pi-users", menuPrincipal);
+            agregarItem(msg("actualizar.mis.datos"), "actMisDatos.jsf", "", usuarios);
         }else{
             //Home
             DefaultSubMenu home = agregarMenu("", "pi pi-fw pi-home", menuPrincipal);
-            agregarItem("Ir a bienvenida", "bienvenida.jsf", "", home);
-            DefaultSubMenu usuarios = agregarMenu("Usuarios", "pi pi-users", menuPrincipal);
-            agregarItem("Actualizar mis datos", "actMisDatos.jsf", "", usuarios);
+            agregarItem(msg("ir.a.bienvenida"), "bienvenida.jsf", "", home);
+            DefaultSubMenu usuarios = agregarMenu(msg("users"), "pi pi-users", menuPrincipal);
+            agregarItem(msg("actualizar.mis.datos"), "actMisDatos.jsf", "", usuarios);
         }
         
     }

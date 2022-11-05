@@ -61,7 +61,7 @@ import org.primefaces.model.file.UploadedFile;
 
 @ManagedBean(name = "evaluadosView")
 @ViewScoped
-public class EvaluadosView implements Serializable {
+public class EvaluadosView extends BaseView implements Serializable {
 
     private static Log log = LogFactory.getLog(EvaluadosView.class);
 

@@ -26,12 +26,11 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
-import org.apache.velocity.tools.view.VelocityViewServlet;
 import org.primefaces.PrimeFaces;
 
 @ManagedBean(name = "redactarMensajesView")
 @ViewScoped
-public class RedactarMensajesView extends VelocityViewServlet implements Serializable {
+public class RedactarMensajesView extends BaseView implements Serializable {
 
     private static final long serialVersionUID = -1L;
 

@@ -35,7 +35,7 @@ import org.primefaces.PrimeFaces;
 
 @ManagedBean(name = "usuarioSesion")
 @ViewScoped
-public class UsuarioSesion implements Serializable{
+public class UsuarioSesion extends BaseView implements Serializable{
     
     private static Log log = LogFactory.getLog(UsuarioSesion.class);
             

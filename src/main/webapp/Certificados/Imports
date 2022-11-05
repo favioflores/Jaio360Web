@@ -1,0 +1,11 @@
+keytool -import -alias GTSRootR1 -file "GTS Root R1.crt" -keystore cacerts -storepass changeit
+keytool -import -alias GTSCA1C3 -file "GTS CA 1C3.crt" -keystore cacerts -storepass changeit
+keytool -import -alias google.com -file "google.com.crt" -keystore cacerts -storepass changeit
+keytool -import -alias gt1 -file "gtsr1.der" -keystore cacerts -storepass changeit
+keytool -import -alias gt2 -file "gtsr2.der" -keystore cacerts -storepass changeit
+keytool -import -alias gt3 -file "gtsr3.der" -keystore cacerts -storepass changeit
+keytool -import -alias gt4 -file "gtsr4.der" -keystore cacerts -storepass changeit
+keytool -import -alias gt5 -file "gsr4.der"  -keystore cacerts -storepass changeit
+
+
+

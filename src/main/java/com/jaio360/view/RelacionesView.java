@@ -24,7 +24,7 @@ import org.apache.commons.logging.LogFactory;
 
 @ManagedBean(name = "relacionesView")
 @ViewScoped
-public class RelacionesView implements Serializable{
+public class RelacionesView extends BaseView implements Serializable{
     
     private static Log log = LogFactory.getLog(RelacionesView.class); 
     
@@ -46,10 +46,6 @@ public class RelacionesView implements Serializable{
 
     public void setIntIdEstadoProyecto(Integer intIdEstadoProyecto) {
         this.intIdEstadoProyecto = intIdEstadoProyecto;
-    }
-    
-    public static Log getLog() {
-        return log;
     }
 
     public String getStrNombre() {

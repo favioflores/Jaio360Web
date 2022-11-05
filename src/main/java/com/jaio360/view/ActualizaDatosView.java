@@ -35,7 +35,7 @@ import org.primefaces.model.file.UploadedFile;
 @ViewScoped
 //@Named
 //@RequestScoped
-public class ActualizaDatosView implements Serializable {
+public class ActualizaDatosView extends BaseView implements Serializable {
 
     private static Log log = LogFactory.getLog(ActualizaDatosView.class);
 
@@ -136,13 +136,6 @@ public class ActualizaDatosView implements Serializable {
         this.pCorreo = pCorreo;
     }
 
-    public static Log getLog() {
-        return log;
-    }
-
-    public static void setLog(Log log) {
-        ActualizaDatosView.log = log;
-    }
 
     public String getStrNombre() {
         return strNombre;

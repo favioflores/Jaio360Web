@@ -36,9 +36,9 @@ import org.primefaces.PrimeFaces;
 @ManagedBean(name = "crearUsuario")
 @ViewScoped
 @Proxy(lazy = false)
-public class CrearUsuario implements Serializable {
+public class CrearUsuario extends BaseView implements Serializable {
 
-    private static Log log = LogFactory.getLog(CrearUsuario.class);
+    private static final Log log = LogFactory.getLog(CrearUsuario.class);
 
     private static final long serialVersionUID = -1L;
 

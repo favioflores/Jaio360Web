@@ -25,7 +25,7 @@ import org.apache.commons.logging.LogFactory;
 
 @ManagedBean(name = "mantenimientoLicenciaView")
 @ViewScoped
-public class MantenimientoLicenciaView implements Serializable {
+public class MantenimientoLicenciaView extends BaseView implements Serializable {
 
     private static Log log = LogFactory.getLog(MantenimientoLicenciaView.class);
 

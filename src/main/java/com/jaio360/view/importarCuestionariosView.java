@@ -41,7 +41,7 @@ import org.primefaces.model.file.UploadedFile;
 
 @ManagedBean(name = "importarCuestionariosView")
 @ViewScoped
-public class importarCuestionariosView implements Serializable {
+public class importarCuestionariosView extends BaseView implements Serializable {
 
     private static Log log = LogFactory.getLog(importarCuestionariosView.class);
 

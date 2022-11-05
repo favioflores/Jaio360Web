@@ -35,7 +35,7 @@ import org.primefaces.event.RowEditEvent;
 
 @ManagedBean(name = "crearCuestionarioView")
 @ViewScoped
-public class crearCuestionarioView implements Serializable {
+public class crearCuestionarioView extends BaseView implements Serializable {
 
     private String cuestionario;
     private List<CuestionarioBean> lstCuetionario;

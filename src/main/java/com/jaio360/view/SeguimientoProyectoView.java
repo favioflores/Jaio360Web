@@ -75,7 +75,7 @@ import org.primefaces.model.charts.radar.RadarChartOptions;
 
 @ManagedBean(name = "seguimientoProyectoView")
 @ViewScoped
-public class SeguimientoProyectoView implements Serializable {
+public class SeguimientoProyectoView extends BaseView implements Serializable {
 
     private static Log log = LogFactory.getLog(SeguimientoProyectoView.class);
 

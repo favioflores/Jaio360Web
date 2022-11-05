@@ -37,7 +37,7 @@ import org.primefaces.event.CellEditEvent;
  */
 @ManagedBean(name = "listasPrincipalView")
 @ViewScoped
-public class ListasPrincipalView implements Serializable {
+public class ListasPrincipalView extends BaseView implements Serializable {
 
     private static Log log = LogFactory.getLog(ListasPrincipalView.class);
 

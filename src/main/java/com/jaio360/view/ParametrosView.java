@@ -17,7 +17,7 @@ import org.apache.commons.logging.LogFactory;
 
 @ManagedBean(name = "parametrosView")
 @ViewScoped
-public class ParametrosView implements Serializable{
+public class ParametrosView extends BaseView implements Serializable{
     
     private static Log log = LogFactory.getLog(ParametrosView.class);
     

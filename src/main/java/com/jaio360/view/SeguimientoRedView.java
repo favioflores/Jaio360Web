@@ -42,7 +42,7 @@ import org.primefaces.model.StreamedContent;
 
 @ManagedBean(name = "seguimientoRedView")
 @ViewScoped
-public class SeguimientoRedView implements Serializable{
+public class SeguimientoRedView extends BaseView implements Serializable{
     
     private static Log log = LogFactory.getLog(SeguimientoRedView.class);
     

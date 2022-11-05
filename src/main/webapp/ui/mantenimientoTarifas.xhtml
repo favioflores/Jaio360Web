@@ -14,9 +14,9 @@
             <p:separator/>
             <h:panelGrid border="0" columns="1" >  
 
-                <p:growl id="growlMntCuenta" showDetail="true" autoUpdate="true" life="4000" />
+                <p:growl id="growlMntCuenta" showDetail="true" life="4000" />
                 <p:commandButton value="Crear nueva tarifa" immediate="true" onclick="PF('dlg').show();" > 
-                    <!-- <p:ajax event="dialogReturn" listener="#{mantenimientoTarifaView.tarifaCreada}" update="lstTarifas" /> -->
+                    
                 </p:commandButton>
 
                 <p:dataTable 
@@ -96,7 +96,7 @@
                     
                     <p:messages id="msgCreaTarifa" showDetail="true" showSummary="false" />
                     
-                    <p:growl sticky="false" showDetail="true" autoUpdate="true" life="4000" />
+                    <p:growl sticky="false" showDetail="true" life="4000" />
                     <h:panelGrid id="grid" columns="3" cellpadding="5" border="0" style="width: 100%;">
 
                         <h:outputLabel value="Descripcion : " />
