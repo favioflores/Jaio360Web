@@ -385,7 +385,6 @@ public class ListasPrincipalView extends BaseView implements Serializable {
 
             ProyectoInfo objProyectoInfo;
 
-            //EHCacheManager objEHCacheManager = new EHCacheManager();
             while (itLstRedes.hasNext()) {
 
                 Proyecto objProyecto = (Proyecto) itLstRedes.next();
@@ -394,12 +393,6 @@ public class ListasPrincipalView extends BaseView implements Serializable {
                 objProyectoInfo.setIntIdProyecto(objProyecto.getPoIdProyectoPk());
                 objProyectoInfo.setStrDescNombre(objProyecto.getPoTxDescripcion());
                 objProyectoInfo.setStrMotivo(objProyecto.getPoTxMotivo());
-                /*
-                objProyectoInfo.setIntIdMetodologia(objProyecto.getPoIdMetodologia());
-                objProyectoInfo.setStrDescMetodologia(objEHCacheManager.obtenerDescripcionElemento(objProyecto.getPoIdMetodologia()));
-                objProyectoInfo.setIntIdEstado(objProyecto.getPoIdEstado());
-                objProyectoInfo.setStrDescEstado(objEHCacheManager.obtenerDescripcionElemento(objProyecto.getPoIdEstado()));
-                objProyectoInfo.setDtFechaCreacion(objProyecto.getPoFeRegistro());*/
 
                 lstRedes.add(objProyectoInfo);
             }
@@ -446,12 +439,6 @@ public class ListasPrincipalView extends BaseView implements Serializable {
                     objProyectoInfo.setStrRelacion("AUTOEVALUACIÓN");
                 }
 
-                /*
-                objProyectoInfo.setIntIdMetodologia(objProyecto[6]);
-                objProyectoInfo.setStrDescMetodologia(objEHCacheManager.obtenerDescripcionElemento(objProyecto[6]));
-                objProyectoInfo.setIntIdEstado(objProyecto[3]);
-                objProyectoInfo.setStrDescEstado(objEHCacheManager.obtenerDescripcionElemento(objProyecto[3]));
-                objProyectoInfo.setDtFechaCreacion(objProyecto[4]);*/
                 lstEvaluaciones.add(objProyectoInfo);
             }
 
@@ -481,9 +468,13 @@ public class ListasPrincipalView extends BaseView implements Serializable {
         objProyectoInfo.setIntIdProyecto(objProyecto.getPoIdProyectoPk());
         objProyectoInfo.setStrDescNombre(objProyecto.getPoTxDescripcion());
         objProyectoInfo.setIntIdMetodologia(objProyecto.getPoIdMetodologia());
-        objProyectoInfo.setStrDescMetodologia(EHCacheManager.obtenerDescripcionElemento(objProyecto.getPoIdMetodologia()));
+        
+        //objProyectoInfo.setStrDescMetodologia(EHCacheManager.obtenerDescripcionElemento(objProyecto.getPoIdMetodologia()));
+        
         objProyectoInfo.setIntIdEstado(objProyecto.getPoIdEstado());
-        objProyectoInfo.setStrDescEstado(EHCacheManager.obtenerDescripcionElemento(objProyecto.getPoIdEstado()));
+        
+        objProyectoInfo.setStrDescEstado(msg(objProyecto.getPoIdEstado().toString(),null));
+        
         objProyectoInfo.setDtFechaCreacion(Utilitarios.convertDateToLocalDate(objProyecto.getPoFeRegistro()));
         objProyectoInfo.setDtFechaEjecucion(objProyecto.getPoFeEjecucion());
         objProyectoInfo.setStrMotivo(objProyecto.getPoTxMotivo());
@@ -517,15 +508,12 @@ public class ListasPrincipalView extends BaseView implements Serializable {
 
             objProyectoDAO.eliminaProyecto(intIdProyecto);
 
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "El proyecto se eliminó correctamente", null);
-            FacesContext.getCurrentInstance().addMessage(null, message);
+            mostrarAlertaInfo("adm.project.deleted", null);
 
             buscarProyectos();
 
         } catch (Exception ex) {
-            log.error(ex);
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_FATAL, "Ocurrio un error al realizar esta accion. Por favor comunicate con el administrador", null);
-            FacesContext.getCurrentInstance().addMessage(null, message);
+            mostrarError(log, ex);
         }
 
     }
@@ -542,22 +530,18 @@ public class ListasPrincipalView extends BaseView implements Serializable {
                 Proyecto objProyecto = objProyectoDAO.obtenProyecto(objProyectoInfo.getIntIdProyecto());
 
                 objProyecto.setPoTxDescripcion(event.getNewValue().toString());
-                //objProyecto.setPoIdMetodologia(objProyectoInfo.getIntIdMetodologia());
-                //objProyecto.setPoTxMotivo(objProyectoInfo.getStrMotivo());
 
                 objProyectoDAO.actualizaProyecto(objProyecto);
 
-                FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Se actualizó el proyecto correctamente", null);
-                FacesContext.getCurrentInstance().addMessage(null, msg);
+                mostrarAlertaInfo("adm.project.updated", null);
+
                 init();
+
             } else {
-                FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Debe ingresar un valor", null);
-                FacesContext.getCurrentInstance().addMessage(null, msg);
+                mostrarAlertaError("adm.least.value", null);
             }
         } catch (Exception e) {
-            log.error(e);
-            FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Ocurrio un error en la actualización", null);
-            FacesContext.getCurrentInstance().addMessage(null, msg);
+            mostrarError(log, e);
         }
     }
 
@@ -567,29 +551,16 @@ public class ListasPrincipalView extends BaseView implements Serializable {
             ProyectoDAO objProyectoDAO = new ProyectoDAO();
             Proyecto objProyecto = objProyectoDAO.obtenProyecto(objProyectoInfo.getIntIdProyecto());
 
-            //if (objProyectoInfo.isBoOculto()) {
             objProyecto.setPoInOculto(Boolean.TRUE);
             objProyectoInfo.setBoOculto(true);
             lstProyectos.remove(objProyectoInfo);
 
             objProyectoDAO.actualizaProyecto(objProyecto);
 
-            FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "El proyecto fue archivado exitosamente", null);
-            FacesContext.getCurrentInstance().addMessage(null, msg);
-            /*
-            } else {
-
-                objProyecto.setPoInOculto(Boolean.FALSE);
-                objProyectoInfo.setBoOculto(false);
-                lstProyectos.remove(objProyectoInfo);
-                FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Modificación de proyecto", "El proyecto se habilitó correctamente");
-                FacesContext.getCurrentInstance().addMessage(null, msg);
-            }*/
+            mostrarAlertaInfo("adm.archived.project", null);
 
         } catch (Exception e) {
-            log.error(e);
-            FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Modificación de proyecto", "Ocurrio un error en la actualización");
-            FacesContext.getCurrentInstance().addMessage(null, msg);
+            mostrarError(log, e);
         }
     }
 
@@ -632,19 +603,6 @@ public class ListasPrincipalView extends BaseView implements Serializable {
 
         Date fecha = Utilitarios.obtenerFechaHoraSistema();
         String dias = EHCacheManager.obtenerValor1Elemento(Constantes.ET_DIAS_BUSQUEDAS);
-        /*
-        if (Utilitarios.noEsNuloOVacio(dias) && Utilitarios.isNumber(dias, true)) {
-            txtFechaRegistroInicial = Utilitarios.sumarRestarDiasFecha(fecha, Utilitarios.aNumero(dias));
-            txtFechaEjecucionInicial = Utilitarios.sumarRestarDiasFecha(fecha, Utilitarios.aNumero(dias));
-        } else {
-            int diasTemp = -100;
-            txtFechaRegistroInicial = Utilitarios.sumarRestarDiasFecha(fecha, diasTemp);
-            txtFechaEjecucionInicial = Utilitarios.sumarRestarDiasFecha(fecha, diasTemp);
-        }
-
-        txtFechaRegistroFinal = fecha;
-        txtFechaEjecucionFinal = fecha;
-         */
 
         blOcultos = false;
 

@@ -129,11 +129,8 @@ public class CrearProyecto extends BaseView implements Serializable {
 
     public void proyectoCreado() {
 
-        mostrarAlerta(FacesMessage.SEVERITY_INFO, "El proyecto fue creado exitosamente", log, null);
-        /*
-        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "El proyecto fue creado exitosamente", null);
-        FacesContext.getCurrentInstance().addMessage(null, message);
-        */
+        mostrarAlertaInfo("adm.project.created", null);
+
     }
 
     public void poblarMetodologias() {
@@ -171,7 +168,6 @@ public class CrearProyecto extends BaseView implements Serializable {
             objProyecto.setPoTxDescripcion(this.strNombre);
             objProyecto.setPoFeRegistro(new Date());
             objProyecto.setPoIdEstado(Constantes.INT_ET_ESTADO_PROYECTO_REGISTRADO);
-            //objProyecto.setPoIdMetodologia(Integer.parseInt(strMetodologia));
             objProyecto.setPoIdMetodologia(30);
             objProyecto.setPoTxMotivo(this.getStrDescripcion());
             objProyecto.setPoInOculto(Boolean.FALSE);
@@ -185,16 +181,11 @@ public class CrearProyecto extends BaseView implements Serializable {
             strNombre = Constantes.strVacio;
             strDescripcion = Constantes.strVacio;
             strMetodologia = Constantes.strVacio;
-
-            //RequestContext.getCurrentInstance().closeDialog("crearProyecto");
-            //PrimeFaces.current().dialog().closeDynamic("crearProyecto");
-            //PrimeFaces.current().executeScript("PF('dlgCrearProyecto').hide();");
             
             proyectoCreado();
             
         } catch (Exception e) {
-            log.error(e);
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Fallo!", "Ocurrio un error al guardar el proyecto"));
+            mostrarError(log, e);
         }
 
     }

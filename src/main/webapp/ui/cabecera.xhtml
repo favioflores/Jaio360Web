@@ -31,6 +31,35 @@
 
         </ui:composition>
 
+        <h:form prependId="false">
+            <!--p:idleMonitor timeout="3600000" -->
+            <p:idleMonitor timeout="3600000" >
+                <p:ajax event="idle" listener="#{usuarioSesion.timeout()}" oncomplete="PF('timeoutDlg').show();"/>
+            </p:idleMonitor>
+
+            <p:dialog header="#{msg['aviso.cierre']}" widgetVar="timeoutDlg" width="400" closable="false" maximizable="false" resizable="false" draggable="false" closeOnEscape="false" modal="true" >
+
+                <div class="ui-fluid">
+
+                    <div class="p-field">
+                        <p:outputLabel value="#{msg['aviso.texto.explicado']}" class="p-m-2" />
+                    </div>
+                    <div class="p-field">
+                        <p:button outcome="iniciar" value="#{msg['aviso.ok']}" class="p-m-2" />         
+                    </div>
+                </div>
+
+            </p:dialog> 
+
+        </h:form>
+
+        <p:ajaxStatus onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" />
+
+        <p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false">
+            <h5>Procesando</h5>
+            <p:progressBar id="progressBarIndeterminate" style="height:10px;" mode="indeterminate"/>
+        </p:dialog>
+
     </body>
-    
+
 </html>

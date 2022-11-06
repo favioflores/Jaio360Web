@@ -78,11 +78,85 @@ public abstract class BaseView extends VelocityViewServlet implements Serializab
             mostrarError(ex);
         }
     }
+    
+    public void mostrarAlertaInfo(String key, Object... params) {
+        try {
+            if (existeMsg(key)) {
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, msg(key, params), null);
+                FacesContext.getCurrentInstance().addMessage(null, message);
 
+            } else {
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, key, null);
+                FacesContext.getCurrentInstance().addMessage(null, message);
+            }
+        } catch (Exception ex) {
+            logBase.error(ex);
+            mostrarError(ex);
+        }
+    }
+
+    public void mostrarAlertaError(String key, Object... params) {
+        try {
+            if (existeMsg(key)) {
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, msg(key, params), null);
+                FacesContext.getCurrentInstance().addMessage(null, message);
+
+            } else {
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, key, null);
+                FacesContext.getCurrentInstance().addMessage(null, message);
+            }
+        } catch (Exception ex) {
+            logBase.error(ex);
+            mostrarError(ex);
+        }
+    }
+
+    public void mostrarAlertaFatal(String key, Object... params) {
+        try {
+            if (existeMsg(key)) {
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_FATAL, msg(key, params), null);
+                FacesContext.getCurrentInstance().addMessage(null, message);
+
+            } else {
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_FATAL, key, null);
+                FacesContext.getCurrentInstance().addMessage(null, message);
+            }
+        } catch (Exception ex) {
+            logBase.error(ex);
+            mostrarError(ex);
+        }
+    }
+
+    public void mostrarAlertaWarning(String key, Object... params) {
+        try {
+            if (existeMsg(key)) {
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_WARN, msg(key, params), null);
+                FacesContext.getCurrentInstance().addMessage(null, message);
+
+            } else {
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_WARN, key, null);
+                FacesContext.getCurrentInstance().addMessage(null, message);
+            }
+        } catch (Exception ex) {
+            logBase.error(ex);
+            mostrarError(ex);
+        }
+    }
+        
     private void mostrarError(Exception e) {
         try {
-            FacesMessage message = new FacesMessage(FATAL, e.getMessage(), null);
+            FacesMessage message = new FacesMessage(FATAL, msg("error.was.occurred", null), null);
             FacesContext.getCurrentInstance().addMessage(null, message);
+        } catch (Exception ex) {
+            logBase.error(ex);
+        }
+    }
+    
+    public void mostrarError(Log log, Exception e) {
+        try {
+            FacesMessage message = new FacesMessage(FATAL, msg("error.was.occurred", null), null);
+            FacesContext.getCurrentInstance().addMessage(null, message);
+            log.error(e);
         } catch (Exception ex) {
             logBase.error(ex);
         }

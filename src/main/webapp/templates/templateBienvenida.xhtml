@@ -29,31 +29,7 @@
             <ui:insert name="cabecera"></ui:insert>
             <ui:insert name="content">...</ui:insert>
 
-
-            <h:form prependId="false">
-                <!--p:idleMonitor timeout="3600000" -->
-                <p:idleMonitor timeout="3600000" >
-                    <p:ajax event="idle" listener="#{usuarioSesion.timeout()}" oncomplete="PF('timeoutDlg').show();"/>
-                </p:idleMonitor>
-
-                <p:dialog header="#{msg['aviso.cierre']}" widgetVar="timeoutDlg" width="400" closable="false" maximizable="false" resizable="false" draggable="false" closeOnEscape="false" modal="true" >
-
-                    <div class="ui-fluid">
-
-                        <div class="p-field">
-                            <p:outputLabel value="#{msg['aviso.texto.explicado']}" class="p-m-2" />
-                        </div>
-                        <div class="p-field">
-                            <p:button outcome="iniciar" value="#{msg['aviso.ok']}" class="p-m-2" />         
-                        </div>
-                    </div>
-
-                </p:dialog> 
-
-            </h:form>
-
         </h:body>
-
 
     </f:view>
 </html>

@@ -34,35 +34,6 @@
                 <p:commandButton type="button" value="#{msg['cabecera.logout.confirmacion.no']}" styleClass="ui-confirmdialog-no" />
             </p:confirmDialog>
 
-            <h:form prependId="false">
-
-                <p:idleMonitor timeout="3600000" >
-                    <p:ajax event="idle" listener="#{usuarioSesion.timeout()}" oncomplete="PF('timeoutDlg').show();"/>
-                </p:idleMonitor>
-
-                <p:dialog header="Aviso de cierre de sesión" widgetVar="timeoutDlg" hideEffect="drop" showEffect="drop" width="400" closable="false" maximizable="false" resizable="false" draggable="false" closeOnEscape="false" modal="true" >
-
-                    <div class="ui-fluid">
-
-                        <div class="p-field">
-                            <p:outputLabel value="Por seguridad su sesión fue cerrada tras 60 minutos de inactividad." />
-                        </div>
-                        <div class="p-field">
-                            <p:button outcome="iniciar" value="Ok" />         
-                        </div>
-                    </div>
-
-                </p:dialog> 
-
-            </h:form>
-
-            <p:ajaxStatus onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" />
-
-            <p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false">
-                <h5>Procesando</h5>
-                <p:progressBar id="progressBarIndeterminate" style="height:10px;" mode="indeterminate"/>
-            </p:dialog>
-
         </h:body>
 
     </f:view>

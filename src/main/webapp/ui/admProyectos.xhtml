@@ -25,35 +25,35 @@
 
                         <p:card id="panel"> 
 
-                            <h3>Crear un nuevo proyecto</h3>
+                            <h3>#{msg['adm.proyecto']}</h3>
 
                             <div class="ui-fluid">
 
                                 <div class="p-field">
-                                    <p:outputLabel for="strNombre" value="Nombre del proyecto" />
-                                    <p:inputText type="text" id="strNombre" value="#{crearProyecto.strNombre}"  required="true" requiredMessage="Debe ingresar un nombre de proyecto" maxlength="100" >
+                                    <p:outputLabel for="strNombre" value="#{msg['adm.nombre']}" />
+                                    <p:inputText type="text" id="strNombre" value="#{crearProyecto.strNombre}"  required="true" requiredMessage="#{msg['adm.falta.nombre']}" maxlength="100" >
                                         <f:validator validatorId="validaTextoIngresado" />
                                     </p:inputText>
-                                    <small class="p-d-block">Ingresa el nombre con el que identificarás el proyecto.</small>
+                                    <small class="p-d-block">#{msg['adm.text1']}</small>
                                 </div>
 
                                 <div class="p-field">
-                                    <p:outputLabel for="strDescripcion" value="Descripción" />
-                                    <p:inputTextarea id="strDescripcion" value="#{crearProyecto.strDescripcion}" required="true" maxlength="200" autoResize="true" requiredMessage="Debe ingresar una descripción o motivo del proyecto"  >
+                                    <p:outputLabel for="strDescripcion" value="#{msg['adm.descripcion']}" />
+                                    <p:inputTextarea id="strDescripcion" value="#{crearProyecto.strDescripcion}" required="true" maxlength="200" autoResize="true" requiredMessage="#{msg['adm.falta.description']}"  >
                                         <f:validator validatorId="validaTextoIngresado" />
                                     </p:inputTextarea>
-                                    <small class="p-d-block">Agrega mayor detalle para incluirlo como valor de búsqueda.</small>
+                                    <small class="p-d-block">#{msg['adm.text2']}</small>
                                 </div>
 
 
                                 <div class="p-field p-formgrid p-grid">
                                     <div class="p-field p-col">
-                                        <p:commandButton value="Crear" update="crearProyecto,:frmListados:idProyectos:" actionListener="#{crearProyecto.guardarProyecto}"  icon="pi pi-check">
+                                        <p:commandButton value="#{msg['create']}" update="crearProyecto,:frmListados:idProyectos:" actionListener="#{crearProyecto.guardarProyecto}"  icon="pi pi-check">
                                             <p:ajax oncomplete="#{listasPrincipalView.buscarProyectos()}" update=":frmListados:idProyectos:"  />
                                         </p:commandButton>
                                     </div>
                                     <div class="p-field p-col">
-                                        <p:commandButton value="Limpiar" resetValues="true"  styleClass="ui-button-secondary" icon="pi pi-times" >
+                                        <p:commandButton value="#{msg['clean']}" resetValues="true"  styleClass="ui-button-secondary" icon="pi pi-times" >
                                             <p:ajax update="panel" resetValues="true"/>
                                         </p:commandButton>
                                     </div>
@@ -67,69 +67,9 @@
 
                 <div class="p-col-12 p-md-12 p-lg-12">
 
-
-    <!-- <p:outputLabel value="#{msg['pendientes.proyectos.parrafo']}" class="p-m-2" /> -->
-
                     <p:card id="cardLstProyectos" >
 
-
-
-                        <h3>Lista de proyectos</h3>
-                        <!--
-                        <div class="ui-fluid">
-                            <div class="p-field p-grid">
-
-                                <p:outputLabel for="txtDescripion" value="Nombre del proyecto :" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0" />
-                                <div class="p-col-12 p-md-10">
-                                    <p:inputText id="txtDescripion" value="#{listasPrincipalView.txtDescripcion}" maxlength="100" size="50" />
-                                </div>
-                            </div>
-                            <div class="p-field p-grid">
-                                <p:outputLabel for="idTipoProyecto" value="Tipo de proyecto :" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0" />
-                                <div class="p-col-12 p-md-10">
-                                    <p:selectOneMenu id="idTipoProyecto"  value="#{listasPrincipalView.idTipoProyecto}" >
-                                        <f:selectItems value="#{listasPrincipalView.lstMetodologias}" itemLabel="#{label}" itemValue="#{value}" />
-                                    </p:selectOneMenu> 
-                                </div>
-
-                            </div>
-                            <div class="p-field p-grid">
-                                <p:outputLabel for="idEstadoProyecto" value="Estado de proyecto :" class="p-col-12 p-mb-2 p-md-2 p-mb-md-0" />
-                                <div class="p-col-12 p-md-10">
-                                    <p:selectOneMenu id="idEstadoProyecto" value="#{listasPrincipalView.idEstadoProyecto}" >
-                                        <f:selectItems value="#{listasPrincipalView.lstEstados}" itemLabel="#{label}" itemValue="#{value}" />
-                                    </p:selectOneMenu> 
-                                </div>
-                            </div>
-                            <div class="p-field p-grid">
-                                <p:outputLabel for="maskr1" value="Fecha creación inicial :"  class="p-col-12 p-mb-2 p-md-2 p-mb-md-0" />
-                                <div class="p-col-12 p-md-10">
-                                    <p:calendar id="maskr1" value="#{listasPrincipalView.txtFechaRegistroInicial}"  pattern="dd/MM/yyyy" navigator="true" locale="es" mask="true" showOn="button" />
-                                </div>
-                            </div>
-                            <div class="p-field p-grid">
-                                <p:outputLabel for="maskr2" value="Fecha creación final :"  class="p-col-12 p-mb-2 p-md-2 p-mb-md-0" />
-                                <div class="p-col-12 p-md-10">
-                                    <p:calendar id="maskr2" value="#{listasPrincipalView.txtFechaRegistroFinal}" pattern="dd/MM/yyyy" navigator="true" locale="es" mask="true" showOn="button" />
-                                </div>
-                            </div>
-                            <div class="p-field p-grid">
-                                <p:outputLabel value="Ver ocultos :"  class="p-col-12 p-mb-2 p-md-2 p-mb-md-0" />
-                                <div class="p-col-12 p-md-10">
-                                    <p:toggleSwitch value="#{listasPrincipalView.blOcultos}" />
-                                </div>
-
-                            </div>
-                            <div class="p-grid">
-                                <div class="p-col-6">
-                                    <p:commandButton value="Buscar" actionListener="#{listasPrincipalView.buscarProyectos()}" update=":frmListados:" />
-                                </div>
-                                <div class="p-col-6">
-                                    <p:commandButton value="Limpiar" actionListener="#{listasPrincipalView.limpiarFiltro()}" update=":frmListados:"  />
-                                </div>
-                            </div>
-
-                        </div>-->
+                        <h3>#{msg['adm.list.projects']}</h3>
 
                         <div class="product card">
                             <h:form id="frmListados">
@@ -143,7 +83,7 @@
     
                                             <div class="p-field p-formgrid p-grid">
                                                <div class="p-col" style="text-align: left;" >
-                                                Ver proyectos archivados
+                                                #{msg['adm.view.projects.archivated']}
                                                </div>
                                                 <div class="p-col" style="text-align: left;" >
                                                     <p:toggleSwitch id="switch" value="#{listasPrincipalView.blOcultos}" >
@@ -167,32 +107,13 @@
                                     paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                     rowsPerPageTemplate="5,10,{ShowAll|'All'}"
                                     widgetVar="proyectosTabla"
+                                    emptyMessage="#{msg['no.items']}"
                                     style="height: 100%;"
                                     rowIndexVar="index"
                                     size="small"
                                     >    
 
-                                    <!--
-                                    <f:facet name="header">
-                                        <div class="p-d-flex p-ai-center p-jc-between">
-                                            <span></span>
-                                            <div>
-                                                <p:inputText id="globalFilter" onkeyup="PF('proyectosTabla').filter()" style="width:16rem" placeholder="Ingrese una palabra para buscarla" />
-                                            </div>
-                                        </div>
-
-                                    </f:facet>
-                                    -->
-
                                     <p:ajax event="cellEdit" listener="#{listasPrincipalView.actualizarProyecto}" update="frmListados:idProyectos,frmListados:growlLstProyectos"/>
-
-                                    <!--
-                                    <p:ajax event="rowEdit" listener="#{listasPrincipalView.actualizarProyecto}" update=":frmListados:idProyectos" />
-        
-                                    <f:facet name="footer">
-                                        En total tienes #{listasPrincipalView.lstProyectos.size()} proyecto(s).
-                                    </f:facet>
-                                    -->
 
                                     <p:column style="width: 50px;" > 
                                         <f:facet name="header">
@@ -202,7 +123,7 @@
                                             value="#{index + 1}" />
                                     </p:column>
 
-                                    <p:column headerText="Nombre" sortBy="#{pro.strDescNombre}"   >
+                                    <p:column headerText="#{msg['adm.nombre']}" sortBy="#{pro.strDescNombre}"   >
 
                                         <p:cellEditor>
                                             <f:facet name="output">
@@ -215,30 +136,20 @@
 
                                     </p:column>
 
-                                    <!-- 
-                                    
-                                                                    <p:column headerText="Descripción" sortBy="#{pro.strMotivo}">
-                                                                        <p:cellEditor>
-                                                                            <f:facet name="output"><h:outputText value="#{pro.strMotivo}" /></f:facet>
-                                                                            <f:facet name="input"><p:inputText value="#{pro.strMotivo}" style="width: 100%;" /></f:facet>
-                                                                        </p:cellEditor>
-                                                                    </p:column>
-                                    -->
-                                    <p:column headerText="#{msg['pendientes.proy.lst.est']}" sortBy="#{pro.strDescEstado}" style="text-align: center;">
+                                    <p:column headerText="#{msg['adm.descripcion']}" sortBy="#{pro.strDescEstado}" style="text-align: center;">
                                         <p:tag value="#{pro.strDescEstado}" ></p:tag>
                                     </p:column>
 
-                                    <p:column  headerText="#{msg['pendientes.proy.lst.fecOpe']}"  sortBy="#{pro.dtFechaCreacion}">        
+                                    <p:column  headerText="#{msg['adm.fecha']}"  sortBy="#{pro.dtFechaCreacion}">        
                                         <h:outputText value="#{pro.dtFechaCreacion}"  />
                                     </p:column>
-
 
                                     <p:column>
                                         <p:commandButton icon="pi pi-sign-in" styleClass="ui-button-outlined rounded-button " actionListener="#{listasPrincipalView.cargarProyecto(pro)}" immediate="true" />
                                         <p:spacer/> 
                                         <p:commandButton icon="pi pi-trash" styleClass="ui-button-outlined rounded-button ui-button-danger" update=":frmListados:" immediate="true" actionListener="#{listasPrincipalView.borrarProyecto(pro.intIdProyecto)}" 
                                                          disabled="#{pro.intIdEstado==34 or pro.intIdEstado==37?true:false}" >
-                                            <p:confirm header="Confirmacion" message="¿Estás seguro que deseas borrar este proyecto? Recuerda que el contenido, la información y los posibles avances no podrán recuperarse." icon="pi pi-info-circle"  />
+                                            <p:confirm header="#{msg['confirmation']}" message="#{msg['adm.prev.delete']}" icon="pi pi-info-circle"  />
                                         </p:commandButton>
                                         <p:spacer/> 
                                         <p:commandButton icon="pi pi-folder" styleClass="ui-button-outlined rounded-button ui-button-success" 
