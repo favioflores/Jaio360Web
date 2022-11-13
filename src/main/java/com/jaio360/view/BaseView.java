@@ -51,9 +51,15 @@ public abstract class BaseView extends VelocityViewServlet implements Serializab
     }
 
     public boolean existeMsg(String key) {
+        
+        String result = null;
+        
         try {
             FacesContext context = FacesContext.getCurrentInstance();
             ResourceBundle bundle = context.getApplication().getResourceBundle(context, "msg");
+            result = bundle.getString(key);
+            
+            
         } catch (MissingResourceException e) {
             return false;
         }
@@ -94,6 +100,22 @@ public abstract class BaseView extends VelocityViewServlet implements Serializab
             mostrarError(ex);
         }
     }
+    
+    public void mostrarAlertaInfo(String key) {
+        try {
+            if (existeMsg(key)) {
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, msg(key, null), null);
+                FacesContext.getCurrentInstance().addMessage(null, message);
+
+            } else {
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, key, null);
+                FacesContext.getCurrentInstance().addMessage(null, message);
+            }
+        } catch (Exception ex) {
+            logBase.error(ex);
+            mostrarError(ex);
+        }
+    }
 
     public void mostrarAlertaError(String key, Object... params) {
         try {
@@ -103,6 +125,38 @@ public abstract class BaseView extends VelocityViewServlet implements Serializab
 
             } else {
                 FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, key, null);
+                FacesContext.getCurrentInstance().addMessage(null, message);
+            }
+        } catch (Exception ex) {
+            logBase.error(ex);
+            mostrarError(ex);
+        }
+    }
+    
+    public void mostrarAlertaError(String key) {
+        try {
+            if (existeMsg(key)) {
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, msg(key, null), null);
+                FacesContext.getCurrentInstance().addMessage(null, message);
+
+            } else {
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, key, null);
+                FacesContext.getCurrentInstance().addMessage(null, message);
+            }
+        } catch (Exception ex) {
+            logBase.error(ex);
+            mostrarError(ex);
+        }
+    }
+    
+    public void mostrarAlertaFatal(String key) {
+        try {
+            if (existeMsg(key)) {
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_FATAL, msg(key, null), null);
+                FacesContext.getCurrentInstance().addMessage(null, message);
+
+            } else {
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_FATAL, key, null);
                 FacesContext.getCurrentInstance().addMessage(null, message);
             }
         } catch (Exception ex) {

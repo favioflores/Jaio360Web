@@ -4,7 +4,6 @@
  */
 package com.jaio360.view;
 
-import com.jaio360.application.EHCacheManager;
 import com.jaio360.dao.ProyectoDAO;
 import com.jaio360.dao.RelacionDAO;
 import com.jaio360.domain.ProyectoInfo;
@@ -21,7 +20,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import javax.annotation.PostConstruct;
-import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
@@ -330,7 +328,14 @@ public class ListasPrincipalView extends BaseView implements Serializable {
             } else {
                 session.setAttribute("proyectoInfo", proyectoSeleccionado);
             }
-            FacesContext.getCurrentInstance().getExternalContext().redirect("stepOne.jsf");
+
+            if (obj.getIntIdEstado().equals(Constantes.INT_ET_ESTADO_PROYECTO_EN_EJECUCION)) {
+                FacesContext.getCurrentInstance().getExternalContext().redirect("stepFive.jsf");
+            } else if (obj.getIntIdEstado().equals(Constantes.INT_ET_ESTADO_PROYECTO_TERMINADO)) {
+                FacesContext.getCurrentInstance().getExternalContext().redirect("stepSix.jsf");
+            } else {
+                FacesContext.getCurrentInstance().getExternalContext().redirect("stepOne.jsf");
+            }
 
         } catch (IOException ex) {
             log.error(ex);
@@ -468,13 +473,8 @@ public class ListasPrincipalView extends BaseView implements Serializable {
         objProyectoInfo.setIntIdProyecto(objProyecto.getPoIdProyectoPk());
         objProyectoInfo.setStrDescNombre(objProyecto.getPoTxDescripcion());
         objProyectoInfo.setIntIdMetodologia(objProyecto.getPoIdMetodologia());
-        
-        //objProyectoInfo.setStrDescMetodologia(EHCacheManager.obtenerDescripcionElemento(objProyecto.getPoIdMetodologia()));
-        
         objProyectoInfo.setIntIdEstado(objProyecto.getPoIdEstado());
-        
-        objProyectoInfo.setStrDescEstado(msg(objProyecto.getPoIdEstado().toString(),null));
-        
+        objProyectoInfo.setStrDescEstado(msg(objProyecto.getPoIdEstado().toString()));
         objProyectoInfo.setDtFechaCreacion(Utilitarios.convertDateToLocalDate(objProyecto.getPoFeRegistro()));
         objProyectoInfo.setDtFechaEjecucion(objProyecto.getPoFeEjecucion());
         objProyectoInfo.setStrMotivo(objProyecto.getPoTxMotivo());
@@ -601,9 +601,8 @@ public class ListasPrincipalView extends BaseView implements Serializable {
         idTipoProyecto = Constantes.ZERO_INTEGER;
         idEstadoProyecto = Constantes.ZERO_INTEGER;
 
-        Date fecha = Utilitarios.obtenerFechaHoraSistema();
-        String dias = EHCacheManager.obtenerValor1Elemento(Constantes.ET_DIAS_BUSQUEDAS);
-
+        //Date fecha = Utilitarios.obtenerFechaHoraSistema();
+        //String dias = EHCacheManager.obtenerValor1Elemento(Constantes.ET_DIAS_BUSQUEDAS);
         blOcultos = false;
 
     }

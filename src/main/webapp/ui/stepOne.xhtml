@@ -11,32 +11,27 @@
 
     <ui:define name="cabecera">
         <ui:include src="cabecera.xhtml" />
-        <p:staticMessage severity="info" summary="INFO" detail="El proyecto actual es: #{stepOneView.objProyectoInfo.strDescNombre}" style="width: 100%; margin-top: 5px; margin-left: 2px; margin-right: 2px;"/>
+        <p:staticMessage severity="info" summary="#{msg['info']}" detail="#{msg['project.info']} #{stepOneView.objProyectoInfo.strDescNombre}" style="width: 100%; margin-top: 5px; margin-left: 2px; margin-right: 2px;"/>
     </ui:define>
     <ui:define name="helpSteps">
 
         <h:form id="formPrincipalProyecto">
 
-            <!--<h2>Espacio de trabajo del proyecto: #{stepOneView.objProyectoInfo.strDescNombre}</h2>-->
-
             <div class="p-field">
-                <center>
-                    <!--<p:commandButton value="Ocultar pasos de ayuda" type="submit" update="formPrincipalProyecto" icon="pi pi-info-circle" />-->
-                </center>
                 <p:steps readonly="false" activeIndex="#{stepOneView.activeIndex}" >
-                    <p:menuitem value="Configurar base"         actionListener="#{stepOneView.goToStep(1)}"/>
-                    <p:menuitem value="Cargar evaluación"       actionListener="#{stepOneView.goToStep(2)}"/>
-                    <p:menuitem value="Asignar evaluaciones"     actionListener="#{stepOneView.goToStep(3)}"/>
-                    <p:menuitem value="Preparar comunicados"       actionListener="#{stepOneView.goToStep(4)}"/>
-                    <p:menuitem value="Ejecución"               actionListener="#{stepOneView.goToStep(5)}"/>
-                    <p:menuitem value="Análisis"               actionListener="#{stepOneView.goToStep(6)}"/>
+                    <p:menuitem value="#{msg['step.1']}" actionListener="#{stepOneView.goToStep(1)}"/>
+                    <p:menuitem value="#{msg['step.2']}" actionListener="#{stepOneView.goToStep(2)}"/>
+                    <p:menuitem value="#{msg['step.3']}" actionListener="#{stepOneView.goToStep(3)}"/>
+                    <p:menuitem value="#{msg['step.4']}" actionListener="#{stepOneView.goToStep(4)}"/>
+                    <p:menuitem value="#{msg['step.5']}" actionListener="#{stepOneView.goToStep(5)}"/>
+                    <p:menuitem value="#{msg['step.6']}" actionListener="#{stepOneView.goToStep(6)}"/>
                 </p:steps></div>
             <p:spacer/>
             <div class="p-field">
                 <center>
-                    <p:commandButton value="Regresar" type="submit" actionListener="#{stepOneView.backStep()}" update="formPrincipalProyecto" styleClass="ui-button-secondary" disabled="true" icon="pi pi-angle-left" />
+                    <p:commandButton value="#{msg['back']}" type="submit" actionListener="#{stepOneView.backStep()}" update="formPrincipalProyecto" styleClass="ui-button-secondary" disabled="true" icon="pi pi-angle-left" />
                     <p:spacer/>
-                    <p:commandButton value="Siguiente" type="submit" actionListener="#{stepOneView.nextStep()}" update="formPrincipalProyecto" styleClass="ui-button-secondary" icon="pi pi-angle-right" />                   
+                    <p:commandButton value="#{msg['next']}" type="submit" actionListener="#{stepOneView.nextStep()}" update="formPrincipalProyecto" styleClass="ui-button-secondary" icon="pi pi-angle-right" />                   
                 </center>
             </div>
 
@@ -49,33 +44,32 @@
 
             <h:form id="formParametros"  >
 
-                <p:growl life="4000" showSummary="true" />
 
-                <!--<h2>Configuración de grupos de análisis y red de participantes</h2>-->
 
                 <p:card id="panel" >  
 
-                    <h3>Grupos de análisis</h3>
+                    <p:growl life="4000" showSummary="true" />
+
+                    <h3>#{msg['step1.title']}</h3>
 
                     <div class="ui-fluid p-formgrid p-grid">
 
                         <div class="p-field p-col-12 p-md-12">
-                            <p:outputLabel value="Activa los datos adicionales que quieras incluir en tus redes de evaluación." />
+                            <p:outputLabel value="#{msg['Step1.description']}" />
                         </div>
 
                         <div class="p-field p-col-12 p-md-4">
 
                             <p:toggleSwitch id="switchSexo" value="#{parametrosView.blSexo}" disabled="#{evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}">
                                 <p:ajax listener="#{parametrosView.activarParametro(82)}" update="panel" />
-                                <!--<p:ajax listener="#{evaluadosView.init}" update=":tvModoConfiguracion:tvEval,:tvModoConfiguracion:formModoAvanzado"/>-->
                             </p:toggleSwitch>     
 
                             <div class="p-field p-grid">
                                 <div class="p-col">
-                                    <p:outputLabel for="@next" value="Sexo" />
-                                    <p:inputText type="text" disabled="true" placeholder="MASCULINO,FEMENINO" required="true" />
+                                    <p:outputLabel for="@next" value="#{msg['step1.sex.label']}" />
+                                    <p:inputText type="text" disabled="true" placeholder="#{msg['step1.sex.option']}" required="true" />
                                     <p:spacer/>
-                                    <p:commandButton type="submit" icon="pi pi-save" value="Guardar parámetro" disabled="#{!parametrosView.blRangoEdad or evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}" process="@this,strRangoEdad" oncomplete="rbtnRE1();rbtnRE2();" />
+                                    <!--p:commandButton type="submit" icon="pi pi-save" value="#{msg['save']}" disabled="#{!parametrosView.blRangoEdad or evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}" process="@this,strRangoEdad" oncomplete="rbtnRE1();rbtnRE2();" -->
                                 </div>
                             </div>
                         </div>
@@ -84,17 +78,16 @@
 
                             <p:toggleSwitch value="#{parametrosView.blRangoEdad}" disabled="#{evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}" >
                                 <p:ajax listener="#{parametrosView.activarParametro(83)}" update="panel" />
-                                <!--<p:ajax listener="#{evaluadosView.init}" update=":tvModoConfiguracion:tvEval,:tvModoConfiguracion:formModoAvanzado"/>-->
                             </p:toggleSwitch>
 
                             <div class="p-field p-grid">
                                 <div class="p-col">
-                                    <p:outputLabel for="@next" value="Edad" />
+                                    <p:outputLabel for="@next" value="#{msg['step1.age.label']}" />
                                     <p:inputText id="strRangoEdad" type="text" value="#{parametrosView.strRangoEdad}" maxlength="500" placeholder="20,30,40,50,60,70,80,90" disabled="#{!parametrosView.blRangoEdad or evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}" required="true" >
                                         <f:validator validatorId="validarRango" />
                                     </p:inputText>
                                     <p:spacer/>
-                                    <p:commandButton type="submit" icon="pi pi-save" value="Guardar parámetro" disabled="#{!parametrosView.blRangoEdad or evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}" process="@this,strRangoEdad" oncomplete="rbtnRE1();rbtnRE2();" />
+                                    <p:commandButton type="submit" icon="pi pi-save" value="#{msg['save']}" disabled="#{!parametrosView.blRangoEdad or evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}" process="@this,strRangoEdad" oncomplete="rbtnRE1();rbtnRE2();" />
                                     <p:message for="strRangoEdad" display="text" />
                                 </div>
                             </div>
@@ -104,17 +97,16 @@
 
                             <p:toggleSwitch value="#{parametrosView.blTiempoEmpresa}" disabled="#{evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}" >
                                 <p:ajax listener="#{parametrosView.activarParametro(84)}" update="panel" />
-                                <!-- <p:ajax listener="#{evaluadosView.init}" update=":tvModoConfiguracion:tvEval,:tvModoConfiguracion:formModoAvanzado"/> -->
                             </p:toggleSwitch>
 
                             <div class="p-field p-grid">
                                 <div class="p-col">
-                                    <p:outputLabel for="@next" value="Tiempo en la empresa (En años)" />
+                                    <p:outputLabel for="@next" value="#{msg['step1.hiring.time']}" />
                                     <p:inputText id="strRangoTiempo" value="#{parametrosView.strRangoTiempo}" maxlength="500" placeholder="1,3,5,10,20,50" disabled="#{!parametrosView.blTiempoEmpresa or evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}" required="true" >
                                         <f:validator validatorId="validarRango" />
                                     </p:inputText>
                                     <p:spacer/>
-                                    <p:commandButton type="submit" icon="pi pi-save" value="Guardar parámetro" disabled="#{!parametrosView.blTiempoEmpresa or evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}" process="@this,strRangoTiempo" oncomplete="rbtnRT1();rbtnRT2();"/>
+                                    <p:commandButton type="submit" icon="pi pi-save" value="#{msg['save']}" disabled="#{!parametrosView.blTiempoEmpresa or evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}" process="@this,strRangoTiempo" oncomplete="rbtnRT1();rbtnRT2();"/>
                                     <p:message for="strRangoTiempo" display="text" />
                                 </div>
                             </div>
@@ -124,17 +116,17 @@
 
                             <p:toggleSwitch value="#{parametrosView.blNivelOcupacional}" disabled="#{evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}" >
                                 <p:ajax listener="#{parametrosView.activarParametro(85)}" update="panel" />
-                                <!--<p:ajax listener="#{evaluadosView.init}" update=":tvModoConfiguracion:tvEval,:tvModoConfiguracion:formModoAvanzado"/>-->
                             </p:toggleSwitch>
                             <div class="p-field p-grid">
                                 <div class="p-col">
-                                    <p:outputLabel for="@next" value="Nivel ocupacional" />
+                                    <p:outputLabel for="@next" value="#{msg['step1.lvlOcu.label']}" />
                                     <p:selectCheckboxMenu id="lstJob" value="#{parametrosView.selectedJob}" required="true"
-                                                          panelStyle="width:250px" disabled="#{!parametrosView.blNivelOcupacional or evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}">
+                                                          label="#{msg['please.select']}" 
+                                                          disabled="#{!parametrosView.blNivelOcupacional or evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}">
                                         <f:selectItems value="#{parametrosView.job}" />
                                     </p:selectCheckboxMenu>
                                     <p:spacer/>
-                                    <p:commandButton type="submit" icon="pi pi-save" value="Guardar parámetro" disabled="#{!parametrosView.blNivelOcupacional or evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}" process="@this,lstJob" oncomplete="rbtnNO1();rbtnNO2();"/>
+                                    <p:commandButton type="submit" icon="pi pi-save" value="#{msg['save']}" disabled="#{!parametrosView.blNivelOcupacional or evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}" process="@this,lstJob" oncomplete="rbtnNO1();rbtnNO2();"/>
                                     <p:message for="lstJob" display="text" />
 
                                 </div>
@@ -145,17 +137,17 @@
 
                             <p:toggleSwitch value="#{parametrosView.blAreaNegocio}" disabled="#{evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}" >
                                 <p:ajax listener="#{parametrosView.activarParametro(86)}" update="panel" />
-                                <!--<p:ajax listener="#{evaluadosView.init}" update=":tvModoConfiguracion:tvEval,:tvModoConfiguracion:formModoAvanzado"/>-->
                             </p:toggleSwitch>
                             <div class="p-field p-grid">
                                 <div class="p-col">
-                                    <p:outputLabel for="@next" value="Área de negocio" />
+                                    <p:outputLabel for="@next" value="#{msg['step1.area.label']}" />
                                     <p:selectCheckboxMenu id="lstAreaNegocioP" value="#{parametrosView.selectedAreaNegocio}" required="true"
-                                                          panelStyle="width:250px" disabled="#{!parametrosView.blAreaNegocio or evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}">
+                                                          label="#{msg['please.select']}"
+                                                          disabled="#{!parametrosView.blAreaNegocio or evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}">
                                         <f:selectItems value="#{parametrosView.area}" />
                                     </p:selectCheckboxMenu>
                                     <p:spacer/>
-                                    <p:commandButton type="submit" icon="pi pi-save" value="Guardar parámetro" disabled="#{!parametrosView.blAreaNegocio or evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}" process="@this,lstAreaNegocioP" oncomplete="rbtnAN1();rbtnAN2();" />
+                                    <p:commandButton type="submit" icon="pi pi-save" value="#{msg['save']}" disabled="#{!parametrosView.blAreaNegocio or evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}" process="@this,lstAreaNegocioP" oncomplete="rbtnAN1();rbtnAN2();" />
                                     <p:message for="lstAreaNegocioP" display="text" />
                                 </div>
                             </div>
@@ -177,19 +169,19 @@
 
                 <p:card id="panel">  
 
-                    <h3>Carga participantes y redes</h3>
+                    <h3>#{msg['step1.title2']}</h3>
 
                     <div class="ui-fluid p-formgrid p-grid">
 
                         <div class="p-field p-col-12 p-md-12">
-                            <p:outputLabel value="Importa toda la red de personas y sus relaciones a través del archivo Excel. En caso requieras ayuda, descarga el material de apoyo." />
+                            <p:outputLabel value="#{msg['step1.decription2']}" />
                         </div>
                     </div>
                     <div class="ui-fluid p-formgrid p-grid">
                         <div class="p-field p-col-12 p-md-6">
                             <p:card>
                                 <f:facet name="title">
-                                    Subir archivo
+                                    #{msg['step1.upload.configuration']}
                                 </f:facet>
                                 <div class="p-field">
 
@@ -200,11 +192,11 @@
                                                   multiple="false" 
                                                   sizeLimit="2000000" 
                                                   allowTypes="/(\.|\/)(xls)$/"
-                                                  label="Buscar archivo" 
+                                                  label="#{msg['search']}" 
                                                   disabled="#{evaluadosView.lstRelacionBean.size()>0 or evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0}" />
                                 </div>
                                 <div class="p-field">
-                                    <p:commandButton id="btnUploadFile" value="Subir archivo" ajax="true" 
+                                    <p:commandButton id="btnUploadFile" value="#{msg['upload']}" ajax="true" 
                                                      actionListener="#{evaluadosView.leeExcelAvanzado}" 
                                                      disabled="#{evaluadosView.lstRelacionBean.size()>0 or evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0}"
                                                      icon="pi pi-upload" update="formRed" />
@@ -214,15 +206,15 @@
                         <div class="p-field p-col-12 p-md-6">
                             <p:card>
                                 <f:facet name="title">
-                                    Material de apoyo
+                                    #{msg['step1.material.label']}
                                 </f:facet>
                                 <div class="p-field">
-                                    <p:commandButton value="Descargar formato en EXCEL" actionListener="#{evaluadosView.generaModeloAzanvado()}" immediate="true" ajax="false" icon="pi pi-download" styleClass="ui-button-warning" >
+                                    <p:commandButton value="#{msg['step1.download.format']}" actionListener="#{evaluadosView.generaModeloAzanvado()}" immediate="true" ajax="false" icon="pi pi-download" styleClass="ui-button-warning" >
                                         <p:fileDownload value="#{evaluadosView.xlsContentAvanzado}" />
                                     </p:commandButton>
                                 </div>
                                 <div class="p-field">
-                                    <p:commandButton value="Guía de uso" actionListener="#{evaluadosView.generaModeloAzanvado()}" immediate="true" ajax="false" icon="pi pi-download" styleClass="ui-button-warning"  >
+                                    <p:commandButton value="#{msg['step1.download.guide']}" actionListener="#{evaluadosView.generaModeloAzanvado()}" disabled="true" immediate="true" ajax="false" icon="pi pi-download" styleClass="ui-button-warning"  >
                                         <p:fileDownload value="#{evaluadosView.xlsContentAvanzado}" />
                                     </p:commandButton>
                                 </div>
@@ -232,7 +224,9 @@
                         <c:if test="#{evaluadosView.lstErrorAvan.size()>0}">
                             <div class="p-field p-col-12 p-md-12">
                                 <p:card rendered="#{evaluadosView.lstErrorAvan.size()>0}">
-                                    <p:staticMessage severity="error" summary="ERROR" detail="Debes corregir los errores de la siguiente lista para que se habilite el boton de guardar carga" style="width: 100%"/>
+                                    <p:staticMessage severity="error" summary="ERROR" 
+                                                     detail="#{msg['step1.detail.label']}" 
+                                                     style="width: 100%"/>
                                     <p:spacer/>
                                     <p:dataTable 
                                         id="tblErrorAvan"
@@ -246,16 +240,16 @@
                                         paginatorPosition="bottom"
                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                         currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords}"
-                                        emptyMessage="No se encontró ningun registro"
+                                        emptyMessage="#{msg['no.items']}"
                                         rowIndexVar="index"
                                         rendered="#{evaluadosView.lstErrorAvan.size()>0}">
 
                                         <f:facet name="header">
-                                            Lista de errores encontrados
+                                            #{msg['step1.list.errors']}
                                         </f:facet>  
 
                                         <f:facet name="footer">
-                                            Se han encontrado en total #{evaluadosView.lstErrorAvan.size()} error(res).
+                                            #{msg['step1.errores.encontrados']} #{evaluadosView.lstErrorAvan.size()}
                                         </f:facet>
 
                                         <p:column style="width: 60px;">
@@ -265,11 +259,11 @@
                                             <h:outputText 
                                                 value="#{index + 1}" />
                                         </p:column> 
-                                        <p:column headerText="Descripción del error">
+                                        <p:column headerText="#{msg['description']}">
                                             <h:outputText value="#{err.strDesc}" />
                                         </p:column>                      
-                                        <p:column>
-                                            <p:tag value="POR FAVOR RESOLVER" severity="danger" />
+                                        <p:column headerText="#{msg['status']}">
+                                            <p:tag value="#{msg['step1.please.resolve']}" severity="danger" />
                                         </p:column>
 
                                     </p:dataTable>
@@ -293,16 +287,16 @@
                                         stripedRows="true"
                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                         currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords}"
-                                        emptyMessage="No se encontró ningun registro" 
+                                        emptyMessage="#{msg['no.items']}" 
                                         rowIndexVar="index"
                                         rendered="#{evaluadosView.lstAvanPersonas.size()>0}" >
 
                                         <f:facet name="header">
-                                            Lista de personas encontradas
+                                            #{msg['step1.list.items.found']}
                                         </f:facet>
 
                                         <f:facet name="footer">
-                                            En total tienes #{evaluadosView.lstAvanPersonas.size()} persona(s).
+                                            #{msg['step1.total.items.found']} #{evaluadosView.lstAvanPersonas.size()}
                                         </f:facet>
 
                                         <p:column>
@@ -313,31 +307,31 @@
                                                 value="#{index + 1}" />
                                         </p:column>
 
-                                        <p:column headerText="Descripción">
+                                        <p:column headerText="#{msg['description']}">
                                             <h:outputText value="#{reg.paTxDescripcion}" />
                                         </p:column>
-                                        <p:column headerText="Cargo">
+                                        <p:column headerText="#{msg['role']}">
                                             <h:outputText value="#{reg.paTxNombreCargo}" />
                                         </p:column>                                 
-                                        <p:column headerText="Correo">
+                                        <p:column headerText="#{msg['email']}">
                                             <h:outputText value="#{reg.paTxCorreo}" />
                                         </p:column>
-                                        <p:column headerText="Sexo" rendered="#{evaluadosView.blHabilitarSexo}">
+                                        <p:column headerText="#{msg['sex']}" rendered="#{evaluadosView.blHabilitarSexo}">
                                             <h:outputText value="#{reg.paTxSexo}" />
                                         </p:column>
-                                        <p:column headerText="Edad" rendered="#{evaluadosView.blHabilitarEdad}">
+                                        <p:column headerText="#{msg['age']}" rendered="#{evaluadosView.blHabilitarEdad}">
                                             <h:outputText value="#{reg.paNrEdad}" />
                                         </p:column>
-                                        <p:column headerText="Tiempo en empresa (En años)" rendered="#{evaluadosView.blHabilitarTiempoEmpresa}">
+                                        <p:column headerText="#{msg['hiring.time']}" rendered="#{evaluadosView.blHabilitarTiempoEmpresa}">
                                             <h:outputText value="#{reg.paNrTiempoTrabajo}" />
                                         </p:column>
-                                        <p:column headerText="Nivel ocupacional" rendered="#{evaluadosView.blHabilitarNivelOcupacional}">
+                                        <p:column headerText="#{msg['work.range']}" rendered="#{evaluadosView.blHabilitarNivelOcupacional}">
                                             <h:outputText value="#{reg.paTxOcupacion}" />
                                         </p:column>
-                                        <p:column headerText="Area de negocio" rendered="#{evaluadosView.blHabilitarAreaNegocio}">
+                                        <p:column headerText="#{msg['working.area']}" rendered="#{evaluadosView.blHabilitarAreaNegocio}">
                                             <h:outputText value="#{reg.paTxAreaNegocio}" />
                                         </p:column>
-                                        <p:column style="text-align: center;" headerText="Autoevaluar">
+                                        <p:column style="text-align: center;" headerText="#{msg['autoevaluate']}">
                                             <p:selectBooleanCheckbox value="#{reg.paInAutoevaluar}" disabled="true" />
                                         </p:column>
 
@@ -362,16 +356,16 @@
                                         rowIndexVar="index"
                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                         currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords}"
-                                        emptyMessage="No se encontró ningun registro" 
+                                        emptyMessage="#{msg['no.items']}"
                                         rendered="#{evaluadosView.lstAvanRelacion.size()>0}"
                                         >
 
                                         <f:facet name="header">
-                                            Lista de relaciones encontradas
+                                            #{msg['step1.list.relationships']}
                                         </f:facet>
 
                                         <f:facet name="footer">
-                                            En total tienes #{evaluadosView.lstAvanRelacion.size()} tipos de relacion(es).
+                                            #{msg['step1.total.relationships']} #{evaluadosView.lstAvanRelacion.size()}
                                         </f:facet>
                                         <p:column style="width: 60px;">
                                             <f:facet name="header">
@@ -380,13 +374,13 @@
                                             <h:outputText 
                                                 value="#{index + 1}" />
                                         </p:column> 
-                                        <p:column headerText="Relación" sortBy="#{rel.strNombre}" sortOrder="asc" >
+                                        <p:column headerText="#{msg['relationship']}" sortBy="#{rel.strNombre}" sortOrder="asc" >
                                             <h:outputText value="#{rel.strNombre}" />
                                         </p:column>
-                                        <p:column headerText="Abreviatura">
+                                        <p:column headerText="#{msg['abbreviation']}">
                                             <h:outputText value="#{rel.strAbreviatura}" />
                                         </p:column>
-                                        <p:column style="text-align: center" headerText="Color asignado" >
+                                        <p:column style="text-align: center" headerText="#{msg['assigned.color']}" >
                                             <p:tag value="#{rel.strColor}" style=" width: 80px; height: 17px; background-color: #{rel.strColor};" />
                                         </p:column>
 
@@ -410,26 +404,26 @@
                                         sortMode="single"
                                         stickyHeader="true"
                                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                        emptyMessage="No se encontró ningun registro" 
+                                        emptyMessage="#{msg['no.items']}" 
                                         rendered="#{evaluadosView.lstRelacionAvanzadas.size()>0}" >
 
                                         <f:facet name="header">
-                                            Lista de redes de evaluación encontradas
+                                            #{msg['step1.list.network.found']}
                                         </f:facet>
 
                                         <f:facet name="footer">
-                                            En total tienes #{evaluadosView.lstRelacionAvanzadas.size()} red(es) relacionadas.
+                                            #{msg['step1.total.network.found']} #{evaluadosView.lstRelacionAvanzadas.size()}
                                         </f:facet>
 
-                                        <p:column headerText="Evaluado" sortBy="#{red.strEvaluado}" groupRow="true" sortOrder="asc" sortPriority="1" >
+                                        <p:column headerText="#{msg['evaluated']}" sortBy="#{red.strEvaluado}" groupRow="true" sortOrder="asc" sortPriority="1" >
                                             <h:outputText value="#{red.strEvaluadoDesc}" />
                                             <br/>
                                             <h:outputText value="#{red.strEvaluado}" class="p-text-light" />
                                         </p:column>
-                                        <p:column headerText="Relación" sortBy="#{red.strRelacionAbreviatura}" sortOrder="asc" sortPriority="2" >
+                                        <p:column headerText="#{msg['relationship']}" sortBy="#{red.strRelacionAbreviatura}" sortOrder="asc" sortPriority="2" >
                                             <p:tag value="#{red.strRelacionAbreviatura}" style=" width: 80px; height: 17px; background-color: #{red.strRelacionColor};" />
                                         </p:column>                                 
-                                        <p:column headerText="Evaluador" sortBy="#{red.strEvaluador}" sortOrder="asc" sortPriority="3" >
+                                        <p:column headerText="#{msg['evaluator']}" sortBy="#{red.strEvaluador}" sortOrder="asc" sortPriority="3" >
                                             <h:outputText value="#{red.strEvaluadorDesc}" />
                                             <br/>
                                             <h:outputText value="#{red.strEvaluador}" class="p-text-light" />
@@ -440,108 +434,96 @@
 
                             </div>
                         </c:if>
-                        <div class="p-field p-col-12 p-md-12">
-                            <h4>Lista de evaluados</h4>
-                            <p:card>
-                                <div class="p-field">
-
-                                    <p:dataTable 
-                                        id="lstEvaluados"
-                                        var="reg"
-                                        widgetVar="lstEvaluados"
-                                        resizableColumns="true"
-                                        value="#{evaluadosView.lstEvaluado}" 
-                                        rows="10"
-                                        rowsPerPageTemplate="5,10,{ShowAll|'All'}"
-                                        paginatorPosition="bottom"
-                                        stripedRows="true"
-                                        paginator="true" 
-                                        size="small"
-                                        paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                        emptyMessage="No se encontró ningun elemento"
-                                        rowIndexVar="index"
-                                        >
-
-                                        <p:column style="width: 40px;">
-                                            <f:facet name="header">
-                                                <h:outputText value="#" />
-                                            </f:facet>
-                                            <h:outputText 
-                                                value="#{index + 1}" />
-                                        </p:column> 
-
-                                        <p:column headerText="Descripción" sortBy="#{reg.paTxDescripcion}">
-                                            <h:outputText value="#{reg.paTxDescripcion}" />
-                                        </p:column>                           
-                                        <p:column headerText="Email" sortBy="#{reg.paTxCorreo}">
-                                            <h:outputText value="#{reg.paTxCorreo}" />
-                                        </p:column>    
-                                        <p:column headerText="Sexo" sortBy="#{reg.paTxSexo}" rendered="#{evaluadosView.blHabilitarSexo}" >
-                                            <h:outputText value="#{reg.paTxSexo}" />
-                                        </p:column>    
-                                        <p:column headerText="Edad" sortBy="#{reg.paNrEdad}" rendered="#{evaluadosView.blHabilitarEdad}"  >
-                                            <h:outputText value="#{reg.paNrEdad}"  />
-                                        </p:column>   
-                                        <p:column headerText="Tiempo en la empresa" sortBy="#{reg.paNrTiempoTrabajo}" rendered="#{evaluadosView.blHabilitarTiempoEmpresa}" >
-                                            <h:outputText value="#{reg.paNrTiempoTrabajo}" />
-                                        </p:column>    
-                                        <p:column headerText="Nivel ocupacional" sortBy="#{reg.paTxOcupacion}" rendered="#{evaluadosView.blHabilitarNivelOcupacional}">
-                                            <h:outputText value="#{reg.paTxOcupacion}" />
-                                        </p:column>  
-                                        <p:column headerText="Area de trabajo" sortBy="#{reg.paTxAreaNegocio}" rendered="#{evaluadosView.blHabilitarAreaNegocio}" >
-                                            <h:outputText value="#{reg.paTxAreaNegocio}" />
-                                        </p:column>  
-                                        <p:column headerText="Autoevaluar">
-                                            <p:selectBooleanCheckbox value="#{reg.paInAutoevaluar}" disabled="true" />
-                                        </p:column>
-
-                                    </p:dataTable>
-
-                                </div>
-
-                            </p:card>
-
-                        </div>
-
-
                         
+                        <c:if test="#{evaluadosView.lstEvaluado.size()>0}">
+                            <div class="p-field p-col-12 p-md-12">
+                                <h4>#{msg['step1.list.evaluated.found']}</h4>
+                                <p:card>
+                                    <div class="p-field">
+                                        <p:dataTable 
+                                            id="lstEvaluados"
+                                            var="reg"
+                                            widgetVar="lstEvaluados"
+                                            resizableColumns="true"
+                                            value="#{evaluadosView.lstEvaluado}" 
+                                            rows="10"
+                                            rowsPerPageTemplate="5,10,{ShowAll|'All'}"
+                                            paginatorPosition="bottom"
+                                            stripedRows="true"
+                                            paginator="true" 
+                                            size="small"
+                                            paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                            emptyMessage="#{msg['no.items']}"
+                                            rowIndexVar="index"
+                                            >
+
+                                            <p:column style="width: 40px;">
+                                                <f:facet name="header">
+                                                    <h:outputText value="#" />
+                                                </f:facet>
+                                                <h:outputText 
+                                                    value="#{index + 1}" />
+                                            </p:column> 
+
+                                            <p:column headerText="#{msg['description']}" sortBy="#{reg.paTxDescripcion}">
+                                                <h:outputText value="#{reg.paTxDescripcion}" />
+                                            </p:column>                           
+                                            <p:column headerText="#{msg['email']}" sortBy="#{reg.paTxCorreo}">
+                                                <h:outputText value="#{reg.paTxCorreo}" />
+                                            </p:column>    
+                                            <p:column headerText="#{msg['sex']}" sortBy="#{reg.paTxSexo}" rendered="#{evaluadosView.blHabilitarSexo}" >
+                                                <h:outputText value="#{reg.paTxSexo}" />
+                                            </p:column>    
+                                            <p:column headerText="#{msg['age']}" sortBy="#{reg.paNrEdad}" rendered="#{evaluadosView.blHabilitarEdad}"  >
+                                                <h:outputText value="#{reg.paNrEdad}"  />
+                                            </p:column>   
+                                            <p:column headerText="#{msg['hiring.time']}" sortBy="#{reg.paNrTiempoTrabajo}" rendered="#{evaluadosView.blHabilitarTiempoEmpresa}" >
+                                                <h:outputText value="#{reg.paNrTiempoTrabajo}" />
+                                            </p:column>    
+                                            <p:column headerText="#{msg['work.range']}" sortBy="#{reg.paTxOcupacion}" rendered="#{evaluadosView.blHabilitarNivelOcupacional}">
+                                                <h:outputText value="#{reg.paTxOcupacion}" />
+                                            </p:column>  
+                                            <p:column headerText="#{msg['working.area']}" sortBy="#{reg.paTxAreaNegocio}" rendered="#{evaluadosView.blHabilitarAreaNegocio}" >
+                                                <h:outputText value="#{reg.paTxAreaNegocio}" />
+                                            </p:column>  
+                                            <p:column headerText="#{msg['autoevaluate']}">
+                                                <p:selectBooleanCheckbox value="#{reg.paInAutoevaluar}" disabled="true" />
+                                            </p:column>
+
+                                        </p:dataTable>
+
+                                    </div>
+
+                                </p:card>
+
+                            </div>
+                        </c:if>
+
+
                         <c:if test="#{evaluadosView.blCargarCorrectoAvan and evaluadosView.lstErrorAvan.size()==0}">
-                                    <p:commandButton value="Guardar carga de participantes y redes" 
-                                                     rendered="#{evaluadosView.blCargarCorrectoAvan}" 
-                                                     disabled="#{!evaluadosView.blCargarCorrectoAvan}" 
-                                                     actionListener="#{evaluadosView.cargarListaAvanzado()}"
-                                                     type="submit"
-                                                     style="width: 100%;" 
-                                                     update="formRed"
-                                                     icon="pi pi-save" /> 
-                                
+                            <p:commandButton value="#{msg['step1.save.participant.networks']}" 
+                                             rendered="#{evaluadosView.blCargarCorrectoAvan}" 
+                                             disabled="#{!evaluadosView.blCargarCorrectoAvan}" 
+                                             actionListener="#{evaluadosView.cargarListaAvanzado()}"
+                                             type="submit"
+                                             style="width: 100%;" 
+                                             update="formRed,formParametros"
+                                             icon="pi pi-save" /> 
+
                         </c:if>
 
                         <c:if test="#{evaluadosView.lstEvaluado.size()>0 and evaluadosView.lstEvaluadores.size()>0}">
-                                    <p:commandButton value="Eliminar carga de participantes y redes" 
-                                                     rendered="#{!(evaluadosView.lstEvaluado.size()>0 and evaluadosView.lstEvaluadores.size()>0) or !(evaluadosView.intIdEstadoProyecto == 37 or evaluadosView.intIdEstadoProyecto == 34)}" 
-                                                     disabled="#{!(evaluadosView.lstEvaluado.size()>0 and evaluadosView.lstEvaluadores.size()>0) or (evaluadosView.intIdEstadoProyecto == 37 or evaluadosView.intIdEstadoProyecto == 34)}" 
-                                                     styleClass="ui-button-danger"
-                                                     actionListener="#{evaluadosView.eliminarCargar()}"
-                                                     type="submit"
-                                                     update="formRed"
-                                                     icon="pi pi-times" /> 
+                            <p:commandButton value="#{msg['step1.delete.participant.networks']}" 
+                                             rendered="#{!(evaluadosView.lstEvaluado.size()>0 and evaluadosView.lstEvaluadores.size()>0) or !(evaluadosView.intIdEstadoProyecto == 37 or evaluadosView.intIdEstadoProyecto == 34)}" 
+                                             disabled="#{!(evaluadosView.lstEvaluado.size()>0 and evaluadosView.lstEvaluadores.size()>0) or (evaluadosView.intIdEstadoProyecto == 37 or evaluadosView.intIdEstadoProyecto == 34)}" 
+                                             styleClass="ui-button-danger"
+                                             actionListener="#{evaluadosView.eliminarCargar()}"
+                                             type="submit"
+                                             update="formRed,formParametros"
+                                             icon="pi pi-times" /> 
 
                         </c:if>
-                        <!--
-                                                <c:if test="#{evaluadosView.lstEvaluado.size()>0 and evaluadosView.lstEvaluadores.size()>0}">
-                                                    <div class="ui-fluid p-formgrid p-grid">
-                                                        <div class="p-field p-col-12 p-md-12">
-                                                            <p:commandButton value="Modificar carga de participantes y redes" 
-                                                                             rendered="#{evaluadosView.lstEvaluado.size()>0 and evaluadosView.lstEvaluadores.size()>0}" 
-                                                                             disabled="#{!(evaluadosView.intIdEstadoProyecto == 37 or evaluadosView.intIdEstadoProyecto == 34)}"  
-                                                                             process="@this" 
-                                                                             styleClass="ui-button-secondary"
-                                                                             icon="pi pi-pencil" /> 
-                                                        </div>
-                                                    </div>
-                                                </c:if>
-                        -->
+
                     </div>
 
                 </p:card>
@@ -550,16 +532,18 @@
 
             <h:form id="frmRemotos">
 
-                <p:remoteCommand name="rbtnRE1" actionListener="#{parametrosView.guardarPreferencia(83)}"  />
+                <p:growl life="4000" showSummary="true" />
+
+                <p:remoteCommand name="rbtnRE1" actionListener="#{parametrosView.guardarPreferencia(83)}" update="@form" />
                 <p:remoteCommand name="rbtnRE2" actionListener="#{evaluadosView.init}" />
 
-                <p:remoteCommand name="rbtnRT1" actionListener="#{parametrosView.guardarPreferencia(84)}"  />
+                <p:remoteCommand name="rbtnRT1" actionListener="#{parametrosView.guardarPreferencia(84)}" update="@form" />
                 <p:remoteCommand name="rbtnRT2" actionListener="#{evaluadosView.init}"  />
 
-                <p:remoteCommand name="rbtnNO1" actionListener="#{parametrosView.guardarPreferencia(85)}" />
+                <p:remoteCommand name="rbtnNO1" actionListener="#{parametrosView.guardarPreferencia(85)}" update="@form" />
                 <p:remoteCommand name="rbtnNO2" actionListener="#{evaluadosView.init}"  />
 
-                <p:remoteCommand name="rbtnAN1" actionListener="#{parametrosView.guardarPreferencia(86)}"/>
+                <p:remoteCommand name="rbtnAN1" actionListener="#{parametrosView.guardarPreferencia(86)}" update="@form"/>
                 <p:remoteCommand name="rbtnAN2" actionListener="#{evaluadosView.init}"  />
             </h:form>
 

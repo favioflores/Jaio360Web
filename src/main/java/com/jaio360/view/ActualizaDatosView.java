@@ -1,6 +1,7 @@
 package com.jaio360.view;
 
 import com.jaio360.application.EHCacheManager;
+import com.jaio360.dao.ElementoDAO;
 import com.jaio360.dao.UbigeoDAO;
 import com.jaio360.dao.UsuarioDAO;
 import com.jaio360.domain.Documento;
@@ -55,6 +56,8 @@ public class ActualizaDatosView extends BaseView implements Serializable {
     private String strCorreo;
     private Integer pais;
     private Integer ciudad;
+    
+    private ElementoDAO objElementoDAO = new ElementoDAO();
     /*
     private String cmbTema;
 
@@ -275,7 +278,7 @@ public class ActualizaDatosView extends BaseView implements Serializable {
         intIdTipoDocumento = objUsuarioInfo.getIntIdDocumentoEmpresa();
         ciudad = objUsuarioInfo.getIntIdCiudad();
 
-        List<Elemento> lstElementos = EHCacheManager.obtenerElementosPorDefinicion(Constantes.INT_DT_TIPO_DOCUMENTO);
+        List<Elemento> lstElementos = objElementoDAO.obtenListaElementoXDefinicion(Constantes.INT_DT_TIPO_DOCUMENTO);
 
         for (Elemento objElemento : lstElementos) {
             Documento objDocumento = new Documento();

@@ -11,6 +11,7 @@ import java.io.Serializable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
+import javax.faces.context.FacesContext;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -21,50 +22,60 @@ import org.apache.commons.logging.LogFactory;
  *
  * @author Favio
  */
-public class EhCacheInit extends HttpServlet implements Serializable{
-    
+public class EhCacheInit extends HttpServlet implements Serializable {
+
     private static Log log = LogFactory.getLog(EhCacheInit.class);
     private EHCacheManager objEHCacheManager;
-    
+
     /**
      * @param config
      * @throws ServletException
-     */
+     *
+     * /
+     /*
     @Override
-    public void init(ServletConfig config) throws ServletException{
-    
+    public void init(ServletConfig config) throws ServletException {
+
         log.debug("Cargando CACHE del sistema");
-        
+
         ElementoDAO objElementoDAO = new ElementoDAO();
-        
+
         List lstElementos = objElementoDAO.obtenListaElemento();
-        
-        if(!lstElementos.isEmpty()){
-        
+
+        if (!lstElementos.isEmpty()) {
+
             Iterator itLstElementos = lstElementos.iterator();
-            
+
             objEHCacheManager = new EHCacheManager();
-            
-            while(itLstElementos.hasNext()){
-            
+
+            FacesContext context = FacesContext.getCurrentInstance();
+            ResourceBundle bundle = context.getApplication().getResourceBundle(context, "msg");
+
+            while (itLstElementos.hasNext()) {
+
                 Elemento objElemento = (Elemento) itLstElementos.next();
-                
+
                 try {
-                    String strTemp = ResourceBundle.getBundle("etiquetas").getString("elemento."+objElemento.getElIdElementoPk().toString());    
+
+                    if(objElemento.getElIdElementoPk()==45){
+                        log.debug(objElemento);
+                    }
+                    String strTemp = bundle.getString("elemento." + objElemento.getElIdElementoPk().toString());
                     objElemento.setElTxDescripcion(strTemp);
+
                 } catch (Exception e) {
                     log.info(e);
                 }
-                
+
                 log.debug("Agregando a Cache : CACHE" + objElemento.getElTxDescripcion());
                 objEHCacheManager.agregarElemento(objElemento);
-                
+
             }
-        
+
         }
-        
+
         log.debug("CACHE cargado");
-    
+
     }
-    
+    */
 }

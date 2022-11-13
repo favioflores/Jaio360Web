@@ -11,30 +11,27 @@
 
     <ui:define name="cabecera">
         <ui:include src="cabecera.xhtml" />
-        <p:staticMessage severity="info" summary="INFO" detail="El proyecto actual es: #{stepTwoView.objProyectoInfo.strDescNombre}" style="width: 100%; margin-top: 5px; margin-left: 2px; margin-right: 2px;"/>
+        <p:staticMessage severity="info" summary="#{msg['info']}" detail="#{msg['project.info']} #{stepOneView.objProyectoInfo.strDescNombre}" style="width: 100%; margin-top: 5px; margin-left: 2px; margin-right: 2px;"/>
     </ui:define>
     <ui:define name="helpSteps">
 
         <h:form id="formPrincipalProyecto">
 
             <div class="p-field">
-                <center>
-                    <!-- <p:commandButton value="Ocultar pasos de ayuda" type="submit" update="formPrincipalProyecto" icon="pi pi-info-circle"  /> -->
-                </center>
                 <p:steps readonly="false" activeIndex="#{stepTwoView.activeIndex}" >
-                    <p:menuitem value="Configurar base"         actionListener="#{stepTwoView.goToStep(1)}"/>
-                    <p:menuitem value="Cargar evaluación"       actionListener="#{stepTwoView.goToStep(2)}"/>
-                    <p:menuitem value="Asignar evaluaciones"    actionListener="#{stepTwoView.goToStep(3)}"/>
-                    <p:menuitem value="Preparar comunicados"    actionListener="#{stepTwoView.goToStep(4)}"/>
-                    <p:menuitem value="Ejecución"               actionListener="#{stepTwoView.goToStep(5)}"/>
-                    <p:menuitem value="Análisis"               actionListener="#{stepTwoView.goToStep(6)}"/>
+                    <p:menuitem value="#{msg['step.1']}" actionListener="#{stepOneView.goToStep(1)}"/>
+                    <p:menuitem value="#{msg['step.2']}" actionListener="#{stepOneView.goToStep(2)}"/>
+                    <p:menuitem value="#{msg['step.3']}" actionListener="#{stepOneView.goToStep(3)}"/>
+                    <p:menuitem value="#{msg['step.4']}" actionListener="#{stepOneView.goToStep(4)}"/>
+                    <p:menuitem value="#{msg['step.5']}" actionListener="#{stepOneView.goToStep(5)}"/>
+                    <p:menuitem value="#{msg['step.6']}" actionListener="#{stepOneView.goToStep(6)}"/>
                 </p:steps></div>
             <p:spacer/>
             <div class="p-field">
                 <center>
-                    <p:commandButton value="Regresar" type="submit" actionListener="#{stepTwoView.backStep()}" update="formPrincipalProyecto" styleClass="ui-button-secondary" icon="pi pi-angle-left" />
+                    <p:commandButton value="#{msg['back']}" type="submit" actionListener="#{stepTwoView.backStep()}" update="formPrincipalProyecto" styleClass="ui-button-secondary" icon="pi pi-angle-left" />
                     <p:spacer/>
-                    <p:commandButton value="Siguiente" type="submit" actionListener="#{stepTwoView.nextStep()}" update="formPrincipalProyecto" styleClass="ui-button-secondary" icon="pi pi-angle-right" />                   
+                    <p:commandButton value="#{msg['next']}" type="submit" actionListener="#{stepTwoView.nextStep()}" update="formPrincipalProyecto" styleClass="ui-button-secondary" icon="pi pi-angle-right" />                   
                 </center>
             </div>
 
@@ -51,12 +48,12 @@
 
                 <p:card id="panelMetrica" >  
 
-                    <h3>Metrica de evaluación</h3>
+                    <h3>#{msg['metric']}</h3>
 
                     <div class="ui-fluid p-formgrid p-grid">
 
                         <div class="p-field p-col-12 p-md-12">
-                            <p:outputLabel value="Seleccione el número de respuestas y edite las etiquetas que aparecerán en las evaluaciones." />
+                            <p:outputLabel value="#{msg['step2.desc1']}"/>
                         </div>
                     </div>
                     <div class="ui-fluid p-formgrid p-grid">
@@ -64,9 +61,9 @@
                         <div class="p-field p-col-12 p-md-4">
                             <p:card id="cardMetricas" >
 
-                                <h4>Respuestas</h4>
+                                <h4>#{msg['answers']}</h4>
 
-                                <p:outputLabel for="@next" value="Número de respuestas para las evaluaciones" />
+                                <p:outputLabel for="@next" value="#{msg['nro.answers.for.evaluations']}" />
                                 <p:spinner  id="rangos" value="#{crearCuestionarioView.intRangos}" 
                                             max="#{crearCuestionarioView.intRangoMax}" 
                                             min="#{crearCuestionarioView.intRangoMin}" 
@@ -85,10 +82,9 @@
                                             <div class="p-field p-grid">
                                                 <div class="p-col-10">
                                                     <span class="ui-float-label">
-                                                        <p:inputText id="idRpta#{counter-1}" required="true" requiredMessage="Debe ingresar algún dato" value="#{crearCuestionarioView.strRptaDesc[counter-1]}" >
-                                                            <!--p:ajax event="blur" process="@this" immediate="true"  update="formMetrica" /-->
+                                                        <p:inputText id="idRpta#{counter-1}" required="true" requiredMessage="#{msg['step2.not.valid.answer']}" value="#{crearCuestionarioView.strRptaDesc[counter-1]}" >
                                                         </p:inputText>
-                                                        <p:outputLabel for="@previous" value="Etiqueta de respuesta nro. #{counter}"/>
+                                                        <p:outputLabel for="@previous" value="#{msg['step2.label.answer']} #{counter}"/>
                                                     </span>
                                                 </div>
                                                 <div class="p-col-2">
@@ -110,7 +106,7 @@
 
                             <p:card id="cardMetricasPreview" >
 
-                                <h4>Vista preliminar de respuestas</h4>
+                                <h4>#{msg['step2.preview.answer']}</h4>
 
                                 <div class="p-field p-formgrid p-grid">
 
@@ -124,7 +120,7 @@
                                         <c:forEach var="counter" begin="1" end="#{crearCuestionarioView.intRangos}">
                                             <div class="p-col">
                                                 <p:button disabled="true" icon="pi pi-check" styleClass="#{crearCuestionarioView.strRptaDesc[counter-1]!=null?'rounded-button':'rounded-button ui-button-danger'}" />
-                                                <p:commandButton ajax="false" disabled="true" value="#{crearCuestionarioView.strRptaDesc[counter-1]!=null?crearCuestionarioView.strRptaDesc[counter-1]:'Sin definir'}" styleClass="#{crearCuestionarioView.strRptaDesc[counter-1]!=null?'ui-button-outlined':'ui-button-outlined ui-button-danger'}"  style=" height: 100px;" />
+                                                <p:commandButton ajax="false" disabled="true" value="#{crearCuestionarioView.strRptaDesc[counter-1]!=null?crearCuestionarioView.strRptaDesc[counter-1]:msg['step2.not.defined']}" styleClass="#{crearCuestionarioView.strRptaDesc[counter-1]!=null?'ui-button-outlined':'ui-button-outlined ui-button-danger'}"  style=" height: 100px;" />
                                             </div>
                                         </c:forEach>
 
@@ -148,12 +144,12 @@
 
                 <p:card id="panelCuestionarios" >  
 
-                    <h3>Carga de cuestionarios</h3>
+                    <h3>#{msg['step2.evaluations']}</h3>
 
                     <div class="ui-fluid p-formgrid p-grid">
 
                         <div class="p-field p-col-12 p-md-12">
-                            <p:outputLabel value="Importa tu cuestionario a través del archivo Excel. En caso requieras ayuda, descarga el material de apoyo." />
+                            <p:outputLabel value="#{msg['step2.desc2']}" />
                         </div>
 
                     </div>
@@ -162,7 +158,7 @@
                         <div class="p-field p-col-12 p-md-6">
                             <p:card>
                                 <f:facet name="title">
-                                    Subir archivo
+                                    #{msg['step1.upload.configuration']}
                                 </f:facet>
                                 <div class="p-field">
 
@@ -173,11 +169,11 @@
                                                   multiple="false" 
                                                   sizeLimit="2000000" 
                                                   allowTypes="/(\.|\/)(xls)$/"
-                                                  label="Buscar archivo" 
+                                                  label="#{msg['search']}" 
                                                   disabled="#{importarCuestionariosView.blExistPrevImport or importarCuestionariosView.intIdEstadoProyecto==37}" />
                                 </div>
                                 <div class="p-field">
-                                    <p:commandButton id="btnUploadFile" value="Subir archivo" ajax="true" 
+                                    <p:commandButton id="btnUploadFile" value="#{msg['upload']}" ajax="true" 
                                                      actionListener="#{importarCuestionariosView.cargaCuestionarios}" 
                                                      disabled="#{importarCuestionariosView.blExistPrevImport or importarCuestionariosView.intIdEstadoProyecto==37}" 
                                                      icon="pi pi-upload" update="formCuestionario" />
@@ -187,15 +183,15 @@
                         <div class="p-field p-col-12 p-md-6">
                             <p:card>
                                 <f:facet name="title">
-                                    Material de apoyo
+                                    #{msg['step1.material.label']}
                                 </f:facet>
                                 <div class="p-field">
-                                    <p:commandButton value="Descargar formato en EXCEL" ajax="false" icon="pi pi-download" styleClass="ui-button-warning" disabled="#{importarCuestionariosView.intIdEstadoProyecto==37}" >
+                                    <p:commandButton value="#{msg['step1.download.format']}" ajax="false" icon="pi pi-download" styleClass="ui-button-warning" disabled="#{importarCuestionariosView.intIdEstadoProyecto==37}" >
                                         <p:fileDownload value="#{importarCuestionariosView.fileImport}" />
                                     </p:commandButton>
                                 </div>
                                 <div class="p-field">
-                                    <p:commandButton value="Guía de uso" immediate="true" ajax="false" icon="pi pi-download" styleClass="ui-button-warning"  >
+                                    <p:commandButton value="#{msg['step1.download.guide']}" immediate="true" ajax="false" icon="pi pi-download" styleClass="ui-button-warning" disabled="true"  >
                                         <p:fileDownload value="#{importarCuestionariosView.fileImport}" />
                                     </p:commandButton>
                                 </div>
@@ -209,7 +205,7 @@
                             <p:spacer/>
                             <div class="p-field p-col-12 p-md-12">
                                 <p:card rendered="#{importarCuestionariosView.lstErrores.size()>0}">
-                                    <p:staticMessage severity="error" summary="ERROR" detail="Debes corregir los errores de la siguiente lista para que se muetren los cuestionarios a crear" style="width: 100%"/>
+                                    <p:staticMessage severity="error" summary="#{msg['step1.errores.encontrados']}" detail="#{msg['step2.please.resolve.errors']}" style="width: 100%"/>
                                     <p:spacer/>
 
                                     <p:dataTable 
@@ -224,15 +220,15 @@
                                         paginatorPosition="bottom"
                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                         currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords}"
-                                        emptyMessage="No se encontró ningun registro"
+                                        emptyMessage="#{msg['no.items']}"
                                         rowIndexVar="index">
 
                                         <f:facet name="header">
-                                            Lista de errores encontrados
+                                            #{msg['step1.list.errors']}
                                         </f:facet>  
 
                                         <f:facet name="footer">
-                                            Se han encontrado en total #{importarCuestionariosView.lstErrores.size()} error(res).
+                                            #{msg['step1.errores.encontrados']} #{importarCuestionariosView.lstErrores.size()}
                                         </f:facet>
 
                                         <p:column style="width: 60px;">
@@ -243,17 +239,17 @@
                                                 value="#{index + 1}" />
                                         </p:column> 
 
-                                        <p:column headerText="Descripcion" >
+                                        <p:column headerText="#{msg['description']}" >
                                             <h:outputText value="#{err.strDesc}"/>
                                         </p:column> 
-                                        <p:column headerText="Cuestionario" >
+                                        <p:column headerText="#{msg['evaluation']}" >
                                             <h:outputText value="#{err.strCues}"/>
                                         </p:column>
-                                        <p:column headerText="Linea" >
+                                        <p:column headerText="#{msg['row']}" >
                                             <h:outputText value="#{err.strLinea}"/>
                                         </p:column>
                                         <p:column>
-                                            <p:tag value="POR FAVOR RESOLVER" severity="danger" />
+                                            <p:tag value="#{msg['step1.please.resolve']}" severity="danger" />
                                         </p:column>
 
                                     </p:dataTable>
@@ -267,7 +263,7 @@
                     <div class="ui-fluid p-formgrid p-grid">
                         <c:if test="#{importarCuestionariosView.lstCuestionariosImportados.size()>0}">
 
-                            <div class="p-field p-col-12 p-md-5">
+                            <div class="p-field p-col-12 p-md-4">
 
                                 <p:card rendered="#{importarCuestionariosView.lstCuestionariosImportados.size()>0}">
 
@@ -285,13 +281,13 @@
                                         paginatorPosition="bottom"
                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                         currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords}"
-                                        emptyMessage="No se encontró ningun registro" >
+                                        emptyMessage="#{msg['no.items']}" >
 
                                         <f:facet name="header">
-                                            <p:outputLabel value="Lista de cuestionarios" />
+                                            <p:outputLabel value="#{msg['step2.list.evaluations']}" />
                                         </f:facet>
                                         <f:facet name="footer">
-                                            En total tiene(s) #{importarCuestionariosView.lstCuestionariosImportados.size()} cuestionario(s).
+                                            #{msg['step2.number.evaluations']} #{importarCuestionariosView.lstCuestionariosImportados.size()}
                                         </f:facet>
 
                                         <p:column style="width: 60px;">
@@ -301,10 +297,10 @@
                                             <h:outputText 
                                                 value="#{index + 1}" />
                                         </p:column>
-                                        <p:column headerText="Nombre del cuestionario" >
+                                        <p:column headerText="#{msg['step2.evaluation.name']}" >
                                             <h:outputText value="#{cue.strDescCuestionario}" />
                                         </p:column> 
-                                        <p:column style="width: 100px;" headerText="Ver contenido" >
+                                        <p:column style="width: 100px;" headerText="#{msg['step2.view.content']}" >
                                             <p:commandButton icon="pi pi-eye" update="@form" styleClass="rounded-button ui-button-outlined"  actionListener="#{importarCuestionariosView.verElementos(cue.idCuestionario)}" />
                                         </p:column> 
 
@@ -313,7 +309,7 @@
                                 </p:card>
                             </div>
 
-                            <div class="p-field p-col-12 p-md-7">
+                            <div class="p-field p-col-12 p-md-8">
 
                                 <p:card rendered="#{importarCuestionariosView.lstElementosDelCuestionarios.size()>0}">
 
@@ -332,26 +328,17 @@
                                         paginatorPosition="bottom"
                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                         currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords}"                                    
-                                        emptyMessage="No se encontró ningun elemento " >                 
+                                        emptyMessage="#{msg['not.items']}" >                 
 
                                         <f:facet name="header">
-                                            <p:outputLabel value="Lista de elementos del cuestionario #{importarCuestionariosView.strCuestionario}" style="text-align: left;" />
+                                            <p:outputLabel value="#{msg['step2.list.element.evaluation']} #{importarCuestionariosView.strCuestionario}" style="text-align: left;" />
                                         </f:facet>  
 
-                                        <p:column headerText="Tipo elemento" groupRow="true" style="width: 150px;" >
+                                        <p:column headerText="#{msg['step2.element.type']}" groupRow="true" style="width: 150px;" >
                                             <p:button value="#{cuesprev.strDato1}" style="height: 100%;" styleClass="ui-button-#{cuesprev.strDato3}" disabled="true" />
                                         </p:column>
-                                        <!--
-                                        <p:column style="width: 60px;">
-                                            <f:facet name="header">
-                                                <h:outputText value="#" />
-                                            </f:facet>
-                                            <h:outputText 
-                                                value="#{index + 1}" />
-                                        </p:column> 
-                                        -->
 
-                                        <p:column headerText="Descripción" >
+                                        <p:column headerText="#{msg['description']}" >
                                             <h:outputText value="#{cuesprev.strDato2}" />
                                         </p:column>
 
@@ -379,16 +366,16 @@
                                         paginatorPosition="bottom"
                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                         currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords}"                                    
-                                        emptyMessage="No se encontró ningun elemento" >                 
+                                        emptyMessage="#{msg['not.items']}" >                 
 
                                         <p:ajax event="rowEdit" listener="#{importarCuestionariosView.onRowEdit}" />
                                         <p:ajax event="rowEditCancel" listener="#{importarCuestionariosView.onRowCancel}" />
 
                                         <f:facet name="header">
-                                            <p:outputLabel value="Lista de elementos del cuestionario #{importarCuestionariosView.strCuestionario}" style="text-align: left;" />
+                                            <p:outputLabel value="#{msg['step2.list.element.evaluation']} #{importarCuestionariosView.strCuestionario}" style="text-align: left;" />
                                         </f:facet>  
 
-                                        <p:column headerText="Tipo elemento" groupRow="true" style="width: 150px;" >
+                                        <p:column headerText="#{msg['step2.element.type']}" style="width: 160px;" >
                                             <p:button value="#{cues.strTipo}" style="height: 100%;" styleClass="ui-button-#{cues.strColor}" disabled="true" />
                                         </p:column>
 
@@ -400,10 +387,7 @@
                                                 value="#{index + 1}" />
                                         </p:column> 
 
-                                        <p:column headerText="Descripción" >
-                                            <!--
-                                                <h:outputText value="#{cues.strDescripcion}" />
-                                            -->
+                                        <p:column headerText="#{msg['description']}" >
                                             <p:cellEditor>
                                                 <f:facet name="output">
                                                     <p:outputLabel value="#{cues.strDescripcion}"/>
@@ -429,7 +413,7 @@
                     <c:if test="#{!importarCuestionariosView.blExistPrevImport and importarCuestionariosView.lstCuestionariosImportados.size()>0}">
                         <div class="ui-fluid p-formgrid p-grid">
                             <div class="p-field p-col-12 p-md-12">
-                                <p:commandButton value="Guardar cuestionarios"
+                                <p:commandButton value="#{msg['step2.save.evaluation']}"
                                                  icon="pi pi-save" 
                                                  type="submit"
                                                  update="@form"
@@ -443,12 +427,14 @@
                     <c:if test="#{importarCuestionariosView.blExistPrevImport and importarCuestionariosView.lstCuestionariosImportados.size()>0}">
                         <div class="ui-fluid p-formgrid p-grid">
                             <div class="p-field p-col-12 p-md-12">
-                                <p:commandButton value="Eliminar cuestionarios"
+                                <!-- FAFO FALTA UNA CONDICION PARA NO BORRAR EL CUESTIONARIO SI YA ESTÁ ASIGNADO A UN EVALUADO -->
+                                <p:commandButton value="#{msg['step2.delete.evaluation']}"
                                                  type="submit"
                                                  immediate="true"
                                                  update="@form"
                                                  rendered="#{!(importarCuestionariosView.blExistPrevImport) or !(evaluadosView.intIdEstadoProyecto == 37 or evaluadosView.intIdEstadoProyecto == 34)}"
-                                                 disabled="#{!(importarCuestionariosView.blExistPrevImport) or !(evaluadosView.intIdEstadoProyecto == 37 or evaluadosView.intIdEstadoProyecto == 34)}" 
+                                               
+                                                 disabled="#{!(importarCuestionariosView.blExistPrevImport) or !(evaluadosView.intIdEstadoProyecto == 32 or evaluadosView.intIdEstadoProyecto == 33)}" 
                                                  actionListener="#{importarCuestionariosView.eliminarCuestionario()}" 
                                                  styleClass="ui-button-danger"
                                                  icon="pi pi-times" /> 

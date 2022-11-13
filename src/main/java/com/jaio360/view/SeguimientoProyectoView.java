@@ -1,6 +1,5 @@
 package com.jaio360.view;
 
-import com.jaio360.application.EHCacheManager;
 import com.jaio360.dao.ContratoDAO;
 import com.jaio360.dao.CuestionarioDAO;
 import com.jaio360.dao.MensajeDAO;
@@ -457,7 +456,7 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
 
                 objEvaluado.setPaIdParticipantePk(objParticipante.getPaIdParticipantePk());
                 objEvaluado.setPaIdEstado(objParticipante.getPaIdEstado());
-                objEvaluado.setPaStrEstado(EHCacheManager.obtenerDescripcionElemento(objParticipante.getPaIdEstado()));
+                objEvaluado.setPaStrEstado(msg(objParticipante.getPaIdEstado().toString()));
                 objEvaluado.setPaIdTipoParticipante(objParticipante.getPaIdTipoParticipante());
                 objEvaluado.setPaInAutoevaluar(objParticipante.getPaInAutoevaluar());
                 objEvaluado.setPaInRedCargada(objParticipante.getPaInRedCargada());
@@ -1314,13 +1313,13 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
             }
 
             //Validar si las licencias estan ok
-            if(this.intLicenciasIndividuales >= this.intLicenciasIndividualesRequerido &&
-                    this.intLicenciasMasivas >= this.intLicenciasMasivasRequerido){
+            if (this.intLicenciasIndividuales >= this.intLicenciasIndividualesRequerido
+                    && this.intLicenciasMasivas >= this.intLicenciasMasivasRequerido) {
                 blLicenciasOK = true;
-            }else{
+            } else {
                 blLicenciasOK = false;
             }
-            
+
         } catch (Exception e) {
             log.error(e);
         }

@@ -2,6 +2,7 @@ package com.jaio360.view;
 
 import com.jaio360.application.EHCacheManager;
 import com.jaio360.dao.CuestionarioDAO;
+import com.jaio360.dao.ElementoDAO;
 import com.jaio360.domain.BibliotecaInfo;
 import com.jaio360.domain.UsuarioInfo;
 import com.jaio360.orm.Elemento;
@@ -25,18 +26,20 @@ import org.apache.poi.ss.usermodel.Row;
 
 @ManagedBean(name = "bibliotecaView")
 @SessionScoped
-public class BibliotecaView implements Serializable {
-    
-    private String metodologia;  
+public class BibliotecaView extends BaseView implements Serializable {
+
+    private String metodologia;
     private String estadoProyecto;
     private List<BibliotecaInfo> filtroElementos;
-    
+
     private int cantidadElementos;
-    
-    private  Map<String,String> metodologias;
-    private  Map<String,String> estados;
-    
+
+    private Map<String, String> metodologias;
+    private Map<String, String> estados;
+
     private List<BibliotecaInfo> lstElementos;
+
+    private ElementoDAO objElementoDAO = new ElementoDAO();
 
     public BibliotecaView() {
         metodologia = "";
@@ -63,7 +66,7 @@ public class BibliotecaView implements Serializable {
     public void setLstElementos(List<BibliotecaInfo> lstElementos) {
         this.lstElementos = lstElementos;
     }
-    
+
     public int getCantidadElementos() {
         return cantidadElementos;
     }
@@ -103,68 +106,68 @@ public class BibliotecaView implements Serializable {
     public void setEstados(Map<String, String> estados) {
         this.estados = estados;
     }
-    
+
     @PostConstruct
     public void init() {
 
         EHCacheManager objEHCacheManager = new EHCacheManager();
 
-        List lstMetodologias = objEHCacheManager.obtenerElementosPorDefinicion(Constantes.INT_DT_METODOLOGIAS);
-        
-        List lstEstadosProyecto = objEHCacheManager.obtenerElementosPorDefinicion(Constantes.INT_DT_ESTADOS_PROYECTO);
-    
+        List lstMetodologias = objElementoDAO.obtenListaElementoXDefinicion(Constantes.INT_DT_METODOLOGIAS);
+
+        List lstEstadosProyecto = objElementoDAO.obtenListaElementoXDefinicion(Constantes.INT_DT_ESTADOS_PROYECTO);
+
         Iterator itLstMetodologia = lstMetodologias.iterator();
         metodologias = new HashMap<String, String>();
-        
-        while(itLstMetodologia.hasNext()){
+
+        while (itLstMetodologia.hasNext()) {
             Elemento objElemento = (Elemento) itLstMetodologia.next();
             metodologias.put(objElemento.getElIdElementoPk().toString(), objElemento.getElTxDescripcion());
-        }   
-        
+        }
+
         Iterator itLstEstadosProyecto = lstEstadosProyecto.iterator();
         estados = new HashMap<String, String>();
-        
+
         while (itLstEstadosProyecto.hasNext()) {
             Elemento objElemento = (Elemento) itLstEstadosProyecto.next();
             estados.put(objElemento.getElIdElementoPk().toString(), objElemento.getElTxDescripcion());
         }
-         
+
     }
-    
-    public void buscarBiblioteca(){
-    
+
+    public void buscarBiblioteca() {
+
         CuestionarioDAO objCuestionarioDAO = new CuestionarioDAO();
-        
+
         UsuarioSesion objUsuarioSesion = new UsuarioSesion();
-        
+
         UsuarioInfo objUsuarioInfo = objUsuarioSesion.obtenerUsuarioInfo();
-        
+
         List lstItemsTemp = objCuestionarioDAO.obtenItemsBiblioteca(objUsuarioInfo.getStrEmail(), metodologia, estadoProyecto);
-        
+
         Iterator itLstItems = lstItemsTemp.iterator();
-        
+
         int i = 0;
-        
+
         List<BibliotecaInfo> lstItems = new ArrayList<BibliotecaInfo>();
-        
+
         EHCacheManager objEHCacheManager = new EHCacheManager();
-        
+
         while (itLstItems.hasNext()) {
-            
+
             Object[] object = (Object[]) itLstItems.next();
-            
+
             BibliotecaInfo objBibliotecaInfo = new BibliotecaInfo();
-            
-            objBibliotecaInfo.setStrDescMetodologia(objEHCacheManager.obtenerDescripcionElemento((Integer)object[0]));
+
+            objBibliotecaInfo.setStrDescMetodologia(msg(object[0].toString()));
             objBibliotecaInfo.setStrProyectos(object[2].toString());
             objBibliotecaInfo.setStrFechaProyecto(object[3].toString());
             objBibliotecaInfo.setStrCuestionarios(object[5].toString());
-            objBibliotecaInfo.setStrTipoElemento(objEHCacheManager.obtenerDescripcionElemento((Integer)object[7]));
+            objBibliotecaInfo.setStrTipoElemento(msg(object[7].toString()));
             objBibliotecaInfo.setStrDescElemento(object[8].toString());
-            
-            if(Utilitarios.noEsNuloOVacio(object[9])){
+
+            if (Utilitarios.noEsNuloOVacio(object[9])) {
                 objBibliotecaInfo.setStrExtension(object[9].toString());
-            }else{
+            } else {
                 objBibliotecaInfo.setStrExtension("---");
             }
             //objBibliotecaInfo.setStrExtension(metodologia);
@@ -174,7 +177,7 @@ public class BibliotecaView implements Serializable {
         }
         cantidadElementos = lstItems.size();
         lstElementos = lstItems;
-        
+
     }
 
     public void postProcessXLS(Object document) {
@@ -182,7 +185,7 @@ public class BibliotecaView implements Serializable {
         HSSFSheet sheet = wb.getSheetAt(0);
         CellStyle style = wb.createCellStyle();
         style.setFillBackgroundColor(IndexedColors.AQUA.getIndex());
- 
+
         for (Row row : sheet) {
             for (Cell cell : row) {
                 cell.setCellValue(cell.getStringCellValue().toUpperCase());

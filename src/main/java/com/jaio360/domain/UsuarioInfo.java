@@ -4,21 +4,19 @@
  */
 package com.jaio360.domain;
 
-import com.jaio360.application.EHCacheManager;
 import com.jaio360.dao.HistorialAccesoDAO;
 import com.jaio360.orm.Usuario;
 import com.jaio360.utils.Constantes;
 import com.jaio360.utils.Utilitarios;
+import com.jaio360.view.BaseView;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  *
  * @author Favio
  */
-public class UsuarioInfo implements Serializable{
+public class UsuarioInfo extends BaseView implements Serializable{
 
     private Integer intUsuarioPk;
     private String strEmail;
@@ -77,7 +75,7 @@ public class UsuarioInfo implements Serializable{
         this.intUsuarioPk = objUsuario.getUsIdCuentaPk();
         this.strEmail = objUsuario.getUsIdMail();
         
-        this.strTipoUsuario = EHCacheManager.obtenerDescripcionElemento(objUsuario.getUsIdTipoCuenta());
+        this.strTipoUsuario = msg(objUsuario.getUsIdTipoCuenta().toString());
         this.strDescripcion = objUsuario.getUsTxNombreRazonsocial();
         this.strEmpresaDesc = objUsuario.getUsTxDescripcionEmpresa();
         this.intIdDocumentoEmpresa = objUsuario.getUsIdTipoDocumento();
@@ -118,7 +116,7 @@ public class UsuarioInfo implements Serializable{
         this.intUsuarioPk = objUsuario.getUsIdCuentaPk();
         this.strEmail = objUsuario.getUsIdMail();
         
-        this.strTipoUsuario = EHCacheManager.obtenerDescripcionElemento(objUsuario.getUsIdTipoCuenta());
+        this.strTipoUsuario = msg(objUsuario.getUsIdTipoCuenta().toString());
         this.strDescripcion = objUsuario.getUsTxNombreRazonsocial();
         this.strEmpresaDesc = objUsuario.getUsTxDescripcionEmpresa();
         this.intIdDocumentoEmpresa = objUsuario.getUsIdTipoDocumento();

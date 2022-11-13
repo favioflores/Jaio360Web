@@ -41,11 +41,12 @@ public class EHCacheManager implements Serializable{
     public EHCacheManager(){
         elementosCache = cacheManager.getEhcache("elementosCache");
     }
-
+/*
     public void agregarElemento(Elemento objElemento){
         Element element = new Element(objElemento.getElIdElementoPk(), objElemento);
         elementosCache.put(element);
     }
+    
     
     public static String obtenerDescripcionElemento(Integer intIdElemento){
         
@@ -112,5 +113,5 @@ public class EHCacheManager implements Serializable{
         }
         
     }
-        
+        */
 }

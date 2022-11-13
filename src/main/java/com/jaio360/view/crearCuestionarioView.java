@@ -1,12 +1,10 @@
 package com.jaio360.view;
 
-import com.jaio360.application.EHCacheManager;
 import com.jaio360.dao.ComponenteDAO;
 import com.jaio360.orm.Cuestionario;
 import java.util.List;
 import com.jaio360.dao.CuestionarioDAO;
 import com.jaio360.dao.DetalleMetricaDAO;
-import com.jaio360.dao.ElementoDAO;
 import com.jaio360.dao.MetricaDAO;
 import com.jaio360.dao.ProyectoDAO;
 import com.jaio360.domain.CuestionarioBean;
@@ -42,7 +40,6 @@ public class crearCuestionarioView extends BaseView implements Serializable {
     private List<DetalleMetrica> lstDetalleMetrica;
     CuestionarioDAO cuestionarioDAO = new CuestionarioDAO();
     ComponenteDAO componenteDao = new ComponenteDAO();
-    ElementoDAO elementoDao = new ElementoDAO();
     DetalleMetricaDAO detalleMetricaDAO = new DetalleMetricaDAO();
     MetricaDAO metricaDAO = new MetricaDAO();
     ProyectoDAO proyectoDAO = new ProyectoDAO();
@@ -308,7 +305,6 @@ public class crearCuestionarioView extends BaseView implements Serializable {
         compComentario = new Componente();
         compAbierta = new Componente();
         objCuestionario = new Cuestionario();
-
         lstCOmpTmpSUb = new ArrayList<>();
         lstCompAbiertas = new ArrayList<>();
         lstDetalleMetrica = new ArrayList<>();
@@ -420,7 +416,7 @@ public class crearCuestionarioView extends BaseView implements Serializable {
 
             objCuestionarioBean.setCuIdCuestionarioPk(objCuestionario.getCuIdCuestionarioPk());
             objCuestionarioBean.setCuIdEstado(objCuestionario.getCuIdEstado());
-            objCuestionarioBean.setCuDescEstado(EHCacheManager.obtenerDescripcionElemento(objCuestionario.getCuIdEstado()));
+            objCuestionarioBean.setCuDescEstado(msg(objCuestionario.getCuIdEstado().toString()));
             objCuestionarioBean.setCuFeRegistro(objCuestionario.getCuFeRegistro());
             objCuestionarioBean.setCuTxDescripcion(objCuestionario.getCuTxDescripcion());
             if (objCuestionario.getCuIdEstado().equals(Constantes.INT_ET_ESTADO_CUESTIONARIO_REGISTRADO)) {
@@ -582,14 +578,11 @@ public class crearCuestionarioView extends BaseView implements Serializable {
             }
             
             loadRango();
-
-            FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "La respuesta número " + (idNuOrden+1) + " se agregó correctamente", null);
-            FacesContext.getCurrentInstance().addMessage(null, msg);
+            mostrarAlertaInfo("step2.answer.saved");
 
         } catch (Exception e) {
-            log.error(e);
-            FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_FATAL, "Ocrrió un error al grabar la respuesta número" + idNuOrden+1, null);
-            FacesContext.getCurrentInstance().addMessage(null, msg);
+            mostrarError(log, e);
+            mostrarAlertaFatal("error.was.occurred");
         }
 
     }
@@ -599,15 +592,17 @@ public class crearCuestionarioView extends BaseView implements Serializable {
         if (lstCuetionario.isEmpty() || lstDetalleMetrica.size() > 1) {
             if (detalleMetricaDAO.eliminaDetalleMetrica(objDetalleMetrica)) {
                 loadRango();
-                FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Eliminar metrica", "La metrica se eliminó correctamente");
-                FacesContext.getCurrentInstance().addMessage(null, msg);
+                mostrarAlertaInfo("deleted");
             } else {
-                FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_FATAL, "Eliminar metrica", "Ocurrio un error al eliminar la metrica");
-                FacesContext.getCurrentInstance().addMessage(null, msg);
+                mostrarAlertaFatal("error.was.occurred");
             }
         } else {
-            FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Eliminar metrica", "Al menos debes tener una metrica si tienes cuestionarios creados");
+            mostrarAlertaFatal("error.was.occurred");
+            /*
+            FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Eliminar metrica", 
+                    "Al menos debes tener una metrica si tienes cuestionarios creados");
             FacesContext.getCurrentInstance().addMessage(null, msg);
+            */
         }
 
     }
@@ -624,8 +619,7 @@ public class crearCuestionarioView extends BaseView implements Serializable {
                     
                     loadRango();
                     
-                    FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "La cantidad de respuestas se guardó correctamente", null);
-                    FacesContext.getCurrentInstance().addMessage(null, msg);
+                    mostrarAlertaInfo("success");
 
                 } else {
                     this.intRangos = lstDetalleMetrica.size();
@@ -638,17 +632,15 @@ public class crearCuestionarioView extends BaseView implements Serializable {
                     this.metrica.setMeNuRango(this.intRangos);
                     this.metricaDAO.actualizaMetrica(metrica);
 
-                    FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Grabar metrica", "La metrica se guardó correctamente");
-                    FacesContext.getCurrentInstance().addMessage(null, msg);
+                    mostrarAlertaInfo("success");
 
                 }
 
             }
 
         } catch (Exception e) {
-            log.error(e);
-            FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_FATAL, "Ocurrio un error al grabar los datos", null);
-            FacesContext.getCurrentInstance().addMessage(null, msg);
+            mostrarError(log, e);
+            mostrarAlertaFatal("error.was.occurred");
         }
     }
 
@@ -877,10 +869,10 @@ public class crearCuestionarioView extends BaseView implements Serializable {
         boolean correcto = cuestionarioDAO.eliminaCuestionarioById(intIdCuestionario);
 
         if (correcto) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Eliminar cuestionario", "El cuestionario se eliminó correctamente"));
+            mostrarAlertaInfo("deleted");
             init();
         } else {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Eliminar cuestionario", "Ocurrio un error al eliminar el cuestionario"));
+            mostrarAlertaFatal("error.was.occurred");
         }
 
     }
@@ -888,9 +880,9 @@ public class crearCuestionarioView extends BaseView implements Serializable {
     public void eliminarComentario(Componente compComentario) {
 
         if (componenteDao.eliminaComponente(compComentario)) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Eliminar comentario", "Se elimino correctamente"));
+            mostrarAlertaInfo("deleted");
         } else {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Eliminar comentario", "Ocurrio un error al eliminar el comentario"));
+            mostrarAlertaFatal("error.was.occurred");
         }
         this.loadCuestionario(objCuestionario.getCuIdCuestionarioPk());
         this.loadCuestionarios();
@@ -938,20 +930,20 @@ public class crearCuestionarioView extends BaseView implements Serializable {
     public void actualizaItem() {
         this.compToUpdate.setCoTxDescripcion(strNuevaDescripcion);
         if (this.componenteDao.actualizaComponente(compToUpdate)) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Actualizacion de elemento", "Item actualizado correctamente"));
+            mostrarAlertaInfo("updated");
             this.strAnteriorDescripcion = this.strNuevaDescripcion;
             this.strNuevaDescripcion = Constantes.strVacio;
         } else {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Actualizacion de elemento", "Ocurrio un error al querer actualizar este elemento"));
+            mostrarAlertaFatal("error.was.occurred");
         }
     }
 
     public void eliminarCuestionarioSub(Componente compCategoria, Componente compPregunta) {
 
         if (componenteDao.eliminaComponente(compPregunta)) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Eliminar pregunta cerrada", "Se elimino correctamente"));
+            mostrarAlertaInfo("deleted");
         } else {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Eliminar pregunta cerrada", "Ocurrio un error al eliminar la pregunta cerrada"));
+            mostrarAlertaFatal("error.was.occurred");
         }
         this.loadCuestionario(objCuestionario.getCuIdCuestionarioPk());
         this.loadCuestionarios();
@@ -1285,8 +1277,7 @@ public class crearCuestionarioView extends BaseView implements Serializable {
             if (detalleMetricaDAO.bajarMetrica(objDetalleMetrica, lstDetalleMetrica, metrica)) {
                 loadRango();
             } else {
-                FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Bajar metrica", "Ocurrio un error al mover la metrica");
-                FacesContext.getCurrentInstance().addMessage(null, msg);
+                mostrarAlertaFatal("error.was.occurred");
             }
 
         }

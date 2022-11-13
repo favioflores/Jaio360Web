@@ -24,10 +24,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
-import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
-import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 import org.apache.commons.logging.Log;
@@ -102,7 +100,7 @@ public class CrearProyecto extends BaseView implements Serializable {
     }
 
     public List<SelectItem> getLstMetodologias() {
-        poblarMetodologias();
+        //poblarMetodologias();
         return lstMetodologias;
     }
 
@@ -133,6 +131,7 @@ public class CrearProyecto extends BaseView implements Serializable {
 
     }
 
+    /*
     public void poblarMetodologias() {
 
         lstMetodologias = new ArrayList();
@@ -154,7 +153,8 @@ public class CrearProyecto extends BaseView implements Serializable {
         }
 
     }
-
+    */
+    
     public void guardarProyecto(ActionEvent event) {
 
         try {

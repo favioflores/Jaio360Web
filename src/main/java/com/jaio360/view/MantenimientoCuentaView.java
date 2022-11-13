@@ -1,7 +1,7 @@
 package com.jaio360.view;
 
-import com.jaio360.application.EHCacheManager;
 import com.jaio360.dao.ContratoDAO;
+import com.jaio360.dao.ElementoDAO;
 import com.jaio360.dao.TarifaDAO;
 import com.jaio360.dao.UbigeoDAO;
 import com.jaio360.dao.UsuarioDAO;
@@ -68,6 +68,8 @@ public class MantenimientoCuentaView extends BaseView implements Serializable {
     private Integer pais;
     private Integer ciudad;
     private boolean isEdit;
+
+    private ElementoDAO objElementoDAO = new ElementoDAO();
 
     public boolean isIsEdit() {
         return isEdit;
@@ -282,9 +284,9 @@ public class MantenimientoCuentaView extends BaseView implements Serializable {
         obtenerListaUsuarios();
 
         tipoUsuario = new String[3];
-        tipoUsuario[0] = EHCacheManager.obtenerDescripcionElemento(Constantes.INT_ET_TIPO_USUARIO_ADMINISTRADOR);
-        tipoUsuario[1] = EHCacheManager.obtenerDescripcionElemento(Constantes.INT_ET_TIPO_USUARIO_USUARIO);
-        tipoUsuario[2] = EHCacheManager.obtenerDescripcionElemento(Constantes.INT_ET_TIPO_USUARIO_USUARIO_MAESTRO);
+        tipoUsuario[0] = msg(Constantes.INT_ET_TIPO_USUARIO_ADMINISTRADOR.toString());
+        tipoUsuario[1] = msg(Constantes.INT_ET_TIPO_USUARIO_USUARIO.toString());
+        tipoUsuario[2] = msg(Constantes.INT_ET_TIPO_USUARIO_USUARIO_MAESTRO.toString());
 
         lstContrato = new ArrayList<>();
         lstTarifa = new ArrayList<>();
@@ -296,7 +298,6 @@ public class MantenimientoCuentaView extends BaseView implements Serializable {
 
         TarifaDAO tarifaDAO = new TarifaDAO();
 
-        
         lstTarifa = tarifaDAO.obtenListaTarifa();
 
         List<Tarifa> lstTemp = new ArrayList();
@@ -314,7 +315,7 @@ public class MantenimientoCuentaView extends BaseView implements Serializable {
         List<Elemento> lstElementos;
         Iterator itLstElementos;
 
-        lstElementos = EHCacheManager.obtenerElementosPorDefinicion(Constantes.INT_DT_ESTADO_CONTRATO);
+        lstElementos = objElementoDAO.obtenListaElementoXDefinicion(Constantes.INT_DT_ESTADO_CONTRATO);
 
         itLstElementos = lstElementos.iterator();
         lstEstadoContrato = new ArrayList<>();
@@ -329,7 +330,7 @@ public class MantenimientoCuentaView extends BaseView implements Serializable {
             lstEstadoContrato.add(objSelectItem);
         }
 
-        lstElementos = EHCacheManager.obtenerElementosPorDefinicion(Constantes.INT_DT_TIPO_CONTRATO);
+        lstElementos = objElementoDAO.obtenListaElementoXDefinicion(Constantes.INT_DT_TIPO_CONTRATO);
 
         itLstElementos = lstElementos.iterator();
         lstTipoContrato = new ArrayList<>();
@@ -345,13 +346,13 @@ public class MantenimientoCuentaView extends BaseView implements Serializable {
         }
         //lstContrato = contratoDAO.obtenListaContratoPorUsuario(1);
     }
-    
-    private void obtenerListaUsuarios(){
-        
+
+    private void obtenerListaUsuarios() {
+
         UsuarioDAO usuarioDAO = new UsuarioDAO();
-        
+
         lstUsuario = new ArrayList<>();
-        
+
         List<Usuario> lstUsers = usuarioDAO.obtenListaUsuario();
 
         UsuarioInfo objUsuarioInfo;
@@ -400,7 +401,7 @@ public class MantenimientoCuentaView extends BaseView implements Serializable {
 
                 ciudad = objUsuario.getIntIdCiudad();
                 pais = objUbigeoDAO.obtenPais(objUsuario.getIntIdCiudad());
-                
+
                 poblarCiudades();
 
             } catch (Exception ex) {
@@ -555,13 +556,13 @@ public class MantenimientoCuentaView extends BaseView implements Serializable {
                         usuarioForm.setUsFeRegistro(new Date());
                         usuarioDAO.guardaUsuario(usuarioForm);
                         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Usuario creado correctamente", null));
-                        
+
                     }
 
                 } else {
                     FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, strErrores, null));
                 }
-                
+
                 resetFormUsuario();
                 obtenerListaUsuarios();
 
@@ -573,16 +574,15 @@ public class MantenimientoCuentaView extends BaseView implements Serializable {
         }
 
     }
-    
-    private void resetFormUsuario(){
-        
+
+    private void resetFormUsuario() {
+
         usuarioForm = new Usuario();
         pais = null;
         ciudad = null;
         isEdit = false;
-        
+
     }
-            
 
     private void poblarPaises() {
         lstCiudades = new ArrayList<>();
@@ -600,7 +600,7 @@ public class MantenimientoCuentaView extends BaseView implements Serializable {
         List<Elemento> lstElementos;
         Iterator itLstElementos;
 
-        lstElementos = EHCacheManager.obtenerElementosPorDefinicion(Constantes.INT_DT_ESTADO_USUARIO);
+        lstElementos = objElementoDAO.obtenListaElementoXDefinicion(Constantes.INT_DT_ESTADO_USUARIO);
 
         itLstElementos = lstElementos.iterator();
         lstEstados = new ArrayList<>();
@@ -628,7 +628,7 @@ public class MantenimientoCuentaView extends BaseView implements Serializable {
 
         List<Elemento> lstElementos;
         Iterator itLstElementos;
-        lstElementos = EHCacheManager.obtenerElementosPorDefinicion(Constantes.INT_DT_TIPO_CUENTA);
+        lstElementos = objElementoDAO.obtenListaElementoXDefinicion(Constantes.INT_DT_TIPO_CUENTA);
 
         itLstElementos = lstElementos.iterator();
         lstTipoCuenta = new ArrayList<>();
@@ -648,7 +648,7 @@ public class MantenimientoCuentaView extends BaseView implements Serializable {
 
         List<Elemento> lstElementos;
         Iterator itLstElementos;
-        lstElementos = EHCacheManager.obtenerElementosPorDefinicion(Constantes.INT_DT_TIPO_DOCUMENTO);
+        lstElementos = objElementoDAO.obtenListaElementoXDefinicion(Constantes.INT_DT_TIPO_DOCUMENTO);
 
         itLstElementos = lstElementos.iterator();
         lstTipoDocumento = new ArrayList<>();

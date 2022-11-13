@@ -1,0 +1,4 @@
+FIX-Se corrigió el error que impedía borrar las evaluaciones antes de asignarlas a los evaluados
+FIX-Se arreglaron los mensajes emergentes al grabar los parametros de análisis
+UPGRADE-Boton de iniciar projecto desde la pantalla de bienvenida
+UPGRADE-Se implemento el uso de idioma ingles

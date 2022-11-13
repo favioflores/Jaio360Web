@@ -1,11 +1,9 @@
 package com.jaio360.view;
 
-import com.jaio360.application.EHCacheManager;
 import com.jaio360.dao.CuestionarioDAO;
 import com.jaio360.dao.ProyectoDAO;
 import com.jaio360.dao.ComponenteDAO;
 import com.jaio360.domain.Categorias;
-import com.jaio360.domain.CuestionarioBean;
 import com.jaio360.domain.CuestionarioImportado;
 import com.jaio360.domain.DosDatos;
 import com.jaio360.domain.ElementoCuestionario;
@@ -191,13 +189,11 @@ public class importarCuestionariosView extends BaseView implements Serializable 
             session.removeAttribute("importarCuestionario");
             FacesContext.getCurrentInstance().getExternalContext().redirect("crearCuestionarios.jsf");
         } catch (IOException ex) {
-            log.error(ex);
+            mostrarError(log, ex);
         }
     }
 
     public void cargaCuestionarios() {
-
-        FacesMessage message;
 
         this.lstCuestionariosImportados = new ArrayList<>();
         this.lstElementosDelCuestionarios = new ArrayList<>();
@@ -205,7 +201,7 @@ public class importarCuestionariosView extends BaseView implements Serializable 
         this.lstErrores = new ArrayList<>();
 
         if (inputFile == null) {
-            message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Debe buscar un archivo primero", "");
+            mostrarAlertaInfo("search.file.first");
         } else {
 
             HSSFWorkbook xlsAvanzado;
@@ -217,20 +213,18 @@ public class importarCuestionariosView extends BaseView implements Serializable 
 
                 if (lstErrores.isEmpty()) {
                     procesaArchivo(xlsAvanzado);
-                    message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Archivo cargado correctamente.", null);
+                    mostrarAlertaInfo("file.uploaded.correctly");
                     processOk = true;
                 } else {
-                    message = new FacesMessage(FacesMessage.SEVERITY_FATAL, "Archivo contiene errores.", null);
+                    mostrarAlertaFatal("file.has.data.errors");
                 }
 
             } catch (IOException ex) {
-                log.error(ex);
-                message = new FacesMessage(FacesMessage.SEVERITY_FATAL, "Ocurrió un error al cargar el archivo", null);
+                mostrarError(log, ex);
+                mostrarAlertaFatal("error.was.occurred");
             }
 
         }
-
-        FacesContext.getCurrentInstance().addMessage(null, message);
 
     }
 
@@ -265,7 +259,7 @@ public class importarCuestionariosView extends BaseView implements Serializable 
                 if (primeraCategoria == true) {
 
                     if (strTipo.equals(Constantes.LINEA_PREGUNTA_CERRADA)) {
-                        lstErrores.add(new ErrorBean((row.getRowNum() + 1), "Esta pregunta cerrada no esta dentro de una categoria", null, (row.getRowNum() + 1) + ""));
+                        lstErrores.add(new ErrorBean((row.getRowNum() + 1), msg("step2.closed.question.not.in.category"), null, (row.getRowNum() + 1) + ""));
                     } else {
                         primeraCategoria = false;
                     }
@@ -280,14 +274,14 @@ public class importarCuestionariosView extends BaseView implements Serializable 
 
                 } else {
 
-                    lstErrores.add(new ErrorBean((row.getRowNum() + 1), "Tipo de linea desconocida", null, "A" + (row.getRowNum() + 1) + ""));
+                    lstErrores.add(new ErrorBean((row.getRowNum() + 1), msg("step2.incorrect.type.line"), null, "A" + (row.getRowNum() + 1) + ""));
 
                 }
 
                 String validaDescripcion = PatterTexto.validar(strElemento);
 
                 if (!Utilitarios.esNuloOVacio(validaDescripcion)) {
-                    lstErrores.add(new ErrorBean((row.getRowNum() + 1), "Descripcion de elemento inválido, asegurate de que no sea vacio o tenga algún digito especial", null, (row.getRowNum() + 1) + ""));
+                    lstErrores.add(new ErrorBean((row.getRowNum() + 1), msg("step2.invalid.text"), null, (row.getRowNum() + 1) + ""));
                 }
 
                 if (strTipo.equals(Constantes.LINEA_CATEGORIA)
@@ -297,7 +291,7 @@ public class importarCuestionariosView extends BaseView implements Serializable 
 
                     if (cuestionarioEncontrado == false) {
                         cuestionarioEncontrado = true;
-                        lstErrores.add(new ErrorBean((row.getRowNum() + 1), "Debes colocar al menos un cuestionario en la primera fila", null, "1"));
+                        lstErrores.add(new ErrorBean((row.getRowNum() + 1), msg("step2.at.least.evaluation"), null, "1"));
                     }
                 }
 
@@ -306,9 +300,9 @@ public class importarCuestionariosView extends BaseView implements Serializable 
                 if (Utilitarios.noEsNuloOVacio(strTipo) || Utilitarios.noEsNuloOVacio(strElemento)) {
 
                     if (Utilitarios.noEsNuloOVacio(strTipo)) {
-                        lstErrores.add(new ErrorBean((row.getRowNum() + 1), "No se especificó el tipo del elemento", null, "A" + (row.getRowNum() + 1) + ""));
+                        lstErrores.add(new ErrorBean((row.getRowNum() + 1), msg("step2.not.element.unspecified.type"), null, "A" + (row.getRowNum() + 1) + ""));
                     } else {
-                        lstErrores.add(new ErrorBean((row.getRowNum() + 1), "No se especificó una descripción para el elemento del cuestionario", null, "B" + (row.getRowNum() + 1) + ""));
+                        lstErrores.add(new ErrorBean((row.getRowNum() + 1), msg("step2.not.element.unspecified.description"), null, "B" + (row.getRowNum() + 1) + ""));
                     }
 
                 }
@@ -380,9 +374,8 @@ public class importarCuestionariosView extends BaseView implements Serializable 
             }
 
         } catch (Exception e) {
-            log.error(e);
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_FATAL, "Importar cuestionario", "Ocurrio un error al procesar el archivo");
-            FacesContext.getCurrentInstance().addMessage(null, message);
+            mostrarError(log, e);
+            mostrarAlertaFatal("error.was.occurred");
         }
 
     }
@@ -399,48 +392,27 @@ public class importarCuestionariosView extends BaseView implements Serializable 
 
         try {
 
-            //lstElementosDelCuestionarios.add(new DosDatos("Cuestionario",objElementos.getStrDescCuestionario()));
-            Iterator itCategoria = objElementos.getLstCategorias().iterator();
+            for (Categorias objCat : objElementos.getLstCategorias()) {
+                lstElementosDelCuestionarios.add(new DosDatos(msg("category"), objCat.getStrCategoria(), null));
 
-            while (itCategoria.hasNext()) {
-
-                Categorias objCat = (Categorias) itCategoria.next();
-                lstElementosDelCuestionarios.add(new DosDatos("Categoria", objCat.getStrCategoria(), null));
-
-                Iterator itPreguntasC = objCat.getLstPreguntasCerradas().iterator();
-
-                while (itPreguntasC.hasNext()) {
-
-                    String strPreguntaC = (String) itPreguntasC.next();
-                    lstElementosDelCuestionarios.add(new DosDatos("Pregunta cerrada", strPreguntaC, "secondary"));
+                for (String strPreguntaC : objCat.getLstPreguntasCerradas()) {
+                    lstElementosDelCuestionarios.add(new DosDatos(msg("close.question"), strPreguntaC, "secondary"));
                 }
-
             }
 
-            Iterator itComentarios = objElementos.getLstComentarios().iterator();
-
-            while (itComentarios.hasNext()) {
-
-                String strComment = (String) itComentarios.next();
-                lstElementosDelCuestionarios.add(new DosDatos("Comentario", strComment, "warning"));
-
+            for (String strComment : objElementos.getLstComentarios()) {
+                lstElementosDelCuestionarios.add(new DosDatos(msg("comment"), strComment, "warning"));
             }
 
-            Iterator itPreguntasA = objElementos.getLstPreguntasAbiertas().iterator();
-
-            while (itPreguntasA.hasNext()) {
-
-                String strPreguntaA = (String) itPreguntasA.next();
-                lstElementosDelCuestionarios.add(new DosDatos("Pregunta abierta", strPreguntaA, "success"));
-
+            for (String strPreguntaA : objElementos.getLstPreguntasAbiertas()) {
+                lstElementosDelCuestionarios.add(new DosDatos(msg("open.question"), strPreguntaA, "success"));
             }
 
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Se seleccionó el cuestionario " + objElementos.getStrDescCuestionario(), null);
-            FacesContext.getCurrentInstance().addMessage(null, message);
+            mostrarAlertaInfo(msg("step2.evaluation.selected") + " " + objElementos.getStrDescCuestionario());
+
         } catch (Exception e) {
-            log.error(e);
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_FATAL, "Ocurrio un error al ver los elementos del cuestionario " + objElementos.getStrDescCuestionario(), null);
-            FacesContext.getCurrentInstance().addMessage(null, message);
+            mostrarError(log, e);
+            mostrarAlertaFatal("error.was.occurred");
         }
     }
 
@@ -453,16 +425,13 @@ public class importarCuestionariosView extends BaseView implements Serializable 
             CuestionarioDAO objCuestionarioDAO = new CuestionarioDAO();
             boolean correcto = objCuestionarioDAO.guardaImportacionCuestionario(lstCuestionariosImportados);
             if (correcto) {
-                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Cuestionarios cargados exitosamente", null);
-                FacesContext.getCurrentInstance().addMessage(null, message);
+                mostrarAlertaInfo("success");
             } else {
-                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_FATAL, "Ocurrio un error al guardar los cuestionarios", null);
-                FacesContext.getCurrentInstance().addMessage(null, message);
+                mostrarAlertaFatal("error.was.occurred");
             }
         } catch (Exception e) {
-            log.error(e);
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_FATAL, "Ocurrio un error al guardar los cuestionarios", null);
-            FacesContext.getCurrentInstance().addMessage(null, message);
+            mostrarError(log, e);
+            mostrarAlertaFatal("error.was.occurred");
         }
 
         init();
@@ -486,23 +455,9 @@ public class importarCuestionariosView extends BaseView implements Serializable 
             objCuestionarioImportado = new CuestionarioImportado();
 
             objCuestionarioImportado.setIdCuestionario(objCuestionario.getCuIdCuestionarioPk());
-            //objCuestionarioImportado.setCuIdEstado(objCuestionario.getCuIdEstado());
-            //objCuestionarioImportado.setStrDescCuestionario(EHCacheManager.obtenerDescripcionElemento(objCuestionario.getCuIdEstado()));
             objCuestionarioImportado.setStrDescCuestionario(objCuestionario.getCuTxDescripcion());
 
             lstCuestionariosImportados.add(objCuestionarioImportado);
-
-            /*
-            if (objCuestionario.getCuIdEstado().equals(Constantes.INT_ET_ESTADO_CUESTIONARIO_REGISTRADO)) {
-                objCuestionarioBean.setBoConfirmado(Boolean.FALSE);
-            } else {
-                objCuestionarioBean.setBoConfirmado(Boolean.TRUE);
-            }
-             */
-            Integer intC1 = 0;
-            Integer intC2 = 0;
-            Integer intC3 = 0;
-            Integer intC4 = 0;
 
             ComponenteDAO objComponenteDao = new ComponenteDAO();
 
@@ -517,15 +472,15 @@ public class importarCuestionariosView extends BaseView implements Serializable 
                 objElementoCuestionario = new ElementoCuestionario();
 
                 if (objComponente.getCoIdTipoComponente().equals(Constantes.INT_ET_TIPO_COMPONENTE_CATEGORIA)) {
-                    objElementoCuestionario.setStrTipo(EHCacheManager.obtenerDescripcionElemento(Constantes.INT_ET_TIPO_COMPONENTE_CATEGORIA).toUpperCase());
+                    objElementoCuestionario.setStrTipo(msg(Constantes.INT_ET_TIPO_COMPONENTE_CATEGORIA.toString()));
                 } else if (objComponente.getCoIdTipoComponente().equals(Constantes.INT_ET_TIPO_COMPONENTE_PREGUNTA_CERRADA)) {
-                    objElementoCuestionario.setStrTipo(EHCacheManager.obtenerDescripcionElemento(Constantes.INT_ET_TIPO_COMPONENTE_PREGUNTA_CERRADA).toUpperCase());
+                    objElementoCuestionario.setStrTipo(msg(Constantes.INT_ET_TIPO_COMPONENTE_PREGUNTA_CERRADA.toString()));
                     objElementoCuestionario.setStrColor("secondary");
                 } else if (objComponente.getCoIdTipoComponente().equals(Constantes.INT_ET_TIPO_COMPONENTE_COMENTARIO)) {
-                    objElementoCuestionario.setStrTipo(EHCacheManager.obtenerDescripcionElemento(Constantes.INT_ET_TIPO_COMPONENTE_COMENTARIO).toUpperCase());
+                    objElementoCuestionario.setStrTipo(msg(Constantes.INT_ET_TIPO_COMPONENTE_COMENTARIO.toString()));
                     objElementoCuestionario.setStrColor("warning");
                 } else if (objComponente.getCoIdTipoComponente().equals(Constantes.INT_ET_TIPO_COMPONENTE_PREGUNTA_ABIERTA)) {
-                    objElementoCuestionario.setStrTipo(EHCacheManager.obtenerDescripcionElemento(Constantes.INT_ET_TIPO_COMPONENTE_PREGUNTA_ABIERTA).toUpperCase());
+                    objElementoCuestionario.setStrTipo(msg(Constantes.INT_ET_TIPO_COMPONENTE_PREGUNTA_ABIERTA.toString()));
                     objElementoCuestionario.setStrColor("success");
                 }
 
@@ -535,12 +490,6 @@ public class importarCuestionariosView extends BaseView implements Serializable 
                 lstElementoCuestionario.add(objElementoCuestionario);
 
             }
-            /*
-            objCuestionarioBean.setIntCantidadCategorias(intC1);
-            objCuestionarioBean.setIntCantidadPreguntasCerradas(intC2);
-            objCuestionarioBean.setIntCantidadComentarios(intC3);
-            objCuestionarioBean.setIntCantidadPreguntasAbiertas(intC4);
-             */
 
         }
 

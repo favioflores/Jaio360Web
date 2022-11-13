@@ -1,6 +1,7 @@
 package com.jaio360.view;
 
 import com.jaio360.application.EHCacheManager;
+import com.jaio360.dao.ElementoDAO;
 import com.jaio360.dao.UbigeoDAO;
 import com.jaio360.dao.UsuarioDAO;
 import com.jaio360.domain.UsuarioInfo;
@@ -58,6 +59,7 @@ public class CrearUsuario extends BaseView implements Serializable {
     private Integer ciudad;
 
     private UsuarioDAO objUsuarioDAO = new UsuarioDAO();
+    private ElementoDAO objElementoDAO = new ElementoDAO();
 
     public String getStrNombre() {
         return strNombre;
@@ -187,7 +189,7 @@ public class CrearUsuario extends BaseView implements Serializable {
         List<Elemento> lstElementos;
         Iterator itLstElementos;
 
-        lstElementos = EHCacheManager.obtenerElementosPorDefinicion(Constantes.INT_DT_ESTADO_USUARIO);
+        lstElementos = objElementoDAO.obtenListaElementoXDefinicion(Constantes.INT_DT_ESTADO_USUARIO);
 
         itLstElementos = lstElementos.iterator();
         lstEstados = new ArrayList<>();
@@ -215,7 +217,7 @@ public class CrearUsuario extends BaseView implements Serializable {
 
         List<Elemento> lstElementos;
         Iterator itLstElementos;
-        lstElementos = EHCacheManager.obtenerElementosPorDefinicion(Constantes.INT_DT_TIPO_CUENTA);
+        lstElementos = objElementoDAO.obtenListaElementoXDefinicion(Constantes.INT_DT_TIPO_CUENTA);
 
         itLstElementos = lstElementos.iterator();
         lstTipoCuenta = new ArrayList<>();
@@ -235,7 +237,7 @@ public class CrearUsuario extends BaseView implements Serializable {
 
         List<Elemento> lstElementos;
         Iterator itLstElementos;
-        lstElementos = EHCacheManager.obtenerElementosPorDefinicion(Constantes.INT_DT_TIPO_DOCUMENTO);
+        lstElementos = objElementoDAO.obtenListaElementoXDefinicion(Constantes.INT_DT_TIPO_DOCUMENTO);
 
         itLstElementos = lstElementos.iterator();
         lstTipoDocumento = new ArrayList<>();

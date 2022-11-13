@@ -145,15 +145,15 @@
                                     </p:column>
 
                                     <p:column>
-                                        <p:commandButton icon="pi pi-sign-in" styleClass="ui-button-outlined rounded-button " actionListener="#{listasPrincipalView.cargarProyecto(pro)}" immediate="true" />
+                                        <p:commandButton icon="pi pi-sign-in" styleClass="ui-button-outlined rounded-button " actionListener="#{listasPrincipalView.cargarProyecto(pro)}" title="#{msg['configurar']}" immediate="true" />
                                         <p:spacer/> 
-                                        <p:commandButton icon="pi pi-trash" styleClass="ui-button-outlined rounded-button ui-button-danger" update=":frmListados:" immediate="true" actionListener="#{listasPrincipalView.borrarProyecto(pro.intIdProyecto)}" 
+                                        <p:commandButton icon="pi pi-trash" styleClass="ui-button-outlined rounded-button ui-button-danger" update=":frmListados:" immediate="true" title="#{msg['borrar']}" actionListener="#{listasPrincipalView.borrarProyecto(pro.intIdProyecto)}" 
                                                          disabled="#{pro.intIdEstado==34 or pro.intIdEstado==37?true:false}" >
                                             <p:confirm header="#{msg['confirmation']}" message="#{msg['adm.prev.delete']}" icon="pi pi-info-circle"  />
                                         </p:commandButton>
                                         <p:spacer/> 
                                         <p:commandButton icon="pi pi-folder" styleClass="ui-button-outlined rounded-button ui-button-success" 
-                                                         actionListener="#{listasPrincipalView.ocultarProyecto(pro)}"  update=":frmListados:"
+                                                         actionListener="#{listasPrincipalView.ocultarProyecto(pro)}"  update=":frmListados:" title="#{msg['archivar']}"
                                                          disabled="#{!(pro.intIdEstado==201 or pro.intIdEstado==37)?true:false}" />
                                     </p:column>
 

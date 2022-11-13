@@ -1,14 +1,13 @@
 package com.jaio360.view;
 
-import com.jaio360.application.EHCacheManager;
 import com.jaio360.dao.CuestionarioDAO;
+import com.jaio360.dao.ElementoDAO;
 import com.jaio360.dao.ParticipanteDAO;
 import com.jaio360.dao.ProyectoDAO;
 import com.jaio360.domain.EvaluadoCuestionario;
 import com.jaio360.domain.ProyectoInfo;
 import com.jaio360.orm.Cuestionario;
 import com.jaio360.orm.Participante;
-import com.jaio360.orm.Proyecto;
 import com.jaio360.utils.Constantes;
 import com.jaio360.utils.Utilitarios;
 import java.io.Serializable;
@@ -52,6 +51,7 @@ public class DefineCuesEvaView extends BaseView implements Serializable {
     private List<EvaluadoCuestionario> lstSelectedAsignados;
     private Integer intItEstadoProyecto;
     private Integer idCuestionario;
+    private ElementoDAO objElementoDAO = new ElementoDAO();
 
     public Integer getIntCantidadPendientesAsignar() {
         return intCantidadPendientesAsignar;
@@ -209,17 +209,17 @@ public class DefineCuesEvaView extends BaseView implements Serializable {
                     objEvaluadoCuestionario.setStrDescNombre(objParticipante.getPaTxDescripcion());
                     objEvaluadoCuestionario.setStrCargo(objParticipante.getPaTxNombreCargo());
                     objEvaluadoCuestionario.setStrCorreo(objParticipante.getPaTxCorreo());
-                    objEvaluadoCuestionario.setStrEstadoEvaluado(EHCacheManager.obtenerDescripcionElemento(objParticipante.getPaIdEstado()));
+                    objEvaluadoCuestionario.setStrEstadoEvaluado(msg(objParticipante.getPaIdEstado().toString()));
                     objEvaluadoCuestionario.setIntIdEstadoSel(Constantes.INT_ET_ESTADO_SELECCION_REGISTRADO);
                     objEvaluadoCuestionario.setStrCuestionarioDesc("Sin asignar");
-                    objEvaluadoCuestionario.setStrEstadoSel(EHCacheManager.obtenerDescripcionElemento(Constantes.INT_ET_ESTADO_SELECCION_REGISTRADO));
+                    objEvaluadoCuestionario.setStrEstadoSel(msg(Constantes.INT_ET_ESTADO_SELECCION_REGISTRADO.toString()));
 
                     if (!map.isEmpty()) {
                         if (map.containsKey(objEvaluadoCuestionario.getIntIdEvaluado())) {
 
                             String[] strTemp = (String[]) map.get(objEvaluadoCuestionario.getIntIdEvaluado());
                             objEvaluadoCuestionario.setIntIdCuestionario(Integer.parseInt(strTemp[0]));
-                            
+
                             for (Map.Entry<String, String> objMap : mapItemsCuestionarios.entrySet()) {
                                 if (objMap.getValue().equals(objEvaluadoCuestionario.getIntIdCuestionario().toString())) {
                                     objEvaluadoCuestionario.setStrCuestionarioDesc(objMap.getKey());
@@ -227,12 +227,12 @@ public class DefineCuesEvaView extends BaseView implements Serializable {
                             }
 
                             objEvaluadoCuestionario.setIntIdEstadoSel(Integer.parseInt(strTemp[1]));
-                            objEvaluadoCuestionario.setStrEstadoSel(EHCacheManager.obtenerDescripcionElemento(Integer.parseInt(strTemp[1])));
+                            objEvaluadoCuestionario.setStrEstadoSel(msg(strTemp[1]));
 
                             this.lstEvaluadosAsignados.add(objEvaluadoCuestionario);
-                            
+
                             continue;
-                            
+
                         }
                     }
 

@@ -15,7 +15,7 @@ import com.itextpdf.text.pdf.PdfImportedPage;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStamper;
 import com.itextpdf.text.pdf.PdfWriter;
-import com.jaio360.application.EHCacheManager;
+import com.jaio360.dao.ElementoDAO;
 import com.jaio360.dao.ProyectoDAO;
 import com.jaio360.domain.DatosReporte;
 import com.jaio360.domain.ProyectoInfo;
@@ -42,7 +42,6 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -52,8 +51,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.NoSuchElementException;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import javax.faces.context.FacesContext;
@@ -61,7 +58,6 @@ import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpSession;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 
@@ -976,7 +972,9 @@ public class Utilitarios {
 
         List lstMetodologias = new ArrayList();
 
-        List<Elemento> lstElementos = EHCacheManager.obtenerElementosPorDefinicion(DT);
+        ElementoDAO objElementoDAO = new ElementoDAO();
+        
+        List<Elemento> lstElementos = objElementoDAO.obtenListaElementoXDefinicion(DT);
 
         Iterator itLstElementos = lstElementos.iterator();
 

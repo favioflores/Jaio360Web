@@ -1,6 +1,5 @@
 package com.jaio360.view;
 
-import com.jaio360.application.EHCacheManager;
 import com.jaio360.dao.MensajeDAO;
 import com.jaio360.dao.NotificacionesDAO;
 import com.jaio360.domain.ProyectoInfo;
@@ -90,7 +89,7 @@ public class GuardarNotificacionView extends BaseView implements Serializable {
             
         if(strTipoNotificacion!=null){
             
-            strDescTipoNotificacion = EHCacheManager.obtenerDescripcionElemento(Integer.parseInt(strTipoNotificacion));
+            strDescTipoNotificacion = msg(strTipoNotificacion);
 
             ProyectoInfo objProyectoInfo = Utilitarios.obtenerProyecto();
 
@@ -105,11 +104,11 @@ public class GuardarNotificacionView extends BaseView implements Serializable {
             }else{
                 //Obtiene el mensaje modelo
                 if(strTipoNotificacion.equals(Constantes.INT_ET_NOTIFICACION_CONVOCATORIA.toString())){
-                    strContenido = EHCacheManager.obtenerCadenaElemento(Constantes.INT_ET_MODELO_NOTIFICACION_CONVOCATORIA);
+                    strContenido = msg(Constantes.INT_ET_MODELO_NOTIFICACION_CONVOCATORIA.toString());
                     strAsunto = Constantes.strVacio;
                     strIdNotificacion = Constantes.strVacio;
                 }else if(strTipoNotificacion.equals(Constantes.INT_ET_NOTIFICACION_CONVOCATORIA_RED.toString())){
-                    strContenido = EHCacheManager.obtenerCadenaElemento(Constantes.INT_ET_MODELO_NOTIFICACION_CARGA_RED);
+                    strContenido = msg(Constantes.INT_ET_MODELO_NOTIFICACION_CARGA_RED.toString());
                     strAsunto = Constantes.strVacio;
                     strIdNotificacion = Constantes.strVacio;
                 }else if(strTipoNotificacion.equals(Constantes.INT_ET_NOTIFICACION_AGRADECIMIENTO.toString())){
