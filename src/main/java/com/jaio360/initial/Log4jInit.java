@@ -22,16 +22,12 @@ public class Log4jInit extends HttpServlet implements Serializable {
      */
     @Override
     public void init(ServletConfig config) throws ServletException{
-    
-        System.out.println("Log4j esta inicializando");
         
         String log4jLocation = config.getInitParameter("log4j-init-file") + File.separator + "log4j.properties";
         
         ServletContext sc = config.getServletContext();
         
         if ( log4jLocation == null ){
-        
-                System.err.println("No Log4j Properties Location");
                 BasicConfigurator.configure();
                 
         } else {
@@ -41,14 +37,10 @@ public class Log4jInit extends HttpServlet implements Serializable {
             File properties = new File(log4jProp);
             
             if(properties.exists()){
-            
-                System.out.println("Inicializando Log4j " + log4jProp);
                 PropertyConfigurator.configure(log4jProp);
                 
             }else{
-                System.out.println("Configuracion basica " + log4jProp);
                 BasicConfigurator.configure();
-                
             }
                 
         }

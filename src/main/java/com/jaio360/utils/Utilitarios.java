@@ -23,6 +23,7 @@ import com.jaio360.domain.UsuarioInfo;
 import com.jaio360.orm.Elemento;
 import com.jaio360.orm.Proyecto;
 import com.jaio360.orm.Usuario;
+import com.jaio360.view.BaseView;
 import com.jaio360.view.ListasPrincipalView;
 import java.awt.Color;
 import java.io.ByteArrayOutputStream;
@@ -33,6 +34,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.Files;
@@ -65,7 +67,7 @@ import org.apache.poi.ss.usermodel.Row;
  *
  * @author Favio
  */
-public class Utilitarios {
+public class Utilitarios extends BaseView implements Serializable{
 
     private static Log log = LogFactory.getLog(Utilitarios.class);
 
@@ -510,8 +512,9 @@ public class Utilitarios {
     }
 
     public static String obtieneFechaSistema(int type) {
-        String et = ResourceBundle.getBundle("etiquetas").getString("iniciar.captcha.lenguaje");
-        DateFormat dfDateFull = DateFormat.getDateInstance(type, new Locale(et));
+        FacesContext context = FacesContext.getCurrentInstance();
+        ResourceBundle bundle = context.getApplication().getResourceBundle(context, "msg");
+        DateFormat dfDateFull = DateFormat.getDateInstance(type, bundle.getLocale());
         Date fecha = new Date();
         return dfDateFull.format(fecha);
     }
@@ -563,8 +566,6 @@ public class Utilitarios {
 
         boolean blSave = false;
 
-        log.debug("Inicia zipArchivos");
-
         try {
 
             byte[] BUFFER = new byte[1024];
@@ -596,12 +597,12 @@ public class Utilitarios {
                 try {
                     Files.delete(fl.toPath());
                 } catch (NoSuchFileException x) {
-                    log.error("%s: no such" + " file or directory%n");
+                    mostrarError(log, x);
                 } catch (DirectoryNotEmptyException x) {
-                    log.error("%s not empty%n");
+                    mostrarError(log, x);
                 } catch (IOException x) {
                     // File permission problems are caught here.
-                    log.error(x);
+                    mostrarError(log, x);
                 }
 
             }
@@ -613,11 +614,9 @@ public class Utilitarios {
         } catch (Exception e) {
 
             blSave = false;
-            log.error(e);
+            mostrarError(log, e);
 
         }
-
-        log.debug("Termina zipArchivos");
 
         return blSave;
     }
@@ -878,21 +877,21 @@ public class Utilitarios {
 
         String code = "";
         String[] colors = {"#046BBB",
-             "#DDE4EB",
-             "#F3C305",
-             "#545454",
-             "#57D9DE",
-             "#A490BE",
-             "#5A89C9",
-             "#1F9EE4",
-             "#2C76BC",
-             "#47586D",
-             "#36A4CD",
-             "#366494"};
-        
-        if(colors.length>i){
+            "#DDE4EB",
+            "#F3C305",
+            "#545454",
+            "#57D9DE",
+            "#A490BE",
+            "#5A89C9",
+            "#1F9EE4",
+            "#2C76BC",
+            "#47586D",
+            "#36A4CD",
+            "#366494"};
+
+        if (colors.length > i) {
             return colors[i];
-        }else{
+        } else {
             return generaColorHtml();
         }
 
@@ -973,7 +972,7 @@ public class Utilitarios {
         List lstMetodologias = new ArrayList();
 
         ElementoDAO objElementoDAO = new ElementoDAO();
-        
+
         List<Elemento> lstElementos = objElementoDAO.obtenListaElementoXDefinicion(DT);
 
         Iterator itLstElementos = lstElementos.iterator();

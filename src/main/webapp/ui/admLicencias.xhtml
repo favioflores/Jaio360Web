@@ -15,7 +15,7 @@
 
     <ui:define name="content">     
         <p:panel>
-            
+
             <h:form id="formUsuario">
 
                 <p:card id="cardFormUsuario">
@@ -29,7 +29,7 @@
                         <div class="p-field p-col-12 p-md-12">
                             <div class="p-field p-grid">
                                 <div class="p-col">
-                                    <p:outputLabel for="@next" value="Usuario maestro" />
+                                    <p:outputLabel for="@next" value="Usuario maestros o administradores " />
                                     <p:selectOneMenu id="idUsuario" value="#{mantenimientoLicenciaView.idUsuario}" required="true" requiredMessage="Debe seleccionar un usuario" filter="true" filterMatchMode="contains" >
                                         <f:selectItem itemLabel="Selecciona un usuario" itemValue="" />
                                         <f:selectItems value="#{mantenimientoLicenciaView.lstUsuarios}" var="usu" />
@@ -78,7 +78,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="p-field p-col-12 p-md-4">
                             <div class="p-field p-grid">
                                 <div class="p-col">
@@ -114,20 +114,68 @@
 
                 <p:card id="panel">
 
-                    <h3>Historial de licencias asignadas</h3>
+                    <h3>Resumen de saldos</h3>
 
+                    <div class="p-field p-col-12 p-md-12">
+                        <p:dataTable 
+                            id="lstUsuarioSaldo"
+                            var="usuarioSaldo"
+                            value="#{mantenimientoLicenciaView.lstUsuarioSaldo}" 
+                            rows="5"
+                            size="small"
+                            widgetVar="lstUsuarioSaldo"
+                            emptyMessage="No se encontró ningun elemento"
+                            rowIndexVar="index"
+                            >    
+
+                            <p:columnGroup type="header">
+                                <p:row>
+                                    <p:column colspan="3" headerText="Licencias individuales"/>
+                                    <p:column colspan="3" headerText="Licencias masivos"/>
+                                </p:row>
+                                <p:row>
+                                    <p:column headerText="Total"/>
+                                    <p:column headerText="Disponible"/>
+                                    <p:column headerText="Reservado"/>
+                                    <p:column headerText="Total"/>
+                                    <p:column headerText="Disponible"/>
+                                    <p:column headerText="Reservado"/>
+                                </p:row>
+                            </p:columnGroup>
+
+                            <p:column>
+                                <h:outputText value="#{usuarioSaldo.intTotalIndividual}" />
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{usuarioSaldo.intDisponibleIndividual}" />
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{usuarioSaldo.intReservadoIndividual}" />
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{usuarioSaldo.intTotalMasivo}" />
+                            </p:column>                            
+                            <p:column>
+                                <h:outputText value="#{usuarioSaldo.intDisponibleMasivo}" />
+                            </p:column>
+                            <p:column  headerText="Total Masivo">
+                                <h:outputText value="#{usuarioSaldo.intReservadoMasivo}" />
+                            </p:column>
+
+
+                        </p:dataTable>
+
+                    </div>
+
+                    <h3>Historial de movimientos</h3>
 
                     <p:growl id="growlMntCuenta" showDetail="false" life="4000" />
 
-                    <div class="ui-fluid p-formgrid p-grid">
-
-
-                    </div>
                     <div class="p-field p-col-12 p-md-12">
                         <p:dataTable 
                             id="lstContratos"
                             var="contrato"
-                            value="#{mantenimientoLicenciaView.lstContratos}" 
+                            value="#{mantenimientoLicenciaView.lstMovimientos}" 
                             rows="5"
                             size="small"
                             paginator="true" 
@@ -147,25 +195,26 @@
                                     value="#{index + 1}" />
                             </p:column> 
 
-                            <p:column  headerText="Fecha de registro">
-                                <h:outputText value="#{contrato.coFeCreacion}" />
+                            <p:column  headerText="Fecha de movimiento">
+                                <h:outputText value="#{contrato.dtCreacion}" />
                             </p:column>
-                            <p:column  headerText="Licencias totales">
-                                <h:outputText value="#{contrato.coNuLicenciaTotal}" />
+                            <p:column  headerText="Movimiento">
+                                <h:outputText value="#{contrato.strDescMovimiento}" />
                             </p:column>
-                            <p:column  headerText="Licencias disponibles">
-                                <h:outputText value="#{contrato.coNuLicenciaDisponible}" />
+                            <p:column  headerText="Cantidad">
+                                <h:outputText value="#{contrato.intCantidad}" />
                             </p:column>
-                            <p:column  headerText="Licencias reservadas">
-                                <h:outputText value="#{contrato.coNuLicenciaReservada}" />
-                            </p:column>
-                            <p:column  headerText="Precio">
-                                <h:outputText value="#{contrato.tarifa.taTxPrefijo.concat(contrato.tarifa.taDePrecio)}" />
-                            </p:column>
-                            <p:column  headerText="Tarifa">
-                                #{contrato.tarifa.taTxDescripcion}
-                            </p:column>
-
+                            <!--
+                                                        <p:column  headerText="Licencias reservadas">
+                                                            <h:outputText value="#{contrato.coNuLicenciaReservada}" />
+                                                        </p:column>
+                                                        <p:column  headerText="Precio">
+                                                            <h:outputText value="#{contrato.tarifa.taTxPrefijo.concat(contrato.tarifa.taDePrecio)}" />
+                                                        </p:column>
+                                                        <p:column  headerText="Tarifa">
+                            #{contrato.tarifa.taTxDescripcion}
+                        </p:column>
+                            -->
                         </p:dataTable>
 
                     </div>

@@ -62,5 +62,11 @@
             </key>
             <one-to-many class="com.jaio360.orm.Proyecto" />
         </set>
+        <set name="movimientos" inverse="true">
+            <key>
+                <column name="US_ID_CUENTA_FK" not-null="true" />
+            </key>
+            <one-to-many class="com.jaio360.orm.Movimiento" />
+        </set>
     </class>
 </hibernate-mapping>

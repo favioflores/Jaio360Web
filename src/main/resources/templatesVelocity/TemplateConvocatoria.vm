@@ -112,7 +112,7 @@
                 <td height="40"><div class="divTittle">$TITULO</div></td>
             </tr>
             <tr>
-                <td height="35"><div class="divDatoEnvio">Enviado: $TIEMPO</div></td>
+                <td height="35"><div class="divDatoEnvio">$TEMPLATE-CONVOCATORIA-LABEL-SENDED: $TIEMPO</div></td>
             </tr>
             <tr>
                 <td>
@@ -135,7 +135,7 @@
                                                 </tr>
                                                 <tr style="height: 60px;">
                                                     <td>&nbsp;</td>
-                                                    <td><div class="divCarita">Hola $NOMBRE,</div></td>
+                                                    <td><div class="divCarita">$TEMPLATE-CONVOCATORIA-LABEL-HELLO $NOMBRE,</div></td>
                                                     <td>&nbsp;</td>
                                                 </tr>
                                                 <tr>
@@ -154,7 +154,7 @@
                                                 </tr>
                                                 <tr>
                                                     <td>&nbsp;</td>
-                                                    <td class="divDatosR">Usuario</td>
+                                                    <td class="divDatosR">$TEMPLATE-CONVOCATORIA-LABEL-USER</td>
                                                     <td>&nbsp;</td>
                                                 </tr>
                                                 <tr>
@@ -164,7 +164,7 @@
                                                 </tr>
                                                 <tr>
                                                     <td>&nbsp;</td>
-                                                    <td class="divDatosR">Clave</td>
+                                                    <td class="divDatosR">$TEMPLATE-CONVOCATORIA-LABEL-PASSWORD</td>
                                                     <td>&nbsp;</td>
                                                 </tr>
                                                 <tr>
@@ -179,7 +179,7 @@
                                                 </tr>
                                                 <tr>
                                                     <td>&nbsp;</td>
-                                                    <td><a href="$URL" class="myButton">Ingresar</a></td>
+                                                    <td><a href="$URL" class="myButton">$TEMPLATE-CONVOCATORIA-LABEL-SINGIN</a></td>
                                                     <td>&nbsp;</td>
                                                 </tr>
                                                 <tr>
@@ -197,7 +197,7 @@
                 </td>
             </tr>
             <tr>
-                <td height="60"><div class="divDatoEnvio">Si tienes alguna duda o consulta no dudes en contactarnos a it.service@jaio360.com</div></td>
+                <td height="60"><div class="divDatoEnvio">$TEMPLATE-CONVOCATORIA-FOOTER</div></td>
             </tr>
             <tr>
                 <td height="60"><div class="divDatoEnvio">Copyright © 2022 JAIO360</div></td>

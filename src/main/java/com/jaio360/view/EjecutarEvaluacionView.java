@@ -445,10 +445,10 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
             ProyectoInfo objProyectoInfo = Utilitarios.obtenerEvaluacion();
 
             if (objProyectoInfo.isBoDefineArtificio()) {
-                strDescEvaluado = "Usted está evaluando a "
+                strDescEvaluado = msg("you.are.evaluating") + " "
                         + objProyectoInfo.getStrNombreEvaluado();
             } else {
-                strDescEvaluado = "Usted está evaluando a " + objProyectoInfo.getStrNombreEvaluado();
+                strDescEvaluado = msg("you.are.evaluating") + " " + objProyectoInfo.getStrNombreEvaluado();
             }
 
             EjecutarEvaluacionDAO eEvaluadoDAO = new EjecutarEvaluacionDAO();
@@ -549,7 +549,7 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
                     if (objUsuarioInfo.isBoEsAdministrador() || objUsuarioInfo.isBoEsUsuarioMaestro()) {
                         FacesContext.getCurrentInstance().getExternalContext().redirect("stepFive.jsf");
                     } else {
-                        FacesContext.getCurrentInstance().getExternalContext().redirect("bienvenida.jsf");
+                        FacesContext.getCurrentInstance().getExternalContext().redirect("welcome.jsf");
                     }
                 } catch (Exception ex) {
                     log.error(ex);
@@ -576,10 +576,10 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
                     if (objProyectoInfo.isBoDefineArtificio()) {
                         FacesContext.getCurrentInstance().getExternalContext().redirect("stepFive.jsf");
                     } else {
-                        FacesContext.getCurrentInstance().getExternalContext().redirect("bienvenida.jsf");
+                        FacesContext.getCurrentInstance().getExternalContext().redirect("welcome.jsf");
                     }
                 } else {
-                    FacesContext.getCurrentInstance().getExternalContext().redirect("bienvenida.jsf");
+                    FacesContext.getCurrentInstance().getExternalContext().redirect("welcome.jsf");
                 }
             } else {
 
@@ -636,10 +636,10 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
                 if (objProyectoInfo.isBoDefineArtificio()) {
                     FacesContext.getCurrentInstance().getExternalContext().redirect("stepFive.jsf");
                 } else {
-                    FacesContext.getCurrentInstance().getExternalContext().redirect("bienvenida.jsf");
+                    FacesContext.getCurrentInstance().getExternalContext().redirect("welcome.jsf");
                 }
             } else {
-                FacesContext.getCurrentInstance().getExternalContext().redirect("bienvenida.jsf");
+                FacesContext.getCurrentInstance().getExternalContext().redirect("welcome.jsf");
             }
             
             HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);

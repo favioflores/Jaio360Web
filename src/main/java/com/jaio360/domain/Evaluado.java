@@ -29,6 +29,25 @@ public class Evaluado implements Serializable{
     private Integer paNrTiempoTrabajo;
     private String paTxOcupacion;
     private String paTxAreaNegocio;
+    
+    private Integer intNumberEvaluators;
+    private Integer intNumberEvaluationFinished;
+
+    public Integer getIntNumberEvaluators() {
+        return intNumberEvaluators;
+    }
+
+    public void setIntNumberEvaluators(Integer intNumberEvaluators) {
+        this.intNumberEvaluators = intNumberEvaluators;
+    }
+
+    public Integer getIntNumberEvaluationFinished() {
+        return intNumberEvaluationFinished;
+    }
+
+    public void setIntNumberEvaluationFinished(Integer intNumberEvaluationFinished) {
+        this.intNumberEvaluationFinished = intNumberEvaluationFinished;
+    }
 
     public boolean isBlManual() {
         return blManual;

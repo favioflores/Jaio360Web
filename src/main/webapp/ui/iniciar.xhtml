@@ -45,7 +45,7 @@
                         </div>
                         <div class="p-field">
                             <div class="text-center">
-                                <!-- p:captcha label="Captcha"  language="pe" --> 
+                                <!-- p:captcha label="Captcha" language="#{msg['iniciar.captcha.lenguaje']}" --> 
                             </div>
                         </div>
                         <div class="p-field">
@@ -57,9 +57,7 @@
                         <div class="p-field">
                             <div class="p-text-center">
                                 <p:outputLabel>
-                                    #{msg['iniciar.texto.olvidar.contraseña.part1']}
                                     <p:link outcome="clave.jsf" value="#{msg['iniciar.texto.olvidar.contraseña.part2']}" />
-                                    #{msg['iniciar.texto.olvidar.contraseña.part3']}
                                 </p:outputLabel>
                             </div>
                         </div>

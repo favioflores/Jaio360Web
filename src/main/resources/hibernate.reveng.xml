@@ -24,4 +24,10 @@
   <table-filter match-name="destinatarios"/>
   <table-filter match-name="cuestionario"/>
   <table-filter match-name="parametro"/>
+  <table-filter match-name="contrato"/>
+  <table-filter match-name="tipo_movimiento"/>
+  <table-filter match-name="movimiento"/>
+  <table-filter match-name="referencia_movimiento"/>
+  <table-filter match-name="usuario_saldo"/>
+  
 </hibernate-reverse-engineering>

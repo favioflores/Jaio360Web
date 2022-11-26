@@ -1,12 +1,21 @@
 package com.jaio360.view;
 
+import com.jaio360.component.ExecutorBalanceMovement;
 import com.jaio360.dao.ContratoDAO;
+import com.jaio360.dao.MovimientoDAO;
 import com.jaio360.dao.TarifaDAO;
 import com.jaio360.dao.UsuarioDAO;
+import com.jaio360.dao.UsuarioSaldoDAO;
+import com.jaio360.domain.MovimientoBean;
+import com.jaio360.domain.UsuarioSaldoBean;
 import com.jaio360.orm.Contrato;
+import com.jaio360.orm.Movimiento;
 import com.jaio360.orm.Tarifa;
+import com.jaio360.orm.TipoMovimiento;
 import com.jaio360.orm.Usuario;
+import com.jaio360.orm.UsuarioSaldo;
 import com.jaio360.utils.Constantes;
+import com.jaio360.utils.Movimientos;
 import com.jaio360.utils.Utilitarios;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -40,14 +49,23 @@ public class MantenimientoLicenciaView extends BaseView implements Serializable 
     private Integer idTarifa;
     private String strMontoBruto;
 
-    List<Contrato> lstContratos;
+    List<MovimientoBean> lstMovimientos;
+    List<UsuarioSaldoBean> lstUsuarioSaldo;
 
-    public List<Contrato> getLstContratos() {
-        return lstContratos;
+    public List<UsuarioSaldoBean> getLstUsuarioSaldo() {
+        return lstUsuarioSaldo;
     }
 
-    public void setLstContratos(List<Contrato> lstContratos) {
-        this.lstContratos = lstContratos;
+    public void setLstUsuarioSaldo(List<UsuarioSaldoBean> lstUsuarioSaldo) {
+        this.lstUsuarioSaldo = lstUsuarioSaldo;
+    }
+
+    public List<MovimientoBean> getLstMovimientos() {
+        return lstMovimientos;
+    }
+
+    public void setLstMovimientos(List<MovimientoBean> lstMovimientos) {
+        this.lstMovimientos = lstMovimientos;
     }
 
     public Integer getIntCantidadLicencias() {
@@ -114,7 +132,7 @@ public class MantenimientoLicenciaView extends BaseView implements Serializable 
         poblarUsuarios();
         poblarTarifas();
         calcularMontoBruto();
-        limpiarFormulario();        
+        limpiarFormulario();
 
     }
 
@@ -162,11 +180,11 @@ public class MantenimientoLicenciaView extends BaseView implements Serializable 
                 objContrato.setCoFeCreacion(new Date());
                 objContrato.setCoIdEstado(Constantes.INT_ET_ESTADO_CONTRATO_BLOQUEADO);
                 objContrato.setCoNuLicenciaTotal(intCantidadLicencias);
-                objContrato.setCoNuLicenciaDisponible(intCantidadLicencias);
-                objContrato.setCoNuLicenciaReservada(0);
-                Tarifa objTarifa = new Tarifa();
-                objTarifa.setTaIdTarifaPk(idTarifa);
+
+                TarifaDAO objTarifaDAO = new TarifaDAO();
+                Tarifa objTarifa = objTarifaDAO.obtenTarifa(idTarifa);
                 objContrato.setTarifa(objTarifa);
+
                 Usuario objUsuario = new Usuario();
                 objUsuario.setUsIdCuentaPk(idUsuario);
                 objContrato.setUsuario(objUsuario);
@@ -174,11 +192,30 @@ public class MantenimientoLicenciaView extends BaseView implements Serializable 
                 ContratoDAO objContratoDAO = new ContratoDAO();
                 objContratoDAO.guardaContrato(objContrato);
 
-                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Licencia asignada correctamente", null);
-                FacesContext.getCurrentInstance().addMessage(null, message);
-                
-                limpiarFormulario();
-                verLicenciasAsignadas();
+                List<Movimiento> lstMovements = new ArrayList<>();
+
+                Movimiento objMovimiento = new Movimiento();
+                objMovimiento.setMoFeCreacion(new Date());
+                objMovimiento.setMoInCantidad(intCantidadLicencias);
+
+                if (objTarifa.getTaIdTipoTarifa() == 202) {
+                    objMovimiento.setTipoMovimiento(new TipoMovimiento(Movimientos.MOV_COMPRA_LICENCIA_INDIVIDUAL));
+                } else if (objTarifa.getTaIdTipoTarifa() == 203) {
+                    objMovimiento.setTipoMovimiento(new TipoMovimiento(Movimientos.MOV_COMPRA_LICENCIA_MASIVA));
+                }
+                lstMovements.add(objMovimiento);
+
+                String strResult = ExecutorBalanceMovement.getInstance().execute(lstMovements, objUsuario);
+
+                if (strResult == null) {
+                    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Licencia asignada correctamente", null);
+                    FacesContext.getCurrentInstance().addMessage(null, message);
+
+                    limpiarFormulario();
+                    verLicenciasAsignadas();
+                } else {
+                    mostrarAlertaError("Ocurrió un error al asignar las licencias");
+                }
             }
 
         } catch (Exception e) {
@@ -192,20 +229,50 @@ public class MantenimientoLicenciaView extends BaseView implements Serializable 
 
         try {
 
-            lstContratos = new ArrayList<>();
+            lstMovimientos = new ArrayList<>();
+            lstUsuarioSaldo = new ArrayList<>();
 
             if (Utilitarios.noEsNuloOVacio(idUsuario)) {
 
-                ContratoDAO objContratoDAO = new ContratoDAO();
-                lstContratos = objContratoDAO.obtenListaContratoPorUsuario(idUsuario);
+                MovimientoDAO objMovimientoDAO = new MovimientoDAO();
+                List<Movimiento> lstMovimiento = objMovimientoDAO.obtenListaMovimientos(idUsuario);
 
-                if (lstContratos.isEmpty()) {
+                UsuarioSaldoDAO objUsuarioSaldoDAO = new UsuarioSaldoDAO();
+                UsuarioSaldo objUsuarioSaldo = objUsuarioSaldoDAO.obtenUsuarioSaldo(idUsuario);
+
+                if (lstMovimiento.isEmpty() || objUsuarioSaldo==null ) {
                     FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "No se encontraron licencias asignadas", null);
                     FacesContext.getCurrentInstance().addMessage(null, message);
                 } else {
+
+                    MovimientoBean objMovimientoBean;
+
+                    for (Movimiento objMovimiento : lstMovimiento) {
+
+                        objMovimientoBean = new MovimientoBean();
+
+                        objMovimientoBean.setIntIdMovimiento(objMovimiento.getMoIdMovimientoPk());
+                        objMovimientoBean.setIntCantidad(objMovimiento.getMoInCantidad());
+                        objMovimientoBean.setDtCreacion(objMovimiento.getMoFeCreacion());
+                        objMovimientoBean.setStrDescMovimiento(msg(objMovimiento.getTipoMovimiento().getTmIdTipoMovPk().toString()));
+
+                        lstMovimientos.add(objMovimientoBean);
+                    }
+                    
+                    UsuarioSaldoBean objUsuarioSaldoBean = new UsuarioSaldoBean();
+                    objUsuarioSaldoBean.setIntTotalIndividual(objUsuarioSaldo.getUsNrTotalIndividual());
+                    objUsuarioSaldoBean.setIntTotalMasivo(objUsuarioSaldo.getUsNrTotalMasivo());
+                    objUsuarioSaldoBean.setIntDisponibleIndividual(objUsuarioSaldo.getUsNrDisponibleIndividual());
+                    objUsuarioSaldoBean.setIntDisponibleMasivo(objUsuarioSaldo.getUsNrDisponibleMasivo());
+                    objUsuarioSaldoBean.setIntReservadoIndividual(objUsuarioSaldo.getUsNrReservadoIndividual());
+                    objUsuarioSaldoBean.setIntReservadoMasivo(objUsuarioSaldo.getUsNrReservadoMasivo());
+                    
+                    lstUsuarioSaldo.add(objUsuarioSaldoBean);
+
                     FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Se encontraron licencias asignadas", null);
                     FacesContext.getCurrentInstance().addMessage(null, message);
                 }
+
             }
 
         } catch (Exception e) {
@@ -247,7 +314,7 @@ public class MantenimientoLicenciaView extends BaseView implements Serializable 
 
             lstUsuarios = new ArrayList<>();
 
-            List<Usuario> lstUsers = usuarioDAO.obtenListaUsuarioPorPerfil(Constantes.INT_ET_TIPO_USUARIO_USUARIO_MAESTRO);
+            List<Usuario> lstUsers = usuarioDAO.obtenListaUsuarioPorPerfil(Constantes.INT_ET_TIPO_USUARIO_PROJECT_MANAGER, Constantes.INT_ET_TIPO_USUARIO_MANAGING_DIRECTOR);
 
             for (Usuario objUsuario : lstUsers) {
 
@@ -258,7 +325,7 @@ public class MantenimientoLicenciaView extends BaseView implements Serializable 
                 lstUsuarios.add(objSelectItem);
             }
         } catch (Exception ex) {
-            log.error(ex);
+            mostrarError(log, ex);
         }
     }
 

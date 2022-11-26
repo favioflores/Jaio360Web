@@ -19,6 +19,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -74,6 +75,36 @@ public class ListasPrincipalView extends BaseView implements Serializable {
     private int intLicenciasDisponibles;
     private int intLicenciasReservadas;
     private boolean blLicenciasReservadas;
+
+    private boolean globalFilterOnly;
+    private List<ProyectoInfo> filteredProyectos;
+    private String filterValue;
+
+    public String getFilterValue() {
+        return filterValue;
+    }
+
+    public void setFilterValue(String filterValue) {
+        this.filterValue = filterValue;
+    }
+    
+    
+
+    public boolean isGlobalFilterOnly() {
+        return globalFilterOnly;
+    }
+
+    public void setGlobalFilterOnly(boolean globalFilterOnly) {
+        this.globalFilterOnly = globalFilterOnly;
+    }
+
+    public List<ProyectoInfo> getFilteredProyectos() {
+        return filteredProyectos;
+    }
+
+    public void setFilteredProyectos(List<ProyectoInfo> filteredProyectos) {
+        this.filteredProyectos = filteredProyectos;
+    }
 
     public boolean isBlLicenciasReservadas() {
         return blLicenciasReservadas;
@@ -278,6 +309,7 @@ public class ListasPrincipalView extends BaseView implements Serializable {
 
         limpiarFiltro();
 
+        globalFilterOnly = false;
         lstProyectos = new ArrayList<>();
         lstRedes = new ArrayList<>();
         lstEvaluaciones = new ArrayList<>();
@@ -478,7 +510,6 @@ public class ListasPrincipalView extends BaseView implements Serializable {
         objProyectoInfo.setDtFechaCreacion(Utilitarios.convertDateToLocalDate(objProyecto.getPoFeRegistro()));
         objProyectoInfo.setDtFechaEjecucion(objProyecto.getPoFeEjecucion());
         objProyectoInfo.setStrMotivo(objProyecto.getPoTxMotivo());
-        objProyectoInfo.setStrMotivo(objProyecto.getPoTxMotivo());
         objProyectoInfo.setBoOculto(objProyecto.getPoInOculto());
 
         return objProyectoInfo;
@@ -529,7 +560,13 @@ public class ListasPrincipalView extends BaseView implements Serializable {
 
                 Proyecto objProyecto = objProyectoDAO.obtenProyecto(objProyectoInfo.getIntIdProyecto());
 
-                objProyecto.setPoTxDescripcion(event.getNewValue().toString());
+                if(event.getColumn().getHeaderText().equals(msg("adm.nombre"))){
+                    objProyecto.setPoTxDescripcion(event.getNewValue().toString());
+                }
+                
+                if(event.getColumn().getHeaderText().equals(msg("descripcion"))){
+                    objProyecto.setPoTxMotivo(event.getNewValue().toString());
+                } 
 
                 objProyectoDAO.actualizaProyecto(objProyecto);
 
@@ -606,4 +643,18 @@ public class ListasPrincipalView extends BaseView implements Serializable {
         blOcultos = false;
 
     }
+
+    public boolean globalFilterFunction(Object value, Object filter, Locale locale) {
+        String filterText = (filter == null) ? null : filter.toString().trim().toLowerCase();
+        if (Utilitarios.esNuloOVacio(filterText)) {
+            return true;
+        }
+
+        ProyectoInfo infoProyecto = (ProyectoInfo) value;
+        return infoProyecto.getStrDescNombre().toLowerCase().contains(filterText)
+                || infoProyecto.getStrDescEstado().toLowerCase().contains(filterText)
+                || infoProyecto.getStrMotivo().toLowerCase().contains(filterText)
+                || infoProyecto.getDtFechaCreacion().toString().toLowerCase().contains(filterText);
+    }
+
 }

@@ -518,7 +518,7 @@ public class ProyectoDAO implements Serializable
                         objUsuarioNuevo.setUsTxNombreRazonsocial(str[1]);
                         objUsuarioNuevo.setUsTxContrasenia(objEncryptDecrypt.encrypt(Utilitarios.generarClave()));
                         objUsuarioNuevo.setUsIdEstado(Constantes.INT_ET_ESTADO_USUARIO_CONFIRMADO);
-                        objUsuarioNuevo.setUsIdTipoCuenta(Constantes.INT_ET_TIPO_USUARIO_USUARIO);
+                        objUsuarioNuevo.setUsIdTipoCuenta(Constantes.INT_ET_TIPO_USUARIO_EVALUATED_EVALUATOR);
                         objUsuarioNuevo.setUsFeNacimiento(null);
                         objUsuarioNuevo.setUsTxDocumento(null);
                         objUsuarioNuevo.setUsIdTipoDocumento(null);

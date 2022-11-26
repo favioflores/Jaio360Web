@@ -28,6 +28,7 @@ public class Usuario  implements java.io.Serializable {
      private Set contratos = new HashSet(0);
      private Set historialAccesos = new HashSet(0);
      private Set proyectos = new HashSet(0);
+     private Set movimientos = new HashSet(0);
 
     public Usuario() {
     }
@@ -177,8 +178,13 @@ public class Usuario  implements java.io.Serializable {
         this.proyectos = proyectos;
     }
 
+    public Set getMovimientos() {
+        return movimientos;
+    }
 
-
+    public void setMovimientos(Set movimientos) {
+        this.movimientos = movimientos;
+    }
 
 }
 

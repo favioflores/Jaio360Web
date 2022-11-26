@@ -30,7 +30,6 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.primefaces.PrimeFaces;
 
 /**
  *
@@ -106,23 +105,6 @@ public class CrearProyecto extends BaseView implements Serializable {
 
     public void setLstMetodologias(List<SelectItem> lstMetodologias) {
         this.lstMetodologias = lstMetodologias;
-    }
-
-    public void abrirPanel() {
-
-        Map<String, Object> options = new HashMap();
-        options.put("resizable", false);
-        options.put("modal", false);
-        options.put("draggable", false);
-        options.put("closable", true);
-        options.put("closeOnEscape", true);
-        options.put("responsive", true);
-        options.put("modal", true);
-        options.put("appendTo", true);
-        options.put("dynamic", true);
-
-        PrimeFaces.current().dialog().openDynamic("crearProyecto");
-
     }
 
     public void proyectoCreado() {

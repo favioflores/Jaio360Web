@@ -206,7 +206,7 @@ public abstract class BaseView extends VelocityViewServlet implements Serializab
         }
     }
     
-    public void mostrarError(Log log, Exception e) {
+    public static void mostrarError(Log log, Exception e) {
         try {
             FacesMessage message = new FacesMessage(FATAL, msg("error.was.occurred", null), null);
             FacesContext.getCurrentInstance().addMessage(null, message);

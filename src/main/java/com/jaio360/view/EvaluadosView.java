@@ -2657,8 +2657,8 @@ public class EvaluadosView extends BaseView implements Serializable {
     }
 
     public void leeExcelAvanzado() {
-
-        FacesMessage message;
+        
+        habilitarParametros();
 
         lstErrorAvan = new ArrayList();
         lstAvanPersonas = new ArrayList();

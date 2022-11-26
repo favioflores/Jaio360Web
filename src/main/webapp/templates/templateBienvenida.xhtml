@@ -28,7 +28,13 @@
 
             <ui:insert name="cabecera"></ui:insert>
             <ui:insert name="content">...</ui:insert>
+            <ui:insert name="pie"></ui:insert>
 
+            <p:ajaxStatus onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" />
+            <p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false">
+                <h5>#{msg['processing']}</h5>
+                <p:progressBar id="progressBarIndeterminate" style="height:10px;" mode="indeterminate"/>
+            </p:dialog>
         </h:body>
 
     </f:view>

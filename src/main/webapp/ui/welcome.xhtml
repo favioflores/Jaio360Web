@@ -82,13 +82,6 @@
             </h:form>
         </p:dialog>
 
-        <p:ajaxStatus onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" />
-
-        <p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false">
-            <h5>#{msg['processing']}</h5>
-            <p:progressBar id="progressBarIndeterminate" style="height:10px;" mode="indeterminate"/>
-        </p:dialog>
-
         <p:dialog widgetVar="dlgEvaluaciones" header="#{msg['lista.evaluaciones.pendientes']}" style="max-width: 90%; "  draggable="false" closable="false" hideEffect="drop" showEffect="drop"  resizable="false" >
             <h:form>
                 <p:panel>

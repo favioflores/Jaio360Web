@@ -25,7 +25,7 @@
 
                         <h5>#{ejecutarEvaluacionView.strDescEvaluado}</h5>  
 
-                        <H6>Pregunta #{ejecutarEvaluacionView.intNroPreguntasActual +1}/#{ejecutarEvaluacionView.intNroTotalPreguntas}</H6>
+                        <H6>#{msg['question']} #{ejecutarEvaluacionView.intNroPreguntasActual +1}/#{ejecutarEvaluacionView.intNroTotalPreguntas}</H6>
                         <p:progressBar value="#{(ejecutarEvaluacionView.intNroPreguntasActual +1) / (ejecutarEvaluacionView.intNroTotalPreguntas)*100}" 
                                        />
                     </f:facet>
@@ -37,15 +37,11 @@
                         <c:if  test="#{ejecutarEvaluacionView.intNroPreguntasActual.intValue() le ejecutarEvaluacionView.lstPreguntasCerradas.size()}" >
                             <div class="p-field p-col-12 p-md-12">
                                 <h3>#{ejecutarEvaluacionView.strDescripcionPreguntaCerradaActual}</h3>
-                                Por favor seleccione una de las siguientes respuestas:
+                                #{msg['please.select.answer']}
                             </div>
 
                             <div class="p-field p-col-12 p-md-12">
-                                <!--
-                                <p:selectOneRadio id="lstRespuestasBase" value="#{ejecutarEvaluacionView.intRptaSeleccionada}" onclick="grabarRespuestaCerradaActual()"  unselectable="true" columns="1" layout="grid" >
-                                    <f:selectItems value="#{ejecutarEvaluacionView.mapRespuestas}" />
-                                </p:selectOneRadio>
-                                -->
+
                                 <p:outputPanel id="customPanel" style="margin-bottom:10px">
                                     <p:selectOneRadio id="lstRespuestas" value="#{ejecutarEvaluacionView.intRptaSeleccionada}" 
                                                       onclick="grabarRespuestaCerradaActual()" 
@@ -75,7 +71,7 @@
                                     <p:spacer/>
                                     <span class="ui-float-label">
 
-                                        <p:inputTextarea style="width: 100%;" autoResize="true" maxlength="500" counter="display#{counter}" counterTemplate="{0} caracteres restantes."
+                                        <p:inputTextarea style="width: 100%;" autoResize="true" maxlength="500" counter="display#{counter}" counterTemplate="{0} #{msg['remaining.characters']}"
                                                          value="#{ejecutarEvaluacionView.strRptaComentario[counter]}" />
                                         <p:outputLabel for="@previous" value="#{ejecutarEvaluacionView.lstCompComentario.get(counter).getCoTxDescripcion()}"/>
                                         <h:outputText id="display#{counter}" class="p-d-block" />
@@ -91,12 +87,12 @@
 
                         <c:if  test="#{ejecutarEvaluacionView.intNroPreguntasActual.intValue() le (ejecutarEvaluacionView.lstPreguntasCerradas.size() + ejecutarEvaluacionView.lstPreguntasAbiertas.size())}" >
                             <div class="p-field p-col-12 p-md-12">
-                                Por favor responde las siguientes preguntas:
+                                #{msg['please.answer.next.questions']}
                             </div>
 
                             <div class="p-field p-col-12 p-md-12">
                                 <span class="ui-float-label">
-                                    <p:inputTextarea style="width: 100%;" autoResize="true" maxlength="500" counter="display" counterTemplate="{0} caracteres restantes."
+                                    <p:inputTextarea style="width: 100%;" autoResize="true" maxlength="500" counter="display" counterTemplate="{0} #{msg['remaining.characters']}"
                                                      value="#{ejecutarEvaluacionView.strRptaPreguntaAbierta}" />
                                     <p:outputLabel for="@previous" value="#{ejecutarEvaluacionView.strDescripcionPreguntaAbiertaActual}" />
                                     <h:outputText id="display" class="p-d-block" />
@@ -111,7 +107,7 @@
                         <div class="ui-fluid p-formgrid p-grid">
                             <div class="p-field p-col" style="text-align:left;">
                                 <!--<c:if test="#{ejecutarEvaluacionView.isPreguntaCerradaActual}" >-->
-                                <p:commandButton icon="pi pi-arrow-left" value="Anterior (Ctrl+A)" update="@form" style="width: 200px;" 
+                                <p:commandButton icon="pi pi-arrow-left" value="#{msg['back']} (Ctrl+A)" update="@form" style="width: 200px;" 
                                                  actionListener="#{ejecutarEvaluacionView.previaPregunta()}" 
                                                  rendered="#{ejecutarEvaluacionView.intNroPreguntasActual.intValue()>0?true:false}" />
                                 <p:hotkey bind="ctrl+a" update="@form" 
@@ -121,14 +117,14 @@
                             </div>
                             <div class="p-field p-col" style="text-align:right;">
                                 <!--<c:if test="#{ejecutarEvaluacionView.isPreguntaCerradaActual}" >-->
-                                <p:commandButton icon="pi pi-arrow-right" value="Siguiente (Ctrl+S)" update="@form" style="width: 200px;" 
+                                <p:commandButton icon="pi pi-arrow-right" value="#{msg['next']} (Ctrl+S)" update="@form" style="width: 200px;" 
                                                  actionListener="#{ejecutarEvaluacionView.siguientePregunta()}"
                                                  rendered="#{ejecutarEvaluacionView.intNroPreguntasActual.intValue()==ejecutarEvaluacionView.intNroTotalPreguntas.intValue()-1?false:true}"
                                                  />
                                 <p:hotkey bind="ctrl+s" update="@form" 
                                           rendered="#{ejecutarEvaluacionView.intNroPreguntasActual.intValue()==ejecutarEvaluacionView.intNroTotalPreguntas.intValue()-1?false:true}"
                                           actionListener="#{ejecutarEvaluacionView.siguientePregunta()}"/>
-                                <p:commandButton icon="pi pi-save" value="Grabar respuestas" update="@form" style="width: 200px;" 
+                                <p:commandButton icon="pi pi-save" value="#{msg['save.answers']}" update="@form" style="width: 200px;" 
                                                  actionListener="#{ejecutarEvaluacionView.ultimaPregunta()}" styleClass="ui-button-warning"
                                                  rendered="#{ejecutarEvaluacionView.intNroPreguntasActual.intValue()==ejecutarEvaluacionView.intNroTotalPreguntas.intValue()-1?true:false}"
                                                  oncomplete="PF('dlgAgradecimiento').show();"
@@ -174,7 +170,7 @@
 
         </h:form>
 
-        <p:dialog header="Bienvenida"  
+        <p:dialog header="#{msg['welcome']}"  
                   visible="true" 
                   hideEffect="drop"
                   showEffect="drop"
@@ -192,12 +188,12 @@
             </p:scrollPanel>
             <f:facet name="footer">
                 <center>
-                    <p:commandButton value="Cerrar instrucciones" type="button" onclick="PF('dlgInstrucciones').hide()" />
+                    <p:commandButton value="#{msg['close']}" type="button" onclick="PF('dlgInstrucciones').hide()" />
                 </center>
             </f:facet>  
         </p:dialog>
 
-        <p:dialog header="Te agradecemos tu tiempo" modal="true" 
+        <p:dialog header="#{msg['template.regards.label.thank']}" modal="true" 
                   fitViewport="true" 
                   appendTo="@(body)" 
                   widgetVar="dlgAgradecimiento" 
@@ -208,7 +204,7 @@
                 <h:outputText value="#{ejecutarEvaluacionView.strAgradecimiento}" escape="false" />
                 <br/>
                 <center>
-                <p:commandButton value="Salir de evaluación" actionListener="#{ejecutarEvaluacionView.salir()}" />
+                <p:commandButton value="#{msg['go.out']}" actionListener="#{ejecutarEvaluacionView.salir()}" />
                 </center>
             </h:form>
         </p:dialog>

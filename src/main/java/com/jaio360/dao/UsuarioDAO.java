@@ -94,6 +94,23 @@ public class UsuarioDAO implements Serializable {
 
         return usuario;
     }
+    
+    public Usuario obtenUsuarioByEmail(String strEmail) throws HibernateException {
+        try {
+            iniciaOperacion();
+            Query query = sesion.createQuery("from Usuario where us_id_mail = ?");
+
+            query.setString(0, strEmail);
+
+            return (Usuario) query.uniqueResult();
+        } catch (HibernateException ex) {
+            log.error(ex);
+        } finally {
+            sesion.close();
+        }
+        return null;
+
+    }
 
     public Object obtenUsuario(String strEmail, Session sesion) throws HibernateException {
         try {
@@ -128,6 +145,24 @@ public class UsuarioDAO implements Serializable {
             Query query = sesion.createQuery("from Usuario u where u.usIdTipoCuenta = ? and u.usIdEstado != ? order by usTxNombreRazonsocial ");
             query.setInteger(0, intPerfil);
             query.setInteger(1, Constantes.INT_ET_ESTADO_USUARIO_BLOQUEADO);
+            listaUsuario = query.list();
+        } catch (HibernateException ex) {
+            log.error(ex);
+        } finally {
+            sesion.close();
+        }
+
+        return listaUsuario;
+    }
+    
+    public List<Usuario> obtenListaUsuarioPorPerfil(Integer intPerfil1, Integer intPerfil2) throws HibernateException {
+        List<Usuario> listaUsuario = null;
+        try {
+            iniciaOperacion();
+            Query query = sesion.createQuery("from Usuario u where u.usIdTipoCuenta in (?,?) and u.usIdEstado != ? order by usTxNombreRazonsocial ");
+            query.setInteger(0, intPerfil1);
+            query.setInteger(1, intPerfil2);
+            query.setInteger(2, Constantes.INT_ET_ESTADO_USUARIO_BLOQUEADO);
             listaUsuario = query.list();
         } catch (HibernateException ex) {
             log.error(ex);
@@ -244,7 +279,7 @@ public class UsuarioDAO implements Serializable {
                     objUsuarioNuevo.setUsTxNombreRazonsocial(entry.getValue().toString());
                     objUsuarioNuevo.setUsTxContrasenia(objEncryptDecrypt.encrypt(Utilitarios.generarClave()));
                     objUsuarioNuevo.setUsIdEstado(Constantes.INT_ET_ESTADO_USUARIO_CONFIRMADO);
-                    objUsuarioNuevo.setUsIdTipoCuenta(Constantes.INT_ET_TIPO_USUARIO_USUARIO);
+                    objUsuarioNuevo.setUsIdTipoCuenta(Constantes.INT_ET_TIPO_USUARIO_EVALUATED_EVALUATOR);
                     objUsuarioNuevo.setUsFeNacimiento(null);
                     objUsuarioNuevo.setUsTxDocumento(null);
                     objUsuarioNuevo.setUsIdTipoDocumento(null);

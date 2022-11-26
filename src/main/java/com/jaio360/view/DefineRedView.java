@@ -274,7 +274,7 @@ public class DefineRedView extends BaseView implements Serializable{
             
                     HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
                     session.removeAttribute("redInfo");
-                    FacesContext.getCurrentInstance().getExternalContext().redirect("bienvenida.jsf");
+                    FacesContext.getCurrentInstance().getExternalContext().redirect("welcome.jsf");
 
                     } catch (IOException ex) {
                         log.debug(ex);
@@ -308,7 +308,7 @@ public class DefineRedView extends BaseView implements Serializable{
     
     public void regresarBienvenida(){
         try{
-            FacesContext.getCurrentInstance().getExternalContext().redirect("bienvenida.jsf");
+            FacesContext.getCurrentInstance().getExternalContext().redirect("welcome.jsf");
         } catch (IOException ex) {
             log.debug(ex);
         }

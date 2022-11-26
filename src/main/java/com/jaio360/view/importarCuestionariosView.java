@@ -219,7 +219,7 @@ public class importarCuestionariosView extends BaseView implements Serializable 
                     mostrarAlertaFatal("file.has.data.errors");
                 }
 
-            } catch (IOException ex) {
+            } catch (Exception ex) {
                 mostrarError(log, ex);
                 mostrarAlertaFatal("error.was.occurred");
             }

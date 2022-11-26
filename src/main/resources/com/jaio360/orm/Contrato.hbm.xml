@@ -20,12 +20,6 @@
         <property name="coNuLicenciaTotal" type="java.lang.Integer">
             <column name="CO_NU_LICENCIA_TOTAL" not-null="true" />
         </property>
-        <property name="coNuLicenciaDisponible" type="java.lang.Integer">
-            <column name="CO_NU_LICENCIA_DISPONIBLE" not-null="true" />
-        </property>
-        <property name="coNuLicenciaReservada" type="java.lang.Integer">
-            <column name="CO_NU_LICENCIA_RESERVADA" not-null="true" />
-        </property>
         <property name="coIdEstado" type="java.lang.Integer">
             <column name="CO_ID_ESTADO" not-null="true" />
         </property>

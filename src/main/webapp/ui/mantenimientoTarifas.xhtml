@@ -126,16 +126,6 @@
         </h:form>
         
     </ui:composition>
-        <h:form prependId="false">
-            <p:idleMonitor timeout="3600000" >
-                <p:ajax event="idle" listener="#{usuarioSesion.timeout()}" oncomplete="PF('timeoutDlg').show();"/>
-            </p:idleMonitor>
-            <p:dialog header="Aviso de cierre de sesión" widgetVar="timeoutDlg" width="300" closable="false" maximizable="false" resizable="false" draggable="false" closeOnEscape="false" modal="true" >
-                <h:panelGrid border="0" columns="1" >
-                <h:outputText value="Por seguridad su sesión fue cerrada tras 60 minutos de inactividad." />
-                <p:button outcome="iniciar" value="Ok" /> 
-                </h:panelGrid>
-            </p:dialog> 
-        </h:form>
+
 </h:body>
 </html>

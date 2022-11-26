@@ -16,41 +16,33 @@
     <ui:define name="content">      
 
         <p:panel>
-            <!--<p:separator/>-->
 
-
-
-            <!--
-            <p:row/>
-            <p:outputLabel value="Personaliza los comunicados que apareceran durante el proyecto. Recuerda que debes redactar la convocatoria, las instrucciones y el agradecimiento." />
-            <p:row/>
-            -->
             <p:growl id="growl" life="4000" sticky="false" />
 
             <h:form id="frmPersonal">
 
                 <p:card id="panel">
 
-                    <h3>Mis datos personales</h3>
+                    <h3>#{msg['my.information']}</h3>
 
                     <div class="ui-fluid p-formgrid p-grid">
 
                         <div class="p-field p-col-12 p-md-4">
-                            <p:outputLabel for="@next" value="Correo electronico"/>
-                            <p:inputText id="idCorreo" value="#{actualizaDatosView.strCorreo}" label="Correo" required="true" disabled="true" />
+                            <p:outputLabel for="@next" value="#{msg['email']}"/>
+                            <p:inputText id="idCorreo" value="#{actualizaDatosView.strCorreo}" label="#{msg['email']}" required="true" disabled="true" />
                             <p:message for="idCorreo" />
                         </div>
 
                         <div class="p-field p-col-12 p-md-4">
-                            <p:outputLabel for="@next" value="Nombre para mostrar"/>
-                            <p:inputText id="idNombre" value="#{actualizaDatosView.strNombre}" label="Nombre"  required="true" requiredMessage="Debe ser un nombre válido"  />
+                            <p:outputLabel for="@next" value="#{msg['description']}"/>
+                            <p:inputText id="idNombre" value="#{actualizaDatosView.strNombre}" label="#{msg['description']}"  required="true" requiredMessage="#{msg['step2.invalid.text']}"  />
                             <p:message for="idNombre" />
                         </div>
 
                         <div class="p-field p-col-12 p-md-4">
                             <p:outputLabel for="@next" value="Pais"/>
-                            <p:selectOneMenu id="idPais" value="#{actualizaDatosView.pais}" label="Pais" required="true" requiredMessage="Debe seleccionar un país" >
-                                <f:selectItem itemLabel="Selecciona un pais" itemValue="" />
+                            <p:selectOneMenu id="idPais" value="#{actualizaDatosView.pais}" label="#{msg['country']}" required="true" requiredMessage="#{msg['valor.requerido']}" >
+                                <f:selectItem itemLabel="#{msg['please.select']}" itemValue="" />
                                 <f:selectItems value="#{actualizaDatosView.lstPaises}"  var="pais" itemLabel="#{pais.ubTxDescripcion}" itemValue="#{pais.ubIdUbigeoPk}" />
                                 <p:ajax update="panel" listener="#{actualizaDatosView.cargaCiudades}"/>
                             </p:selectOneMenu>
@@ -58,9 +50,9 @@
                         </div>
 
                         <div class="p-field p-col-12 p-md-4">
-                            <p:outputLabel for="idCiudad" value="Ciudad"/>
-                            <p:selectOneMenu id="idCiudad" value="#{actualizaDatosView.ciudad}" label="Ciudad" required="true" disabled="#{actualizaDatosView.pais==null?true:false}" requiredMessage="Debes seleccionar una ciudad" >
-                                <f:selectItem itemLabel="Selecciona una ciudad" itemValue="" />
+                            <p:outputLabel for="idCiudad" value="#{msg['city']}"/>
+                            <p:selectOneMenu id="idCiudad" value="#{actualizaDatosView.ciudad}" label="#{msg['city']}" required="true" disabled="#{actualizaDatosView.pais==null?true:false}" requiredMessage="#{msg['valor.requerido']}" >
+                                <f:selectItem itemLabel="#{msg['please.select']}" itemValue="" />
                                 <f:selectItems value="#{actualizaDatosView.lstCiudades}"  var="ciudad" itemLabel="#{ciudad.ubTxDescripcion}" itemValue="#{ciudad.ubIdUbigeoPk}" />
                             </p:selectOneMenu>
                             <p:message for="idCiudad" /> 
@@ -68,7 +60,7 @@
 
                     </div>                    
 
-                    <p:commandButton type="submit" update="frmPersonal,growl" actionListener="#{actualizaDatosView.actualizaPersonales}"  value="Actualizar datos" />
+                    <p:commandButton type="submit" update="frmPersonal,growl" actionListener="#{actualizaDatosView.actualizaPersonales}"  value="#{msg['save']}" />
 
                 </p:card>
             </h:form>
@@ -79,32 +71,25 @@
 
                 <p:card id="panel">
 
-                    <h3>Cambiar contraseña</h3>
+                    <h3>#{msg['change.password']}</h3>
 
                     <div class="ui-fluid p-formgrid p-grid">
 
                         <div class="p-field p-col-12 p-md-12">
-                            <p:outputLabel value="La contraseña ingresada no debe ser mayor a 20 dígitos." />        
+                            <p:outputLabel value="#{msg['password.not.more.20.character']}" />        
                         </div>
-                        <!--
                         <div class="p-field p-col-12 p-md-4">
-                            <p:outputLabel for="@next" value="Contraseña actual"/>
-                            <p:password id="strPassActual" value="#{actualizaDatosView.strContrasenia}" label="Contraseña actual" maxlength="20" required="true" requiredMessage="Debe ingresar su contraseña actual" />
-                            <p:message for="strPassActual" />
-                        </div>
-                        -->
-                        <div class="p-field p-col-12 p-md-4">
-                            <p:outputLabel for="@next" value="Nueva contraseña"/> 
-                            <p:password id="strPassNuevo" value="#{actualizaDatosView.strContraseniaNueva}" match="strPassReNuevo"  label="Contraseña nueva" feedback="true" maxlength="20" required="true" requiredMessage="Debe ingresar una contraseña" validatorMessage="Debe repetir la misma contraseña" />
+                            <p:outputLabel for="@next" value="#{msg['new.password']}"/> 
+                            <p:password id="strPassNuevo" value="#{actualizaDatosView.strContraseniaNueva}" match="strPassReNuevo"  label="#{msg['new.password']}" feedback="true" maxlength="20" required="true" requiredMessage="#{msg['cant.be.empty']}" validatorMessage="#{msg['must.be.same.password']}" />
                             <p:message for="strPassNuevo" />
                         </div>
                         <div class="p-field p-col-12 p-md-4">
-                            <p:outputLabel for="@next" value="Repetir nueva contraseña"/>
-                            <p:password id="strPassReNuevo" value="#{actualizaDatosView.strContraseniaReNueva}"  label="Repetir contraseña" feedback="true" maxlength="20" required="true" requiredMessage="Debe ingresar una contraseña" />
+                            <p:outputLabel for="@next" value="#{msg['re.new.password']}"/>
+                            <p:password id="strPassReNuevo" value="#{actualizaDatosView.strContraseniaReNueva}"  label="#{msg['new.password']}" feedback="true" maxlength="20" required="true" requiredMessage="#{msg['cant.be.empty']}" />
                             <p:message for="strPassReNuevo" />
                         </div>              
                     </div>
-                    <p:commandButton type="submit" update="frmContrasenia,growl" actionListener="#{actualizaDatosView.actualizaContraseña}" value="Cambiar contraseña" />
+                    <p:commandButton type="submit" update="frmContrasenia,growl" actionListener="#{actualizaDatosView.actualizaContraseña}" value="#{msg['save']}" />
 
                 </p:card>
             </h:form>     
@@ -114,34 +99,34 @@
             <h:form id="frmEmpresa" >  
                 <p:card id="panel">
 
-                    <h3>Datos de la empresa</h3>
+                    <h3>#{msg['company.information']}</h3>
 
                     <div class="ui-fluid p-formgrid p-grid">
 
                         <div class="p-field p-col-12 p-md-4">
 
-                            <p:outputLabel for="@next" value="Razon social"/>
-                            <p:inputText id="idRazon" value="#{actualizaDatosView.strRazonSocial}" label="Razon social" required="true" requiredMessage="Debe ingresar una razon social" >
+                            <p:outputLabel for="@next" value="#{msg['company.name']}"/>
+                            <p:inputText id="idRazon" value="#{actualizaDatosView.strRazonSocial}" label="#{msg['company.name']}" required="true" requiredMessage="#{msg['cant.be.empty']}" >
                             </p:inputText>
                             <p:message for="idRazon" />
                         </div>
                         <div class="p-field p-col-12 p-md-4">
-                            <p:outputLabel for="@next" value="Tipo documento"/>
-                            <p:selectOneMenu id="idTipoDocumento" value="#{actualizaDatosView.intIdTipoDocumento}" label="Tipo documento" required="true" requiredMessage="Debe seleccionar un tipo de documento" >
-                                <f:selectItem itemLabel="Selecciona tipo de documento" itemValue="" />
+                            <p:outputLabel for="@next" value="#{msg['document.type']}"/>
+                            <p:selectOneMenu id="idTipoDocumento" value="#{actualizaDatosView.intIdTipoDocumento}" label="#{msg['document.type']}" required="true" requiredMessage="#{msg['cant.be.empty']}" >
+                                <f:selectItem itemLabel="#{msg['please.select']}" itemValue="" />
                                 <f:selectItems value="#{actualizaDatosView.lstTipoDocumento}"  var="docum" itemLabel="#{docum.strDescDocumento}" itemValue="#{docum.idTipoDocumento}" />
                             </p:selectOneMenu>
                             <p:message for="idTipoDocumento" />
                         </div>
                         <div class="p-field p-col-12 p-md-4">
-                            <p:outputLabel for="@next" value="Documento triburario"/>
-                            <p:inputText id="idDocumento" value="#{actualizaDatosView.strDocumento}" label="Documento triburario" maxlength="20" required="true" requiredMessage="Debe ingresar un documento" >
+                            <p:outputLabel for="@next" value="#{msg['tax.document']}"/>
+                            <p:inputText id="idDocumento" value="#{actualizaDatosView.strDocumento}" label="#{msg['tax.document']}" maxlength="20" required="true" requiredMessage="#{msg['cant.be.empty']}" >
                             </p:inputText>
                             <p:message for="idDocumento" />
                         </div>
                     </div>
 
-                    <p:commandButton type="submit" update="frmEmpresa,growl" actionListener="#{actualizaDatosView.actualizaEmpresa}"  value="Actualizar datos" />
+                    <p:commandButton type="submit" update="frmEmpresa,growl" actionListener="#{actualizaDatosView.actualizaEmpresa}"  value="#{msg['save']}" />
 
                 </p:card> 
             </h:form>  

@@ -1,5 +1,6 @@
 package com.jaio360.view;
 
+import com.jaio360.component.ExecutorBalanceMovement;
 import com.jaio360.dao.ContratoDAO;
 import com.jaio360.dao.CuestionarioDAO;
 import com.jaio360.dao.MensajeDAO;
@@ -11,6 +12,7 @@ import com.jaio360.dao.RedEvaluacionDAO;
 import com.jaio360.dao.RelacionDAO;
 import com.jaio360.dao.RelacionParticipanteDAO;
 import com.jaio360.dao.ResultadoDAO;
+import com.jaio360.dao.UsuarioSaldoDAO;
 import com.jaio360.domain.Evaluado;
 import com.jaio360.domain.ProyectoInfo;
 import com.jaio360.domain.RelacionEvaluadoEvaluador;
@@ -19,6 +21,7 @@ import com.jaio360.orm.Cuestionario;
 import com.jaio360.orm.CuestionarioEvaluado;
 import com.jaio360.orm.HibernateUtil;
 import com.jaio360.orm.Mensaje;
+import com.jaio360.orm.Movimiento;
 import com.jaio360.orm.Parametro;
 import com.jaio360.orm.Participante;
 import com.jaio360.orm.Proyecto;
@@ -27,8 +30,12 @@ import com.jaio360.orm.Relacion;
 import com.jaio360.orm.RelacionParticipante;
 import com.jaio360.orm.RelacionParticipanteId;
 import com.jaio360.orm.Tarifa;
+import com.jaio360.orm.TipoMovimiento;
+import com.jaio360.orm.Usuario;
+import com.jaio360.orm.UsuarioSaldo;
 import com.jaio360.report.CuestionarioFisico;
 import com.jaio360.utils.Constantes;
+import com.jaio360.utils.Movimientos;
 import com.jaio360.utils.Utilitarios;
 import java.io.File;
 import java.io.FileInputStream;
@@ -75,7 +82,7 @@ import org.primefaces.model.charts.radar.RadarChartOptions;
 @ManagedBean(name = "seguimientoProyectoView")
 @ViewScoped
 public class SeguimientoProyectoView extends BaseView implements Serializable {
-
+    
     private static Log log = LogFactory.getLog(SeguimientoProyectoView.class);
 
     /**
@@ -98,12 +105,12 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
     private Integer intLicenciasIndividualesRequerido;
     private Integer intLicenciasMasivasRequerido;
     private boolean blLicenciasOK;
-
+    
     private RadarChartModel radarGrupo;
-
+    
     private Boolean boProyectoEjecutado;
     private Integer intIdEstadoProyecto;
-
+    
     private List<Participante> lstParticipante;
     private List<RedEvaluacion> lstRedEvaluacion;
     private List<Cuestionario> lstCuestionario;
@@ -121,267 +128,267 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
     private Integer intPorcentajeGeneral;
     private List<Evaluado> lstParticipantesIniciados;
     private List<RelacionEvaluadoEvaluador> lstRelacionEvaluadoEvaluador;
-
+    
     private StreamedContent fileIndividual;
-
+    
     private Boolean flagDescargaFisico = Boolean.FALSE;
     private Boolean flagFiltrarRed = Boolean.FALSE;
     private Boolean flagComunicar = Boolean.TRUE;
-
+    
     private Integer idParametroElegido;
     private LinkedHashMap<String, String> mapItemsParametros;
-
+    
     public Integer getIdParametroElegido() {
         return idParametroElegido;
     }
-
+    
     public Integer getIntLicenciasIndividualesRequerido() {
         return intLicenciasIndividualesRequerido;
     }
-
+    
     public void setIntLicenciasIndividualesRequerido(Integer intLicenciasIndividualesRequerido) {
         this.intLicenciasIndividualesRequerido = intLicenciasIndividualesRequerido;
     }
-
+    
     public Integer getIntLicenciasMasivasRequerido() {
         return intLicenciasMasivasRequerido;
     }
-
+    
     public boolean isBlLicenciasOK() {
         return blLicenciasOK;
     }
-
+    
     public void setBlLicenciasOK(boolean blLicenciasOK) {
         this.blLicenciasOK = blLicenciasOK;
     }
-
+    
     public void setIntLicenciasMasivasRequerido(Integer intLicenciasMasivasRequerido) {
         this.intLicenciasMasivasRequerido = intLicenciasMasivasRequerido;
     }
-
+    
     public void setIdParametroElegido(Integer idParametroElegido) {
         this.idParametroElegido = idParametroElegido;
     }
-
+    
     public LinkedHashMap<String, String> getMapItemsParametros() {
         return mapItemsParametros;
     }
-
+    
     public void setMapItemsParametros(LinkedHashMap<String, String> mapItemsParametros) {
         this.mapItemsParametros = mapItemsParametros;
     }
-
+    
     public Integer getIntLicenciasIndividuales() {
         return intLicenciasIndividuales;
     }
-
+    
     public void setIntLicenciasIndividuales(Integer intLicenciasIndividuales) {
         this.intLicenciasIndividuales = intLicenciasIndividuales;
     }
-
+    
     public Integer getIntLicenciasMasivas() {
         return intLicenciasMasivas;
     }
-
+    
     public void setIntLicenciasMasivas(Integer intLicenciasMasivas) {
         this.intLicenciasMasivas = intLicenciasMasivas;
     }
-
+    
     public RadarChartModel getRadarGrupo() {
         return radarGrupo;
     }
-
+    
     public void setRadarGrupo(RadarChartModel radarGrupo) {
         this.radarGrupo = radarGrupo;
     }
-
+    
     public Boolean getFlagComunicar() {
         return flagComunicar;
     }
-
+    
     public void setFlagComunicar(Boolean flagComunicar) {
         this.flagComunicar = flagComunicar;
     }
-
+    
     public Boolean getFlagFiltrarRed() {
         return flagFiltrarRed;
     }
-
+    
     public void setFlagFiltrarRed(Boolean flagFiltrarRed) {
         this.flagFiltrarRed = flagFiltrarRed;
     }
-
+    
     public Boolean getFlagDescargaFisico() {
         return flagDescargaFisico;
     }
-
+    
     public void setFlagDescargaFisico(Boolean flagDescargaFisico) {
         this.flagDescargaFisico = flagDescargaFisico;
     }
-
+    
     public StreamedContent getFileIndividual() {
         return fileIndividual;
     }
-
+    
     public void setFileIndividual(StreamedContent fileIndividual) {
         this.fileIndividual = fileIndividual;
     }
-
+    
     public Integer getIntIdEstadoProyecto() {
         return intIdEstadoProyecto;
     }
-
+    
     public void setIntIdEstadoProyecto(Integer intIdEstadoProyecto) {
         this.intIdEstadoProyecto = intIdEstadoProyecto;
     }
-
+    
     public List<RelacionEvaluadoEvaluador> getLstRelacionEvaluadoEvaluador() {
         return lstRelacionEvaluadoEvaluador;
     }
-
+    
     public void setLstRelacionEvaluadoEvaluador(List<RelacionEvaluadoEvaluador> lstRelacionEvaluadoEvaluador) {
         this.lstRelacionEvaluadoEvaluador = lstRelacionEvaluadoEvaluador;
     }
-
+    
     public Integer getIntPorcentajeGeneral() {
         return intPorcentajeGeneral;
     }
-
+    
     public void setIntPorcentajeGeneral(Integer intPorcentajeGeneral) {
         this.intPorcentajeGeneral = intPorcentajeGeneral;
     }
-
+    
     public List<Evaluado> getLstParticipantesIniciados() {
         return lstParticipantesIniciados;
     }
-
+    
     public void setLstParticipantesIniciados(List<Evaluado> lstParticipantesIniciados) {
         this.lstParticipantesIniciados = lstParticipantesIniciados;
     }
-
+    
     public List<RelacionParticipante> getLstRelacionParticipante() {
         return lstRelacionParticipante;
     }
-
+    
     public void setLstRelacionParticipante(List<RelacionParticipante> lstRelacionParticipante) {
         this.lstRelacionParticipante = lstRelacionParticipante;
     }
-
+    
     public Integer getIntCantPartCuesEje() {
         return intCantPartCuesEje;
     }
-
+    
     public void setIntCantPartCuesEje(Integer intCantPartCuesEje) {
         this.intCantPartCuesEje = intCantPartCuesEje;
     }
-
+    
     public Integer getIntCantPartCuesNoEje() {
         return intCantPartCuesNoEje;
     }
-
+    
     public void setIntCantPartCuesNoEje(Integer intCantPartCuesNoEje) {
         this.intCantPartCuesNoEje = intCantPartCuesNoEje;
     }
-
+    
     public Integer getIntCantPartParam() {
         return intCantPartParam;
     }
-
+    
     public void setIntCantPartParam(Integer intCantPartParam) {
         this.intCantPartParam = intCantPartParam;
     }
-
+    
     public Integer getIntCantPartEjecucion() {
         return intCantPartEjecucion;
     }
-
+    
     public void setIntCantPartEjecucion(Integer intCantPartEjecucion) {
         this.intCantPartEjecucion = intCantPartEjecucion;
     }
-
+    
     public Integer getIntCantPartTodos() {
         return intCantPartTodos;
     }
-
+    
     public void setIntCantPartTodos(Integer intCantPartTodos) {
         this.intCantPartTodos = intCantPartTodos;
     }
-
+    
     public Integer getIntCantPartRegistrados() {
         return intCantPartRegistrados;
     }
-
+    
     public void setIntCantPartRegistrados(Integer intCantPartRegistrados) {
         this.intCantPartRegistrados = intCantPartRegistrados;
     }
-
+    
     public Integer getIntCantPartVeri() {
         return intCantPartVeri;
     }
-
+    
     public void setIntCantPartVeri(Integer intCantPartVeri) {
         this.intCantPartVeri = intCantPartVeri;
     }
-
+    
     public Integer getIntCantPartSel() {
         return intCantPartSel;
     }
-
+    
     public void setIntCantPartSel(Integer intCantPartSel) {
         this.intCantPartSel = intCantPartSel;
     }
-
+    
     public Boolean getBoProyectoEjecutado() {
         return boProyectoEjecutado;
     }
-
+    
     public void setBoProyectoEjecutado(Boolean boProyectoEjecutado) {
         this.boProyectoEjecutado = boProyectoEjecutado;
     }
-
+    
     public List<Participante> getLstParticipante() {
         return lstParticipante;
     }
-
+    
     public void setLstParticipante(List<Participante> lstParticipante) {
         this.lstParticipante = lstParticipante;
     }
-
+    
     public List<RedEvaluacion> getLstRedEvaluacion() {
         return lstRedEvaluacion;
     }
-
+    
     public void setLstRedEvaluacion(List<RedEvaluacion> lstRedEvaluacion) {
         this.lstRedEvaluacion = lstRedEvaluacion;
     }
-
+    
     public List<Cuestionario> getLstCuestionario() {
         return lstCuestionario;
     }
-
+    
     public void setLstCuestionario(List<Cuestionario> lstCuestionario) {
         this.lstCuestionario = lstCuestionario;
     }
-
+    
     public List<CuestionarioEvaluado> getLstCuestionarioEvaluado() {
         return lstCuestionarioEvaluado;
     }
-
+    
     public void setLstCuestionarioEvaluado(List<CuestionarioEvaluado> lstCuestionarioEvaluado) {
         this.lstCuestionarioEvaluado = lstCuestionarioEvaluado;
     }
-
+    
     public List<Relacion> getLstRelacion() {
         return lstRelacion;
     }
-
+    
     public void setLstRelacion(List<Relacion> lstRelacion) {
         this.lstRelacion = lstRelacion;
     }
-
+    
     @PostConstruct
     public void init() {
-
+        
         intCantPartTodos = 0;
         intCantPartVeri = 0;
         intCantPartSel = 0;
@@ -391,14 +398,14 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
         intCantPartCuesNoEje = 0;
         intCantPartCuesEje = 0;
         intPorcentajeGeneral = 0;
-
+        
         Integer idProyecto = Utilitarios.obtenerProyecto().getIntIdProyecto();
-
+        
         ProyectoDAO objProyectoDAO = new ProyectoDAO();
         Proyecto objProyecto = objProyectoDAO.obtenProyecto(Utilitarios.obtenerProyecto().getIntIdProyecto());
-
+        
         intIdEstadoProyecto = objProyecto.getPoIdEstado();
-
+        
         if (objProyecto.getPoIdEstado().equals(Constantes.INT_ET_ESTADO_PROYECTO_EN_EJECUCION)
                 || objProyecto.getPoIdEstado().equals(Constantes.INT_ET_ESTADO_PROYECTO_TERMINADO)) {
             boProyectoEjecutado = Boolean.TRUE;
@@ -426,34 +433,31 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
         /* DATOS DE RELACIONES */
         RelacionDAO objRelacionDAO = new RelacionDAO();
         lstRelacion = objRelacionDAO.obtenListaRelacionPorProyecto(idProyecto);
-
+        
         if (!lstParticipante.isEmpty()) {
             cargarDatosDeParticipantes(lstParticipante, lstCuestionarioEvaluado);
         }
-
+        
         if (!lstCuestionarioEvaluado.isEmpty()) {
             cargarDatosDeCuestinarioEvaluado(lstCuestionarioEvaluado);
         }
 
         /* POBLAR PARAMETROS */
         poblarParametros();
-
-        /* POBLAR RADAR */
-        createRadarModel();
-
+        
         calcularLicencias();
 
         /* SEGUIMIENTO */
         lstParticipantesIniciados = new ArrayList();
-
+        
         Evaluado objEvaluado;
-
+        
         for (Participante objParticipante : lstParticipante) {
             if (objParticipante.getPaIdEstado().equals(Constantes.INT_ET_ESTADO_EVALUADO_EN_EJECUCION)
                     || objParticipante.getPaIdEstado().equals(Constantes.INT_ET_ESTADO_EVALUADO_TERMINADO)) {
-
+                
                 objEvaluado = new Evaluado();
-
+                
                 objEvaluado.setPaIdParticipantePk(objParticipante.getPaIdParticipantePk());
                 objEvaluado.setPaIdEstado(objParticipante.getPaIdEstado());
                 objEvaluado.setPaStrEstado(msg(objParticipante.getPaIdEstado().toString()));
@@ -466,7 +470,7 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
                 objEvaluado.setPaTxNombreCargo(objParticipante.getPaTxNombreCargo());
                 objEvaluado.setBdPorcentajeAvance(BigDecimal.ZERO);
                 objEvaluado.setBoCheckFilterSeg(Boolean.FALSE);
-
+                
                 for (CuestionarioEvaluado objCuestionarioEvaluado : lstCuestionarioEvaluado) {
                     if (objCuestionarioEvaluado.getId().getPaIdParticipanteFk().equals(objEvaluado.getPaIdParticipantePk())) {
                         for (Cuestionario objCuestionario : lstCuestionario) {
@@ -476,31 +480,31 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
                         }
                     }
                 }
-
+                
                 lstParticipantesIniciados.add(objEvaluado);
             }
         }
-
+        
         Map map = buscaEvaluacionesTerminadas();
         cargarEvaluaciones(map);
-
+        
         if (!lstParticipantesIniciados.isEmpty()) {
             calcularPorcentajes(map);
         }
-
+        
     }
-
+    
     private void poblarParametros() {
-
+        
         Integer idProyecto = Utilitarios.obtenerProyecto().getIntIdProyecto();
         ParametroDAO objParametroDAO = new ParametroDAO();
         List<Parametro> lstParametros = objParametroDAO.obtenListaParametros(idProyecto);
-
+        
         this.mapItemsParametros = new LinkedHashMap<>();
         this.mapItemsParametros.put("Relaciones", "0");
-
+        
         for (Parametro objParametro : lstParametros) {
-
+            
             String strDesc;
             if (objParametro.getPaIdTipoParametro().equals(Constantes.INT_ET_TIPO_PARAMETRO_SEXO)) {
                 this.mapItemsParametros.put("Sexo", objParametro.getPaIdParametroPk().toString());
@@ -513,10 +517,10 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
             } else if (objParametro.getPaIdTipoParametro().equals(Constantes.INT_ET_TIPO_PARAMETRO_AREA)) {
                 this.mapItemsParametros.put("Area", objParametro.getPaIdParametroPk().toString());
             }
-
+            
         }
     }
-
+    
     private void calcularPorcentajes(Map map) {
 
         /* General */
@@ -525,144 +529,144 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
 
         /* Coloca porcentajes a evaluados */
         for (Evaluado objEvaluado : lstParticipantesIniciados) {
-
+            
             int i = 0;
             int c = 0;
-
+            
             Iterator it = map.entrySet().iterator();
-
+            
             while (it.hasNext()) {
                 Map.Entry entry = (Map.Entry) it.next();
-
+                
                 if (entry.getValue().equals(objEvaluado.getPaIdParticipantePk())) {
                     i++;
                     terminados++;
                 }
-
+                
             }
-
+            
             for (RelacionEvaluadoEvaluador objRelacionEvaluadoEvaluador : lstRelacionEvaluadoEvaluador) {
-
+                
                 if (objRelacionEvaluadoEvaluador.getIntIdEvaluado().equals(objEvaluado.getPaIdParticipantePk())) {
                     c++;
                     total++;
                 }
-
+                
             }
-
+            
             objEvaluado.setBdPorcentajeAvance(new BigDecimal(Math.floor(i * 100 / c)));
             this.intPorcentajeGeneral = new BigDecimal(Math.floor(terminados * 100 / total)).toBigIntegerExact().intValue();
-
+            
         }
-
+        
     }
-
+    
     private void cargarEvaluaciones(Map map) {
-
+        
         lstRelacionEvaluadoEvaluador = new ArrayList<>();
-
+        
         for (RelacionParticipante objRelacionParticipante : lstRelacionParticipante) {
-
+            
             boolean apto = false;
             String strDescEvaluador = null;
-
+            
             for (Participante objParticipante : lstParticipante) {
                 if (objParticipante.getPaIdParticipantePk().equals(objRelacionParticipante.getId().getPaIdParticipanteFk())) {
                     if (!(objParticipante.getPaIdEstado().equals(Constantes.INT_ET_ESTADO_EVALUADO_REGISTRADO)
                             || objParticipante.getPaIdEstado().equals(Constantes.INT_ET_ESTADO_EVALUADO_EN_PARAMETRIZACION))) {
-
+                        
                         strDescEvaluador = objParticipante.getPaTxDescripcion();
                         apto = true;
                     }
                 }
             }
-
+            
             if (apto) {
-
+                
                 RelacionEvaluadoEvaluador objRelacionEvaluadoEvaluador = new RelacionEvaluadoEvaluador();
-
+                
                 objRelacionEvaluadoEvaluador.setStrDescEvaluado(strDescEvaluador);
-
+                
                 objRelacionEvaluadoEvaluador.setIntIdEvaluado(objRelacionParticipante.getId().getPaIdParticipanteFk());
                 objRelacionEvaluadoEvaluador.setIntIdEvaluador(objRelacionParticipante.getId().getReIdParticipanteFk());
                 objRelacionEvaluadoEvaluador.setIntIdRelacion(objRelacionParticipante.getId().getReIdRelacionFk());
-
+                
                 String strKey = objRelacionEvaluadoEvaluador.getIntIdEvaluado() + Constantes.strPipe
                         + objRelacionEvaluadoEvaluador.getIntIdEvaluador() + Constantes.strPipe
                         + objRelacionEvaluadoEvaluador.getIntIdRelacion();
-
+                
                 objRelacionEvaluadoEvaluador.setBlEnvioCorreo(Boolean.TRUE);
-
+                
                 if (map.containsKey(strKey)) {
                     objRelacionEvaluadoEvaluador.setBlEvaluacionTerminada(Boolean.TRUE);
                     objRelacionEvaluadoEvaluador.setBlEnvioCorreo(Boolean.FALSE);
                 }
-
+                
                 for (Relacion objRelacion : lstRelacion) {
                     if (objRelacion.getReIdRelacionPk().equals(objRelacionEvaluadoEvaluador.getIntIdRelacion())) {
                         objRelacionEvaluadoEvaluador.setStrDescRelacion(objRelacion.getReTxNombre());
                         objRelacionEvaluadoEvaluador.setStrColorRelacion(objRelacion.getReColor());
                     }
                 }
-
+                
                 for (RedEvaluacion objRedEvaluacion : lstRedEvaluacion) {
                     if (objRedEvaluacion.getReIdParticipantePk().equals(objRelacionEvaluadoEvaluador.getIntIdEvaluador())) {
                         objRelacionEvaluadoEvaluador.setStrDescEvaluador(objRedEvaluacion.getReTxDescripcion());
                         objRelacionEvaluadoEvaluador.setStrCorreoEvaluador(objRedEvaluacion.getReTxCorreo());
                     }
                 }
-
+                
                 lstRelacionEvaluadoEvaluador.add(objRelacionEvaluadoEvaluador);
-
+                
             }
         }
 
         /* Carga autoevaluaciones */
         for (Participante objParticipante : lstParticipante) {
-
+            
             if (objParticipante.getPaInRedCargada().equals(true) && objParticipante.getPaInRedVerificada().equals(true)
                     && (objParticipante.getPaIdEstado().equals(Constantes.INT_ET_ESTADO_EVALUADO_EN_EJECUCION)
                     || objParticipante.getPaIdEstado().equals(Constantes.INT_ET_ESTADO_EVALUADO_TERMINADO))) {
-
+                
                 if (objParticipante.getPaInAutoevaluar().equals(true)) {
-
+                    
                     RelacionEvaluadoEvaluador objRelacionEvaluadoEvaluador = new RelacionEvaluadoEvaluador();
-
+                    
                     objRelacionEvaluadoEvaluador.setIntIdEvaluado(objParticipante.getPaIdParticipantePk());
                     objRelacionEvaluadoEvaluador.setIntIdEvaluador(null);
                     objRelacionEvaluadoEvaluador.setIntIdRelacion(null);
-
+                    
                     String strKey = objRelacionEvaluadoEvaluador.getIntIdEvaluado() + Constantes.strPipe
                             + objRelacionEvaluadoEvaluador.getIntIdEvaluador() + Constantes.strPipe
                             + objRelacionEvaluadoEvaluador.getIntIdRelacion();
-
+                    
                     objRelacionEvaluadoEvaluador.setBlEnvioCorreo(Boolean.TRUE);
-
+                    
                     if (map.containsKey(strKey)) {
                         objRelacionEvaluadoEvaluador.setBlEvaluacionTerminada(Boolean.TRUE);
                         objRelacionEvaluadoEvaluador.setBlEnvioCorreo(Boolean.FALSE);
                     }
-
-                    objRelacionEvaluadoEvaluador.setStrDescRelacion("AUTOEVALUACIÓN");
-
+                    
+                    objRelacionEvaluadoEvaluador.setStrDescRelacion(msg("autoevaluate.cap"));
+                    
                     objRelacionEvaluadoEvaluador.setStrDescEvaluador(objParticipante.getPaTxDescripcion());
                     objRelacionEvaluadoEvaluador.setStrDescEvaluado(objParticipante.getPaTxDescripcion());
                     objRelacionEvaluadoEvaluador.setStrCorreoEvaluador(objParticipante.getPaTxCorreo());
-
+                    
                     lstRelacionEvaluadoEvaluador.add(objRelacionEvaluadoEvaluador);
-
+                    
                 }
-
+                
             }
-
+            
         }
-
+        
     }
-
+    
     private void cargarDatosDeCuestinarioEvaluado(List<CuestionarioEvaluado> lstCuestionarioEvaluado) {
-
+        
         for (CuestionarioEvaluado objCuestionarioEvaluado : lstCuestionarioEvaluado) {
-
+            
             if (objCuestionarioEvaluado.getCeIdEstado().equals(Constantes.INT_ET_ESTADO_CUES_EVA_REGISTRADO)) {
                 intCantPartCuesNoEje++;
             }
@@ -670,149 +674,146 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
                 intCantPartCuesEje++;
             }
         }
-
+        
     }
-
+    
     private void cargarDatosDeParticipantes(List<Participante> lstParticipantes, List<CuestionarioEvaluado> lstCuestionarioEvaluado) {
-
+        
         for (Participante objParticipante : lstParticipantes) {
-
+            
             intCantPartTodos++;
-
+            
             if (objParticipante.getPaIdEstado().equals(Constantes.INT_ET_ESTADO_EVALUADO_REGISTRADO)) {
                 intCantPartRegistrados++;
             }
-
+            
             if (objParticipante.getPaIdEstado().equals(Constantes.INT_ET_ESTADO_EVALUADO_EN_EJECUCION)) {
                 intCantPartEjecucion++;
             }
-
+            
             if (objParticipante.getPaIdEstado().equals(Constantes.INT_ET_ESTADO_EVALUADO_EN_PARAMETRIZACION)) {
                 intCantPartParam++;
             }
-
+            
             if (objParticipante.getPaInRedVerificada().equals(Boolean.TRUE)) {
                 intCantPartVeri++;
             }
-
+            
             if (objParticipante.getPaIdEstado().equals(Constantes.INT_ET_ESTADO_EVALUADO_EN_PARAMETRIZACION)
                     && objParticipante.getPaInRedVerificada().equals(Boolean.TRUE)) {
-
+                
                 for (CuestionarioEvaluado objCuestionarioEvaluado : lstCuestionarioEvaluado) {
                     if (objCuestionarioEvaluado.getId().getPaIdParticipanteFk().equals(objParticipante.getPaIdParticipantePk())) {
                         intCantPartSel++;
                     }
                 }
             }
-
+            
         }
-
+        
     }
-
+    
     public boolean verificaNotificaciones() {
-
+        
         MensajeDAO objMensajeDAO = new MensajeDAO();
         Mensaje objMensajeA = objMensajeDAO.obtenMensaje(Utilitarios.obtenerProyecto().getIntIdProyecto(), Constantes.INT_ET_NOTIFICACION_CONVOCATORIA);
         Mensaje objMensajeB = objMensajeDAO.obtenMensaje(Utilitarios.obtenerProyecto().getIntIdProyecto(), Constantes.INT_ET_NOTIFICACION_INSTRUCCIONES);
         Mensaje objMensajeC = objMensajeDAO.obtenMensaje(Utilitarios.obtenerProyecto().getIntIdProyecto(), Constantes.INT_ET_NOTIFICACION_AGRADECIMIENTO);
-
+        
         return !(objMensajeA == null || objMensajeB == null || objMensajeC == null);
-
+        
     }
-
+    
     public void iniciarProceso() {
-
+        
         if (verificaNotificaciones()) {
-
+            
             init();
-
+            
             ProyectoDAO objProyectoDAO = new ProyectoDAO();
-
+            
             List lstNotificaciones = objProyectoDAO.iniciarProyecto(lstParticipante, lstRedEvaluacion, lstCuestionario, lstCuestionarioEvaluado, lstRelacion, lstRelacionParticipante);
-
+            
             if (!lstNotificaciones.isEmpty()) {
                 Proyecto objProyecto = objProyectoDAO.obtenProyecto(Utilitarios.obtenerProyecto().getIntIdProyecto());
-
+                
                 if (!objProyecto.getPoIdEstado().equals(Constantes.INT_ET_ESTADO_PROYECTO_EN_EJECUCION)) {
                     objProyecto.setPoFeEjecucion(new Date());
                     objProyecto.setPoIdEstado(Constantes.INT_ET_ESTADO_PROYECTO_EN_EJECUCION);
                     objProyectoDAO.actualizaProyecto(objProyecto);
-
-                    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "El proyecto fue iniciado exitosamente", null);
-                    FacesContext.getCurrentInstance().addMessage(null, message);
+                    
+                    mostrarAlertaInfo("step5.start.project");
                 }
             } else {
-                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Ocurrio un error al iniciar el proyecto", null);
-                FacesContext.getCurrentInstance().addMessage(null, message);
+                mostrarAlertaError("error.was.occurred");
             }
-
+            
             init();
         } else {
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "No se han redactado todos los comunicados para iniciar el proyecto. Por favor volver al paso anterior", null);
-            FacesContext.getCurrentInstance().addMessage(null, message);
+            mostrarAlertaError("step5.start.project.incomplete");
         }
-
+        
     }
-
+    
     public void actListaEvaluadores() {
-
+        
         Map map = buscaEvaluacionesTerminadas();
-
+        
         cargarEvaluaciones(map);
-
+        
         List<RelacionEvaluadoEvaluador> lstTemp = new ArrayList<>();
-
+        
         for (RelacionEvaluadoEvaluador obj : lstRelacionEvaluadoEvaluador) {
-
+            
             for (Evaluado objEvaluado : lstParticipantesIniciados) {
-
+                
                 if (obj.getIntIdEvaluado().equals(objEvaluado.getPaIdParticipantePk()) && objEvaluado.getBoCheckFilterSeg()) {
-
+                    
                     lstTemp.add(obj);
-
+                    
                 }
-
+                
             }
-
+            
         }
-
+        
         lstRelacionEvaluadoEvaluador = lstTemp;
-
+        
     }
-
+    
     private Map buscaEvaluacionesTerminadas() {
-
+        
         Map map = new HashMap();
-
+        
         ResultadoDAO objResultadoDAO = new ResultadoDAO();
-
+        
         List lstTerminados = objResultadoDAO.obtenListaResultadoGeneral(Utilitarios.obtenerProyecto().getIntIdProyecto());
-
+        
         if (!lstTerminados.isEmpty()) {
-
+            
             Iterator itLstTerminados = lstTerminados.iterator();
-
+            
             while (itLstTerminados.hasNext()) {
-
+                
                 Object[] obj = (Object[]) itLstTerminados.next();
-
+                
                 String strKey = obj[0] + Constantes.strPipe + obj[1] + Constantes.strPipe + obj[2];
-
+                
                 map.put(strKey, obj[0]);
-
+                
             }
         }
-
+        
         return map;
-
+        
     }
-
+    
     public void descargarFisico() {
-
+        
         boolean flag = false;
-
+        
         List<String> lstArchivos = new ArrayList<>();
-
+        
         for (Evaluado objEvaluado : lstParticipantesIniciados) {
 
             //if (objEvaluado.isBlManual()) {
@@ -822,139 +823,134 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
                 String archivo = objCuestionarioFisico.build(objEvaluado);
                 lstArchivos.add(archivo);
             } catch (IOException ex) {
-                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_FATAL, "Ocurrio un error al descarga la evaluación", null);
-                FacesContext.getCurrentInstance().addMessage(null, message);
-                log.error(ex);
+                mostrarError(log, ex);
+                mostrarAlertaFatal("error.was.occurred");
             }
             //}
         }
-
+        
         if (!flag) {
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Debe seleccionar al menos un evaluado", null);
-            FacesContext.getCurrentInstance().addMessage(null, message);
+            mostrarAlertaError("must.select.at.least.evaluated");
         } else {
-
+            
             if (!lstArchivos.isEmpty()) {
                 try {
-                    String ZipName = "Evaluaciones_" + Utilitarios.formatearFecha(Utilitarios.getCurrentDate(), Constantes.DDMMYYYYHH24MISS) + Constantes.STR_EXTENSION_ZIP;
+                    String ZipName = msg("step2.evaluations") + "_" + Utilitarios.formatearFecha(Utilitarios.getCurrentDate(), Constantes.DDMMYYYYHH24MISS) + Constantes.STR_EXTENSION_ZIP;
                     File objFile = new File(Constantes.STR_INBOX_DEFINITIVO + File.separator + ZipName);
                     File directory = new File(Constantes.STR_INBOX_DEFINITIVO);
-
+                    
                     if (!directory.exists()) {
                         directory.mkdir();
                     }
-
+                    
                     FileOutputStream salida;
                     salida = new FileOutputStream(objFile);
                     Utilitarios.zipArchivosCualquiera(lstArchivos, salida);
                     InputStream stream = new FileInputStream(objFile.getAbsolutePath());
-
+                    
                     fileIndividual = DefaultStreamedContent.builder()
                             .name(ZipName)
                             .contentType("application/zip")
                             .stream(() -> stream)
                             //.stream(() -> FacesContext.getCurrentInstance().getExternalContext().getResourceAsStream(objFile.getAbsolutePath()))
                             .build();
-
-                    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Evaluación descargada", null);
-                    FacesContext.getCurrentInstance().addMessage(null, message);
+                    
+                    mostrarAlertaInfo("step5.evaluation.downloaded=");
                 } catch (FileNotFoundException ex) {
-                    log.error(ex);
-                    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_FATAL, "No se pudo generar documento. Comuniquese con el proveedor", null);
-                    FacesContext.getCurrentInstance().addMessage(null, message);
+                    mostrarError(log, ex);
+                    mostrarAlertaFatal("error.was.occurred");
                 }
             } else {
-                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "No se pudo generar documento. Comuniquese con el proveedor", null);
-                FacesContext.getCurrentInstance().addMessage(null, message);
+                mostrarAlertaFatal("error.was.occurred");
             }
         }
-
+        
     }
-
+    
     public void revertirEvaluado(Evaluado objEvaluado) {
-
+        
         Session sesion = HibernateUtil.getSessionFactory().openSession();
         Transaction tx = sesion.beginTransaction();
-
+        
         try {
-
+            
             boolean correcto;
             /* ACTUALIZA EL ESTADO DEL CUESTIONARIO */
             CuestionarioDAO objCuestionarioDAO = new CuestionarioDAO();
-
+            
             correcto = objCuestionarioDAO.actualizaEstadoCuestionarioXEvaluado(objEvaluado, Utilitarios.obtenerProyecto().getIntIdProyecto(), Constantes.INT_ET_ESTADO_CUES_EVA_REGISTRADO, sesion);
-
+            
             if (correcto) {
                 /* ACTUALIZA EL ESTADO DEL EVALUADO */
                 ParticipanteDAO objParticipanteDAO = new ParticipanteDAO();
-
+                
                 Participante objParticipante = objParticipanteDAO.obtenParticipante(objEvaluado.getPaIdParticipantePk());
-
+                
                 objParticipante.setPaIdEstado(Constantes.INT_ET_ESTADO_EVALUADO_EN_PARAMETRIZACION);
-
+                
                 objParticipanteDAO.actualizaParticipante(objParticipante, sesion);
-
+                
             }
-
+            
             if (correcto) {
                 tx.commit();
             } else {
                 tx.rollback();
             }
-
+            
         } catch (Exception e) {
-            log.error(e);
+            mostrarError(log, e);
             tx.rollback();
         }
-
+        
         init();
-
+        
     }
-
+    
     public void retirarRelacion(RelacionEvaluadoEvaluador objRelacionEvaluadoEvaluador) {
-
+        
         RelacionParticipanteDAO objRelacionParticipanteDAO = new RelacionParticipanteDAO();
-
+        
         RelacionParticipante objRelacionParticipante = new RelacionParticipante();
-
+        
         RelacionParticipanteId objRelacionParticipanteId = new RelacionParticipanteId();
-
+        
         objRelacionParticipanteId.setPaIdParticipanteFk(objRelacionEvaluadoEvaluador.getIntIdEvaluado());
         objRelacionParticipanteId.setReIdParticipanteFk(objRelacionEvaluadoEvaluador.getIntIdEvaluador());
         objRelacionParticipanteId.setReIdRelacionFk(objRelacionEvaluadoEvaluador.getIntIdRelacion());
-
+        
         objRelacionParticipante.setId(objRelacionParticipanteId);
-
+        
         objRelacionParticipanteDAO.eliminaRelacionParticipante(objRelacionParticipante);
         /* VERIFICA SI NO TIENE OTRAS RELACIONES, SINO CAMBIA DE ESTADO A REGISTRADO */
         //FALTA
 
         init();
-
+        
     }
-
+    
     public void terminarProceso() {
-
+        
         ProyectoDAO objProyectoDAO = new ProyectoDAO();
-
+        
         objProyectoDAO.terminarProyecto(Utilitarios.obtenerProyecto().getIntIdProyecto());
-
-        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "El proyecto fue terminado exitosamente", null);
-        FacesContext.getCurrentInstance().addMessage(null, message);
+        
+        mostrarAlertaInfo("step5.finish.project");
+        
         init();
-
+        
     }
-
+    
     public void realizaEvaluacion(RelacionEvaluadoEvaluador objRelacionEvaluadoEvaluador) {
         try {
-
+            
             ProyectoInfo redSeleccionada = new ProyectoInfo();
             redSeleccionada.setBoDefineArtificio(Boolean.TRUE);
             redSeleccionada.setIntIdProyecto(Utilitarios.obtenerProyecto().getIntIdProyecto());
-
+            
             ParticipanteDAO objParticipanteDAO = new ParticipanteDAO();
             Participante objParticipante = objParticipanteDAO.obtenParticipante(Long.valueOf(objRelacionEvaluadoEvaluador.getIntIdEvaluado()));
-
+            
             redSeleccionada.setIntIdEvaluado(objParticipante.getPaIdParticipantePk());
             redSeleccionada.setStrCorreoEvaluado(objParticipante.getPaTxCorreo());
             redSeleccionada.setStrDescEvaluado(objParticipante.getPaTxDescripcion());
@@ -962,100 +958,100 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
             redSeleccionada.setStrNombreEvaluado(objRelacionEvaluadoEvaluador.getStrDescEvaluado());
             redSeleccionada.setStrNombreEvaluador(objRelacionEvaluadoEvaluador.getStrDescEvaluador());
             redSeleccionada.setStrRelacion(objRelacionEvaluadoEvaluador.getStrDescRelacion());
-
+            
             HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
             session.removeAttribute("evalInfo");
             session.setAttribute("evalInfo", redSeleccionada);
-
+            
             FacesContext.getCurrentInstance().getExternalContext().redirect("ejecutarEvaluacion.jsf");
-
+            
         } catch (IOException ex) {
-            log.debug(ex);
+            mostrarError(log, ex);
         }
-
+        
     }
-
+    
     public void generaExcel() {
-
+        
         HSSFWorkbook xlsEvaluados = new HSSFWorkbook();
-
-        HSSFSheet hoja = xlsEvaluados.createSheet("Seguimiento");
-
+        
+        HSSFSheet hoja = xlsEvaluados.createSheet(msg("monitoring"));
+        
         HSSFRow row = hoja.createRow(0);
-
+        
         int c = 0;
-
+        
         HSSFCell cell0 = row.createCell(c);
-        HSSFRichTextString texto0 = new HSSFRichTextString("Evaluado");
+        HSSFRichTextString texto0 = new HSSFRichTextString(msg("evaluated"));
         cell0.setCellValue(texto0);
-
+        
         c++;
-
+        
         HSSFCell cell1 = row.createCell(c);
-        HSSFRichTextString texto1 = new HSSFRichTextString("Evaluador");
+        HSSFRichTextString texto1 = new HSSFRichTextString(msg("evaluator"));
         cell1.setCellValue(texto1);
-
+        
         c++;
-
+        
         HSSFCell cell2 = row.createCell(c);
-        HSSFRichTextString texto2 = new HSSFRichTextString("Relacion");
+        HSSFRichTextString texto2 = new HSSFRichTextString(msg("relationship"));
         cell2.setCellValue(texto2);
-
+        
         c++;
         HSSFCell cell3 = row.createCell(c);
-        HSSFRichTextString texto3 = new HSSFRichTextString("Termino evaluacion");
+        HSSFRichTextString texto3 = new HSSFRichTextString(msg("complete"));
         cell3.setCellValue(texto3);
-
+        
         int i = 1;
         for (RelacionEvaluadoEvaluador objRelacionEvaluadoEvaluador : lstRelacionEvaluadoEvaluador) {
-
+            
             HSSFRow nextrow = hoja.createRow(i);
-
+            
             int r = 0;
-
+            
             nextrow.createCell(r).setCellValue(objRelacionEvaluadoEvaluador.getStrDescEvaluado());
             r++;
             nextrow.createCell(r).setCellValue(objRelacionEvaluadoEvaluador.getStrDescEvaluador());
             r++;
             nextrow.createCell(r).setCellValue(objRelacionEvaluadoEvaluador.getStrDescRelacion());
-
+            
             r++;
             if (objRelacionEvaluadoEvaluador.getBlEvaluacionTerminada() != null) {
                 if (objRelacionEvaluadoEvaluador.getBlEvaluacionTerminada()) {
-                    nextrow.createCell(r).setCellValue("SI");
+                    nextrow.createCell(r).setCellValue(msg("yes"));
                 } else {
-                    nextrow.createCell(r).setCellValue("NO");
+                    nextrow.createCell(r).setCellValue(msg("no"));
                 }
             } else {
-                nextrow.createCell(r).setCellValue("NO");
+                nextrow.createCell(r).setCellValue(msg("no"));
             }
-
+            
             i++;
-
+            
         }
-
+        
         hoja.autoSizeColumn(0);
         hoja.autoSizeColumn(1);
         hoja.autoSizeColumn(2);
         hoja.autoSizeColumn(3);
-
+        
         try {
-
+            
             FacesContext facesContext = FacesContext.getCurrentInstance();
             ExternalContext externalContext = facesContext.getExternalContext();
             externalContext.setResponseContentType("application/vnd.ms-excel");
-            externalContext.setResponseHeader("Content-Disposition", "attachment; filename=\"SeguimientoRed.xls\"");
-
+            externalContext.setResponseHeader("Content-Disposition", "attachment; filename=\"" + msg("monitoring") + ".xls\"");
+            
             xlsEvaluados.write(externalContext.getResponseOutputStream());
             facesContext.responseComplete();
-
+            
         } catch (Exception e) {
-            log.error(e);
+            mostrarError(log, e);
         }
     }
-
+    
     public void enviarRecordatorio() {
-
+        
         boolean validaAlMenosUno = false;
         for (RelacionEvaluadoEvaluador objRelacionEvaluadoEvaluador : lstRelacionEvaluadoEvaluador) {
             if (objRelacionEvaluadoEvaluador.getBlEvaluacionTerminada() == null || objRelacionEvaluadoEvaluador.getBlEvaluacionTerminada().equals(false)) {
@@ -1063,123 +1059,121 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
                 continue;
             }
         }
-
+        
         if (validaAlMenosUno) {
             NotificacionesDAO objNotificacionesDAO = new NotificacionesDAO();
             try {
                 if (objNotificacionesDAO.guardaNotificacionesEvaluadores(lstRelacionEvaluadoEvaluador)) {
-                    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Se enviaron las convocatorias correctamente", null);
-                    FacesContext.getCurrentInstance().addMessage(null, message);
+                    mostrarAlertaInfo("step5.sended.reminders.project");
                 } else {
-                    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_FATAL, "Ocurrió un error al enviar las convocatorias", null);
-                    FacesContext.getCurrentInstance().addMessage(null, message);
+                    mostrarAlertaFatal("error.was.occurred");
                 }
             } catch (HibernateException ex) {
-                log.error(ex);
+                mostrarError(log, ex);
+                mostrarAlertaFatal("error.was.occurred");
             } catch (Exception ex) {
-                log.error(ex);
+                mostrarError(log, ex);
+                mostrarAlertaFatal("error.was.occurred");
             }
         } else {
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Se debe seleccionar al menos un evaluado", null);
-            FacesContext.getCurrentInstance().addMessage(null, message);
+            mostrarAlertaError("must.select.at.least.evaluated");
         }
-
+        
     }
-
+    
     public void enviarRecordatorioPersonal(RelacionEvaluadoEvaluador objRelacionEvaluadoEvaluador) {
-
+        
         NotificacionesDAO objNotificacionesDAO = new NotificacionesDAO();
         try {
-
+            
             List<RelacionEvaluadoEvaluador> lstEvaluadoEvaluadors = new ArrayList<>();
-
+            
             lstEvaluadoEvaluadors.add(objRelacionEvaluadoEvaluador);
-
+            
             if (objNotificacionesDAO.guardaNotificacionesEvaluadores(lstEvaluadoEvaluadors)) {
-                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Se envió el recordatorio correctamente", null);
-                FacesContext.getCurrentInstance().addMessage(null, message);
+                mostrarAlertaInfo("step5.sended.reminder.project");
             } else {
-                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_FATAL, "Ocurrió un error al enviar el recordatorio", null);
-                FacesContext.getCurrentInstance().addMessage(null, message);
+                mostrarAlertaFatal("error.was.occurred");
             }
-
+            
         } catch (HibernateException ex) {
-            log.error(ex);
+            mostrarError(log, ex);
+            mostrarAlertaFatal("error.was.occurred");
         } catch (Exception ex) {
-            log.error(ex);
+            mostrarError(log, ex);
+            mostrarAlertaFatal("error.was.occurred");
         }
-
+        
     }
-
+    
     public void actCheckCorreo(RelacionEvaluadoEvaluador objRelacionEvaluadoEvaluador) {
-
+        
         RelacionEvaluadoEvaluador objRelacionEvaluadoEvaluadorT = lstRelacionEvaluadoEvaluador.get(lstRelacionEvaluadoEvaluador.indexOf(objRelacionEvaluadoEvaluador));
-
+        
         if (objRelacionEvaluadoEvaluadorT != null) {
-
+            
             objRelacionEvaluadoEvaluadorT.setBlEnvioCorreo(objRelacionEvaluadoEvaluador.getBlEnvioCorreo());
-
+            
         }
-
+        
     }
-
+    
     public void putFlagDescargaFisico() {
-
+        
         for (Evaluado objEvaluado : lstParticipantesIniciados) {
             if (flagDescargaFisico) {
                 objEvaluado.setBlManual(Boolean.TRUE);
             } else {
                 objEvaluado.setBlManual(Boolean.FALSE);
             }
-
+            
         }
-
+        
     }
-
+    
     public void onRowSelect(SelectEvent<Evaluado> event) {
-
+        
         lstParticipantesIniciados.forEach(objEvaluado -> {
             objEvaluado.setBoCheckFilterSeg(Boolean.FALSE);
         });
-
+        
         event.getObject().setBoCheckFilterSeg(Boolean.TRUE);
-
+        
         actListaEvaluadores();
-
-        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Se filtró la red de " + event.getObject().getPaTxDescripcion(), null);
-        FacesContext.getCurrentInstance().addMessage(null, message);
-
+        
+        mostrarAlertaInfo("step5.filter");
+        
     }
-
+    
     public void onRowUnselect(UnselectEvent<Evaluado> event) {
-
+        
         lstParticipantesIniciados.forEach(objEvaluado -> {
             objEvaluado.setBoCheckFilterSeg(Boolean.TRUE);
         });
-
+        
         actListaEvaluadores();
-
-        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Se quitó el filtro del evaluado " + event.getObject().getPaTxDescripcion(), null);
-        FacesContext.getCurrentInstance().addMessage(null, message);
+        
+        mostrarAlertaInfo("step5.filter.retired");
+        
     }
-
+    
     public void putFlagFiltrarRed() {
-
+        
         for (Evaluado objEvaluado : lstParticipantesIniciados) {
             if (flagFiltrarRed) {
                 objEvaluado.setBoCheckFilterSeg(Boolean.TRUE);
             } else {
                 objEvaluado.setBoCheckFilterSeg(Boolean.FALSE);
             }
-
+            
         }
-
+        
         actListaEvaluadores();
-
+        
     }
-
+    
     public void putFlagComunicar() {
-
+        
         for (RelacionEvaluadoEvaluador objRelacionEvaluadoEvaluador : lstRelacionEvaluadoEvaluador) {
             if (objRelacionEvaluadoEvaluador.getBlEvaluacionTerminada() == null || objRelacionEvaluadoEvaluador.getBlEvaluacionTerminada().equals(Boolean.FALSE)) {
                 if (flagComunicar) {
@@ -1188,15 +1182,15 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
                     objRelacionEvaluadoEvaluador.setBlEnvioCorreo(Boolean.FALSE);
                 }
             }
-
+            
         }
-
+        
     }
-
+    
     public void createRadarModel() {
         radarGrupo = new RadarChartModel();
         ChartData data = new ChartData();
-
+        
         RadarChartDataSet radarDataSet = new RadarChartDataSet();
         radarDataSet.setLabel("My First Dataset");
         radarDataSet.setFill(true);
@@ -1215,7 +1209,7 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
         dataVal.add(55);
         dataVal.add(40);
         radarDataSet.setData(dataVal);
-
+        
         RadarChartDataSet radarDataSet2 = new RadarChartDataSet();
         radarDataSet2.setLabel("My Second Dataset");
         radarDataSet2.setFill(true);
@@ -1234,10 +1228,10 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
         dataVal2.add(27);
         dataVal2.add(100);
         radarDataSet2.setData(dataVal2);
-
+        
         data.addChartDataSet(radarDataSet);
         data.addChartDataSet(radarDataSet2);
-
+        
         List<String> labels = new ArrayList<>();
         labels.add("Eating");
         labels.add("Drinking");
@@ -1256,18 +1250,18 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
         elementsLine.setBorderWidth(3);
         elements.setLine(elementsLine);
         options.setElements(elements);
-
+        
         radarGrupo.setOptions(options);
-        radarGrupo.setData(data);;
+        radarGrupo.setData(data);
     }
-
+    
     public void calcularLicencias() {
         try {
             this.intLicenciasIndividuales = 0;
             this.intLicenciasMasivas = 0;
             this.intLicenciasIndividualesRequerido = 0;
             this.intLicenciasMasivasRequerido = 0;
-
+            
             Integer intIndividualesRequerido = 0;
             Integer intMasivasRequerido = 0;
             this.blLicenciasOK = false;
@@ -1280,133 +1274,89 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
             ParticipanteDAO objParticipanteDAO = new ParticipanteDAO();
             List lstParticipanteRedEvaluacion = objParticipanteDAO.obtenerNroParticipantes(objProyectoInfo.getIntIdProyecto());
             Iterator itLstParticipanteRedEvaluacion = lstParticipanteRedEvaluacion.iterator();
-
+            
             while (itLstParticipanteRedEvaluacion.hasNext()) {
-
+                
                 Object[] obj = (Object[]) itLstParticipanteRedEvaluacion.next();
-
+                
                 Integer nroEvaluadores = Integer.parseInt(obj[1].toString());
-
+                
                 if (nroEvaluadores > 20) {
                     intMasivasRequerido++;
                 } else {
                     intIndividualesRequerido++;
                 }
-
+                
             }
-
+            
             this.intLicenciasIndividualesRequerido = intIndividualesRequerido;
             this.intLicenciasMasivasRequerido = intMasivasRequerido;
 
             //Obtener licencias disponibles
-            ContratoDAO objContratoDAO = new ContratoDAO();
-            List<Contrato> lstContratosConfirmados = objContratoDAO.obtenListaContratoPorUsuario(Utilitarios.obtenerUsuario().getIntUsuarioPk());
-
-            for (Contrato objContrato : lstContratosConfirmados) {
-
-                Tarifa objTarifa = objContrato.getTarifa();
-                if (objTarifa.getTaIdTipoTarifa() == Constantes.INT_ET_TIPO_TARIFA_INDIVIDUAL) {
-                    this.intLicenciasIndividuales = objContrato.getCoNuLicenciaDisponible();
-                } else {
-                    this.intLicenciasMasivas = objContrato.getCoNuLicenciaDisponible();
-                }
+            UsuarioSaldoDAO objUsuarioSaldoDAO = new UsuarioSaldoDAO();
+            
+            UsuarioSaldo objUsuarioSaldo = objUsuarioSaldoDAO.obtenUsuarioSaldo(Utilitarios.obtenerUsuario().getIntUsuarioPk());
+            
+            if (objUsuarioSaldo == null) {
+                this.intLicenciasIndividuales = 0;
+                this.intLicenciasMasivas = 0;
+            } else {
+                this.intLicenciasIndividuales = objUsuarioSaldo.getUsNrDisponibleIndividual();
+                this.intLicenciasMasivas = objUsuarioSaldo.getUsNrDisponibleMasivo();
             }
 
             //Validar si las licencias estan ok
-            if (this.intLicenciasIndividuales >= this.intLicenciasIndividualesRequerido
-                    && this.intLicenciasMasivas >= this.intLicenciasMasivasRequerido) {
-                blLicenciasOK = true;
-            } else {
-                blLicenciasOK = false;
-            }
-
+            blLicenciasOK = this.intLicenciasIndividuales >= this.intLicenciasIndividualesRequerido
+                    && this.intLicenciasMasivas >= this.intLicenciasMasivasRequerido;
+            
         } catch (Exception e) {
-            log.error(e);
+            mostrarError(log, e);
         }
     }
-
+    
     public void reservarLicencias() {
         try {
             calcularLicencias();
             boolean blLicenciasOk = true;
-
-            ContratoDAO objContratoDAO = new ContratoDAO();
-            List<Contrato> lstContratosConfirmados = objContratoDAO.obtenListaContratoPorUsuario(Utilitarios.obtenerUsuario().getIntUsuarioPk());
-
-            /**
-             * INDIVIDUALES
-             */
-            if (this.intLicenciasIndividualesRequerido > 0) {
-
-                for (Contrato objContrato : lstContratosConfirmados) {
-                    if (objContrato.getTarifa().getTaIdTipoTarifa() == Constantes.INT_ET_TIPO_TARIFA_INDIVIDUAL) {
-                        Integer intLicDisponibles = objContrato.getCoNuLicenciaDisponible();
-                        if (intLicDisponibles == this.intLicenciasIndividualesRequerido) {
-                            objContrato.setCoNuLicenciaDisponible(intLicDisponibles - this.intLicenciasIndividualesRequerido);
-                            objContrato.setCoNuLicenciaReservada(objContrato.getCoNuLicenciaReservada() + intLicenciasIndividualesRequerido);
-                            this.intLicenciasIndividualesRequerido = 0;
-                        } else if (intLicDisponibles > this.intLicenciasIndividualesRequerido) {
-                            intLicDisponibles = intLicDisponibles - this.intLicenciasIndividualesRequerido;
-                            objContrato.setCoNuLicenciaDisponible(intLicDisponibles);
-                            objContrato.setCoNuLicenciaReservada(objContrato.getCoNuLicenciaReservada() + this.intLicenciasIndividualesRequerido);
-                            this.intLicenciasIndividualesRequerido = 0;
-                        } else {
-                            this.intLicenciasIndividualesRequerido = this.intLicenciasIndividualesRequerido - intLicDisponibles;
-                            objContrato.setCoNuLicenciaDisponible(0);
-                            objContrato.setCoNuLicenciaReservada(objContrato.getCoNuLicenciaReservada() + intLicDisponibles);
-                        }
-                    }
+            
+            UsuarioSaldoDAO objUsuarioSaldoDAO = new UsuarioSaldoDAO();
+            UsuarioSaldo objUsuarioSaldo = objUsuarioSaldoDAO.obtenUsuarioSaldo(Utilitarios.obtenerUsuario().getIntUsuarioPk());
+            
+            if (this.intLicenciasIndividualesRequerido <= objUsuarioSaldo.getUsNrDisponibleIndividual()
+                    && this.intLicenciasMasivasRequerido <= objUsuarioSaldo.getUsNrDisponibleMasivo()) {
+                
+                List<Movimiento> lstMovements = new ArrayList<>();
+                
+                if (intLicenciasIndividualesRequerido > 0) {
+                    Movimiento objMovimiento = new Movimiento();
+                    objMovimiento.setMoInCantidad(intLicenciasIndividualesRequerido);
+                    objMovimiento.setTipoMovimiento(new TipoMovimiento(Movimientos.MOV_RESERVA_LICENCIA_INDIVIDUAL));
+                    lstMovements.add(objMovimiento);
                 }
-            }
-
-            /**
-             * MASIVAS
-             */
-            if (this.intLicenciasMasivasRequerido > 0) {
-                for (Contrato objContrato : lstContratosConfirmados) {
-                    if (objContrato.getTarifa().getTaIdTipoTarifa() == Constantes.INT_ET_TIPO_TARIFA_MASIVO) {
-                        Integer intLicDisponibles = objContrato.getCoNuLicenciaDisponible();
-                        if (intLicDisponibles == this.intLicenciasMasivasRequerido) {
-                            objContrato.setCoNuLicenciaDisponible(intLicDisponibles - this.intLicenciasMasivasRequerido);
-                            objContrato.setCoNuLicenciaReservada(this.intLicenciasMasivasRequerido);
-                            this.intLicenciasMasivasRequerido = 0;
-                        } else if (intLicDisponibles > this.intLicenciasMasivasRequerido) {
-                            intLicDisponibles = intLicDisponibles - this.intLicenciasMasivasRequerido;
-                            objContrato.setCoNuLicenciaDisponible(intLicDisponibles);
-                            objContrato.setCoNuLicenciaReservada(this.intLicenciasMasivasRequerido);
-                            this.intLicenciasMasivasRequerido = 0;
-                        } else {
-                            this.intLicenciasMasivasRequerido = this.intLicenciasMasivasRequerido - intLicDisponibles;
-                            objContrato.setCoNuLicenciaDisponible(0);
-                            objContrato.setCoNuLicenciaReservada(intLicDisponibles);
-                        }
-                    }
+                
+                if (intLicenciasMasivasRequerido > 0) {
+                    Movimiento objMovimiento = new Movimiento();
+                    objMovimiento.setMoInCantidad(intLicenciasMasivasRequerido);
+                    objMovimiento.setTipoMovimiento(new TipoMovimiento(Movimientos.MOV_RESERVA_LICENCIA_MASIVA));
+                    lstMovements.add(objMovimiento);
                 }
-            }
-
-            if (this.intLicenciasIndividualesRequerido == 0 && this.intLicenciasMasivasRequerido == 0) {
-                try {
-
-                    for (Contrato objContrato : lstContratosConfirmados) {
-                        objContratoDAO.actualizaContrato(objContrato);
-                    }
+                Usuario objUsuario = new Usuario();
+                objUsuario.setUsIdCuentaPk(Utilitarios.obtenerUsuario().getIntUsuarioPk());
+                String strResult = ExecutorBalanceMovement.getInstance().execute(lstMovements, objUsuario);                
+                
+                if (strResult == null) {
                     iniciarProceso();
-                } catch (Exception e) {
-                    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Ocurrió un problema. Por favor probar nuevamente", null);
-                    FacesContext.getCurrentInstance().addMessage(null, message);
                 }
-
+                
             } else {
-                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "No hay licencias disponibles para iniciar el proceso. Por favor comunicarse con nosotros", null);
-                FacesContext.getCurrentInstance().addMessage(null, message);
+                mostrarAlertaError("step5.insufficient.licenses");
             }
-
+            
         } catch (Exception e) {
-            log.error(e);
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Ocurrió un problema. Por favor probar nuevamente", null);
-            FacesContext.getCurrentInstance().addMessage(null, message);
+            mostrarError(log, e);
+            mostrarAlertaFatal("error.was.occurred");
         }
-
+        
     }
-
+    
 }

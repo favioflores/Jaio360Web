@@ -333,8 +333,7 @@ public class ActualizaDatosView extends BaseView implements Serializable {
         try {
 
             if (!strContraseniaNueva.equals(strContraseniaReNueva)) {
-                FacesContext context = FacesContext.getCurrentInstance();
-                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Cambio de contraseña", "La confirmacion de nueva contraseña no coincide"));
+                mostrarAlertaError("must.be.same.password=");
             } else {
 
                 UsuarioDAO objUsuarioDAO = new UsuarioDAO();
@@ -343,22 +342,15 @@ public class ActualizaDatosView extends BaseView implements Serializable {
 
                 EncryptDecrypt objEncryptDecrypt = new EncryptDecrypt();
 
-                //if(strContrasenia.equals(objEncryptDecrypt.decrypt(objUsuario.getUsTxContrasenia()))){
                 objUsuario.setUsTxContrasenia(objEncryptDecrypt.encrypt(strContraseniaNueva));
                 objUsuarioDAO.actualizaUsuario(objUsuario);
 
-                FacesContext context = FacesContext.getCurrentInstance();
-                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Cambio de contraseña", "Contraseña actualizada"));
-                //}else{
-                //    FacesContext context = FacesContext.getCurrentInstance();
-                //    context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,"Cambio de contraseña",  "La contraseña actual es incorrecta"));  
-                //}
+                mostrarAlertaInfo("success");
 
             }
         } catch (Exception e) {
-            log.error(e);
-            FacesContext context = FacesContext.getCurrentInstance();
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Cambio de contraseña", "La confirmacion de nueva contraseña no coincide"));
+            mostrarError(log, e);
+            mostrarAlertaFatal("error.was.occurred");
         }
     }
 

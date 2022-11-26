@@ -11,30 +11,27 @@
 
     <ui:define name="cabecera">
         <ui:include src="cabecera.xhtml" />
-        <p:staticMessage severity="info" summary="INFO" detail="El proyecto actual es: #{stepFourView.objProyectoInfo.strDescNombre}" style="width: 100%; margin-top: 5px; margin-left: 2px; margin-right: 2px;"/>
+        <p:staticMessage severity="info" summary="#{msg['info']}" detail="#{msg['project.info']} #{stepOneView.objProyectoInfo.strDescNombre}" style="width: 100%; margin-top: 5px; margin-left: 2px; margin-right: 2px;"/>
     </ui:define>
     <ui:define name="helpSteps">
 
         <h:form id="formPrincipalProyecto">
 
             <div class="p-field">
-                <center>
-                    <!--<p:commandButton value="Ocultar pasos de ayuda" type="submit" update="formPrincipalProyecto" /> -->
-                </center>
                 <p:steps readonly="false" activeIndex="#{stepFourView.activeIndex}" >
-                    <p:menuitem value="Configurar base"         actionListener="#{stepFourView.goToStep(1)}"/>
-                    <p:menuitem value="Cargar evaluación"       actionListener="#{stepFourView.goToStep(2)}"/>
-                    <p:menuitem value="Asignar evaluaciones"    actionListener="#{stepFourView.goToStep(3)}"/>
-                    <p:menuitem value="Preparar comunicados"    actionListener="#{stepFourView.goToStep(4)}"/>
-                    <p:menuitem value="Ejecución"               actionListener="#{stepFourView.goToStep(5)}"/>
-                    <p:menuitem value="Análisis"                actionListener="#{stepFourView.goToStep(6)}"/>
+                    <p:menuitem value="#{msg['step.1']}" actionListener="#{stepOneView.goToStep(1)}"/>
+                    <p:menuitem value="#{msg['step.2']}" actionListener="#{stepOneView.goToStep(2)}"/>
+                    <p:menuitem value="#{msg['step.3']}" actionListener="#{stepOneView.goToStep(3)}"/>
+                    <p:menuitem value="#{msg['step.4']}" actionListener="#{stepOneView.goToStep(4)}"/>
+                    <p:menuitem value="#{msg['step.5']}" actionListener="#{stepOneView.goToStep(5)}"/>
+                    <p:menuitem value="#{msg['step.6']}" actionListener="#{stepOneView.goToStep(6)}"/>
                 </p:steps></div>
             <p:spacer/>
             <div class="p-field">
                 <center>
-                    <p:commandButton value="Regresar" type="submit" actionListener="#{stepFourView.backStep()}" update="formPrincipalProyecto" styleClass="ui-button-secondary" icon="pi pi-angle-left" />
+                    <p:commandButton value="#{msg['back']}" type="submit" actionListener="#{stepFourView.backStep()}" update="formPrincipalProyecto" styleClass="ui-button-secondary" icon="pi pi-angle-left" />
                     <p:spacer/>
-                    <p:commandButton value="Siguiente" type="submit" actionListener="#{stepFourView.nextStep()}" update="formPrincipalProyecto" styleClass="ui-button-secondary" icon="pi pi-angle-right" />                   
+                    <p:commandButton value="#{msg['next']}" type="submit" actionListener="#{stepFourView.nextStep()}" update="formPrincipalProyecto" styleClass="ui-button-secondary" icon="pi pi-angle-right" />                   
                 </center>
             </div>
 
@@ -48,18 +45,18 @@
         <p:panel>  
             <p:card>
 
-                <h3>Configuración de notificaciones</h3>
+                <h3>#{msg['step4.title']}</h3>
 
                 <div class="ui-fluid p-formgrid p-grid">
 
                     <div class="p-field p-col-12 p-md-12">
-                        <p:outputLabel value="Personaliza el contenido de las notificaciones del proceso." />
+                        <p:outputLabel value="#{msg['step4.desc1']}" />
                     </div>
                 </div>
 
                 <p:tabView cache="true" >
 
-                    <p:tab title="Convocatoria" >
+                    <p:tab title="#{msg['announcement']}" >
 
                         <h:form>
 
@@ -68,7 +65,7 @@
                             <div class="ui-fluid p-formgrid p-grid">
 
                                 <div class="p-field p-col-12 p-md-12">
-                                    <p:outputLabel value="Este comunicado será enviado vía correo a la lista de evaluadores del proceso convocándolos para rendir sus evaluaciones." />
+                                    <p:outputLabel value="#{msg['step4.announcement.desc']}" />
                                 </div>
                             </div>
                             <div class="ui-fluid p-formgrid p-grid">
@@ -76,28 +73,28 @@
                                 <div class="p-field p-col-12 p-md-6">
                                     <p:card id="cardConvocatoriaDatos">
 
-                                        <h4>Personalización</h4>
+                                        <h4>#{msg['customization']}</h4>
 
                                         <div class="p-field">
-                                            <p:outputLabel for="strAsuntoConvocatoria" value="Asunto del correo" />
+                                            <p:outputLabel for="strAsuntoConvocatoria" value="#{msg['subject']}" />
                                             <p:inputText id="strAsuntoConvocatoria" value="#{redactarMensajesView.strAsuntoConvocatoria}" 
-                                                         required="true" maxlength="200" requiredMessage="Debe ingresar un asunto" 
+                                                         required="true" maxlength="200" requiredMessage="#{msg['adm.least.value']}" 
                                                          >
                                             </p:inputText>
-                                            <small class="p-d-block">Indicar el asunto que aparecerá en el correo de la convocatoria.</small>
+                                            <small class="p-d-block">#{msg['step4.announcement.label.1']}</small>
                                         </div>
                                         <div class="p-field">
-                                            <p:outputLabel for="strTituloConvocatoria" value="Título del cuerpo " />
+                                            <p:outputLabel for="strTituloConvocatoria" value="#{msg['title']}" />
                                             <p:inputText id="strTituloConvocatoria" value="#{redactarMensajesView.strTituloConvocatoria}" 
-                                                         required="true" maxlength="200" requiredMessage="Debe ingresar un título" 
+                                                         required="true" maxlength="200" requiredMessage="#{msg['adm.least.value']}" 
                                                          >
                                             </p:inputText>
-                                            <small class="p-d-block">Indicar el título que tendrá la convocatoria.</small>
+                                            <small class="p-d-block">#{msg['step4.announcement.label.2']}</small>
                                         </div>
                                         <div class="p-field">
-                                            <p:outputLabel for="strParrafoConvocatoria" value="Contenido del párrafo" />
+                                            <p:outputLabel for="strParrafoConvocatoria" value="#{msg['step4.announcement.content.paragraph']}" />
                                             <p:textEditor id="strParrafoConvocatoria" value="#{redactarMensajesView.strParrafoConvocatoria}" 
-                                                          required="true" requiredMessage="Debe ingresar el contenido del párrafo del correo" 
+                                                          required="true" requiredMessage="#{msg['adm.least.value']}" 
                                                           >
                                                 <f:facet name="toolbar">
                                                     <span class="ql-formats">
@@ -111,50 +108,43 @@
                                                     </span>
                                                 </f:facet>
                                             </p:textEditor>
-                                            <small class="p-d-block">Ingresa el contenido del parrafo que aparecerá en el correo.</small>
+                                            <small class="p-d-block">#{msg['step4.announcement.label.3']}</small>
                                         </div>
                                         <div class="p-field">
-                                            <p:commandButton value="Preview" styleClass="ui-button-warning" process="cardConvocatoriaDatos" update="@form"
+                                            <p:commandButton value="#{msg['preview']}" styleClass="ui-button-warning" process="cardConvocatoriaDatos" update="@form"
                                                              icon="pi pi-eye" actionListener="#{redactarMensajesView.armarTemplateConvocatoria(true)}">
                                             </p:commandButton>
                                         </div>   
-                                        <!--
                                         <div class="p-field">
-                                            <p:commandButton value="Restaurar" styleClass="ui-button-secondary" update="@form" icon="pi pi-undo" actionListener="#{redactarMensajesView.armarTemplateConvocatoria(true)}">
-                                            </p:commandButton>
-                                        </div>   
-                                        -->
-                                        <div class="p-field">
-                                            <p:commandButton value="Guardar" process="cardConvocatoriaDatos" update="@form" icon="pi pi-save" actionListener="#{redactarMensajesView.guardarNotificacion(redactarMensajesView.ID_CONVOCATORIA)}">
+                                            <p:commandButton value="#{msg['save']}" process="cardConvocatoriaDatos" update="@form" icon="pi pi-save" actionListener="#{redactarMensajesView.guardarNotificacion(redactarMensajesView.ID_CONVOCATORIA)}">
                                             </p:commandButton>
                                         </div>
                                     </p:card>
                                     <p:divider/>
                                     <p:card id="cardPruebaEnvioCorreo" >
-                                        <h4>Prueba de envío de correo</h4>
+                                        <h4>#{msg['step4.email.test']}</h4>
 
                                         <div class="p-field">
 
-                                            <p:outputLabel for="correoExtra" value="Correo electrónico" />
+                                            <p:outputLabel for="correoExtra" value="#{msg['email']}" />
                                             <p:inputText id="correoExtra" widgetVar="correoExtra" 
                                                          required="true" value="#{redactarMensajesView.correoExtra}" 
-                                                         maxlength="150"  >
+                                                         maxlength="150" requiredMessage="#{msg['adm.least.value']}" >
                                                 <f:validator validatorId="validarCorreo" /> 
                                             </p:inputText>
                                         </div>
                                         <div class="p-field">
-                                            <!--<p:commandButton value="Agregar" actionListener="#{redactarMensajesView.agregaCorreoExtra}" process="@this,correoExtra" update="@form" />-->
                                             <p:commandButton 
                                                 actionListener="#{redactarMensajesView.enviarmeMensajeria}" 
                                                 icon="pi pi-send"  process="cardPruebaEnvioCorreo"
-                                                value="Enviar correo de prueba" update="@form" />
+                                                value="#{msg['send.email']}" update="@form" />
                                         </div>
 
                                     </p:card>
                                 </div>
                                 <div class="p-field p-col-12 p-md-6">
                                     <p:card id="cardPreviewConvocatoriaTemplate">
-                                        <h4>Vista previa</h4>
+                                        <h4>#{msg['preview']}</h4>
 
                                         <div>
                                             <p:outputLabel id="outconvoper" value="#{redactarMensajesView.strPreviewConvocatoriaTemplate}" escape="false" />
@@ -166,7 +156,7 @@
                         </h:form>
 
                     </p:tab>
-                    <p:tab title="Bienvenida">
+                    <p:tab title="#{msg['welcome']}">
 
                         <h:form>
 
@@ -175,19 +165,19 @@
                             <div class="ui-fluid p-formgrid p-grid">
 
                                 <div class="p-field p-col-12 p-md-12">
-                                    <p:outputLabel value="Este comunicado se le mostrará al evaluador previo a iniciar su evaluación. Indica los puntos que requiere tener presente mientras realiza la evaluación." />
+                                    <p:outputLabel value="#{msg['step4.welcome.label.1']}" />
                                 </div>
                             </div>
                             <div class="ui-fluid p-formgrid p-grid">
 
                                 <div class="p-field p-col-12 p-md-6">
                                     <p:card>
-                                        <h4>Personalización</h4>
+                                        <h4>#{msg['customization']}</h4>
 
                                         <div class="p-field">
-                                            <p:outputLabel for="strBienvenidaRecomendaciones" value="Recomendaciones para la evaluación" />
+                                            <p:outputLabel for="strBienvenidaRecomendaciones" value="#{msg['step4.welcome.recomendations']}" />
                                             <p:textEditor id="strBienvenidaRecomendaciones" value="#{redactarMensajesView.strBienvenidaRecomendaciones}" 
-                                                          required="true" requiredMessage="Debe ingresar el contenido del párrafo de recomendaciones" >
+                                                          required="true" requiredMessage="#{msg['adm.least.value']}" >
                                                 <f:facet name="toolbar">
                                                     <span class="ql-formats">
                                                         <button class="ql-bold"></button>
@@ -200,13 +190,13 @@
                                                     </span>
                                                 </f:facet>
                                             </p:textEditor>
-                                            <small class="p-d-block">Ingresa el contenido del parrafo que aparecerá sobre las recomendaciones para la evaluación.</small>
+                                            <small class="p-d-block">#{msg['step4.welcome.label.1']}</small>
                                         </div>
 
                                         <div class="p-field">
-                                            <p:outputLabel for="strBienvenidaConfidencialidad" value="Acerca de la confidencialidad" />
+                                            <p:outputLabel for="strBienvenidaConfidencialidad" value="#{msg['step4.welcome.confidentiality']}" />
                                             <p:textEditor id="strBienvenidaConfidencialidad" value="#{redactarMensajesView.strBienvenidaConfidencialidad}" 
-                                                          required="true" requiredMessage="Debe ingresar el contenido del párrafo de confidencialidad" >
+                                                          required="true" requiredMessage="#{msg['adm.least.value']}" >
                                                 <f:facet name="toolbar">
                                                     <span class="ql-formats">
                                                         <button class="ql-bold"></button>
@@ -219,13 +209,13 @@
                                                     </span>
                                                 </f:facet>
                                             </p:textEditor>
-                                            <small class="p-d-block">Ingresa el contenido del parrafo que aparecerá sobre la confidencialidad.</small>
+                                            <small class="p-d-block">#{msg['step4.welcome.label.2']}</small>
                                         </div>
 
                                         <div class="p-field">
-                                            <p:outputLabel for="strBienvenidaAtentamente" value="Agradecimiento" />
+                                            <p:outputLabel for="strBienvenidaAtentamente" value="#{msg['step4.welcome.end']}" />
                                             <p:textEditor id="strBienvenidaAtentamente" value="#{redactarMensajesView.strBienvenidaAgradecimiento}" 
-                                                          required="true" requiredMessage="Debe ingresar el nombre del anfitrion" 
+                                                          required="true" requiredMessage="#{msg['adm.least.value']}" 
                                                           >
                                                 <f:facet name="toolbar">
                                                     <span class="ql-formats">
@@ -239,11 +229,11 @@
                                                     </span>
                                                 </f:facet>
                                             </p:textEditor>
-                                            <small class="p-d-block">Ingresa un agradecimiento por el tiempo y dedicación de la evaluación.</small>
+                                            <small class="p-d-block">#{msg['step4.welcome.label.3']}</small>
                                         </div>
 
                                         <div class="p-field">
-                                            <p:commandButton value="Preview" styleClass="ui-button-warning" update="@form" icon="pi pi-eye" actionListener="#{redactarMensajesView.armarTemplateBienvenida(true)}">
+                                            <p:commandButton value="#{msg['preview']}" styleClass="ui-button-warning" update="@form" icon="pi pi-eye" actionListener="#{redactarMensajesView.armarTemplateBienvenida(true)}">
                                             </p:commandButton>
                                         </div>   
                                         <!--
@@ -253,7 +243,7 @@
                                         </div>   
                                         -->
                                         <div class="p-field">
-                                            <p:commandButton value="Guardar" update="@form" icon="pi pi-save" actionListener="#{redactarMensajesView.guardarNotificacion(redactarMensajesView.ID_INSTRUCCIONES)}">
+                                            <p:commandButton value="#{msg['save']}" update="@form" icon="pi pi-save" actionListener="#{redactarMensajesView.guardarNotificacion(redactarMensajesView.ID_INSTRUCCIONES)}">
                                             </p:commandButton>
                                         </div>
 
@@ -262,7 +252,7 @@
                                 </div>
                                 <div class="p-field p-col-12 p-md-6">
                                     <p:card id="cardPreviewBienvenidaTemplate">
-                                        <h4>Vista previa</h4>
+                                        <h4>#{msg['preview']}</h4>
 
                                         <div>
                                             <p:outputLabel id="outconvoper" value="#{redactarMensajesView.strPreviewBienvenidaTemplate}" escape="false" />
@@ -274,7 +264,7 @@
                         </h:form>
 
                     </p:tab>
-                    <p:tab title="Agradecimiento">
+                    <p:tab title="#{msg['regards']}">
                         <h:form>
 
                             <p:growl life="4000" showSummary="true" />
@@ -282,19 +272,19 @@
                             <div class="ui-fluid p-formgrid p-grid">
 
                                 <div class="p-field p-col-12 p-md-12">
-                                    <p:outputLabel value="Este comunicado se le mostrará al evaluador al finalizar su evaluación." />
+                                    <p:outputLabel value="#{msg['step4.regards.desc']}" />
                                 </div>
                             </div>
                             <div class="ui-fluid p-formgrid p-grid">
 
                                 <div class="p-field p-col-12 p-md-6">
                                     <p:card>
-                                        <h4>Personalización</h4>
+                                        <h4>#{msg['customization']}</h4>
 
                                         <div class="p-field">
-                                            <p:outputLabel for="strAgradecimiento" value="Agradecimiento" />
+                                            <p:outputLabel for="strAgradecimiento" value="#{msg['regard']}" />
                                             <p:textEditor id="strAgradecimiento" value="#{redactarMensajesView.strAgradecimiento}" 
-                                                          required="true" requiredMessage="Debe ingresar el agradecimiento" 
+                                                          required="true" requiredMessage="#{msg['adm.least.value']}" 
                                                           >
                                                 <f:facet name="toolbar">
                                                     <span class="ql-formats">
@@ -308,11 +298,11 @@
                                                     </span>
                                                 </f:facet>
                                             </p:textEditor>
-                                            <small class="p-d-block">Ingresa un agradecimiento por el tiempo y dedicación de la evaluación.</small>
+                                            <small class="p-d-block">#{msg['step4.regards.label.1']}</small>
                                         </div>
 
                                         <div class="p-field">
-                                            <p:commandButton value="Preview" styleClass="ui-button-warning" update="@form" icon="pi pi-eye" actionListener="#{redactarMensajesView.armarTemplateAgradecimiento(true)}">
+                                            <p:commandButton value="#{msg['preview']}" styleClass="ui-button-warning" update="@form" icon="pi pi-eye" actionListener="#{redactarMensajesView.armarTemplateAgradecimiento(true)}">
                                             </p:commandButton>
                                         </div>   
                                         <!--
@@ -322,7 +312,7 @@
                                         </div>   
                                         -->
                                         <div class="p-field">
-                                            <p:commandButton value="Guardar" update="@form" icon="pi pi-save" actionListener="#{redactarMensajesView.guardarNotificacion(redactarMensajesView.ID_AGRADECIMIENTO)}">
+                                            <p:commandButton value="#{msg['save']}" update="@form" icon="pi pi-save" actionListener="#{redactarMensajesView.guardarNotificacion(redactarMensajesView.ID_AGRADECIMIENTO)}">
                                             </p:commandButton>
                                         </div>
 
@@ -331,7 +321,7 @@
                                 </div>
                                 <div class="p-field p-col-12 p-md-6">
                                     <p:card id="cardPreviewAgradecimientoTemplate">
-                                        <h4>Vista previa</h4>
+                                        <h4>#{msg['preview']}</h4>
 
                                         <div>
                                             <p:outputLabel id="outconvoper" value="#{redactarMensajesView.strPreviewAgradecimientoTemplate}" escape="false" />

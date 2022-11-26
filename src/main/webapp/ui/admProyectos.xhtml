@@ -76,26 +76,27 @@
 
                                 <p:growl id="growlLstProyectos" life="4000" showSummary="true" />
 
-
+<!--
                                 <div class="ui-fluid p-formgrid p-grid">
 
                                     <div class="p-field p-col-12 p-md-4">
-    
-                                            <div class="p-field p-formgrid p-grid">
-                                               <div class="p-col" style="text-align: left;" >
+
+                                        <div class="p-field p-formgrid p-grid">
+                                            <div class="p-col" style="text-align: left;" >
                                                 #{msg['adm.view.projects.archivated']}
-                                               </div>
-                                                <div class="p-col" style="text-align: left;" >
-                                                    <p:toggleSwitch id="switch" value="#{listasPrincipalView.blOcultos}" >
-                                                        <p:ajax listener="#{listasPrincipalView.buscarProyectos()}" update="idProyectos"/>
-                                                    </p:toggleSwitch>
-                                                </div>
                                             </div>
+                                            <div class="p-col" style="text-align: left;" >
+                                                <p:toggleSwitch id="switch" value="#{listasPrincipalView.blOcultos}" >
+                                                    <p:ajax listener="#{listasPrincipalView.buscarProyectos()}" update="idProyectos"/>
+                                                </p:toggleSwitch>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-
+-->
                                 <p:dataTable
                                     id="idProyectos"
+                                    widgetVar="proyectosTabla"
                                     var="pro"
                                     value="#{listasPrincipalView.lstProyectos}" 
                                     rows="5"
@@ -106,14 +107,22 @@
                                     paginatorPosition="bottom"
                                     paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                     rowsPerPageTemplate="5,10,{ShowAll|'All'}"
-                                    widgetVar="proyectosTabla"
                                     emptyMessage="#{msg['no.items']}"
                                     style="height: 100%;"
+                                    filteredValue="#{listasPrincipalView.filteredProyectos}"
+                                    globalFilterFunction="#{listasPrincipalView.globalFilterFunction}"
                                     rowIndexVar="index"
                                     size="small"
                                     >    
 
                                     <p:ajax event="cellEdit" listener="#{listasPrincipalView.actualizarProyecto}" update="frmListados:idProyectos,frmListados:growlLstProyectos"/>
+
+                                    <f:facet name="header">
+                                        <div class="flex justify-content-end">
+                                            <p:inputText id="globalFilter" value="#{listasPrincipalView.filterValue}" onkeyup="PF('proyectosTabla').filter()" style="width:400px"
+                                                         placeholder="#{msg['adm.search.filter.global']}" />
+                                        </div>
+                                    </f:facet>
 
                                     <p:column style="width: 50px;" > 
                                         <f:facet name="header">
@@ -123,7 +132,7 @@
                                             value="#{index + 1}" />
                                     </p:column>
 
-                                    <p:column headerText="#{msg['adm.nombre']}" sortBy="#{pro.strDescNombre}"   >
+                                    <p:column headerText="#{msg['adm.nombre']}" sortBy="#{pro.strDescNombre}" filterable="true" >
 
                                         <p:cellEditor>
                                             <f:facet name="output">
@@ -135,12 +144,25 @@
                                         </p:cellEditor>
 
                                     </p:column>
+                                    
+                                    <p:column headerText="#{msg['description']}" sortBy="#{pro.strMotivo}" filterable="true" >
 
-                                    <p:column headerText="#{msg['adm.descripcion']}" sortBy="#{pro.strDescEstado}" style="text-align: center;">
+                                        <p:cellEditor>
+                                            <f:facet name="output">
+                                                <h:outputText value="#{pro.strMotivo}"  />
+                                            </f:facet>
+                                            <f:facet name="input">
+                                                <p:inputText value="#{pro.strMotivo}" style="width: 100%;" />
+                                            </f:facet>
+                                        </p:cellEditor>
+
+                                    </p:column>
+
+                                    <p:column headerText="#{msg['adm.descripcion']}" sortBy="#{pro.strDescEstado}" style="text-align: center;" filterable="true" >
                                         <p:tag value="#{pro.strDescEstado}" ></p:tag>
                                     </p:column>
 
-                                    <p:column  headerText="#{msg['adm.fecha']}"  sortBy="#{pro.dtFechaCreacion}">        
+                                    <p:column  headerText="#{msg['adm.fecha']}"  sortBy="#{pro.dtFechaCreacion}" filterable="true" >        
                                         <h:outputText value="#{pro.dtFechaCreacion}"  />
                                     </p:column>
 

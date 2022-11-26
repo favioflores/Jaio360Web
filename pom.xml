@@ -204,13 +204,13 @@
             <id>community-stable</id>
             <properties>
                 <jsfVersion>Mojarra-${mojarra.version}</jsfVersion>
-                <primefacesVersion>PrimeFaces-8.0</primefacesVersion>
+                <primefacesVersion>PrimeFaces-10.0.0</primefacesVersion>
             </properties>
             <dependencies>
                 <dependency>
                     <groupId>org.primefaces</groupId>
                     <artifactId>primefaces</artifactId>
-                    <version>8.0</version>
+                    <version>10.0.0</version>
                 </dependency>
                 <dependency>
                     <groupId>org.glassfish</groupId>
@@ -228,13 +228,13 @@
             <id>elite-dev</id>
             <properties>
                 <jsfVersion>Mojarra-${mojarra.version}</jsfVersion>
-                <primefacesVersion>PrimeFaces-7.0.10</primefacesVersion>
+                <primefacesVersion>PrimeFaces-10.0.0</primefacesVersion>
             </properties>
             <dependencies>
                 <dependency>
                     <groupId>org.primefaces</groupId>
                     <artifactId>primefaces</artifactId>
-                    <version>7.0.10-SNAPSHOT</version>
+                    <version>10.0.0</version>
                 </dependency>
                 <dependency>
                     <groupId>org.glassfish</groupId>
@@ -252,13 +252,13 @@
             <id>elite-dev-6.2.x</id>
             <properties>
                 <jsfVersion>Mojarra-${mojarra.version}</jsfVersion>
-                <primefacesVersion>PrimeFaces-6.2.27-SNAPSHOT</primefacesVersion>
+                <primefacesVersion>PrimeFaces-10.0.0</primefacesVersion>
             </properties>
             <dependencies>
                 <dependency>
                     <groupId>org.primefaces</groupId>
                     <artifactId>primefaces</artifactId>
-                    <version>6.2.27-SNAPSHOT</version>
+                    <version>11.0.0</version>
                 </dependency>
                 <dependency>
                     <groupId>org.glassfish</groupId>

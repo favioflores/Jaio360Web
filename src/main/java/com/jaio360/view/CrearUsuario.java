@@ -292,7 +292,7 @@ public class CrearUsuario extends BaseView implements Serializable {
                     }
                     usuarioForm = null;
                     //RequestContext.getCurrentInstance().closeDialog("crearUsuario");
-                    PrimeFaces.current().dialog().closeDynamic("crearUsuario");
+                    //PrimeFaces.current().dialog().closeDynamic("crearUsuario");
 
                 } else {
                     FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", strErrores));
@@ -338,7 +338,7 @@ public class CrearUsuario extends BaseView implements Serializable {
             Map<String, Object> options = new HashMap<>();
             options.put("modal", true);
             options.put("resizable", false);
-            PrimeFaces.current().dialog().openDynamic("crearUsuario", options, null);
+            //PrimeFaces.current().dialog().openDynamic("crearUsuario", options, null);
 
             /* } catch (IOException ex) {
                 log.debug(ex);

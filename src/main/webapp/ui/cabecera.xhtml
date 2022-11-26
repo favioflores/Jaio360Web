@@ -10,17 +10,34 @@
         <ui:composition>
             <h:form>
 
-                <p:menubar model="#{menuPrincipal.menuPrincipal}" >
+                <p:menubar id="menu" model="#{menuPrincipal.menuPrincipal}" >
+
                     <f:facet name="options">
 
-                        <div class="ui-input-icon-left p-mr-2">
-                            <p:outputLabel style="margin-right:30px;" value="#{msg['cabecera.bienvenido']} #{menuPrincipal.usuarioInfo.strDescripcion}" />
-                        </div>
-                        <p:commandButton value="#{msg['cabecera.cerrar.sesion']}" id="btcerrarSesion" widgetVar="btcerrarSesion" styleClass="ui-button-secondary" icon="pi pi-fw pi-sign-out" actionListener="#{usuarioSesion.cerrarSesion}"  >
-                            <p:confirm header="#{msg['cabecera.logout.confirmacion.title']}" icon="pi pi-info-circle" message="#{msg['cabecera.logout.confirmacion.mensaje']}" /> 
-                        </p:commandButton>
+                        <h:panelGrid columns="3" cellspacing="0" styleClass="mb-3" >
+
+                            <!--
+                                                        <p:outputLabel  value="#{msg['cabecera.bienvenido']} #{menuPrincipal.usuarioInfo.strDescripcion}" />                            
+                                                        
+                                                        <p:outputLabel  value="#{msg['type.account']} #{menuPrincipal.usuarioInfo.strTipoUsuario}" />                            
+                            
+                            <p:selectOneMenu value="#{localeManager.language}" onchange="submit()" >
+                                <f:selectItem itemValue="en" itemLabel="English" />
+                                <f:selectItem itemValue="es" itemLabel="Español" />
+                            </p:selectOneMenu>
+                            -->   
+
+                            <p:commandButton value="#{msg['cabecera.cerrar.sesion']}" id="btcerrarSesion" widgetVar="btcerrarSesion" styleClass="ui-button-secondary" icon="pi pi-fw pi-sign-out" actionListener="#{usuarioSesion.cerrarSesion}"  >
+                                <p:confirm header="#{msg['cabecera.logout.confirmacion.title']}" icon="pi pi-info-circle" message="#{msg['cabecera.logout.confirmacion.mensaje']}" /> 
+                            </p:commandButton>
+                        </h:panelGrid>
+
                     </f:facet>
                 </p:menubar>
+
+
+
+
 
                 <p:confirmDialog global="true" showEffect="drop" hideEffect="drop" responsive="true" width="400"  >
                     <p:commandButton type="button" value="#{msg['cabecera.logout.confirmacion.si']}" styleClass="ui-confirmdialog-yes" />
@@ -32,7 +49,6 @@
         </ui:composition>
 
         <h:form prependId="false">
-            <!--p:idleMonitor timeout="3600000" -->
             <p:idleMonitor timeout="3600000" >
                 <p:ajax event="idle" listener="#{usuarioSesion.timeout()}" oncomplete="PF('timeoutDlg').show();"/>
             </p:idleMonitor>
@@ -56,7 +72,7 @@
         <p:ajaxStatus onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" />
 
         <p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false">
-            <h5>Procesando</h5>
+            <h5>#{msg['processing']}</h5>
             <p:progressBar id="progressBarIndeterminate" style="height:10px;" mode="indeterminate"/>
         </p:dialog>
 

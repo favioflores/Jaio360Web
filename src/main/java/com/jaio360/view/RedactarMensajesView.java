@@ -349,19 +349,19 @@ public class RedactarMensajesView extends BaseView implements Serializable {
     }
 
     private void setDataConvocatoria() {
-        this.strAsuntoConvocatoria = "Evaluación de desempeño";
-        this.strTituloConvocatoria = "Proceso de evaluación";
-        this.strParrafoConvocatoria = "<p>Hemos iniciado el proceso de cierre de la Evaluación de Desempeño 2021 en la empresa, así que, necesitamos que contestes las encuestas que te han sido asignadas. Por favor, da clic en el botón de abajo para ingresar a las encuestas. Muchas gracias por tu participación!</p><p>Utiliza el usuario y contraseña que te compartimos e ingresa al JAIO360.</p><p>A partir de este momento puedes entrar a contestar las evaluaciones que tienes asignadas.</p>";
+        this.strAsuntoConvocatoria = msg("step4.announcement.text1");
+        this.strTituloConvocatoria = msg("step4.announcement.text2");
+        this.strParrafoConvocatoria = msg("step4.announcement.text3");
     }
 
     private void setDataBienvenida() {
-        this.strBienvenidaRecomendaciones = "<p>Revisa siempre el nombre de la persona que estás evaluando.</p><p>Para puntuar, marque en una escala del 1 al 4 (siendo 1 el puntaje más bajo y 4 el más alto). Tome en cuenta que también se puede marcar la escala NA (No aplica).</p><p>Se recomienda completar los comentarios abiertos después de cada pregunta para obtener mayor retroalimentación sobre los evaluados. </p><p>Cuando escriba comentarios, describa los aspectos positivos y oportunidades de mejora del evaluado.</p>";
-        this.strBienvenidaConfidencialidad = "<p>Su nombre nunca será relacionado con la información que proporcione.</p><p>Otras personas también proporcionarán respuestas. Sus calificaciones serán combinadas (sin su nombre) para producir un puntaje promedio, que será resumido en un informe ejecutivo.</p><p>Si desea puede personalizar su usuario cambiando su contraseña.</p>";
-        this.strBienvenidaAgradecimiento = "<p>El equipo de Jaio360 le agradece el tiempo, compromiso y dedicación invertidos en este proceso.</p>";
+        this.strBienvenidaRecomendaciones = msg("step4.welcome.text1");
+        this.strBienvenidaConfidencialidad = msg("step4.welcome.text2");
+        this.strBienvenidaAgradecimiento = msg("step4.welcome.text3");
     }
 
     private void setDataAgradecimiento() {
-        this.strAgradecimiento = "<p>El equipo de JAIO360 te agradece el tiempo, compromiso y dedicación invertidos en este proceso.</p>";
+        this.strAgradecimiento = msg("step4.regards.text1");
     }
 
     public void armarTemplateConvocatoria(boolean isPreview) {
@@ -392,6 +392,13 @@ public class RedactarMensajesView extends BaseView implements Serializable {
 
             }
 
+            context.put("TEMPLATE-CONVOCATORIA-LABEL-SENDED", msg("template.convocatoria.label.sended"));
+            context.put("TEMPLATE-CONVOCATORIA-LABEL-HELLO", msg("template.convocatoria.label.hello"));
+            context.put("TEMPLATE-CONVOCATORIA-LABEL-USER", msg("template.convocatoria.label.user"));
+            context.put("TEMPLATE-CONVOCATORIA-LABEL-PASSWORD", msg("template.convocatoria.label.password"));
+            context.put("TEMPLATE-CONVOCATORIA-LABEL-SINGIN", msg("template.convocatoria.label.singin"));
+            context.put("TEMPLATE-CONVOCATORIA-FOOTER", msg("template.convocatoria.footer"));
+
             context.put("TITULO", strTituloConvocatoria);
             context.put("PARRAFO", strParrafoConvocatoria);
 
@@ -401,7 +408,7 @@ public class RedactarMensajesView extends BaseView implements Serializable {
             strPreviewConvocatoriaTemplate = out.toString();
 
         } catch (Exception e) {
-            log.error(e);
+            mostrarError(log, e);
         }
 
     }
@@ -430,6 +437,7 @@ public class RedactarMensajesView extends BaseView implements Serializable {
 
             }
 
+            context.put("TEMPLATE-REGARDS-LABEL-THANK", msg("template.regards.label.thank"));
             context.put("PARRAFO_AGRADECIMIENTO", strAgradecimiento);
 
             StringWriter out = new StringWriter();
@@ -466,6 +474,10 @@ public class RedactarMensajesView extends BaseView implements Serializable {
                 context.put("NOMBRE", "Joanquin Inga Solaza");
 
             }
+
+            context.put("TEMPLATE-WELCOME-LABEL-WELCOME", msg("template.welcome.label.welcome"));
+            context.put("TEMPLATE-WELCOME-LABEL-RECOMENDATIONS", msg("template.welcome.label.recomendations"));
+            context.put("TEMPLATE-WELCOME-LABEL-CONFIDENTIAL", msg("template.welcome.label.confidential"));
 
             context.put("PARRAFO_RECOMENDACION", strBienvenidaRecomendaciones);
             context.put("PARRAFO_CONFIDENCIALIDAD", strBienvenidaConfidencialidad);
@@ -511,25 +523,21 @@ public class RedactarMensajesView extends BaseView implements Serializable {
                 lstCorreosExtra.add(this.correoExtra);
 
                 if (objNotificacionesDAO.guardarmeComunicados(lstCorreosExtra, strPreviewConvocatoriaTemplate)) {
-                    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Se enviará la notificación al correo " + correoExtra, null);
-                    FacesContext.getCurrentInstance().addMessage(null, message);
+                    mostrarAlertaInfo("sended.correctly");
 
                     this.correoExtra = Constantes.strVacio;
 
                 } else {
-                    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "No esta disponible el envio de correos. Por favor comunicate con el administrador", null);
-                    FacesContext.getCurrentInstance().addMessage(null, message);
+                    mostrarAlertaFatal("error.was.occurred");
                 }
 
             } else {
-                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "El correo ingresado es inválido. Por favor ingresar un correo válido", null);
-                FacesContext.getCurrentInstance().addMessage(null, message);
+                mostrarAlertaError("error.email.invalid");
             }
 
         } catch (Exception e) {
-            log.error(e);
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_FATAL, "Ocurrio un error inesperado. Por favor comunicate con el administrador", null);
-            FacesContext.getCurrentInstance().addMessage(null, message);
+            mostrarError(log, e);
+            mostrarAlertaFatal("error.was.occurred");
         }
 
     }
@@ -585,8 +593,7 @@ public class RedactarMensajesView extends BaseView implements Serializable {
                 if (strPreviewConvocatoriaTemplate.contains(strTituloConvocatoria) && strPreviewConvocatoriaTemplate.contains(strParrafoConvocatoria)) {
                     blContenidoOk = true;
                 } else {
-                    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Debe presionar el botón Preview para verificar sus últimos cambios antes de guardar", null);
-                    FacesContext.getCurrentInstance().addMessage(null, message);
+                    mostrarAlertaError("step4.preview.first");
                     blContenidoOk = false;
                 }
 
@@ -618,8 +625,7 @@ public class RedactarMensajesView extends BaseView implements Serializable {
                     armarTemplateConvocatoria(true);
 
                     if (blConvocatoria) {
-                        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Template de convocatoria se guardó correctamente", null);
-                        FacesContext.getCurrentInstance().addMessage(null, message);
+                        mostrarAlertaInfo("success");
                     }
 
                 }
@@ -636,8 +642,7 @@ public class RedactarMensajesView extends BaseView implements Serializable {
                     blContenidoOk = true;
 
                 } else {
-                    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Debe presionar el botón Preview para verificar sus últimos cambios antes de guardar", null);
-                    FacesContext.getCurrentInstance().addMessage(null, message);
+                    mostrarAlertaError("step4.preview.first");
                     blContenidoOk = false;
                 }
 
@@ -670,8 +675,7 @@ public class RedactarMensajesView extends BaseView implements Serializable {
                     armarTemplateBienvenida(true);
 
                     if (blBienvenida) {
-                        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Template de bienvenida se guardó correctamente", null);
-                        FacesContext.getCurrentInstance().addMessage(null, message);
+                        mostrarAlertaInfo("success");
                     }
                 }
             } else if (strIdNotificacion.equals(this.ID_AGRADECIMIENTO)) {
@@ -683,8 +687,7 @@ public class RedactarMensajesView extends BaseView implements Serializable {
                     blContenidoOk = true;
 
                 } else {
-                    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Debe presionar el botón Preview para verificar sus últimos cambios antes de guardar", null);
-                    FacesContext.getCurrentInstance().addMessage(null, message);
+                    mostrarAlertaError("step4.preview.first");
                     blContenidoOk = false;
                 }
 
@@ -715,16 +718,14 @@ public class RedactarMensajesView extends BaseView implements Serializable {
                     armarTemplateAgradecimiento(true);
 
                     if (blAgradecimiento) {
-                        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Template de agradecimiento se guardó correctamente", null);
-                        FacesContext.getCurrentInstance().addMessage(null, message);
+                        mostrarAlertaInfo("success");
                     }
                 }
             }
 
         } catch (Exception e) {
-            log.error(e);
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_FATAL, "Ocurrió un error al grabar el comunicado", null);
-            FacesContext.getCurrentInstance().addMessage(null, message);
+            mostrarError(log, e);
+            mostrarAlertaFatal("error.was.occurred");
 
         }
     }

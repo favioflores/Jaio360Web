@@ -31,7 +31,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.primefaces.PrimeFaces;
 
 @ManagedBean(name = "usuarioSesion")
 @ViewScoped
@@ -152,7 +151,7 @@ public class UsuarioSesion extends BaseView implements Serializable {
                         //session.setMaxInactiveInterval(Constantes.INTERVAL_SESSION);
                         session.setAttribute("usuarioInfo", usuarioInfo);
 
-                        FacesContext.getCurrentInstance().getExternalContext().redirect("bienvenida.jsf");
+                        FacesContext.getCurrentInstance().getExternalContext().redirect("welcome.jsf");
 
                     }
                 }
@@ -288,17 +287,6 @@ public class UsuarioSesion extends BaseView implements Serializable {
             log.error(ex);
         }
 
-    }
-
-    public void abrirPanel() {
-
-        Map<String, Object> options = new HashMap();
-        options.put("modal", true);
-        options.put("resizable", false);
-        options.put("contentWidth", 400);
-        //options.put("style", "max-width: 400px;");
-
-        PrimeFaces.current().dialog().openDynamic("clave", options, null);
     }
 
     public void ingresaSistema() {

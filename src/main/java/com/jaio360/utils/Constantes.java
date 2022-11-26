@@ -44,9 +44,14 @@ public class Constantes {
     public static Integer INT_ET_SENDER_USUARIO = 61;
     public static Integer INT_ET_SENDER_CONTRASEÑA = 62;
     
-    public static Integer INT_ET_TIPO_USUARIO_ADMINISTRADOR = 3;
-    public static Integer INT_ET_TIPO_USUARIO_USUARIO_MAESTRO = 4;
-    public static Integer INT_ET_TIPO_USUARIO_USUARIO = 5;
+    //public static Integer INT_ET_TIPO_USUARIO_ADMINISTRADOR = 3;
+    public static Integer INT_ET_TIPO_USUARIO_MANAGING_DIRECTOR = 3;
+    
+    //public static Integer INT_ET_TIPO_USUARIO_USUARIO_MAESTRO = 4;
+    public static Integer INT_ET_TIPO_USUARIO_PROJECT_MANAGER = 4;
+    
+    //public static Integer INT_ET_TIPO_USUARIO_USUARIO = 5;
+    public static Integer INT_ET_TIPO_USUARIO_EVALUATED_EVALUATOR = 5;
     
     public static Integer INT_ET_ESTADO_USUARIO_REGISTRADO = 12;
     public static Integer INT_ET_ESTADO_USUARIO_CONFIRMADO = 13;

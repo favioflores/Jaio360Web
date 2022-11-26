@@ -1,14 +1,10 @@
 package com.jaio360.view;
 
-import com.jaio360.dao.ContratoDAO;
 import com.jaio360.dao.ElementoDAO;
-import com.jaio360.dao.TarifaDAO;
 import com.jaio360.dao.UbigeoDAO;
 import com.jaio360.dao.UsuarioDAO;
 import com.jaio360.domain.UsuarioInfo;
-import com.jaio360.orm.Contrato;
 import com.jaio360.orm.Elemento;
-import com.jaio360.orm.Tarifa;
 import com.jaio360.orm.Ubigeo;
 import com.jaio360.orm.Usuario;
 import com.jaio360.utils.Constantes;
@@ -29,11 +25,9 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
-import org.apache.commons.lang.SerializationUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.primefaces.PrimeFaces;
-import org.primefaces.event.SelectEvent;
 
 @ManagedBean(name = "mantenimientoCuentaView")
 @ViewScoped
@@ -45,64 +39,96 @@ public class MantenimientoCuentaView extends BaseView implements Serializable {
 
     private List<UsuarioInfo> lstUsuario;
     private List<UsuarioInfo> filteredUsuarios;
-    private List<Contrato> lstContrato;
-    private List<Tarifa> lstTarifa;
-    private List<SelectItem> lstTipoContrato;
-    private List<SelectItem> lstEstadoContrato;
     private UsuarioInfo usuarioSeleccionado;
-    private Contrato contratoFormulario;
-    private Contrato contratoSeleccionado;
     private String[] tipoUsuario;
-    private String strNombre;
-    private String strDescripcion;
-    private String strMetodologia;
     private Integer intIdEstado;
     private Integer intIdTipoCuenta;
     private Integer intIdTipoDocumento;
-    private Usuario usuarioForm;
     private List<SelectItem> lstEstados;
     private List<SelectItem> lstTipoCuenta;
     private List<SelectItem> lstTipoDocumento;
     private List<Ubigeo> lstPaises;
     private List<Ubigeo> lstCiudades;
+    private Integer usIdCuentaPk;
+    private String usIdMail;
+    private String usTxContrasenia;
+    private Integer usIdEstado;
+    private Integer usIdTipoCuenta;
+    private String usTxNombreRazonsocial;
+    private String usTxDescripcionEmpresa;
+    private Integer usIdTipoDocumento;
+    private String usTxDocumento;
+    private boolean isEdit;
     private Integer pais;
     private Integer ciudad;
-    private boolean isEdit;
+    private String strContraseniaNueva;
+    private String strContraseniaReNueva;
 
     private ElementoDAO objElementoDAO = new ElementoDAO();
-
-    public boolean isIsEdit() {
-        return isEdit;
-    }
-
-    public void setIsEdit(boolean isEdit) {
-        this.isEdit = isEdit;
-    }
-
     private UsuarioDAO objUsuarioDAO = new UsuarioDAO();
 
-    public String getStrNombre() {
-        return strNombre;
+    public String getStrContraseniaNueva() {
+        return strContraseniaNueva;
     }
 
-    public void setStrNombre(String strNombre) {
-        this.strNombre = strNombre;
+    public void setStrContraseniaNueva(String strContraseniaNueva) {
+        this.strContraseniaNueva = strContraseniaNueva;
     }
 
-    public String getStrDescripcion() {
-        return strDescripcion;
+    public String getStrContraseniaReNueva() {
+        return strContraseniaReNueva;
     }
 
-    public void setStrDescripcion(String strDescripcion) {
-        this.strDescripcion = strDescripcion;
+    public void setStrContraseniaReNueva(String strContraseniaReNueva) {
+        this.strContraseniaReNueva = strContraseniaReNueva;
     }
 
-    public String getStrMetodologia() {
-        return strMetodologia;
+    public List<UsuarioInfo> getLstUsuario() {
+        return lstUsuario;
     }
 
-    public void setStrMetodologia(String strMetodologia) {
-        this.strMetodologia = strMetodologia;
+    public Integer getPais() {
+        return pais;
+    }
+
+    public void setPais(Integer pais) {
+        this.pais = pais;
+    }
+
+    public Integer getCiudad() {
+        return ciudad;
+    }
+
+    public void setCiudad(Integer ciudad) {
+        this.ciudad = ciudad;
+    }
+
+    public void setLstUsuario(List<UsuarioInfo> lstUsuario) {
+        this.lstUsuario = lstUsuario;
+    }
+
+    public List<UsuarioInfo> getFilteredUsuarios() {
+        return filteredUsuarios;
+    }
+
+    public void setFilteredUsuarios(List<UsuarioInfo> filteredUsuarios) {
+        this.filteredUsuarios = filteredUsuarios;
+    }
+
+    public UsuarioInfo getUsuarioSeleccionado() {
+        return usuarioSeleccionado;
+    }
+
+    public void setUsuarioSeleccionado(UsuarioInfo usuarioSeleccionado) {
+        this.usuarioSeleccionado = usuarioSeleccionado;
+    }
+
+    public String[] getTipoUsuario() {
+        return tipoUsuario;
+    }
+
+    public void setTipoUsuario(String[] tipoUsuario) {
+        this.tipoUsuario = tipoUsuario;
     }
 
     public Integer getIntIdEstado() {
@@ -111,6 +137,22 @@ public class MantenimientoCuentaView extends BaseView implements Serializable {
 
     public void setIntIdEstado(Integer intIdEstado) {
         this.intIdEstado = intIdEstado;
+    }
+
+    public Integer getIntIdTipoCuenta() {
+        return intIdTipoCuenta;
+    }
+
+    public void setIntIdTipoCuenta(Integer intIdTipoCuenta) {
+        this.intIdTipoCuenta = intIdTipoCuenta;
+    }
+
+    public Integer getIntIdTipoDocumento() {
+        return intIdTipoDocumento;
+    }
+
+    public void setIntIdTipoDocumento(Integer intIdTipoDocumento) {
+        this.intIdTipoDocumento = intIdTipoDocumento;
     }
 
     public List<SelectItem> getLstEstados() {
@@ -137,30 +179,6 @@ public class MantenimientoCuentaView extends BaseView implements Serializable {
         this.lstTipoDocumento = lstTipoDocumento;
     }
 
-    public Integer getIntIdTipoCuenta() {
-        return intIdTipoCuenta;
-    }
-
-    public void setIntIdTipoCuenta(Integer intIdTipoCuenta) {
-        this.intIdTipoCuenta = intIdTipoCuenta;
-    }
-
-    public Integer getIntIdTipoDocumento() {
-        return intIdTipoDocumento;
-    }
-
-    public void setIntIdTipoDocumento(Integer intIdTipoDocumento) {
-        this.intIdTipoDocumento = intIdTipoDocumento;
-    }
-
-    public Usuario getUsuarioForm() {
-        return usuarioForm;
-    }
-
-    public void setUsuarioForm(Usuario usuarioForm) {
-        this.usuarioForm = usuarioForm;
-    }
-
     public List<Ubigeo> getLstPaises() {
         return lstPaises;
     }
@@ -177,100 +195,84 @@ public class MantenimientoCuentaView extends BaseView implements Serializable {
         this.lstCiudades = lstCiudades;
     }
 
-    public Integer getPais() {
-        return pais;
+    public Integer getUsIdCuentaPk() {
+        return usIdCuentaPk;
     }
 
-    public void setPais(Integer pais) {
-        this.pais = pais;
+    public void setUsIdCuentaPk(Integer usIdCuentaPk) {
+        this.usIdCuentaPk = usIdCuentaPk;
     }
 
-    public Integer getCiudad() {
-        return ciudad;
+    public String getUsIdMail() {
+        return usIdMail;
     }
 
-    public void setCiudad(Integer ciudad) {
-        this.ciudad = ciudad;
+    public void setUsIdMail(String usIdMail) {
+        this.usIdMail = usIdMail;
     }
 
-    public String[] getTipoUsuario() {
-        return tipoUsuario;
+    public String getUsTxContrasenia() {
+        return usTxContrasenia;
     }
 
-    public void setTipoUsuario(String[] tipoUsuario) {
-        this.tipoUsuario = tipoUsuario;
+    public void setUsTxContrasenia(String usTxContrasenia) {
+        this.usTxContrasenia = usTxContrasenia;
     }
 
-    public List<UsuarioInfo> getFilteredUsuarios() {
-        return filteredUsuarios;
+    public Integer getUsIdEstado() {
+        return usIdEstado;
     }
 
-    public void setFilteredUsuarios(List<UsuarioInfo> filteredUsuarios) {
-        this.filteredUsuarios = filteredUsuarios;
+    public void setUsIdEstado(Integer usIdEstado) {
+        this.usIdEstado = usIdEstado;
     }
 
-    public List<UsuarioInfo> getLstUsuario() {
-        return lstUsuario;
+    public Integer getUsIdTipoCuenta() {
+        return usIdTipoCuenta;
     }
 
-    public void setLstUsuario(List<UsuarioInfo> lstUsuario) {
-        this.lstUsuario = lstUsuario;
+    public void setUsIdTipoCuenta(Integer usIdTipoCuenta) {
+        this.usIdTipoCuenta = usIdTipoCuenta;
     }
 
-    public UsuarioInfo getUsuarioSeleccionado() {
-        return usuarioSeleccionado;
+    public String getUsTxNombreRazonsocial() {
+        return usTxNombreRazonsocial;
     }
 
-    public void setUsuarioSeleccionado(UsuarioInfo usuarioSeleccionado) {
-        this.usuarioSeleccionado = usuarioSeleccionado;
+    public void setUsTxNombreRazonsocial(String usTxNombreRazonsocial) {
+        this.usTxNombreRazonsocial = usTxNombreRazonsocial;
     }
 
-    public List<Contrato> getLstContrato() {
-        return lstContrato;
+    public String getUsTxDescripcionEmpresa() {
+        return usTxDescripcionEmpresa;
     }
 
-    public void setLstContrato(List<Contrato> lstContrato) {
-        this.lstContrato = lstContrato;
+    public void setUsTxDescripcionEmpresa(String usTxDescripcionEmpresa) {
+        this.usTxDescripcionEmpresa = usTxDescripcionEmpresa;
     }
 
-    public List<Tarifa> getLstTarifa() {
-        return lstTarifa;
+    public Integer getUsIdTipoDocumento() {
+        return usIdTipoDocumento;
     }
 
-    public void setLstTarifa(List<Tarifa> lstTarifa) {
-        this.lstTarifa = lstTarifa;
+    public void setUsIdTipoDocumento(Integer usIdTipoDocumento) {
+        this.usIdTipoDocumento = usIdTipoDocumento;
     }
 
-    public Contrato getContratoFormulario() {
-        return contratoFormulario;
+    public String getUsTxDocumento() {
+        return usTxDocumento;
     }
 
-    public void setContratoFormulario(Contrato contratoFormulario) {
-        this.contratoFormulario = contratoFormulario;
+    public void setUsTxDocumento(String usTxDocumento) {
+        this.usTxDocumento = usTxDocumento;
     }
 
-    public List<SelectItem> getLstTipoContrato() {
-        return lstTipoContrato;
+    public boolean isIsEdit() {
+        return isEdit;
     }
 
-    public void setLstTipoContrato(List<SelectItem> lstTipoContrato) {
-        this.lstTipoContrato = lstTipoContrato;
-    }
-
-    public List<SelectItem> getLstEstadoContrato() {
-        return lstEstadoContrato;
-    }
-
-    public void setLstEstadoContrato(List<SelectItem> lstEstadoContrato) {
-        this.lstEstadoContrato = lstEstadoContrato;
-    }
-
-    public Contrato getContratoSeleccionado() {
-        return contratoSeleccionado;
-    }
-
-    public void setContratoSeleccionado(Contrato contratoSeleccionado) {
-        this.contratoSeleccionado = contratoSeleccionado;
+    public void setIsEdit(boolean isEdit) {
+        this.isEdit = isEdit;
     }
 
     @PostConstruct
@@ -280,71 +282,13 @@ public class MantenimientoCuentaView extends BaseView implements Serializable {
         poblarPaises();
         poblarTipoCuentas();
         poblarTipoDocumento();
-        //poblarCiudades();
         obtenerListaUsuarios();
 
         tipoUsuario = new String[3];
-        tipoUsuario[0] = msg(Constantes.INT_ET_TIPO_USUARIO_ADMINISTRADOR.toString());
-        tipoUsuario[1] = msg(Constantes.INT_ET_TIPO_USUARIO_USUARIO.toString());
-        tipoUsuario[2] = msg(Constantes.INT_ET_TIPO_USUARIO_USUARIO_MAESTRO.toString());
+        tipoUsuario[0] = msg(Constantes.INT_ET_TIPO_USUARIO_MANAGING_DIRECTOR.toString());
+        tipoUsuario[1] = msg(Constantes.INT_ET_TIPO_USUARIO_EVALUATED_EVALUATOR.toString());
+        tipoUsuario[2] = msg(Constantes.INT_ET_TIPO_USUARIO_PROJECT_MANAGER.toString());
 
-        lstContrato = new ArrayList<>();
-        lstTarifa = new ArrayList<>();
-        lstTipoContrato = new ArrayList<>();
-        lstEstadoContrato = new ArrayList<>();
-        contratoFormulario = new Contrato();
-        contratoFormulario.setTarifa(new Tarifa());
-        contratoFormulario.setUsuario(new Usuario());
-
-        TarifaDAO tarifaDAO = new TarifaDAO();
-
-        lstTarifa = tarifaDAO.obtenListaTarifa();
-
-        List<Tarifa> lstTemp = new ArrayList();
-        for (Tarifa objTarifa : lstTarifa) {
-
-            Tarifa objTarifaT = (Tarifa) SerializationUtils.clone(objTarifa);
-            objTarifaT.setTaTxDescripcion(objTarifaT.getTaTxDescripcion() + " - " + objTarifaT.getTaDePrecio());
-            lstTemp.add(objTarifaT);
-
-        }
-
-        lstTarifa = lstTemp;
-
-        //EHCacheManager objEHCacheManager = new EHCacheManager();
-        List<Elemento> lstElementos;
-        Iterator itLstElementos;
-
-        lstElementos = objElementoDAO.obtenListaElementoXDefinicion(Constantes.INT_DT_ESTADO_CONTRATO);
-
-        itLstElementos = lstElementos.iterator();
-        lstEstadoContrato = new ArrayList<>();
-
-        while (itLstElementos.hasNext()) {
-            Elemento objElemento = (Elemento) itLstElementos.next();
-
-            SelectItem objSelectItem = new SelectItem();
-            objSelectItem.setValue(objElemento.getElIdElementoPk());
-            objSelectItem.setLabel(objElemento.getElTxDescripcion());
-
-            lstEstadoContrato.add(objSelectItem);
-        }
-
-        lstElementos = objElementoDAO.obtenListaElementoXDefinicion(Constantes.INT_DT_TIPO_CONTRATO);
-
-        itLstElementos = lstElementos.iterator();
-        lstTipoContrato = new ArrayList<>();
-
-        while (itLstElementos.hasNext()) {
-            Elemento objElemento = (Elemento) itLstElementos.next();
-
-            SelectItem objSelectItem = new SelectItem();
-            objSelectItem.setValue(objElemento.getElIdElementoPk());
-            objSelectItem.setLabel(objElemento.getElTxDescripcion());
-
-            lstTipoContrato.add(objSelectItem);
-        }
-        //lstContrato = contratoDAO.obtenListaContratoPorUsuario(1);
     }
 
     private void obtenerListaUsuarios() {
@@ -389,133 +333,26 @@ public class MantenimientoCuentaView extends BaseView implements Serializable {
     }
 
     public void editarUsuario(UsuarioInfo objUsuario) {
-
-        if (objUsuario != null) {
-
-            try {
-
-                usuarioForm = objUsuario.getUsuario();
-                isEdit = true;
-
-                UbigeoDAO objUbigeoDAO = new UbigeoDAO();
-
-                ciudad = objUsuario.getIntIdCiudad();
-                pais = objUbigeoDAO.obtenPais(objUsuario.getIntIdCiudad());
-
-                poblarCiudades();
-
-            } catch (Exception ex) {
-                log.error(ex);
-            }
-        }
-    }
-
-    public void cargarContrato(SelectEvent event) {
-
-        UsuarioInfo usuario = (UsuarioInfo) event.getObject();
-        ContratoDAO contratoDAO = new ContratoDAO();
-
-        if (Utilitarios.noEsNuloOVacio(usuario)) {
-
-            resetFail();
-            contratoFormulario.setUsuario(usuarioSeleccionado.getUsuario());
-            lstContrato = contratoDAO.obtenListaContratoPorUsuario(usuario.getIntUsuarioPk());
-            /*
-          ContratoDAO contratoDAO = new ContratoDAO();
-          //Usuario usuFormulario = new Usuario();
-          usuarioSeleccionado.setUsIdCuentaPk(usuario.getUsIdCuentaPk());
-          usuarioSeleccionado.setUsIdMail(usuario.getUsIdMail());
-          contratoFormulario.setUsuario(usuarioSeleccionado);
-          lstContrato = contratoDAO.obtenListaContratoPorUsuario(usuario.getUsIdCuentaPk());*/
-        }
-
-    }
-
-    public void grabarContrato() {
-
-        FacesContext context = FacesContext.getCurrentInstance();
-
-        try {
-            if (contratoFormulario != null
-                    && contratoFormulario.getUsuario() != null
-                    && contratoFormulario.getUsuario().getUsIdCuentaPk().intValue() > 0) {
-
-                ContratoDAO contratoDAO = new ContratoDAO();
-
-                if (Utilitarios.noEsNuloOVacio(contratoFormulario.getCoIdContratoPk())) {
-                    contratoDAO.actualizaContrato(contratoFormulario);
-                    lstContrato = contratoDAO.obtenListaContratoPorUsuario(usuarioSeleccionado.getIntUsuarioPk());
-                    context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Confirmación", "Se actualizo correctamente"));
-                } else {
-                    int idContrato = (int) contratoDAO.guardaContrato(contratoFormulario);
-                    if (idContrato > 0) {
-                        lstContrato = contratoDAO.obtenListaContratoPorUsuario(usuarioSeleccionado.getIntUsuarioPk());
-                        context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Confirmación", "Se guardo correctamente"));
-                    } else {
-                        context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Confirmación", "Ocurrio un error al guardar el listado"));
-                    }
-                }
-
-            } else {
-                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Mensaje", "Seleccione un usuario"));
-            }
-
-        } catch (Exception e) {
-            log.error(e);
-        }
-
-    }
-
-    public void resetFail() {
-
-        Usuario usuario = new Usuario();
-        ContratoDAO contratoDAO = new ContratoDAO();
-        lstContrato = new ArrayList<>();
-
-        if (contratoFormulario != null
-                && contratoFormulario.getUsuario() != null
-                && contratoFormulario.getUsuario() != null
-                && Utilitarios.noEsNuloOVacio(contratoFormulario.getUsuario().getUsIdCuentaPk())) {
-
-            usuario = contratoFormulario.getUsuario();
-        }
-        contratoFormulario = new Contrato();
-        contratoFormulario.setUsuario(usuario);
-        contratoFormulario.setTarifa(new Tarifa());
-        lstContrato = contratoDAO.obtenListaContratoPorUsuario(usuarioSeleccionado.getIntUsuarioPk());
-    }
-
-    public void editContrato(SelectEvent event) {
-
-        contratoFormulario = contratoSeleccionado;
-        /* Contrato contrato = (Contrato) event.getObject();
-       ContratoDAO contratoDAO = new ContratoDAO();
-       contratoFormulario = new Contrato();
-       contratoFormulario = contratoDAO.obtenContrato(contrato.getCoIdContratoPk());
-       contratoFormulario.setUsuario(usuarioSeleccionado);
-       lstContrato = contratoDAO.obtenListaContratoPorUsuario(usuarioSeleccionado.getUsIdCuentaPk());*/
-    }
-
-    public void borrarContrato(Contrato contrato) {
-
         try {
 
-            ContratoDAO contratoDAO = new ContratoDAO();
-            Usuario usuario = contrato.getUsuario();
-            contratoDAO.eliminaContrato(contrato);
+            isEdit = true;
 
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Borrar contrato", "El contrato se eliminó correctamente");
-            FacesContext.getCurrentInstance().addMessage(null, message);
+            UbigeoDAO objUbigeoDAO = new UbigeoDAO();
 
-            //init();
-            resetFail();
-            lstContrato = contratoDAO.obtenListaContratoPorUsuario(usuario.getUsIdCuentaPk());
+            usIdCuentaPk = objUsuario.getIntUsuarioPk();
+            usIdMail = objUsuario.getStrEmail();
+            usTxDescripcionEmpresa = objUsuario.getStrDescripcion();
+            usTxNombreRazonsocial = objUsuario.getStrEmpresaDesc();
+            usIdTipoCuenta = objUsuario.getUsuario().getUsIdTipoCuenta();
+            ciudad = objUsuario.getIntIdCiudad();
+            pais = objUbigeoDAO.obtenPais(objUsuario.getIntIdCiudad());
+
+            poblarCiudades();
 
         } catch (Exception ex) {
-            log.error(ex);
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_FATAL, "Borrar contrato", "Ocurrio un error al realizar esta accion. Por favor comunicate con el administrador");
-            FacesContext.getCurrentInstance().addMessage(null, message);
+            mostrarError(log, ex);
         }
+
     }
 
     public boolean globalFilterFunction(Object value, Object filter, Locale locale) {
@@ -536,50 +373,71 @@ public class MantenimientoCuentaView extends BaseView implements Serializable {
 
         try {
 
-            if (usuarioForm != null) {
+            Usuario objUsuario = objUsuarioDAO.obtenUsuarioByEmail(usIdMail);
 
-                String strErrores = esValido(usuarioForm);
+            if (usIdCuentaPk == null && objUsuario == null) { // NUEVO
 
-                if (Utilitarios.esNuloOVacio(strErrores)) {
+                objUsuario = new Usuario();
+                EncryptDecrypt objEncryptDecrypt = new EncryptDecrypt();
+                objUsuario.setUsTxContrasenia(objEncryptDecrypt.encrypt(Utilitarios.generarClave()));
+                Ubigeo objUbigeo = new Ubigeo();
+                objUbigeo.setUbIdUbigeoPk(ciudad);
+                objUsuario.setUbigeo(objUbigeo);
+                objUsuario.setUsTxDescripcionEmpresa(usTxDescripcionEmpresa);
+                objUsuario.setUsTxNombreRazonsocial(usTxNombreRazonsocial);
+                objUsuario.setUsIdEstado(Constantes.INT_ET_ESTADO_USUARIO_REGISTRADO);
+                objUsuario.setUsFeRegistro(new Date());
+                objUsuario.setUsIdTipoCuenta(usIdTipoCuenta);
+                objUsuario.setUsIdMail(usIdMail);
+                objUsuarioDAO.guardaUsuario(objUsuario);
 
-                    UsuarioDAO usuarioDAO = new UsuarioDAO();
+                mostrarAlertaInfo("created.successfully");
 
-                    if (usuarioForm.getUsIdCuentaPk() != null) {
-                        usuarioDAO.actualizaUsuario(usuarioForm);
-                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Usuario " + usuarioForm.getUsIdMail() + " actualizado correctamente", null));
+                obtenerListaUsuarios();
 
-                    } else {
-                        EncryptDecrypt objEncryptDecrypt = new EncryptDecrypt();
-                        usuarioForm.setUsTxContrasenia(objEncryptDecrypt.encrypt(Utilitarios.generarClave()));
-                        usuarioForm.getUbigeo().setUbIdUbigeoPk(ciudad);
-                        usuarioForm.setUsIdEstado(Constantes.INT_ET_ESTADO_USUARIO_REGISTRADO);
-                        usuarioForm.setUsFeRegistro(new Date());
-                        usuarioDAO.guardaUsuario(usuarioForm);
-                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Usuario creado correctamente", null));
+            } else if (usIdCuentaPk == null && objUsuario != null) { // YA EXISTE Y QUIERO CREARLO
 
-                    }
+                mostrarAlertaError("El mail ingresado ya está siendo utilizado");
 
-                } else {
-                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, strErrores, null));
-                }
+            } else if (usIdCuentaPk != null && objUsuario != null) { // QUIERO ACTUALIZARLO
 
-                resetFormUsuario();
+                objUsuario.setUsTxNombreRazonsocial(usTxDescripcionEmpresa);
+                objUsuario.setUsTxDescripcionEmpresa(usTxNombreRazonsocial);
+                objUsuario.setUsIdTipoCuenta(usIdTipoCuenta);
+                Ubigeo objUbigeoCiudad = new Ubigeo();
+                objUbigeoCiudad.setUbIdUbigeoPk(ciudad);
+                objUsuario.setUbigeo(objUbigeoCiudad);
+
+                objUsuarioDAO.actualizaUsuario(objUsuario);
+
+                mostrarAlertaInfo("updated");
+
                 obtenerListaUsuarios();
 
             }
 
         } catch (Exception e) {
-            log.error(e);
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Ocurrio un error al guardar", null));
+            mostrarError(log, e);
+            mostrarAlertaFatal("error.was.occurred");
         }
 
     }
 
-    private void resetFormUsuario() {
+    public void resetFormUsuario() {
 
-        usuarioForm = new Usuario();
+        usIdCuentaPk = null;
+        usIdMail = null;
+        usTxContrasenia = null;
+        usIdEstado = null;
+        usIdTipoCuenta = null;
+        usTxNombreRazonsocial = "";
+        usTxDescripcionEmpresa = null;
+        usIdTipoDocumento = null;
+        usTxDocumento = null;
         pais = null;
         ciudad = null;
+        strContraseniaNueva = null;
+        strContraseniaReNueva = null;
         isEdit = false;
 
     }
@@ -587,8 +445,7 @@ public class MantenimientoCuentaView extends BaseView implements Serializable {
     private void poblarPaises() {
         lstCiudades = new ArrayList<>();
 
-        usuarioForm = new Usuario();
-        usuarioForm.setUbigeo(new Ubigeo());
+        ciudad = null;
 
         UbigeoDAO objUbigeoDAO = new UbigeoDAO();
         lstPaises = new ArrayList<>();
@@ -667,14 +524,12 @@ public class MantenimientoCuentaView extends BaseView implements Serializable {
     private String esValido(Usuario usuarioForm) {
 
         /* SI SE MODIFICA UNA CUENTA EXISTENTE */
-        if (Utilitarios.noEsNuloOVacio(usuarioForm.getUsIdCuentaPk())) {
+        if (Utilitarios.esNuloOVacio(usuarioForm.getUsIdCuentaPk())) {
 
-            Usuario objUsuario = objUsuarioDAO.obtenUsuario(usuarioForm.getUsIdCuentaPk());
+            Usuario objUsuario = objUsuarioDAO.obtenUsuarioByEmail(usuarioForm.getUsIdMail());
 
-            if (!objUsuario.getUsIdMail().toUpperCase().equals(usuarioForm.getUsIdMail().toUpperCase())) {
-                if (objUsuarioDAO.iniciaSesion(usuarioForm.getUsIdMail()) != null) {
-                    return "El mail ingresado ya está siendo utilizado";
-                }
+            if (objUsuario != null) {
+                return "El mail ingresado ya está siendo utilizado";
             }
 
         }
@@ -683,4 +538,27 @@ public class MantenimientoCuentaView extends BaseView implements Serializable {
         return Constantes.strVacio;
     }
 
+    public void actualizaContraseña() {
+
+        try {
+
+            if (!strContraseniaNueva.equals(strContraseniaReNueva)) {
+                mostrarAlertaError("must.be.same.password=");
+            } else {
+
+                Usuario objUsuario = objUsuarioDAO.obtenUsuario(usIdCuentaPk);
+
+                EncryptDecrypt objEncryptDecrypt = new EncryptDecrypt();
+
+                objUsuario.setUsTxContrasenia(objEncryptDecrypt.encrypt(strContraseniaNueva));
+                objUsuarioDAO.actualizaUsuario(objUsuario);
+
+                mostrarAlertaInfo("password.changed.success");
+
+            }
+        } catch (Exception e) {
+            mostrarError(log, e);
+            mostrarAlertaFatal("error.was.occurred");
+        }
+    }
 }

@@ -7,11 +7,16 @@
                 template="../templates/templateWorkspace.xhtml">    
 
     <ui:define name="head"> 
+        <style>
+            .ui-progressbar .ui-widget-header {
+                background: #cbeccc !important;
+            }
+        </style>
     </ui:define>
 
     <ui:define name="cabecera">
         <ui:include src="cabecera.xhtml" />
-        <p:staticMessage severity="info" summary="INFO" detail="El proyecto actual es: #{stepSixView.objProyectoInfo.strDescNombre}" style="width: 100%; margin-top: 5px; margin-left: 2px; margin-right: 2px;"/>
+        <p:staticMessage severity="info" summary="#{msg['info']}" detail="#{msg['project.info']} #{stepOneView.objProyectoInfo.strDescNombre}" style="width: 100%; margin-top: 5px; margin-left: 2px; margin-right: 2px;"/>
     </ui:define>
     <ui:define name="helpSteps">
 
@@ -19,19 +24,20 @@
 
             <div class="p-field">
                 <p:steps readonly="false" activeIndex="#{stepSixView.activeIndex}" >
-                    <p:menuitem value="Configurar base"         actionListener="#{stepSixView.goToStep(1)}"/>
-                    <p:menuitem value="Cargar evaluación"       actionListener="#{stepSixView.goToStep(2)}"/>
-                    <p:menuitem value="Asignar evaluaciones"    actionListener="#{stepSixView.goToStep(3)}"/>
-                    <p:menuitem value="Preparar comunicados"    actionListener="#{stepSixView.goToStep(4)}"/>
-                    <p:menuitem value="Ejecución"               actionListener="#{stepSixView.goToStep(5)}"/>
-                    <p:menuitem value="Análisis"                actionListener="#{stepSixView.goToStep(6)}"/>
-                </p:steps></div>
+                    <p:menuitem value="#{msg['step.1']}" actionListener="#{stepOneView.goToStep(1)}"/>
+                    <p:menuitem value="#{msg['step.2']}" actionListener="#{stepOneView.goToStep(2)}"/>
+                    <p:menuitem value="#{msg['step.3']}" actionListener="#{stepOneView.goToStep(3)}"/>
+                    <p:menuitem value="#{msg['step.4']}" actionListener="#{stepOneView.goToStep(4)}"/>
+                    <p:menuitem value="#{msg['step.5']}" actionListener="#{stepOneView.goToStep(5)}"/>
+                    <p:menuitem value="#{msg['step.6']}" actionListener="#{stepOneView.goToStep(6)}"/>
+                </p:steps>
+            </div>
             <p:spacer/>
             <div class="p-field">
                 <center>
-                    <p:commandButton value="Regresar" type="submit" actionListener="#{stepSixView.backStep()}" update="formPrincipalProyecto" styleClass="ui-button-secondary" icon="pi pi-angle-left" />
+                    <p:commandButton value="#{msg['back']}" type="submit" actionListener="#{stepSixView.backStep()}" update="formPrincipalProyecto" styleClass="ui-button-secondary" icon="pi pi-angle-left" />
                     <p:spacer/>
-                    <p:commandButton value="Siguiente" type="submit" actionListener="#{stepSixView.nextStep()}" update="formPrincipalProyecto" styleClass="ui-button-secondary" icon="pi pi-angle-right"  disabled="true"/>                   
+                    <p:commandButton value="#{msg['next']}" type="submit" actionListener="#{stepSixView.nextStep()}" update="formPrincipalProyecto" styleClass="ui-button-secondary" icon="pi pi-angle-right"  disabled="true"/>                   
                 </center>
             </div>
 
@@ -48,12 +54,12 @@
 
                 <p:card>
 
-                    <h3>Análisis y resultados individuales</h3><!-- comment -->
+                    <h3>#{msg['step6.title1']}</h3><!-- comment -->
 
                     <div class="ui-fluid p-formgrid p-grid">
 
                         <div class="p-field p-col-12 p-md-12">
-                            <p:outputLabel value="Genera informes personales de las personas evaluadas." />
+                            <p:outputLabel value="#{msg['step6.desc1']}" />
                         </div>
                     </div>
                     <div class="ui-fluid p-formgrid p-grid">
@@ -61,14 +67,14 @@
                         <div class="p-field p-col-12 p-md-12">
 
                             <p:card>
-                                <h4>Selección de evaluados</h4>
+                                <h4>#{msg['step3.evaluated.list']}</h4>
                                 <p:dataTable id="checkboxDT3"
                                              widgetVar="checkboxDT3"
                                              var="evaluado" 
-                                             value="#{generaReportesView.lstEvaluados}" 
+                                             value="#{seguimientoProyectoView.lstParticipantesIniciados}" 
                                              selection="#{generaReportesView.lstEvaluadosSeleccionados}" 
                                              rowKey="#{evaluado.paIdParticipantePk}" 
-                                             rows="15"
+                                             rows="5"
                                              size="small"
                                              paginator="true"
                                              stripedRows="true"
@@ -76,7 +82,7 @@
                                              paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                              rowsPerPageTemplate="5,10,15"
                                              rowIndexVar="index"
-                                             emptyMessage="No se encontraron evaluados">
+                                             emptyMessage="#{msg['no.items']}">
 
                                     <!--
                                     <f:facet name="header">
@@ -86,6 +92,35 @@
                                         </p:outputPanel>
                                     </f:facet>
                                     --> 
+
+                                    <f:facet name="footer">
+                                        <div class="ui-fluid p-formgrid p-grid">
+                                            <div class="p-field p-col-12 p-md-3">
+                                                <p:selectCheckboxMenu id="idCheckIndividual" value="#{generaReportesView.lstSeleccionadosIndividual}" 
+                                                                      filter="true" 
+                                                                      label="#{msg['please.select.reports']}"
+                                                                      filterMatchMode="startsWith" 
+                                                                      panelStyle="width: 30rem" 
+                                                                      scrollHeight="250">
+                                                    <f:selectItems value="#{generaReportesView.lstContenidoIndividual}"/>
+                                                </p:selectCheckboxMenu>
+
+                                            </div>
+                                            <div class="p-field p-col-12 p-md-3">
+                                                <p:commandButton value="#{msg['step6.button.generate.individual']}" ajax="true" update="@form" actionListener="#{generaReportesView.generarReporteIndividual()}" icon="pi pi-file" />
+                                            </div>
+                                            <div class="p-field p-col-12 p-md-3">
+                                                <p:commandButton value="#{msg['step6.button.download.individual']}" ajax="false" disabled="#{generaReportesView.fileIndividual==null?true:false}" update="@this" icon="pi pi-download" >
+                                                    <p:fileDownload value="#{generaReportesView.fileIndividual}" />
+                                                </p:commandButton>
+                                            </div>
+                                            <div class="p-field p-col-12 p-md-3">
+                                                <p:commandButton value="#{msg['step6.button.plan.individual']}" ajax="false" styleClass="ui-button-warning" icon="pi pi-download">
+                                                    <p:fileDownload value="#{generaReportesView.planAccion}" />
+                                                </p:commandButton>
+                                            </div>
+                                        </div>
+                                    </f:facet>
                                     <p:column style="width: 40px;">
                                         <f:facet name="header">
                                             <h:outputText value="#" />
@@ -96,166 +131,202 @@
 
                                     <p:column selectionMode="multiple" style="width:35px;text-right" />
 
-                                    <p:column headerText="Descripción" >
+                                    <p:column headerText="#{msg['description']}" >
                                         <h:outputText value="#{evaluado.paTxDescripcion}" />
                                     </p:column>
 
-                                    <p:column headerText="Correo" >
+                                    <p:column headerText="#{msg['role']}" >
+                                        <h:outputText value="#{evaluado.paTxNombreCargo}" />
+                                    </p:column>
+
+                                    <p:column headerText="#{msg['email']}" >
                                         <h:outputText value="#{evaluado.paTxCorreo}" />
                                     </p:column>
-                                    
-                                    <p:column headerText="Nro de evaluadores">
-                                        <h:outputText value="#{parte.strTipoArchivo}" />
-                                    </p:column>
-                                    
-                                    <p:column headerText="Evaluaciones resueltas">
-                                        <h:outputText value="#{parte.strTipoArchivo}" />
+
+                                    <p:column headerText="#{msg['step5.percent.progress.evaluted']}" style="text-align: center;" >
+                                        <p:progressBar value="#{evaluado.bdPorcentajeAvance}" displayOnly="true" labelTemplate="#{evaluado.bdPorcentajeAvance}%" />
                                     </p:column>
 
-                                </p:dataTable>
-                            </p:card>
-                        </div>
-                        <div class="p-field p-col-12 p-md-12">
-                            <p:card>
-                                <h4>Modelos disponibles</h4>
-                                <p:dataTable id="checkboxDT1" 
-                                             var="parte" 
-                                             size="small"
-                                             stripedRows="true"
-                                             value="#{generaReportesView.lstContenidoIndividual}" 
-                                             selection="#{generaReportesView.lstSeleccionadosIndividual}" 
-                                             rowKey="#{parte.intModeloPk}" >
-
-                                    <p:column selectionMode="multiple" style="width:35px;text-right"/>
-
-                                    <p:column headerText="Evaluado">
-                                        <h:outputText value="#{parte.strDescModelo}" />
-                                    </p:column>
-
-                                    <!--
-                                    <p:column headerText="Tipo de archivo">
-                                        <h:outputText value="#{parte.strTipoArchivo}" />
-                                    </p:column>
-            
-                                    <p:column headerText="Id" style="width: 20px; text-align: center;">
-                                        <h:outputText value="#{parte.intModeloPk}" />
-                                    </p:column>
-                                    -->
-                                </p:dataTable>
-                            </p:card>
-                        </div>
-
-                        <div class="p-field p-col-12 p-md-12">
-                            <p:card>
-                                <h4>Opciones</h4>
-                                <div class="p-field">
-                                    <p:commandButton value="Generar informe individual" ajax="true" update="@form" actionListener="#{generaReportesView.generarReporteIndividual}" />
-                                </div>
-                                <div class="p-field">
-                                    <p:commandButton value="Descargar informe individual" ajax="false" disabled="#{generaReportesView.fileIndividual==null?true:false}" update="@this" >
-                                        <p:fileDownload value="#{generaReportesView.fileIndividual}" />
-                                    </p:commandButton>
-                                </div>
-                                <div class="p-field">
-                                    <p:commandButton value="Descargar plan de accion" ajax="false" styleClass="ui-button-warning" >
-                                        <p:fileDownload value="#{generaReportesView.planAccion}" />
-                                    </p:commandButton>
-                                </div>
-                            </p:card>
-                        </div>
-                    </div>
-                </p:card>
-            </h:form>
-
-            <p:divider/>
-            
-            <h:form>
-                <p:card>
-                    <h3>Análisis y resultados grupales</h3><!-- comment -->
-
-                    <div class="ui-fluid p-formgrid p-grid">
-
-                        <div class="p-field p-col-12 p-md-12">
-                            <p:outputLabel value="Genera informes grupales del proceso." />
-                        </div>
-                    </div>
-                    <div class="ui-fluid p-formgrid p-grid">
-
-                        <div class="p-field p-col-12 p-md-5">
-                            <p:card>
-                                <h4>Lista de cuestionarios</h4>
-                                <p:dataTable id="dtCuestionarios"
-                                             widgetVar="dtCuestionarios"
-                                             var="cuestionario" 
-                                             value="#{generaReportesView.lstCuestionarios}" 
-                                             selection="#{generaReportesView.lstCuestionariosSeleccionados}" 
-                                             rowKey="#{cuestionario.cuIdCuestionarioPk}" 
-                                             rows="15"
-                                             paginator="true"
-                                             size="small"
-                                             stripedRows="false"
-                                             paginatorPosition="bottom"
-                                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                             rowsPerPageTemplate="5,10,15"
-                                             emptyMessage="No se encontraron cuestionarios"
-                                             rowIndexVar="index" >
-
-                                    <p:column style="width: 40px;">
-                                        <f:facet name="header">
-                                            <h:outputText value="#" />
-                                        </f:facet>
-                                        <h:outputText 
-                                            value="#{index + 1}" />
+                                    <p:column headerText="#{msg['license']}" sortBy="#{red.blEvaluacionTerminada}" style="text-align: center;">
+                                        <!--p:tag  value="#{red.blEvaluacionTerminada==true?msg['complete']:msg['pending']}" 
+                                                severity="#{red.blEvaluacionTerminada==true?'success':''}" -->
+                                        <p:tag  value="#{msg['not.used']}" 
+                                                severity="info" />
                                     </p:column> 
-                                    <p:column selectionMode="multiple" style="width:35px;text-right" />
-
-                                    <p:column headerText="Descripción" >
-                                        <h:outputText value="#{cuestionario.cuTxDescripcion}" />
-                                    </p:column>
-
 
                                 </p:dataTable>
-                            </p:card>
-                        </div>
-                        <div class="p-field p-col-12 p-md-4">
-
-                            <p:card>
-                                <h4>Modelos disponibles</h4>
-                                <p:dataTable id="checkboxDT2" 
-                                             var="parte" 
-                                             size="small"
-                                             stripedRows="true"
-                                             value="#{generaReportesView.lstContenidoGrupal}" 
-                                             selection="#{generaReportesView.lstSeleccionadosGrupal}" 
-                                             rowKey="#{parte.intModeloPk}" style="margin-bottom:0" >
-
-                                    <p:column selectionMode="multiple" style="width:35px;text-align:center"/>
-                                    <p:column headerText="Descripción">
-                                        <h:outputText value="#{parte.strDescModelo}" />
-                                    </p:column>
-
-                                </p:dataTable>
-                            </p:card>
-                        </div>
-
-                        <div class="p-field p-col-12 p-md-3">
-                            <p:card>
-                                <h4>Opciones</h4>
-                                <div class="p-field">
-                                    <p:commandButton value="Generar informe grupal" ajax="true" update="@form" actionListener="#{generaReportesView.generarReporteGrupal}" />
-                                </div>
-                                <div class="p-field">
-                                    <p:commandButton value="Descargar informe grupal" ajax="false" disabled="#{generaReportesView.fileGrupal==null?true:false}" update="@this" >
-                                        <p:fileDownload value="#{generaReportesView.fileGrupal}" />
-                                    </p:commandButton>
-                                </div>
                             </p:card>
                         </div>
                     </div>
                 </p:card>
-
             </h:form>
 
+            <!--
+                        <p:divider/>
+            
+                        <h:form>
+                            <p:card>
+                                <h3>#{msg['step6.title2']}</h3>
+            
+                                <div class="ui-fluid p-formgrid p-grid">
+            
+                                    <div class="p-field p-col-12 p-md-12">
+                                        <p:outputLabel value="#{msg['step6.title2']}" />
+                                    </div>
+                                </div>
+                                <div class="ui-fluid p-formgrid p-grid">
+            
+                                    <div class="p-field p-col-12 p-md-5">
+                                        <p:card>
+                                            <h4>Lista de cuestionarios</h4>
+                                            <p:dataTable id="dtCuestionarios"
+                                                         widgetVar="dtCuestionarios"
+                                                         var="cuestionario" 
+                                                         value="#{generaReportesView.lstCuestionarios}" 
+                                                         selection="#{generaReportesView.lstCuestionariosSeleccionados}" 
+                                                         rowKey="#{cuestionario.cuIdCuestionarioPk}" 
+                                                         rows="15"
+                                                         paginator="true"
+                                                         size="small"
+                                                         stripedRows="false"
+                                                         paginatorPosition="bottom"
+                                                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                         rowsPerPageTemplate="5,10,15"
+                                                         emptyMessage="No se encontraron cuestionarios"
+                                                         rowIndexVar="index" >
+            
+                                                <p:column style="width: 40px;">
+                                                    <f:facet name="header">
+                                                        <h:outputText value="#" />
+                                                    </f:facet>
+                                                    <h:outputText 
+                                                        value="#{index + 1}" />
+                                                </p:column> 
+                                                <p:column selectionMode="multiple" style="width:35px;text-right" />
+            
+                                                <p:column headerText="Descripción" >
+                                                    <h:outputText value="#{cuestionario.cuTxDescripcion}" />
+                                                </p:column>
+            
+            
+                                            </p:dataTable>
+                                        </p:card>
+                                    </div>
+                                    <div class="p-field p-col-12 p-md-4">
+            
+                                        <p:card>
+                                            <h4>Modelos disponibles</h4>
+                                            <p:dataTable id="checkboxDT2" 
+                                                         var="parte" 
+                                                         size="small"
+                                                         stripedRows="true"
+                                                         value="#{generaReportesView.lstContenidoGrupal}" 
+                                                         selection="#{generaReportesView.lstSeleccionadosGrupal}" 
+                                                         rowKey="#{parte.intModeloPk}" style="margin-bottom:0" >
+            
+                                                <p:column selectionMode="multiple" style="width:35px;text-align:center"/>
+                                                <p:column headerText="Descripción">
+                                                    <h:outputText value="#{parte.strDescModelo}" />
+                                                </p:column>
+            
+                                            </p:dataTable>
+                                        </p:card>
+                                    </div>
+            
+                                    <div class="p-field p-col-12 p-md-3">
+                                        <p:card>
+                                            <div class="p-field">
+                                                <p:commandButton value="Generar informe grupal" ajax="true" update="@form" actionListener="#{generaReportesView.generarReporteGrupal}" />
+                                            </div>
+                                            <div class="p-field">
+                                                <p:commandButton value="Descargar informe grupal" ajax="false" disabled="#{generaReportesView.fileGrupal==null?true:false}" update="@this" >
+                                                    <p:fileDownload value="#{generaReportesView.fileGrupal}" />
+                                                </p:commandButton>
+                                            </div>
+                                        </p:card>
+                                    </div>
+                                </div>
+                            </p:card>
+            
+                        </h:form>
+            -->
         </p:panel>
+
+        <!--
+        <p:dialog widgetVar="dlgLicencias" header="#{msg['step5.subtitle.manage.licenses']}" width="500"
+                  draggable="false" closable="true" hideEffect="drop" closeOnEscape="true" showEffect="drop" 
+                  modal="true" 
+                  resizable="false" >
+
+            <h:form>
+                <p:panel>
+
+                    <p:growl id="growlFormUduario" showDetail="false" life="4000" />
+
+
+                    <div class="ui-fluid p-formgrid p-grid">
+
+                        <div class="p-field p-col-12 p-md-12">
+                            <div class="p-field">
+                                <p:outputLabel value="#{msg['licenses.assigned.message']}"></p:outputLabel>
+                            </div>
+
+                            <div class="p-field">
+                                <p:card>
+                                    <div class="p-field p-formgrid p-grid">
+                                        <div class="p-col" style="text-align: center;" >
+                                            <p:outputLabel value="#{seguimientoProyectoView.intLicenciasIndividualesRequerido}" style="font-size: 200%;" />
+                                            <p:outputLabel value=" -#{seguimientoProyectoView.intLicenciasIndividualesRequerido}" style="color: red;" />
+                                        </div>
+                                        <div style="text-align: center" >
+                                            <p:divider layout="vertical" />
+                                        </div>
+                                        <div class="p-col" style="text-align: center;">
+                                            <p:outputLabel value="#{seguimientoProyectoView.intLicenciasMasivasRequerido}" style="font-size: 200%;" />
+                                            <p:outputLabel value=" -#{seguimientoProyectoView.intLicenciasIndividualesRequerido}" style="color: red;" />
+                                        </div>
+                                    </div>
+                                    <div class="p-field p-formgrid p-grid">
+                                        <div class="p-col" style="text-align: center;">
+                                            <p:outputLabel value="#{msg['step5.number.individual.licences']}" />
+                                        </div>
+                                        <div>
+
+                                        </div>
+                                        <div class="p-col" style="text-align: center;">
+                                            <p:outputLabel value="#{msg['step5.number.massive.licences']}" />
+                                        </div>
+                                    </div>
+                                </p:card>
+                            </div>
+                            <div class="p-field">
+                                <p:outputLabel value="#{msg['licenses.continue']}" ></p:outputLabel>
+                            </div>
+                        </div>      
+                    </div>
+                    <div class="p-col-12 p-col-12 p-md-12">
+                        <div class="p-field p-formgrid p-grid">
+                            <div class="p-field p-col">
+                                <p:commandButton value="#{msg['yes']}" style="width: 100%;"  icon="pi pi-lock" update="form"
+                                                 actionListener="#{generaReportesView.generarReporteIndividual}"  oncomplete="PF('dlgLicencias').hide()" />
+                            </div>
+                            <div class="p-field p-col">
+                                <p:commandButton value="#{msg['no']}" styleClass="ui-button-danger" 
+                                                 style="width: 100%;"
+                                                 icon="pi pi-times"  onclick="PF('dlgLicencias').hide()" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <br/>
+                    <center>
+                        <p:graphicImage value="../images/logoJaio360.jpg" width="130" height="50" />
+                    </center>
+                </p:panel>
+            </h:form>
+        </p:dialog>       
+-->
+
+
     </ui:define>
 </ui:composition>

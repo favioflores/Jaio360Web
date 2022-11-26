@@ -16,7 +16,7 @@ import java.util.Date;
  *
  * @author Favio
  */
-public class UsuarioInfo extends BaseView implements Serializable{
+public class UsuarioInfo extends BaseView implements Serializable {
 
     private Integer intUsuarioPk;
     private String strEmail;
@@ -34,6 +34,12 @@ public class UsuarioInfo extends BaseView implements Serializable{
     private boolean boEsUsuarioMaestro = false;
     private boolean boEsUsuarioEvaluador = false;
     private boolean boEsUsuarioEvaluado = false;
+
+    private boolean ManagingDirector = false;
+    private boolean CountryDirector = false;
+    private boolean ProjectManager = false;
+    private boolean EvaluatedEvaluator = false;
+
     private Usuario usuario;
 
     public String getStrFechaRegistro() {
@@ -44,7 +50,6 @@ public class UsuarioInfo extends BaseView implements Serializable{
         this.strFechaRegistro = strFechaRegistro;
     }
 
-    
     public Usuario getUsuario() {
         return usuario;
     }
@@ -61,7 +66,6 @@ public class UsuarioInfo extends BaseView implements Serializable{
         this.intIdCiudad = intIdCiudad;
     }
 
-    
     public Integer getIntHistorialPk() {
         return intHistorialPk;
     }
@@ -71,10 +75,10 @@ public class UsuarioInfo extends BaseView implements Serializable{
     }
 
     public UsuarioInfo(Usuario objUsuario) {
-        
+
         this.intUsuarioPk = objUsuario.getUsIdCuentaPk();
         this.strEmail = objUsuario.getUsIdMail();
-        
+
         this.strTipoUsuario = msg(objUsuario.getUsIdTipoCuenta().toString());
         this.strDescripcion = objUsuario.getUsTxNombreRazonsocial();
         this.strEmpresaDesc = objUsuario.getUsTxDescripcionEmpresa();
@@ -83,39 +87,60 @@ public class UsuarioInfo extends BaseView implements Serializable{
         this.intIdCiudad = objUsuario.getUbigeo().getUbIdUbigeoPk();
         HistorialAccesoDAO objHistorialAccesoDAO = new HistorialAccesoDAO();
         Date dtUltimoAcceso = objHistorialAccesoDAO.obtenUltimoAcceso(intUsuarioPk);
-        
-        if(dtUltimoAcceso != null){
-            this.strUltimaConexion = Utilitarios.formatearFecha(dtUltimoAcceso,Constantes.DDMMYYYY);
-        }else{
+
+        if (dtUltimoAcceso != null) {
+            this.strUltimaConexion = Utilitarios.formatearFecha(dtUltimoAcceso, Constantes.DDMMYYYY);
+        } else {
             this.strUltimaConexion = "Sin accesos previos";
         }
         this.strIntentosErrados = "0";
         this.intHistorialPk = -1;
-        
-        if(objUsuario.getUsIdTipoCuenta().equals(Constantes.INT_ET_TIPO_USUARIO_ADMINISTRADOR)){
+
+        if (objUsuario.getUsIdTipoCuenta().equals(Constantes.INT_ET_TIPO_USUARIO_MANAGING_DIRECTOR)) {
             this.boEsAdministrador = true;
-            this.boEsUsuarioMaestro= false;
+            this.boEsUsuarioMaestro = false;
             this.boEsUsuarioEvaluado = false;
             this.boEsUsuarioEvaluador = false;
-        }else if(objUsuario.getUsIdTipoCuenta().equals(Constantes.INT_ET_TIPO_USUARIO_USUARIO_MAESTRO)){
+            
+            this.ManagingDirector = true;
+            this.CountryDirector = false;
+            this.ProjectManager = false;
+            this.EvaluatedEvaluator = false;
+        } else if (objUsuario.getUsIdTipoCuenta().equals(Constantes.INT_ET_TIPO_USUARIO_PROJECT_MANAGER)) {
             this.boEsAdministrador = false;
-            this.boEsUsuarioMaestro= true;
+            this.boEsUsuarioMaestro = true;
             this.boEsUsuarioEvaluado = false;
             this.boEsUsuarioEvaluador = false;
-        }else{
+            
+            this.ManagingDirector = false;
+            this.CountryDirector = true;
+            this.ProjectManager = false;
+            this.EvaluatedEvaluator = false;
+        } else if (objUsuario.getUsIdTipoCuenta().equals(Constantes.INT_ET_TIPO_USUARIO_PROJECT_MANAGER)) {
+            this.ManagingDirector = false;
+            this.CountryDirector = false;
+            this.ProjectManager = true;
+            this.EvaluatedEvaluator = false;
+        } else {
             this.boEsAdministrador = false;
-            this.boEsUsuarioMaestro= false;
+            this.boEsUsuarioMaestro = false;
             this.boEsUsuarioEvaluado = true;
             this.boEsUsuarioEvaluador = true;
+            
+            this.ManagingDirector = false;
+            this.CountryDirector = false;
+            this.ProjectManager = true;
+            this.EvaluatedEvaluator = true;
+            
         }
-        
+
     }
 
-    public UsuarioInfo(Usuario objUsuario , boolean flag) {
-        
+    public UsuarioInfo(Usuario objUsuario, boolean flag) {
+
         this.intUsuarioPk = objUsuario.getUsIdCuentaPk();
         this.strEmail = objUsuario.getUsIdMail();
-        
+
         this.strTipoUsuario = msg(objUsuario.getUsIdTipoCuenta().toString());
         this.strDescripcion = objUsuario.getUsTxNombreRazonsocial();
         this.strEmpresaDesc = objUsuario.getUsTxDescripcionEmpresa();
@@ -123,28 +148,28 @@ public class UsuarioInfo extends BaseView implements Serializable{
         this.strDocumentoEmpresa = objUsuario.getUsTxDocumento();
         this.intIdCiudad = objUsuario.getUbigeo().getUbIdUbigeoPk();
         this.usuario = objUsuario;
-        this.strFechaRegistro = Utilitarios.formatearFecha(objUsuario.getUsFeRegistro(),Constantes.DDMMYYYY);
-        
-        if(objUsuario.getUsIdTipoCuenta().equals(Constantes.INT_ET_TIPO_USUARIO_ADMINISTRADOR)){
+        this.strFechaRegistro = Utilitarios.formatearFecha(objUsuario.getUsFeRegistro(), Constantes.DDMMYYYY);
+
+        if (objUsuario.getUsIdTipoCuenta().equals(Constantes.INT_ET_TIPO_USUARIO_MANAGING_DIRECTOR)) {
             this.boEsAdministrador = true;
-            this.boEsUsuarioMaestro= false;
+            this.boEsUsuarioMaestro = false;
             this.boEsUsuarioEvaluado = false;
             this.boEsUsuarioEvaluador = false;
-        }else if(objUsuario.getUsIdTipoCuenta().equals(Constantes.INT_ET_TIPO_USUARIO_USUARIO_MAESTRO)){
+        } else if (objUsuario.getUsIdTipoCuenta().equals(Constantes.INT_ET_TIPO_USUARIO_PROJECT_MANAGER)) {
             this.boEsAdministrador = false;
-            this.boEsUsuarioMaestro= true;
+            this.boEsUsuarioMaestro = true;
             this.boEsUsuarioEvaluado = false;
             this.boEsUsuarioEvaluador = false;
-        }else{
+        } else {
             this.boEsAdministrador = false;
-            this.boEsUsuarioMaestro= false;
+            this.boEsUsuarioMaestro = false;
             this.boEsUsuarioEvaluado = true;
             this.boEsUsuarioEvaluador = true;
         }
-    
+
         this.usuario = objUsuario;
     }
-    
+
     public Integer getIntIdDocumentoEmpresa() {
         return intIdDocumentoEmpresa;
     }
@@ -160,7 +185,6 @@ public class UsuarioInfo extends BaseView implements Serializable{
     public void setStrDocumentoEmpresa(String strDocumentoEmpresa) {
         this.strDocumentoEmpresa = strDocumentoEmpresa;
     }
-    
 
     public Integer getIntUsuarioPk() {
         return intUsuarioPk;

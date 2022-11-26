@@ -7,7 +7,6 @@
                 template="../templates/templateLogin.xhtml">    
 
     <ui:define name="head"> 
-        <script src='https://www.google.com/recaptcha/api.js'></script>
         <script>
             function toSetAsParent() {
                 var delay = 20000;//1 seconds
@@ -18,37 +17,38 @@
 
         </script>
         <style>
-            .mytable {width: 100%; min-height: 100%; position: fixed; background-size: cover;}
+            .mytable {
+                width: 100%;
+                min-height: 100%;
+                position: fixed;
+                background-size: cover;
+            }
 
             .text-center {
                 text-align: center;
             }
 
             .g-recaptcha {
-                display: inline-block;               
+                display: inline-block;
             }
         </style>
     </ui:define>
     <ui:define name="content">
-        <!--
-        <h:panelGrid border="0" style="width: 100%;" bgcolor="white" columns="2" cellpadding="0" cellspacing="0" >
-            <p:graphicImage value="../images/logoJaio360.jpg" width="140" height="50" />
-        </h:panelGrid>
-        -->
 
         <table class="mytable" background="../images/fondos/macback.png" >
         </table>
 
         <h:body onload="toSetAsParent();PF('timeoutDlg').show();">
-            <p:dialog header="Aviso de cierre de sesión" widgetVar="timeoutDlg" hideEffect="drop" showEffect="drop" width="400" closable="false" maximizable="false" resizable="false" draggable="false" closeOnEscape="false" modal="true" >
+
+            <p:dialog header="#{msg['aviso.cierre']}" widgetVar="timeoutDlg" width="400" closable="false" maximizable="false" resizable="false" draggable="false" closeOnEscape="false" modal="true" >
 
                 <div class="ui-fluid">
 
                     <div class="p-field">
-                        <p:outputLabel value="Por seguridad su sesión fue cerrada tras 60 minutos de inactividad." />
+                        <p:outputLabel value="#{msg['aviso.texto.explicado']}" class="p-m-2" />
                     </div>
                     <div class="p-field">
-                        <p:button outcome="iniciar" value="Ok" />         
+                        <p:button outcome="iniciar" value="#{msg['aviso.ok']}" class="p-m-2" />         
                     </div>
                 </div>
 

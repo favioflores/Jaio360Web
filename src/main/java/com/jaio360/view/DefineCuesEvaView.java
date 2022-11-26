@@ -211,7 +211,7 @@ public class DefineCuesEvaView extends BaseView implements Serializable {
                     objEvaluadoCuestionario.setStrCorreo(objParticipante.getPaTxCorreo());
                     objEvaluadoCuestionario.setStrEstadoEvaluado(msg(objParticipante.getPaIdEstado().toString()));
                     objEvaluadoCuestionario.setIntIdEstadoSel(Constantes.INT_ET_ESTADO_SELECCION_REGISTRADO);
-                    objEvaluadoCuestionario.setStrCuestionarioDesc("Sin asignar");
+                    objEvaluadoCuestionario.setStrCuestionarioDesc("--");
                     objEvaluadoCuestionario.setStrEstadoSel(msg(Constantes.INT_ET_ESTADO_SELECCION_REGISTRADO.toString()));
 
                     if (!map.isEmpty()) {
@@ -277,7 +277,7 @@ public class DefineCuesEvaView extends BaseView implements Serializable {
 
         try {
 
-            if (this.lstSelectedEvaluados.size() > 0 && !Utilitarios.esNuloOVacio(this.idCuestionario)) {
+            if (!this.lstSelectedEvaluados.isEmpty() && !Utilitarios.esNuloOVacio(this.idCuestionario)) {
                 String strCuestionarioDesc = Constantes.strVacio;
                 Integer intCuestionarioId = null;
 
@@ -296,28 +296,24 @@ public class DefineCuesEvaView extends BaseView implements Serializable {
                     objEvaluadoCuestionario.setIntIdCuestionario(intCuestionarioId);
                 }
 
-                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Se asignaron " + this.lstSelectedEvaluados.size() + " al cuestionario " + strCuestionarioDesc, null);
-                FacesContext.getCurrentInstance().addMessage(null, message);
+                mostrarAlertaInfo("saved.temp");
 
                 calcularResumen();
 
                 this.lstSelectedEvaluados.clear();
 
             } else {
-                if (this.lstSelectedEvaluados.size() == 0) {
-                    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_WARN, "Debes seleccionar al menos un evaluado de la lista para asignarlo", null);
-                    FacesContext.getCurrentInstance().addMessage(null, message);
+                if (this.lstSelectedEvaluados.isEmpty()) {
+                    mostrarAlertaError("must.select.at.least.evaluated");
                 }
                 if (Utilitarios.esNuloOVacio(this.idCuestionario)) {
-                    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_WARN, "Debes seleccionar un cuestionario", null);
-                    FacesContext.getCurrentInstance().addMessage(null, message);
+                    mostrarAlertaError("must.select.an.evaluation");
                 }
             }
 
         } catch (Exception e) {
-            log.error(e);
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_FATAL, "Ocurrió un error al añadir a los evaluados", null);
-            FacesContext.getCurrentInstance().addMessage(null, message);
+            mostrarError(log, e);
+            mostrarAlertaFatal("error.was.occurred");
         }
 
     }
@@ -326,17 +322,16 @@ public class DefineCuesEvaView extends BaseView implements Serializable {
 
         try {
 
-            if (this.lstSelectedEvaluados.size() > 0) {
+            if (!this.lstSelectedEvaluados.isEmpty()) {
 
                 for (EvaluadoCuestionario objEvaluadoCuestionario : this.lstSelectedEvaluados) {
 
                     objEvaluadoCuestionario.setIntIdCuestionario(null);
-                    objEvaluadoCuestionario.setStrCuestionarioDesc(null);
+                    objEvaluadoCuestionario.setStrCuestionarioDesc("--");
 
                 }
 
-                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Se desasignaron " + this.lstSelectedEvaluados.size() + " evaluado(s)", null);
-                FacesContext.getCurrentInstance().addMessage(null, message);
+                mostrarAlertaInfo("step3.unassign.success");
 
                 this.lstSelectedEvaluados.clear();
 
@@ -344,61 +339,38 @@ public class DefineCuesEvaView extends BaseView implements Serializable {
 
             } else {
                 if (this.lstSelectedEvaluados.isEmpty()) {
-                    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_WARN, "Debes seleccionar al menos un evaluado de la lista", null);
-                    FacesContext.getCurrentInstance().addMessage(null, message);
+                    mostrarAlertaError("must.select.at.least.evaluated");
                 }
             }
 
         } catch (Exception e) {
-            log.error(e);
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_FATAL, "Ocurrió un error al desasignar a los evaluados(s)", null);
-            FacesContext.getCurrentInstance().addMessage(null, message);
+            mostrarError(log, e);
+            mostrarAlertaFatal("error.was.occurred");
         }
 
     }
 
     public void guardarRelacionCuestionarios() {
 
-        FacesMessage message;
-
         try {
 
-            boolean flagSeleccion = false;
             boolean flagGuardado = false;
 
-            /*
-            for (EvaluadoCuestionario objEvaluadoCuestionario:lstEvaluados){
-                
-                if(objEvaluadoCuestionario.getIntIdCuestionario() != null && 
-                   objEvaluadoCuestionario.getIntIdCuestionario() > 0 && 
-                   objEvaluadoCuestionario.getIntIdEstadoSel()!= Constantes.INT_ET_ESTADO_SELECCION_EN_EJECUCION){
-                    
-                    flagSeleccion = true;
-                }
-            }
-
-             */
-            //if(flagSeleccion){
             CuestionarioDAO objCuestionarioDAO = new CuestionarioDAO();
 
             flagGuardado = objCuestionarioDAO.guardaSeleccion(lstEvaluados, Utilitarios.obtenerProyecto().getIntIdProyecto());
 
             if (flagGuardado) {
-                message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Se guardo la asignación exitosamente", null);
+                mostrarAlertaInfo("success");
                 init();
             } else {
-                message = new FacesMessage(FacesMessage.SEVERITY_FATAL, "Ocurrio un grabe error al guardar", null);
+                mostrarAlertaFatal("error.was.occurred");
             }
 
-            //}else{
-            //    message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error al guardar seleccion", "Debe realizar al menos una seleccion");
-            //}
         } catch (Exception e) {
-            log.error(e);
-            message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Ocurrio un grabe error al guardar", null);
+            mostrarError(log, e);
+            mostrarAlertaFatal("error.was.occurred");
         }
-
-        FacesContext.getCurrentInstance().addMessage(null, message);
 
     }
 

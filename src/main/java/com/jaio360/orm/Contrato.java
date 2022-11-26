@@ -15,8 +15,6 @@ public class Contrato  implements java.io.Serializable {
      private Tarifa tarifa;
      private Date coFeCreacion;
      private Integer coNuLicenciaTotal;
-     private Integer coNuLicenciaDisponible;
-     private Integer coNuLicenciaReservada;
      private Integer coIdEstado;
 
     public Contrato() {
@@ -57,27 +55,13 @@ public class Contrato  implements java.io.Serializable {
     public void setCoNuLicenciaTotal(Integer coNuLicenciaTotal) {
         this.coNuLicenciaTotal = coNuLicenciaTotal;
     }
-    public Integer getCoNuLicenciaDisponible() {
-        return this.coNuLicenciaDisponible;
-    }
-    
-    public void setCoNuLicenciaDisponible(Integer coNuLicenciaDisponible) {
-        this.coNuLicenciaDisponible = coNuLicenciaDisponible;
-    }
+
     public Integer getCoIdEstado() {
         return this.coIdEstado;
     }
     
     public void setCoIdEstado(Integer coIdEstado) {
         this.coIdEstado = coIdEstado;
-    }
-
-    public Integer getCoNuLicenciaReservada() {
-        return coNuLicenciaReservada;
-    }
-
-    public void setCoNuLicenciaReservada(Integer coNuLicenciaReservada) {
-        this.coNuLicenciaReservada = coNuLicenciaReservada;
     }
 
 }

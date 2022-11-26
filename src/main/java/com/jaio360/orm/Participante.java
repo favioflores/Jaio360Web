@@ -26,7 +26,7 @@ public class Participante  implements java.io.Serializable {
      private Integer paNrTiempoTrabajo;
      private String paTxOcupacion;
      private String paTxAreaNegocio;
-     private Integer paNrAnalisisDescarga;
+     private Boolean paInAnalizado;
      
      private Set relacionParticipantes = new HashSet(0);
      private Set cuestionarioEvaluados = new HashSet(0);
@@ -34,14 +34,13 @@ public class Participante  implements java.io.Serializable {
     public Participante() {
     }
 
-    public Integer getPaNrAnalisisDescarga() {
-        return paNrAnalisisDescarga;
+    public Boolean getPaInAnalizado() {
+        return paInAnalizado;
     }
 
-    public void setPaNrAnalisisDescarga(Integer paNrAnalisisDescarga) {
-        this.paNrAnalisisDescarga = paNrAnalisisDescarga;
+    public void setPaInAnalizado(Boolean paInAnalizado) {
+        this.paInAnalizado = paInAnalizado;
     }
-
 	
     public Participante(Proyecto proyecto, String paTxDescripcion, String paTxCorreo, String paTxNombreCargo, int paIdTipoParticipante, int paIdEstado) {
         this.proyecto = proyecto;
