@@ -1,6 +1,5 @@
 package com.jaio360.view;
 
-import com.jaio360.application.EHCacheManager;
 import com.jaio360.dao.CargaAvanzadaDAO;
 import com.jaio360.dao.ParametroDAO;
 import com.jaio360.dao.ParticipanteDAO;
@@ -13,7 +12,6 @@ import com.jaio360.domain.ErrorBean;
 import com.jaio360.domain.Evaluado;
 import com.jaio360.domain.EvaluadoAvan;
 import com.jaio360.domain.Evaluador;
-import com.jaio360.domain.ProyectoInfo;
 import com.jaio360.domain.RelacionAvanzada;
 import com.jaio360.domain.RelacionBean;
 import com.jaio360.orm.Parametro;
@@ -54,6 +52,7 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
+import org.primefaces.event.CellEditEvent;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.TabChangeEvent;
 import org.primefaces.model.StreamedContent;
@@ -153,6 +152,15 @@ public class EvaluadosView extends BaseView implements Serializable {
     private Integer intIdEstadoProyecto;
 
     private List<RelacionBean> lstRelacionBean;
+    private List<RelacionAvanzada> lstRelacionesEvaluadoEvaluador;
+
+    public List<RelacionAvanzada> getLstRelacionesEvaluadoEvaluador() {
+        return lstRelacionesEvaluadoEvaluador;
+    }
+
+    public void setLstRelacionesEvaluadoEvaluador(List<RelacionAvanzada> lstRelacionesEvaluadoEvaluador) {
+        this.lstRelacionesEvaluadoEvaluador = lstRelacionesEvaluadoEvaluador;
+    }
 
     public Integer getIntIdEstadoProyecto() {
         return intIdEstadoProyecto;
@@ -656,6 +664,7 @@ public class EvaluadosView extends BaseView implements Serializable {
         List<Participante> lstParticipantes = objParticipanteDAO.obtenListaParticipanteXProyecto(Utilitarios.obtenerProyecto().getIntIdProyecto());
 
         this.blCargarCorrectoAvan = false;
+        this.lstRelacionesEvaluadoEvaluador = new ArrayList<>();
         this.lstEvaluado = new ArrayList<>();
         this.cantidadEvaluadosRegistrados = 0;
         this.paInAutoevaluar = true;
@@ -745,8 +754,6 @@ public class EvaluadosView extends BaseView implements Serializable {
          */
         this.lstRelacionBean = new ArrayList();
 
-        ProyectoDAO objProyectoDAO = new ProyectoDAO();
-
         Proyecto proyecto = objProyectoDAO.obtenProyecto(Utilitarios.obtenerProyecto().getIntIdProyecto());
 
         intIdEstadoProyecto = proyecto.getPoIdEstado();
@@ -773,11 +780,30 @@ public class EvaluadosView extends BaseView implements Serializable {
             lstRelacionBean.add(objRelacionBean);
         }
 
-        if (!lstEvaluado.isEmpty()) {
+        if (!lstEvaluado.isEmpty() && !lstEvaluadores.isEmpty() && !lstRelacionBean.isEmpty()) {
 
-        }
+            List lstRedCompleta = objParticipanteDAO.obtenerRedCompletaXProyecto(Utilitarios.obtenerProyecto().getIntIdProyecto());
 
-        if (!lstEvaluadores.isEmpty() && lstRelacionBean.isEmpty()) {
+            Iterator itLstRedCompleta = lstRedCompleta.iterator();
+
+            RelacionAvanzada objRelacionAvanzada;
+
+            while (itLstRedCompleta.hasNext()) {
+
+                Object obj[] = (Object[]) itLstRedCompleta.next();
+
+                objRelacionAvanzada = new RelacionAvanzada();
+
+                objRelacionAvanzada.setStrEvaluado(obj[1].toString());
+                objRelacionAvanzada.setStrEvaluadoDesc(obj[0].toString());
+                objRelacionAvanzada.setStrEvaluador(obj[3].toString());
+                objRelacionAvanzada.setStrEvaluadorDesc(obj[2].toString());
+                objRelacionAvanzada.setStrRelacion(obj[4].toString());
+                objRelacionAvanzada.setStrRelacionAbreviatura(obj[5].toString());
+                objRelacionAvanzada.setStrRelacionColor(obj[6].toString());
+
+                lstRelacionesEvaluadoEvaluador.add(objRelacionAvanzada);
+            }
 
         }
 
@@ -1069,7 +1095,7 @@ public class EvaluadosView extends BaseView implements Serializable {
         this.modo = 1;
 
         FacesContext context = FacesContext.getCurrentInstance();
-        context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Modificar evaluado", 
+        context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Modificar evaluado",
                 "Cualquier cambio será actualizado en la lista de evaluados"));
 
         this.strDescripcion = objEvaluado.getPaTxDescripcion();
@@ -1195,7 +1221,7 @@ public class EvaluadosView extends BaseView implements Serializable {
                     nextrow.createCell(r).setCellValue(objEvaluado.getPaTxAreaNegocio());
                 }
                 r++;
-                nextrow.createCell(r).setCellValue(objEvaluado.isPaInAutoevaluar() == true ? msg("yes"): msg("no"));
+                nextrow.createCell(r).setCellValue(objEvaluado.isPaInAutoevaluar() == true ? msg("yes") : msg("no"));
                 i++;
             }
 
@@ -1216,7 +1242,7 @@ public class EvaluadosView extends BaseView implements Serializable {
             FacesContext facesContext = FacesContext.getCurrentInstance();
             ExternalContext externalContext = facesContext.getExternalContext();
             externalContext.setResponseContentType("application/vnd.ms-excel");
-            externalContext.setResponseHeader("Content-Disposition", "attachment; filename=\""+msg("evaluated", null)+".xls\"");
+            externalContext.setResponseHeader("Content-Disposition", "attachment; filename=\"" + msg("evaluated", null) + ".xls\"");
 
             xlsEvaluados.write(externalContext.getResponseOutputStream());
             facesContext.responseComplete();
@@ -1362,7 +1388,7 @@ public class EvaluadosView extends BaseView implements Serializable {
             FacesContext facesContext = FacesContext.getCurrentInstance();
             ExternalContext externalContext = facesContext.getExternalContext();
             externalContext.setResponseContentType("application/vnd.ms-excel");
-            externalContext.setResponseHeader("Content-Disposition", "attachment; filename=\""+msg("evaluated", null)+".xls\"");
+            externalContext.setResponseHeader("Content-Disposition", "attachment; filename=\"" + msg("evaluated", null) + ".xls\"");
 
             xlsEvaluados.write(externalContext.getResponseOutputStream());
             facesContext.responseComplete();
@@ -1680,7 +1706,7 @@ public class EvaluadosView extends BaseView implements Serializable {
     public void actualizarEvaluado() {
         strCorreo = strCorreo.toLowerCase();
         Integer error = buscarListaModifica(idParticipantePk, strDescripcion, strCargo, strCorreo, paInAutoevaluar, false);
-        
+
         String correoAnterior;
         if (error == null) {
 
@@ -1773,7 +1799,7 @@ public class EvaluadosView extends BaseView implements Serializable {
             Evaluado objEvaluado = new Evaluado();
             objEvaluado = determinaError(objEvaluado, error);
             mostrarAlertaError(objEvaluado.getStrObservacionMasivo());
-            
+
         }
 
     }
@@ -1922,7 +1948,7 @@ public class EvaluadosView extends BaseView implements Serializable {
 
         }
         mostrarAlertaInfo("deleted");
-        
+
         resetFail();
 
     }
@@ -2081,7 +2107,7 @@ public class EvaluadosView extends BaseView implements Serializable {
             FacesContext facesContext = FacesContext.getCurrentInstance();
             ExternalContext externalContext = facesContext.getExternalContext();
             externalContext.setResponseContentType("application/vnd.ms-excel");
-            externalContext.setResponseHeader("Content-Disposition", "attachment; filename=\""+msg("evaluator")+".xls\"");
+            externalContext.setResponseHeader("Content-Disposition", "attachment; filename=\"" + msg("evaluator") + ".xls\"");
 
             xlsEvaluadores.write(externalContext.getResponseOutputStream());
             facesContext.responseComplete();
@@ -2156,7 +2182,7 @@ public class EvaluadosView extends BaseView implements Serializable {
 
         HSSFCellStyle myStyle = xlsEvaluadores.createCellStyle();
 
-        HSSFFont hSSFFont = xlsEvaluadores.createFont(); 
+        HSSFFont hSSFFont = xlsEvaluadores.createFont();
         hSSFFont.setBold(true);
 
         myStyle.setFont(hSSFFont);
@@ -2213,7 +2239,7 @@ public class EvaluadosView extends BaseView implements Serializable {
             FacesContext facesContext = FacesContext.getCurrentInstance();
             ExternalContext externalContext = facesContext.getExternalContext();
             externalContext.setResponseContentType("application/vnd.ms-excel");
-            externalContext.setResponseHeader("Content-Disposition", "attachment; filename=\""+msg("evaluator")+".xls\"");
+            externalContext.setResponseHeader("Content-Disposition", "attachment; filename=\"" + msg("evaluator") + ".xls\"");
 
             xlsEvaluadores.write(externalContext.getResponseOutputStream());
             facesContext.responseComplete();
@@ -2561,9 +2587,9 @@ public class EvaluadosView extends BaseView implements Serializable {
         } else {
             Evaluador objEvaluador = new Evaluador();
             objEvaluador = determinaErrorEvaluadores(objEvaluador, error);
-            
+
             mostrarAlertaError(objEvaluador.getStrObservacionMasivo());
-            
+
         }
     }
 
@@ -2657,7 +2683,7 @@ public class EvaluadosView extends BaseView implements Serializable {
     }
 
     public void leeExcelAvanzado() {
-        
+
         habilitarParametros();
 
         lstErrorAvan = new ArrayList();
@@ -2672,7 +2698,7 @@ public class EvaluadosView extends BaseView implements Serializable {
         mapPerEvaluadores = new HashMap();
 
         if (fileAvanzado == null) {
-            
+
             mostrarAlertaError("search.file.first");
         } else {
 
@@ -3368,7 +3394,7 @@ public class EvaluadosView extends BaseView implements Serializable {
                         strCorreoEvaluado = strTemp.trim().toLowerCase();
                     } else {
                         blRegistroOK = false;
-                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + msg("error.network.email.not.exists") ));
+                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + msg("error.network.email.not.exists")));
                     }
                 } else {
                     blRegistroOK = false;
@@ -3561,6 +3587,117 @@ public class EvaluadosView extends BaseView implements Serializable {
         return hUsuarios;
     }
 
+    public void actualizaColorTemporal(RelacionBean objRelacionBean) {
+
+        boolean flag = false;
+        try {
+
+            for (RelacionAvanzada objRelacionAvanzada : lstRelacionAvanzadas) {
+
+                if (objRelacionBean.getStrNombre().equals(objRelacionAvanzada.getStrRelacion())
+                        && objRelacionBean.getStrAbreviatura().equals(objRelacionAvanzada.getStrRelacionAbreviatura())) {
+                    objRelacionAvanzada.setStrRelacionColor(objRelacionBean.getStrColor());
+                    flag = true;
+                }
+
+            }
+
+            if (flag) {
+                mostrarAlertaInfo("color.was.updated");
+            } else {
+                mostrarAlertaFatal("error.was.occurred");
+            }
+
+        } catch (Exception e) {
+            mostrarError(log, e);
+            mostrarAlertaFatal("error.was.occurred");
+        }
+    }
+
+    public void actualizaColorDefinitivo(RelacionBean objRelacionBean) {
+
+        try {
+
+            RelacionDAO objRelacionDAO = new RelacionDAO();
+
+            Relacion objRelacion = objRelacionDAO.obtenRelacion(objRelacionBean.getIdRelacionPk());
+
+            objRelacion.setReColor(objRelacionBean.getStrColor());
+
+            objRelacionDAO.actualizaRelacion(objRelacion);
+
+            init();
+
+            mostrarAlertaInfo("color.was.updated");
+
+        } catch (Exception e) {
+            mostrarError(log, e);
+            mostrarAlertaFatal("error.was.occurred");
+        }
+    }
+
+    public void actualizarRelacionDefinitivo(CellEditEvent event) {
+
+        try {
+
+            if (Utilitarios.noEsNuloOVacio(event.getNewValue())) {
+
+                RelacionBean objRelacionBean = this.lstRelacionBean.get(event.getRowIndex());
+
+                RelacionDAO objRelacionDAO = new RelacionDAO();
+
+                Relacion objRelacion = objRelacionDAO.obtenRelacion(objRelacionBean.getIdRelacionPk());
+
+                objRelacion.setReTxAbreviatura(event.getNewValue().toString().toUpperCase());
+
+                objRelacionDAO.actualizaRelacion(objRelacion);
+
+                init();
+
+                mostrarAlertaInfo("abbreviation.was.updated");
+
+            } else {
+                mostrarAlertaError("adm.least.value", null);
+            }
+        } catch (Exception e) {
+            mostrarError(log, e);
+        }
+    }
+
+    public void actualizarRelacionTemporal(CellEditEvent event) {
+
+        boolean flag = false;
+        
+        try {
+
+            if (Utilitarios.noEsNuloOVacio(event.getNewValue())) {
+
+                RelacionBean objRelacionBean = this.lstAvanRelacion.get(event.getRowIndex());
+
+                for (RelacionAvanzada objRelacionAvanzada : lstRelacionAvanzadas) {
+
+                    if (objRelacionBean.getStrNombre().equals(objRelacionAvanzada.getStrRelacion())) {
+                        objRelacionAvanzada.setStrRelacionAbreviatura(event.getNewValue().toString().toUpperCase());
+                        flag = true;
+                    }
+
+                }
+                
+                if (flag) {
+                    objRelacionBean.setStrAbreviatura(event.getNewValue().toString().toUpperCase());
+                    mostrarAlertaInfo("abbreviation.was.updated");
+                } else {
+                    mostrarAlertaFatal("error.was.occurred");
+                }
+
+            } else {
+                mostrarAlertaError("adm.least.value", null);
+            }
+        } catch (Exception e) {
+            mostrarError(log, e);
+        }
+    }
+
     public void cargarListaAvanzado() {
 
         CargaAvanzadaDAO objCargaAvanzadaDAO = new CargaAvanzadaDAO();
@@ -3573,7 +3710,7 @@ public class EvaluadosView extends BaseView implements Serializable {
             iniciarRedDeCargaAvanzada();
             init();
             mostrarAlertaInfo("configuration.save.success");
-            
+
         } else {
             mostrarAlertaError("error.was.occurred");
         }
@@ -3660,7 +3797,7 @@ public class EvaluadosView extends BaseView implements Serializable {
         HSSFCellStyle myStyle = xlsEvaluados.createCellStyle();
 
         HSSFFont hSSFFont = xlsEvaluados.createFont();
-        
+
         hSSFFont.setBold(true);
 
         myStyle.setFont(hSSFFont);
@@ -3702,7 +3839,7 @@ public class EvaluadosView extends BaseView implements Serializable {
             FacesContext facesContext = FacesContext.getCurrentInstance();
             ExternalContext externalContext = facesContext.getExternalContext();
             externalContext.setResponseContentType("application/vnd.ms-excel");
-            externalContext.setResponseHeader("Content-Disposition", "attachment; filename=\""+msg("advance.configuration")+".xls\"");
+            externalContext.setResponseHeader("Content-Disposition", "attachment; filename=\"" + msg("advance.configuration") + ".xls\"");
 
             xlsEvaluados.write(externalContext.getResponseOutputStream());
             facesContext.responseComplete();

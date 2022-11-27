@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 21/10/2014 08:38:38 PM by Hibernate Tools 3.2.1.GA -->
+<hibernate-mapping>
+    <class name="com.jaio360.orm.LastUpdate" table="last_update" catalog="jaio">
+        <id name="luIdUpdatePk" type="java.lang.Integer">
+            <column name="lu_id_update_pk" />
+            <generator class="identity" />
+        </id>
+
+        <property name="luTxTipo" type="string">
+            <column name="lu_tx_tipo" length="45" not-null="true"/>
+        </property>
+        <property name="luDtFecha" type="date">
+            <column name="lu_dt_fecha" length="10" not-null="true"/>
+        </property>
+        <property name="luTxDescripcion" type="string">
+            <column name="lu_tx_descripcion" length="1000" not-null="true" />
+        </property>
+        
+    </class>
+</hibernate-mapping>

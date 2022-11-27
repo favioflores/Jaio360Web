@@ -11,16 +11,15 @@
             <f:facet name="first">
                 <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
                 <title>Jaio 360</title>
+                <h:outputScript name="js/nanoscroller.js" library="omega-layout" />
+                <h:outputScript name="js/layout.js" library="omega-layout" />
+                <h:outputScript name="jquery/jquery.js" library="primefaces"/>
+                <h:outputScript name="jquery/jquery-plugins.js" library="primefaces"/>
+                <link type="text/css" rel="stylesheet" href="#{request.contextPath}/resources/showcase/css/primeflex.css" />
+                <link type="text/css" rel="stylesheet" href="#{request.contextPath}/resources/showcase/css/flags/flags.css" />
                 <link rel="shortcut icon" type="image/png" href="#{request.contextPath}/images/favicon.png" />
             </f:facet>
-
-            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/resources/showcase/css/primeflex.css" />
-            <link type="text/css" rel="stylesheet" href="#{request.contextPath}/resources/showcase/css/flags/flags.css" />
-
-            <h:outputScript name="jquery/jquery.js" library="primefaces"/>
-            <h:outputScript name="jquery/jquery-plugins.js" library="primefaces"/>
             <ui:insert name="head"/>
-
         </h:head>
 
         <h:body>

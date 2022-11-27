@@ -1,8 +1,0 @@
-UPGRADE-Se mejoró la consulta de saldos para el uso de las licencias
-NEW-Se agregó un nuevo perfil de consultor
-NEW-Se agregó un boton para resetear las notificaciones al modo original
-NEW-Se agregó una búsqueda global en la lista de proyectos
-FIX-Se corrigió el error que impedía borrar las evaluaciones antes de asignarlas a los evaluados
-FIX-Se arreglaron los mensajes emergentes al grabar los parametros de análisis
-UPGRADE-Boton de iniciar projecto desde la pantalla de bienvenida
-UPGRADE-Se implemento el uso de idioma ingles

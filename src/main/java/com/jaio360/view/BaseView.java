@@ -14,7 +14,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.velocity.tools.view.VelocityViewServlet;
 
-
 public abstract class BaseView extends VelocityViewServlet implements Serializable {
 
     /**
@@ -46,20 +45,20 @@ public abstract class BaseView extends VelocityViewServlet implements Serializab
 
         } catch (MissingResourceException e) {
             logBase.error(e);
+            return key;
         }
         return result;
     }
 
     public boolean existeMsg(String key) {
-        
+
         String result = null;
-        
+
         try {
             FacesContext context = FacesContext.getCurrentInstance();
             ResourceBundle bundle = context.getApplication().getResourceBundle(context, "msg");
             result = bundle.getString(key);
-            
-            
+
         } catch (MissingResourceException e) {
             return false;
         }
@@ -84,7 +83,7 @@ public abstract class BaseView extends VelocityViewServlet implements Serializab
             mostrarError(ex);
         }
     }
-    
+
     public void mostrarAlertaInfo(String key, Object... params) {
         try {
             if (existeMsg(key)) {
@@ -100,7 +99,7 @@ public abstract class BaseView extends VelocityViewServlet implements Serializab
             mostrarError(ex);
         }
     }
-    
+
     public void mostrarAlertaInfo(String key) {
         try {
             if (existeMsg(key)) {
@@ -132,7 +131,7 @@ public abstract class BaseView extends VelocityViewServlet implements Serializab
             mostrarError(ex);
         }
     }
-    
+
     public void mostrarAlertaError(String key) {
         try {
             if (existeMsg(key)) {
@@ -148,7 +147,7 @@ public abstract class BaseView extends VelocityViewServlet implements Serializab
             mostrarError(ex);
         }
     }
-    
+
     public void mostrarAlertaFatal(String key) {
         try {
             if (existeMsg(key)) {
@@ -196,7 +195,7 @@ public abstract class BaseView extends VelocityViewServlet implements Serializab
             mostrarError(ex);
         }
     }
-        
+
     private void mostrarError(Exception e) {
         try {
             FacesMessage message = new FacesMessage(FATAL, msg("error.was.occurred", null), null);
@@ -205,7 +204,7 @@ public abstract class BaseView extends VelocityViewServlet implements Serializab
             logBase.error(ex);
         }
     }
-    
+
     public static void mostrarError(Log log, Exception e) {
         try {
             FacesMessage message = new FacesMessage(FATAL, msg("error.was.occurred", null), null);

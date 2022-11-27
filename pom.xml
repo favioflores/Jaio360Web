@@ -75,8 +75,8 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <sassSourceDirectory>${basedir}/src/main/webapp/css</sassSourceDirectory>
-                    <destination>${basedir}/src/main/webapp/css</destination>
+                    <sassSourceDirectory>${basedir}/src/main/webapp/resources/sass</sassSourceDirectory>
+                    <destination>${basedir}/src/main/webapp/resources/sass</destination>
                     <sassOptions>
                         <always_update>true</always_update>
                         <sourcemap>:none</sourcemap>
@@ -416,6 +416,11 @@
             <version>2.5.2</version>
         </dependency>
         <dependency>
+            <groupId>omega</groupId>
+            <artifactId>omega-theme</artifactId>
+            <version>5.0.0</version>
+        </dependency>
+        <dependency>
             <groupId>com.googlecode.owasp-java-html-sanitizer</groupId>
             <artifactId>owasp-java-html-sanitizer</artifactId>
             <version>${owasp-sanitizer.version}</version>
@@ -461,11 +466,7 @@
             <artifactId>atmosphere-runtime</artifactId>
             <version>2.2.0</version>
         </dependency>     
-        <dependency>
-            <groupId>org.primefaces.themes</groupId>
-            <artifactId>all-themes</artifactId>
-            <version>1.0.10</version>
-        </dependency>
+
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>ejb3-persistence</artifactId>

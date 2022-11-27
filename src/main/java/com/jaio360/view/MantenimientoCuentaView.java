@@ -554,6 +554,8 @@ public class MantenimientoCuentaView extends BaseView implements Serializable {
                 objUsuarioDAO.actualizaUsuario(objUsuario);
 
                 mostrarAlertaInfo("password.changed.success");
+                
+                resetFormUsuario();
 
             }
         } catch (Exception e) {

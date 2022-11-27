@@ -29,5 +29,6 @@
   <table-filter match-name="movimiento"/>
   <table-filter match-name="referencia_movimiento"/>
   <table-filter match-name="usuario_saldo"/>
+  <table-filter match-name="last_update"/>
   
 </hibernate-reverse-engineering>

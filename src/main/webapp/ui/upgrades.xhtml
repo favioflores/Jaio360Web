@@ -1,0 +1,88 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui" 
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                template="../templates/templateWorkspace.xhtml" >
+
+    <ui:define name="head"> 
+        <style>
+            .custom-marker {
+                display: flex;
+                width: 2rem;
+                height: 2rem;
+                align-items: center;
+                justify-content: center;
+                color: #ffffff;
+                border-radius: 50%;
+                z-index: 1;
+            }
+
+            .ui-chronoline-event-content,
+            .ui-chronoline-event-opposite {
+                line-height: 1;
+            }
+
+            @media screen and (max-width: 960px) {
+                .customized-chronoline .ui-chronoline-event:nth-child(even) {
+                    flex-direction: row !important;
+                }
+
+                .customized-chronoline .ui-chronoline-event:nth-child(even) .ui-chronoline-event-content {
+                    text-align: left !important;
+                }
+
+                .customized-chronoline .ui-chronoline-event-opposite {
+                    flex: 0;
+                }
+
+                .customized-chronoline .ui-card {
+                    margin-top: 1rem;
+                }
+            }
+        </style>
+    </ui:define>
+
+    <ui:define name="cabecera">
+        <ui:include src="cabecera.xhtml" />
+    </ui:define>
+
+    <ui:define name="content">     
+        <p:panel >
+            <h:form id="formUsuario">
+
+                <p:card id="cardFormUsuario">
+
+                    <h3>#{msg['last.update.title']}</h3>
+                    
+                    <p:outputLabel value="#{msg['whats.new']}"/>
+
+                    <p:chronoline value="#{chronolineView.lstLastUpdateBeans}" var="lastUpdate" align="alternate" styleClass="customized-chronoline">
+
+                        <p:card>
+                            <f:facet name="title">
+                                #{lastUpdate.luTxTipo}
+                            </f:facet>
+                            <f:facet name="subtitle">
+                                #{lastUpdate.luDtFecha}
+                            </f:facet>
+
+                            <p>#{lastUpdate.luTxDescripcion}</p>
+
+                        </p:card>
+
+                        <f:facet name="marker">
+                            <span class="custom-marker shadow-1" style="background-color: #{lastUpdate.strColor}"><i class="#{lastUpdate.strIcon}"/></span>
+                        </f:facet>
+                    </p:chronoline>
+
+                </p:card>
+
+            </h:form>
+
+        </p:panel>
+
+    </ui:define>
+
+</ui:composition>

@@ -166,7 +166,7 @@
 
             <h:form id="formRed" enctype="multipart/form-data" >
 
-                <p:growl life="4000" showSummary="true" />
+                <p:growl widgetVar="growl" id="growl" life="4000" showSummary="true" />
 
                 <p:card id="panel">  
 
@@ -253,7 +253,7 @@
                                             #{msg['step1.errores.encontrados']} #{evaluadosView.lstErrorAvan.size()}
                                         </f:facet>
 
-                                        <p:column style="width: 60px;">
+                                        <p:column style="width: 20px;">
                                             <f:facet name="header">
                                                 <h:outputText value="#" />
                                             </f:facet>
@@ -282,6 +282,7 @@
                                         rows="10"
                                         paginator="true" 
                                         var="reg"
+                                        resizableColumns="true"
                                         value="#{evaluadosView.lstAvanPersonas}"
                                         paginatorPosition="bottom"
                                         stickyHeader="true" stickyTopAt=".layout-topbar"
@@ -289,19 +290,20 @@
                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                         currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords}"
                                         emptyMessage="#{msg['no.items']}" 
-                                        rowIndexVar="index"
+                                        rowIndexVar="index" 
                                         rendered="#{evaluadosView.lstAvanPersonas.size()>0}" >
 
                                         <f:facet name="header">
                                             #{msg['step1.list.items.found']}
+
                                         </f:facet>
 
                                         <f:facet name="footer">
                                             #{msg['step1.total.items.found']} #{evaluadosView.lstAvanPersonas.size()}
                                         </f:facet>
 
-                                        <p:column>
-                                            <f:facet name="header">
+                                        <p:column style="width: 20px;">
+                                            <f:facet name="header" >
                                                 <h:outputText value="#" />
                                             </f:facet>
                                             <h:outputText 
@@ -341,7 +343,7 @@
                             </div>
                         </c:if>
                         <c:if test="#{evaluadosView.lstAvanRelacion.size()>0}">
-                            <div class="p-field p-col-12 p-md-4">
+                            <div class="p-field p-col-12 p-md-5">
                                 <p:card>
                                     <p:dataTable 
                                         id="tblResultadoAvanzadoRelacion"
@@ -352,6 +354,10 @@
                                         value="#{evaluadosView.lstAvanRelacion}"
                                         stickyHeader="true" stickyTopAt=".layout-topbar"
                                         paginatorPosition="bottom"
+                                        resizableColumns="true"
+                                        editable="true"
+                                        editMode="cell"
+                                        editInitEvent="dblclick" 
                                         stripedRows="true"
                                         sortMode="single"
                                         rowIndexVar="index"
@@ -361,6 +367,8 @@
                                         rendered="#{evaluadosView.lstAvanRelacion.size()>0}"
                                         >
 
+                                        <p:ajax event="cellEdit" listener="#{evaluadosView.actualizarRelacionTemporal}" update="formRed:tblRelacionAvanzadas,formRed:growl"/>
+
                                         <f:facet name="header">
                                             #{msg['step1.list.relationships']}
                                         </f:facet>
@@ -368,7 +376,7 @@
                                         <f:facet name="footer">
                                             #{msg['step1.total.relationships']} #{evaluadosView.lstAvanRelacion.size()}
                                         </f:facet>
-                                        <p:column style="width: 60px;">
+                                        <p:column style="width: 20px;">
                                             <f:facet name="header">
                                                 <h:outputText value="#" />
                                             </f:facet>
@@ -379,10 +387,23 @@
                                             <h:outputText value="#{rel.strNombre}" />
                                         </p:column>
                                         <p:column headerText="#{msg['abbreviation']}">
-                                            <h:outputText value="#{rel.strAbreviatura}" />
+                                            <p:cellEditor>
+                                                <f:facet name="output">
+                                                    <h:outputText value="#{rel.strAbreviatura}"  />
+                                                </f:facet>
+                                                <f:facet name="input">
+                                                    <p:inputText value="#{rel.strAbreviatura}" maxlength="3" style="width: 100%;" />
+                                                </f:facet>
+                                            </p:cellEditor>
                                         </p:column>
                                         <p:column style="text-align: center" headerText="#{msg['assigned.color']}" >
-                                            <p:tag value="#{rel.strColor}" style=" width: 80px; height: 17px; background-color: #{rel.strColor};" />
+                                            <p:tag value="##{rel.strColor}" style=" width: 80px; height: 17px; background-color: ##{rel.strColor};" />
+                                        </p:column>
+
+                                        <p:column style="text-align: center"  >
+                                            <p:colorPicker value="#{rel.strColor}"   >
+                                                <p:ajax listener="#{evaluadosView.actualizaColorTemporal(rel)}" process="@this" update="@form"/>
+                                            </p:colorPicker>
                                         </p:column>
 
                                     </p:dataTable>
@@ -391,7 +412,7 @@
                             </div>
                         </c:if>
                         <c:if test="#{evaluadosView.lstRelacionAvanzadas.size()>0}">
-                            <div class="p-field p-col-12 p-md-8">
+                            <div class="p-field p-col-12 p-md-7">
                                 <p:card >
                                     <p:dataTable 
                                         id="tblRelacionAvanzadas"
@@ -401,6 +422,7 @@
                                         var="red"
                                         value="#{evaluadosView.lstRelacionAvanzadas}"
                                         paginatorPosition="bottom"
+                                        resizableColumns="true"
                                         stripedRows="true"
                                         sortMode="single"
                                         stickyHeader="true"
@@ -422,7 +444,7 @@
                                             <h:outputText value="#{red.strEvaluado}" class="p-text-light" />
                                         </p:column>
                                         <p:column headerText="#{msg['relationship']}" sortBy="#{red.strRelacionAbreviatura}" sortOrder="asc" sortPriority="2" >
-                                            <p:tag value="#{red.strRelacionAbreviatura}" style=" width: 80px; height: 17px; background-color: #{red.strRelacionColor};" />
+                                            <p:tag value="#{red.strRelacionAbreviatura}" style=" width: 80px; height: 17px; background-color: ##{red.strRelacionColor};" />
                                         </p:column>                                 
                                         <p:column headerText="#{msg['evaluator']}" sortBy="#{red.strEvaluador}" sortOrder="asc" sortPriority="3" >
                                             <h:outputText value="#{red.strEvaluadorDesc}" />
@@ -435,7 +457,7 @@
 
                             </div>
                         </c:if>
-                        
+
                         <c:if test="#{evaluadosView.lstEvaluado.size()>0}">
                             <div class="p-field p-col-12 p-md-12">
                                 <h4>#{msg['step1.list.evaluated.found']}</h4>
@@ -458,7 +480,7 @@
                                             rowIndexVar="index"
                                             >
 
-                                            <p:column style="width: 40px;">
+                                            <p:column style="width: 20px;">
                                                 <f:facet name="header">
                                                     <h:outputText value="#" />
                                                 </f:facet>
@@ -500,6 +522,122 @@
                             </div>
                         </c:if>
 
+
+                        <c:if test="#{evaluadosView.lstRelacionBean.size()>0}">
+                            <div class="p-field p-col-12 p-md-5">
+                                <p:card>
+                                    <p:dataTable 
+                                        id="tblResultadoRelacion"
+                                        widgetVar="tblResultadoRelacion"
+                                        rows="10"
+                                        paginator="true" 
+                                        var="rel"
+                                        value="#{evaluadosView.lstRelacionBean}"
+                                        stickyHeader="true" stickyTopAt=".layout-topbar"
+                                        paginatorPosition="bottom"
+                                        editable="true"
+                                        editMode="cell"
+                                        editInitEvent="dblclick" 
+                                        stripedRows="true"
+                                        resizableColumns="true"
+                                        sortMode="single"
+                                        rowIndexVar="index"
+                                        paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                        currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords}"
+                                        emptyMessage="#{msg['no.items']}"
+                                        rendered="#{evaluadosView.lstRelacionBean.size()>0}"
+                                        >
+
+                                        <p:ajax event="cellEdit" listener="#{evaluadosView.actualizarRelacionDefinitivo}" update="formRed:tblRelacionesEvaluadoEvaluador,formRed:growl"/>
+
+                                        <f:facet name="header">
+                                            #{msg['step1.list.relationships']}
+                                        </f:facet>
+
+                                        <f:facet name="footer">
+                                            #{msg['step1.total.relationships']} #{evaluadosView.lstRelacionBean.size()}
+                                        </f:facet>
+                                        <p:column style="width: 20px;">
+                                            <f:facet name="header">
+                                                <h:outputText value="#" />
+                                            </f:facet>
+                                            <h:outputText 
+                                                value="#{index + 1}" />
+                                        </p:column> 
+                                        <p:column headerText="#{msg['relationship']}" sortBy="#{rel.strNombre}" sortOrder="asc" >
+                                            <h:outputText value="#{rel.strNombre}" />
+                                        </p:column>
+                                        <p:column headerText="#{msg['abbreviation']}">
+                                            <p:cellEditor>
+                                                <f:facet name="output">
+                                                    <h:outputText value="#{rel.strAbreviatura}"  />
+                                                </f:facet>
+                                                <f:facet name="input">
+                                                    <p:inputText value="#{rel.strAbreviatura}" maxlength="3" style="width: 100%;" />
+                                                </f:facet>
+                                            </p:cellEditor>
+                                        </p:column>
+                                        <p:column style="text-align: center" headerText="#{msg['assigned.color']}" >
+                                            <p:tag value="#{rel.strColor}" style=" width: 80px; height: 17px; background-color: ##{rel.strColor};" />
+                                        </p:column>
+                                        <p:column style="text-align: center"  >
+                                            <p:colorPicker value="#{rel.strColor}"   >
+                                                <p:ajax listener="#{evaluadosView.actualizaColorDefinitivo(rel)}" process="@this" update="@form"/>
+                                            </p:colorPicker>
+                                        </p:column>
+
+                                    </p:dataTable>
+
+                                </p:card>
+                            </div>
+                        </c:if>
+
+                        <c:if test="#{evaluadosView.lstRelacionesEvaluadoEvaluador.size()>0}">
+                            <div class="p-field p-col-12 p-md-7">
+                                <p:card >
+                                    <p:dataTable 
+                                        id="tblRelacionesEvaluadoEvaluador"
+                                        widgetVar="tblRelacionesEvaluadoEvaluador"
+                                        rows="10"
+                                        paginator="true" 
+                                        var="red"
+                                        value="#{evaluadosView.lstRelacionesEvaluadoEvaluador}"
+                                        paginatorPosition="bottom"
+                                        stripedRows="true"
+                                        resizableColumns="true"
+                                        sortMode="single"
+                                        stickyHeader="true"
+                                        paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                        emptyMessage="#{msg['no.items']}" 
+                                        rendered="#{evaluadosView.lstRelacionesEvaluadoEvaluador.size()>0}" >
+
+                                        <f:facet name="header">
+                                            #{msg['step1.list.network.found']}
+                                        </f:facet>
+
+                                        <f:facet name="footer">
+                                            #{msg['step1.total.network.found']} #{evaluadosView.lstRelacionesEvaluadoEvaluador.size()}
+                                        </f:facet>
+
+                                        <p:column headerText="#{msg['evaluated']}" sortBy="#{red.strEvaluado}" groupRow="true" sortOrder="asc" sortPriority="1" >
+                                            <h:outputText value="#{red.strEvaluadoDesc}" />
+                                            <br/>
+                                            <h:outputText value="#{red.strEvaluado}" class="p-text-light" />
+                                        </p:column>
+                                        <p:column headerText="#{msg['relationship']}" sortBy="#{red.strRelacionAbreviatura}" sortOrder="asc" sortPriority="2" >
+                                            <p:tag value="#{red.strRelacionAbreviatura}" style=" width: 80px; height: 17px; background-color: ##{red.strRelacionColor};" />
+                                        </p:column>                                 
+                                        <p:column headerText="#{msg['evaluator']}" sortBy="#{red.strEvaluador}" sortOrder="asc" sortPriority="3" >
+                                            <h:outputText value="#{red.strEvaluadorDesc}" />
+                                            <br/>
+                                            <h:outputText value="#{red.strEvaluador}" class="p-text-light" />
+                                        </p:column>
+
+                                    </p:dataTable>
+                                </p:card>
+
+                            </div>
+                        </c:if>
 
                         <c:if test="#{evaluadosView.blCargarCorrectoAvan and evaluadosView.lstErrorAvan.size()==0}">
                             <p:commandButton value="#{msg['step1.save.participant.networks']}" 
