@@ -44,7 +44,7 @@ public class ExecutorBalanceMovement extends BaseView {
     public synchronized String execute(List<Movimiento> lstMovements, Usuario objUser) {
 
         Session objSession = HibernateUtil.getSessionFactory().openSession();
-        
+
         Transaction tx = objSession.beginTransaction();
 
         try {
@@ -54,8 +54,8 @@ public class ExecutorBalanceMovement extends BaseView {
             if (!lstMovements.isEmpty()) {
 
                 UsuarioSaldo objUsuarioSaldo = objUsuarioSaldoDAO.obtenUsuarioSaldo(objUser.getUsIdCuentaPk(), objSession);
-                
-                if(objUsuarioSaldo==null){
+
+                if (objUsuarioSaldo == null) {
                     objUsuarioSaldo = new UsuarioSaldo();
                     objUsuarioSaldo.setUsIdCuentaPk(objUser.getUsIdCuentaPk());
                     objUsuarioSaldoDAO.guarda(objUsuarioSaldo, objSession);
@@ -65,13 +65,13 @@ public class ExecutorBalanceMovement extends BaseView {
 
                     strResult = executeMovement(objMovimiento, objUsuarioSaldo, objSession);
 
-                    if (strResult!=null) {
+                    if (strResult != null) {
                         tx.rollback();
                         return strResult;
                     }
 
                 }
-                
+
                 //objUsuarioSaldoDAO.actualizar(objUsuarioSaldo, objSession);
             }
 
@@ -96,7 +96,7 @@ public class ExecutorBalanceMovement extends BaseView {
             TipoMovimiento objTipoMovimiento = objMovimiento.getTipoMovimiento();
 
             Integer intQuantity = objMovimiento.getMoInCantidad();
-            
+
             objMovimiento.setMoFeCreacion(new Date());
 
             boolean blCorrect = true;
@@ -138,19 +138,37 @@ public class ExecutorBalanceMovement extends BaseView {
                     blCorrect = false;
                 }
             } else if (objTipoMovimiento.getTmIdTipoMovPk().equals(Movimientos.MOV_EJECUTA_LICENCIA_INDIVIDUAL)) {
-                //RESTA TOTAL Y RESTA RESERVA
-                if (valAmount(objUsuarioSaldo.getUsNrTotalIndividual(), intQuantity * SUBTRACTION)
+                //RESTA RESERVA Y SUMA USADO
+                if (valAmount(objUsuarioSaldo.getUsNrUsadoIndividual(), intQuantity)
                         && valAmount(objUsuarioSaldo.getUsNrReservadoIndividual(), intQuantity * SUBTRACTION)) {
-                    objUsuarioSaldo.setUsNrTotalIndividual(objUsuarioSaldo.getUsNrTotalIndividual() + (intQuantity * SUBTRACTION));
+                    objUsuarioSaldo.setUsNrUsadoIndividual(objUsuarioSaldo.getUsNrUsadoIndividual() + (intQuantity));
                     objUsuarioSaldo.setUsNrReservadoIndividual(objUsuarioSaldo.getUsNrReservadoIndividual() + (intQuantity * SUBTRACTION));
                 } else {
                     blCorrect = false;
                 }
             } else if (objTipoMovimiento.getTmIdTipoMovPk().equals(Movimientos.MOV_EJECUTA_LICENCIA_MASIVA)) {
-                //RESTA TOTAL Y RESTA RESERVA
-                if (valAmount(objUsuarioSaldo.getUsNrTotalMasivo(), intQuantity * SUBTRACTION)
+                //RESTA RESERVA Y SUMA USADO
+                if (valAmount(objUsuarioSaldo.getUsNrUsadoMasivo(), intQuantity)
                         && valAmount(objUsuarioSaldo.getUsNrReservadoMasivo(), intQuantity * SUBTRACTION)) {
-                    objUsuarioSaldo.setUsNrTotalMasivo(objUsuarioSaldo.getUsNrTotalMasivo() + (intQuantity * SUBTRACTION));
+                    objUsuarioSaldo.setUsNrUsadoMasivo(objUsuarioSaldo.getUsNrUsadoMasivo() + (intQuantity));
+                    objUsuarioSaldo.setUsNrReservadoMasivo(objUsuarioSaldo.getUsNrReservadoMasivo() + (intQuantity * SUBTRACTION));
+                } else {
+                    blCorrect = false;
+                }
+            } else if (objTipoMovimiento.getTmIdTipoMovPk().equals(Movimientos.MOV_LIBERAR_LICENCIA_INDIVIDUAL)) {
+                //RESTA RESERVA Y SUMA DISPONIBLE
+                if (valAmount(objUsuarioSaldo.getUsNrDisponibleIndividual(), intQuantity)
+                        && valAmount(objUsuarioSaldo.getUsNrReservadoMasivo(), intQuantity * SUBTRACTION)) {
+                    objUsuarioSaldo.setUsNrDisponibleIndividual(objUsuarioSaldo.getUsNrDisponibleIndividual() + (intQuantity));
+                    objUsuarioSaldo.setUsNrReservadoMasivo(objUsuarioSaldo.getUsNrReservadoMasivo() + (intQuantity * SUBTRACTION));
+                } else {
+                    blCorrect = false;
+                }
+            } else if (objTipoMovimiento.getTmIdTipoMovPk().equals(Movimientos.MOV_LIBERAR_LICENCIA_MASIVA)) {
+                //RESTA RESERVA Y SUMA DISPONIBLE
+                if (valAmount(objUsuarioSaldo.getUsNrDisponibleMasivo(), intQuantity)
+                        && valAmount(objUsuarioSaldo.getUsNrReservadoMasivo(), intQuantity * SUBTRACTION)) {
+                    objUsuarioSaldo.setUsNrDisponibleMasivo(objUsuarioSaldo.getUsNrDisponibleMasivo() + (intQuantity));
                     objUsuarioSaldo.setUsNrReservadoMasivo(objUsuarioSaldo.getUsNrReservadoMasivo() + (intQuantity * SUBTRACTION));
                 } else {
                     blCorrect = false;
@@ -158,8 +176,8 @@ public class ExecutorBalanceMovement extends BaseView {
             }
 
             if (!blCorrect) {
-                throw new ExecutorMovementException("Student failed because he has scored less than 35.");
-            }else{
+                throw new ExecutorMovementException("Error en la ejecución de movimientos.");
+            } else {
                 MovimientoDAO objMovimientoDAO = new MovimientoDAO();
                 Usuario objUsuario = new Usuario();
                 objUsuario.setUsIdCuentaPk(objUsuarioSaldo.getUsIdCuentaPk());
@@ -184,33 +202,5 @@ public class ExecutorBalanceMovement extends BaseView {
         }
         return false;
     }
-/*
-    private static void applyChangeInAmount(Integer intOrigin, Integer IntQuantity) {
 
-        try {
-            intOrigin = intOrigin + IntQuantity;
-        } catch (Exception e) {
-            mostrarError(log, e);
-        }
-    }
-
-    
-    private static String updateBalanceUser(UsuarioSaldo objUsuarioSaldo, Integer intTypeMovement, Session objSession) {
-
-        try {
-
-            if (intTypeMovement.equals(Movimientos.MOV_COMPRA_LICENCIA_INDIVIDUAL)) {
-                objUsuarioSaldo.
-            
-            
-        
-            }
-        } catch (Exception e) {
-            mostrarError(log, e);
-        }
-
-        return null;
-
-    }
-     */
 }

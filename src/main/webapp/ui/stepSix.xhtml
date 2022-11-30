@@ -48,7 +48,7 @@
     <ui:define name="content">
 
         <p:panel>
-            <h:form id="form" >
+            <h:form id="formIndividual" >
 
                 <p:growl life="4000" showSummary="true" />
 
@@ -71,7 +71,7 @@
                                 <p:dataTable id="checkboxDT3"
                                              widgetVar="checkboxDT3"
                                              var="evaluado" 
-                                             value="#{seguimientoProyectoView.lstParticipantesIniciados}" 
+                                             value="#{generaReportesView.lstEvaluados}" 
                                              selection="#{generaReportesView.lstEvaluadosSeleccionados}" 
                                              rowKey="#{evaluado.paIdParticipantePk}" 
                                              rows="5"
@@ -107,7 +107,7 @@
 
                                             </div>
                                             <div class="p-field p-col-12 p-md-3">
-                                                <p:commandButton value="#{msg['step6.button.generate.individual']}" ajax="true" update="@form" actionListener="#{generaReportesView.generarReporteIndividual()}" icon="pi pi-file" />
+                                                <p:commandButton value="#{msg['step6.button.generate.individual']}" ajax="true" update="formIndividual,formDLGIndividual" actionListener="#{generaReportesView.generarReporteIndividual()}" oncomplete="PF('dlgLicencias').show()"  icon="pi pi-file" />
                                             </div>
                                             <div class="p-field p-col-12 p-md-3">
                                                 <p:commandButton value="#{msg['step6.button.download.individual']}" ajax="false" disabled="#{generaReportesView.fileIndividual==null?true:false}" update="@this" icon="pi pi-download" >
@@ -143,15 +143,17 @@
                                         <h:outputText value="#{evaluado.paTxCorreo}" />
                                     </p:column>
 
-                                    <p:column headerText="#{msg['step5.percent.progress.evaluted']}" style="text-align: center;" >
-                                        <p:progressBar value="#{evaluado.bdPorcentajeAvance}" displayOnly="true" labelTemplate="#{evaluado.bdPorcentajeAvance}%" />
+                                    <p:column headerText="#{msg['nro.evaluators']}" style="text-align: right;" >
+                                        <h:outputText value="#{evaluado.intNumberEvaluators}" />
                                     </p:column>
 
-                                    <p:column headerText="#{msg['license']}" sortBy="#{red.blEvaluacionTerminada}" style="text-align: center;">
-                                        <!--p:tag  value="#{red.blEvaluacionTerminada==true?msg['complete']:msg['pending']}" 
-                                                severity="#{red.blEvaluacionTerminada==true?'success':''}" -->
-                                        <p:tag  value="#{msg['not.used']}" 
-                                                severity="info" />
+                                    <p:column headerText="#{msg['nro.evaluators.finished']}" style="text-align: right;" >
+                                        <h:outputText value="#{evaluado.intNumberEvaluationFinished}" /> 
+                                    </p:column>
+
+                                    <p:column headerText="#{msg['license']}" sortBy="#{evaluado.blAnalizado}" style="text-align: center;">
+                                        <p:tag  value="#{evaluado.blAnalizado==true?msg['used']:msg['not.used']}" 
+                                                severity="#{evaluado.blAnalizado==true?'success':''}" />
                                     </p:column> 
 
                                 </p:dataTable>
@@ -252,17 +254,16 @@
             -->
         </p:panel>
 
-        <!--
+
         <p:dialog widgetVar="dlgLicencias" header="#{msg['step5.subtitle.manage.licenses']}" width="500"
                   draggable="false" closable="true" hideEffect="drop" closeOnEscape="true" showEffect="drop" 
                   modal="true" 
                   resizable="false" >
 
-            <h:form>
+            <h:form id="formDLGIndividual">
                 <p:panel>
 
                     <p:growl id="growlFormUduario" showDetail="false" life="4000" />
-
 
                     <div class="ui-fluid p-formgrid p-grid">
 
@@ -275,15 +276,19 @@
                                 <p:card>
                                     <div class="p-field p-formgrid p-grid">
                                         <div class="p-col" style="text-align: center;" >
-                                            <p:outputLabel value="#{seguimientoProyectoView.intLicenciasIndividualesRequerido}" style="font-size: 200%;" />
-                                            <p:outputLabel value=" -#{seguimientoProyectoView.intLicenciasIndividualesRequerido}" style="color: red;" />
+                                            <p:outputLabel value="#{generaReportesView.intLicenciasIndividuales}" style="font-size: 200%;" /> 
+                                            <c:if test="#{generaReportesView.intLicenciasIndividualesRequerido>0}">
+                                                <p:outputLabel value=" -#{generaReportesView.intLicenciasIndividualesRequerido}" style="color: red;" />
+                                            </c:if>
                                         </div>
                                         <div style="text-align: center" >
                                             <p:divider layout="vertical" />
                                         </div>
                                         <div class="p-col" style="text-align: center;">
-                                            <p:outputLabel value="#{seguimientoProyectoView.intLicenciasMasivasRequerido}" style="font-size: 200%;" />
-                                            <p:outputLabel value=" -#{seguimientoProyectoView.intLicenciasIndividualesRequerido}" style="color: red;" />
+                                            <p:outputLabel value="#{generaReportesView.intLicenciasMasivas}" style="font-size: 200%;" />
+                                            <c:if test="#{generaReportesView.intLicenciasMasivasRequerido>0}">
+                                                <p:outputLabel value=" -#{generaReportesView.intLicenciasMasivasRequerido}" style="color: red;" />
+                                            </c:if>
                                         </div>
                                     </div>
                                     <div class="p-field p-formgrid p-grid">
@@ -307,25 +312,29 @@
                     <div class="p-col-12 p-col-12 p-md-12">
                         <div class="p-field p-formgrid p-grid">
                             <div class="p-field p-col">
-                                <p:commandButton value="#{msg['yes']}" style="width: 100%;"  icon="pi pi-lock" update="form"
-                                                 actionListener="#{generaReportesView.generarReporteIndividual}"  oncomplete="PF('dlgLicencias').hide()" />
+                                <p:commandButton value="#{msg['yes']}" style="width: 100%;"  icon="pi pi-lock" update="@form,formIndividual"
+                                                 actionListener="#{generaReportesView.confirmaGeneracionReporteIndividual()}" oncomplete="PF('dlgLicencias').hide()" />
                             </div>
                             <div class="p-field p-col">
                                 <p:commandButton value="#{msg['no']}" styleClass="ui-button-danger" 
                                                  style="width: 100%;"
-                                                 icon="pi pi-times"  onclick="PF('dlgLicencias').hide()" />
+                                                 icon="pi pi-times" oncomplete="PF('dlgLicencias').hide()" />
                             </div>
                         </div>
                     </div>
 
                     <br/>
+
                     <center>
                         <p:graphicImage value="../images/logoJaio360.jpg" width="130" height="50" />
                     </center>
+
                 </p:panel>
+
             </h:form>
+
         </p:dialog>       
--->
+
 
 
     </ui:define>

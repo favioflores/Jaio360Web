@@ -10,9 +10,11 @@ public class UsuarioSaldo implements java.io.Serializable {
     private Integer usNrTotalIndividual;
     private Integer usNrDisponibleIndividual;
     private Integer usNrReservadoIndividual;
+    private Integer usNrUsadoIndividual;
     private Integer usNrTotalMasivo;
     private Integer usNrDisponibleMasivo;
     private Integer usNrReservadoMasivo;
+    private Integer usNrUsadoMasivo;
 
     public UsuarioSaldo() {
         this.usNrTotalIndividual = 0;
@@ -21,6 +23,8 @@ public class UsuarioSaldo implements java.io.Serializable {
         this.usNrTotalMasivo = 0;
         this.usNrDisponibleMasivo = 0;
         this.usNrReservadoMasivo = 0;
+        this.usNrUsadoIndividual = 0;
+        this.usNrUsadoMasivo = 0;
     }
 
     public Integer getUsIdCuentaPk() {
@@ -77,6 +81,22 @@ public class UsuarioSaldo implements java.io.Serializable {
 
     public void setUsNrReservadoMasivo(Integer usNrReservadoMasivo) {
         this.usNrReservadoMasivo = usNrReservadoMasivo;
+    }
+
+    public Integer getUsNrUsadoIndividual() {
+        return usNrUsadoIndividual;
+    }
+
+    public void setUsNrUsadoIndividual(Integer usNrUsadoIndividual) {
+        this.usNrUsadoIndividual = usNrUsadoIndividual;
+    }
+
+    public Integer getUsNrUsadoMasivo() {
+        return usNrUsadoMasivo;
+    }
+
+    public void setUsNrUsadoMasivo(Integer usNrUsadoMasivo) {
+        this.usNrUsadoMasivo = usNrUsadoMasivo;
     }
 
 }

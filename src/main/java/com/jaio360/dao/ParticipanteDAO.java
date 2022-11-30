@@ -217,6 +217,26 @@ public class ParticipanteDAO implements Serializable {
         return listaParticipante;
     }
 
+    public List<Participante> obtenListaParticipanteAnalizadosXProyecto(Integer intProyectoPk) throws HibernateException {
+
+        List<Participante> listaParticipante = null;
+
+        try {
+            iniciaOperacion();
+            Query query = sesion.createQuery("from Participante p where p.proyecto.poIdProyectoPk = ? and paInAnalizado = ? ");
+
+            query.setInteger(0, intProyectoPk);
+            query.setBoolean(1, true);
+
+            listaParticipante = query.list();
+
+        } finally {
+            sesion.close();
+        }
+
+        return listaParticipante;
+    }
+
     public List<Participante> obtenListaParticipanteXEstado(Integer intProyectoPk, Integer intEstadoParticipante1, Integer intEstadoParticipante2) throws HibernateException {
         List<Participante> listaParticipante = new ArrayList<>();
 
@@ -299,14 +319,14 @@ public class ParticipanteDAO implements Serializable {
                     + "select p.PA_ID_PARTICIPANTE_PK as idParticipante, "
                     + "1 as cantidad_participantes "
                     + "from jaio.participante p "
-                    + "where p.PA_ID_ESTADO in (72) "
+                    + "where p.PA_ID_ESTADO in (69) "
                     + "and p.PO_ID_PROYECTO_FK = :intProyectoPk "
                     + "and p.PA_IN_AUTOEVALUAR = true "
                     + "union ALL "
                     + "select p.PA_ID_PARTICIPANTE_PK as idParticipante, "
                     + "count(rp.RE_ID_PARTICIPANTE_FK) as cantidad_participantes "
                     + "from jaio.participante p, jaio.relacion_participante rp "
-                    + "where p.PA_ID_ESTADO in (72) "
+                    + "where p.PA_ID_ESTADO in (69) "
                     + "and p.PO_ID_PROYECTO_FK = :intProyectoPk "
                     + "and p.PA_ID_PARTICIPANTE_PK = rp.PA_ID_PARTICIPANTE_FK "
                     + "and rp.RP_ID_ESTADO = 79 group by p.PA_ID_PARTICIPANTE_PK ) datos group by idParticipante ";
@@ -323,6 +343,44 @@ public class ParticipanteDAO implements Serializable {
 
     }
 
+    public Object obtenerNroEvaluadoresXEvaluado(Integer intProyectoPk, Integer intParticipante) throws HibernateException {
+
+        try {
+
+            iniciaOperacion();
+
+            String sql
+                    = "  select sum(cantidad_participantes) from ( "
+                    + "select p.PA_ID_PARTICIPANTE_PK as idParticipante, "
+                    + "1 as cantidad_participantes "
+                    + "from jaio.participante p "
+                    + "where p.PA_ID_ESTADO in (69) "
+                    + "and p.PO_ID_PROYECTO_FK = :intProyectoPk "
+                    + "and p.PA_IN_AUTOEVALUAR = true "
+                    + "and p.PA_ID_PARTICIPANTE_PK = :intParticipante "
+                    + "union ALL "
+                    + "select p.PA_ID_PARTICIPANTE_PK as idParticipante, "
+                    + "count(rp.RE_ID_PARTICIPANTE_FK) as cantidad_participantes "
+                    + "from jaio.participante p, jaio.relacion_participante rp "
+                    + "where p.PA_ID_ESTADO in (69) "
+                    + "and p.PO_ID_PROYECTO_FK = :intProyectoPk "
+                    + "and p.PA_ID_PARTICIPANTE_PK = :intParticipante "
+                    + "and p.PA_ID_PARTICIPANTE_PK = rp.PA_ID_PARTICIPANTE_FK "
+                    + "and rp.RP_ID_ESTADO = 79 group by p.PA_ID_PARTICIPANTE_PK ) datos ";
+
+            Query query = sesion.createSQLQuery(sql);
+
+            query.setInteger("intProyectoPk", intProyectoPk);
+            query.setInteger("intParticipante", intParticipante);
+            
+            return query.uniqueResult();
+
+        } finally {
+            sesion.close();
+        }
+
+    }
+
     public List obtenerRedCompletaXProyecto(Integer intProyectoPk) throws HibernateException {
 
         try {
@@ -330,23 +388,23 @@ public class ParticipanteDAO implements Serializable {
             iniciaOperacion();
 
             String sql
-                    = "  SELECT\n"
-                    + "	p.PA_TX_DESCRIPCION,\n"
-                    + "	p.PA_TX_CORREO,\n"
-                    + "	re.RE_TX_DESCRIPCION,\n"
-                    + "	re.RE_TX_CORREO,\n"
-                    + "	r.RE_TX_NOMBRE,\n"
-                    + "	r.RE_TX_ABREVIATURA,\n"
-                    + "	r.RE_COLOR\n"
-                    + "FROM\n"
-                    + "	participante p,\n"
-                    + "	relacion_participante rp,\n"
-                    + "	red_evaluacion re,\n"
-                    + "	relacion r\n"
-                    + "where\n"
-                    + "	p.PO_ID_PROYECTO_FK = :intProyectoPk \n"
-                    + "	and p.PA_ID_PARTICIPANTE_PK = rp.PA_ID_PARTICIPANTE_FK\n"
-                    + "	and rp.RE_ID_PARTICIPANTE_FK = re.RE_ID_PARTICIPANTE_PK\n"
+                    = "  SELECT "
+                    + "	p.PA_TX_DESCRIPCION, "
+                    + "	p.PA_TX_CORREO, "
+                    + "	re.RE_TX_DESCRIPCION, "
+                    + "	re.RE_TX_CORREO, "
+                    + "	r.RE_TX_NOMBRE, "
+                    + "	r.RE_TX_ABREVIATURA, "
+                    + "	r.RE_COLOR "
+                    + "FROM "
+                    + "	participante p, "
+                    + "	relacion_participante rp, "
+                    + "	red_evaluacion re, "
+                    + "	relacion r "
+                    + "where "
+                    + "	p.PO_ID_PROYECTO_FK = :intProyectoPk  "
+                    + "	and p.PA_ID_PARTICIPANTE_PK = rp.PA_ID_PARTICIPANTE_FK "
+                    + "	and rp.RE_ID_PARTICIPANTE_FK = re.RE_ID_PARTICIPANTE_PK "
                     + "	and rp.RE_ID_RELACION_FK = r.RE_ID_RELACION_PK  ";
 
             Query query = sesion.createSQLQuery(sql);

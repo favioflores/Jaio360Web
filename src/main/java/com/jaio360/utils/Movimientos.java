@@ -13,5 +13,7 @@ public class Movimientos {
     public static Integer MOV_RESERVA_LICENCIA_MASIVA = 1004;
     public static Integer MOV_EJECUTA_LICENCIA_INDIVIDUAL = 1005;
     public static Integer MOV_EJECUTA_LICENCIA_MASIVA = 1006;
+    public static Integer MOV_LIBERAR_LICENCIA_INDIVIDUAL = 1007;
+    public static Integer MOV_LIBERAR_LICENCIA_MASIVA = 1008;
 
 }

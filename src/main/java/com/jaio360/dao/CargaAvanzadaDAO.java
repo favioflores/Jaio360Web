@@ -56,16 +56,20 @@ public class CargaAvanzadaDAO implements Serializable {
 
             Query query1 = sesion.createSQLQuery("delete from relacion_participante where pa_id_participante_fk in ( select pa_id_Participante_pk from participante where po_id_proyecto_fk = ? ) ");
             Query query2 = sesion.createSQLQuery("delete from relacion where po_id_proyecto_fk = ? ");
+            Query query5 = sesion.createSQLQuery("delete from cuestionario_evaluado where po_id_proyecto_fk = ? ");
             Query query3 = sesion.createSQLQuery("delete from participante where po_id_proyecto_fk = ? ");
             Query query4 = sesion.createSQLQuery("delete from red_evaluacion where po_id_Proyecto_fk = ? ");
+            
 
             query1.setInteger(0, objProyecto.getPoIdProyectoPk());
             query2.setInteger(0, objProyecto.getPoIdProyectoPk());
+            query5.setInteger(0, objProyecto.getPoIdProyectoPk());
             query3.setInteger(0, objProyecto.getPoIdProyectoPk());
             query4.setInteger(0, objProyecto.getPoIdProyectoPk());
 
             query1.executeUpdate();
             query2.executeUpdate();
+            query5.executeUpdate();
             query3.executeUpdate();
             query4.executeUpdate();
 

@@ -31,7 +31,7 @@ public class LastUpdateDAO implements Serializable {
         List<LastUpdate> listaLastUpdate = null;
         try {
             iniciaOperacion();
-            listaLastUpdate = sesion.createQuery("from LastUpdate order by luDtFecha desc ").list();
+            listaLastUpdate = sesion.createQuery("from LastUpdate order by luDtFecha desc, luTxTipo desc ").setMaxResults(15).list();
         } finally {
             sesion.close();
         }

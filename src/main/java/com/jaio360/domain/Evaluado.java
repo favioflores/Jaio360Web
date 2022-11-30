@@ -23,6 +23,8 @@ public class Evaluado implements Serializable{
     private Integer intCantidadRed;
     private boolean blManual;
     private boolean blEnvioCorreo;
+    private boolean blAnalizado;
+    private Integer inAnalizado;
     
     private String paTxSexo;
     private Integer paNrEdad;
@@ -37,6 +39,14 @@ public class Evaluado implements Serializable{
         return intNumberEvaluators;
     }
 
+    public Integer getInAnalizado() {
+        return inAnalizado;
+    }
+
+    public void setInAnalizado(Integer inAnalizado) {
+        this.inAnalizado = inAnalizado;
+    }
+
     public void setIntNumberEvaluators(Integer intNumberEvaluators) {
         this.intNumberEvaluators = intNumberEvaluators;
     }
@@ -44,6 +54,16 @@ public class Evaluado implements Serializable{
     public Integer getIntNumberEvaluationFinished() {
         return intNumberEvaluationFinished;
     }
+
+    public boolean isBlAnalizado() {
+        return blAnalizado;
+    }
+
+    public void setBlAnalizado(boolean blAnalizado) {
+        this.blAnalizado = blAnalizado;
+    }
+    
+    
 
     public void setIntNumberEvaluationFinished(Integer intNumberEvaluationFinished) {
         this.intNumberEvaluationFinished = intNumberEvaluationFinished;

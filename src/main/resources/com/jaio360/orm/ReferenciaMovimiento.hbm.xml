@@ -8,12 +8,16 @@
             <column name="RM_ID_REFERENCIA_MOV_PK" />
             <generator class="identity" />
         </id>
-        <many-to-one name="movimiento" class="com.jaio360.orm.Movimiento" fetch="select">
+        <many-to-one name="movimiento" class="com.jaio360.orm.Movimiento" fetch="select"  >
             <column name="MO_ID_MOVIMIENTO_FK" not-null="true" />
         </many-to-one>
        
         <property name="rmTxComentario" type="string">
-            <column name="RM_TX_COMENTARIO" length="100" not-null="true" />
+            <column name="RM_TX_COMENTARIO" length="100" />
         </property>
+        <property name="poIdProyectoFk" type="java.lang.Integer">
+            <column name="PO_ID_PROYECTO_FK" />
+        </property>
+        
     </class>
 </hibernate-mapping>

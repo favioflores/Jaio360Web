@@ -182,7 +182,7 @@
                                                      disabled="#{seguimientoProyectoView.intIdEstadoProyecto==37?true:seguimientoProyectoView.boProyectoEjecutado==true?false:true}"
                                                      update="@form"
                                                      icon="pi pi-save" >
-
+                                        <p:confirm header="#{msg['confirmation']}" message="#{msg['prev.finished']}" icon="pi pi-info-circle" />
                                     </p:commandButton>
 
                                 </div>

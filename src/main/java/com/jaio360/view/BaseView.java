@@ -148,6 +148,22 @@ public abstract class BaseView extends VelocityViewServlet implements Serializab
         }
     }
 
+    public void mostrarAlertaWarning(String key) {
+        try {
+            if (existeMsg(key)) {
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_WARN, msg(key, null), null);
+                FacesContext.getCurrentInstance().addMessage(null, message);
+
+            } else {
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_WARN, key, null);
+                FacesContext.getCurrentInstance().addMessage(null, message);
+            }
+        } catch (Exception ex) {
+            logBase.error(ex);
+            mostrarError(ex);
+        }
+    }
+    
     public void mostrarAlertaFatal(String key) {
         try {
             if (existeMsg(key)) {

@@ -41,6 +41,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
+import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -1221,7 +1222,7 @@ public class EvaluadosView extends BaseView implements Serializable {
                     nextrow.createCell(r).setCellValue(objEvaluado.getPaTxAreaNegocio());
                 }
                 r++;
-                nextrow.createCell(r).setCellValue(objEvaluado.isPaInAutoevaluar() == true ? msg("yes") : msg("no"));
+                nextrow.createCell(r).setCellValue(objEvaluado.isPaInAutoevaluar() == true ? msg("a.indicator.autoevaluation") : null);
                 i++;
             }
 
@@ -1364,7 +1365,7 @@ public class EvaluadosView extends BaseView implements Serializable {
             }
 
             r++;
-            nextrow.createCell(r).setCellValue(objEvaluado.isPaInAutoevaluar() == true ? msg("yes") : msg("no"));
+            nextrow.createCell(r).setCellValue(objEvaluado.isPaInAutoevaluar() == true ? msg("a.indicator.autoevaluation") : null);
             r++;
             nextrow.createCell(r).setCellValue(objEvaluado.getStrObservacionMasivo());
             i++;
@@ -1508,10 +1509,10 @@ public class EvaluadosView extends BaseView implements Serializable {
                     objEvaluado.setPaTxOcupacion(strOcupacion);
                     objEvaluado.setPaTxAreaNegocio(strAreaNegocio);
 
-                    if (Utilitarios.esNuloOVacio(strAutoevaluar) || strAutoevaluar.toUpperCase().equals(msg("no").toUpperCase())) {
-                        objEvaluado.setPaInAutoevaluar(false);
-                    } else {
+                    if (Utilitarios.noEsNuloOVacio(strAutoevaluar) && strAutoevaluar.toUpperCase().equals(msg("a.indicator.autoevaluation").toUpperCase())) {
                         objEvaluado.setPaInAutoevaluar(true);
+                    } else {
+                        objEvaluado.setPaInAutoevaluar(false);
                     }
 
                     Integer error;
@@ -2859,14 +2860,14 @@ public class EvaluadosView extends BaseView implements Serializable {
                 try {
                     String strDato = row.getCell(c, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
                     if (Utilitarios.esNuloOVacio(strDato)) {
-                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + msg("error.title.description")));
+                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + " " + msg("error.title.description")));
                     } else {
                         if (!strDato.trim().equals(msg("description"))) {
-                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + msg("error.title.description")));
+                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + " " + msg("error.title.description")));
                         }
                     }
                 } catch (NoSuchElementException | NullPointerException e) {
-                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + msg("error.title.description")));
+                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + " " + msg("error.title.description")));
                 }
 
                 //CARGO
@@ -2874,14 +2875,14 @@ public class EvaluadosView extends BaseView implements Serializable {
                     c++;
                     String strDato = row.getCell(c, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
                     if (Utilitarios.esNuloOVacio(strDato)) {
-                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + msg("error.title.role")));
+                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + " " + msg("error.title.role")));
                     } else {
                         if (!strDato.trim().equals(msg("role"))) {
-                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + msg("error.title.role")));
+                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + " " + msg("error.title.role")));
                         }
                     }
                 } catch (NoSuchElementException | NullPointerException e) {
-                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + msg("error.title.role")));
+                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + " " + msg("error.title.role")));
                 }
 
                 //CORREO
@@ -2889,14 +2890,14 @@ public class EvaluadosView extends BaseView implements Serializable {
                     c++;
                     String strDato = row.getCell(c, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
                     if (Utilitarios.esNuloOVacio(strDato)) {
-                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + msg("error.title.email")));
+                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + " " + msg("error.title.email")));
                     } else {
                         if (!strDato.trim().equals(msg("email"))) {
-                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + msg("error.title.email")));
+                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + " " + msg("error.title.email")));
                         }
                     }
                 } catch (NoSuchElementException | NullPointerException e) {
-                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + msg("error.title.email")));
+                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + " " + msg("error.title.email")));
                 }
 
                 //SEXO
@@ -2905,14 +2906,14 @@ public class EvaluadosView extends BaseView implements Serializable {
                         c++;
                         String strDato = row.getCell(c, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
                         if (Utilitarios.esNuloOVacio(strDato)) {
-                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + msg("error.title.sex")));
+                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + " " + msg("error.title.sex")));
                         } else {
                             if (!strDato.trim().equals(msg("sex"))) {
-                                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + msg("error.title.sex")));
+                                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + " " + msg("error.title.sex")));
                             }
                         }
                     } catch (NoSuchElementException | NullPointerException e) {
-                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + msg("error.title.sex")));
+                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + " " + msg("error.title.sex")));
                     }
                 }
 
@@ -2922,14 +2923,14 @@ public class EvaluadosView extends BaseView implements Serializable {
                         c++;
                         String strDato = row.getCell(c, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
                         if (Utilitarios.esNuloOVacio(strDato)) {
-                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + msg("error.title.age")));
+                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + " " + msg("error.title.age")));
                         } else {
                             if (!strDato.trim().equals(msg("age"))) {
-                                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + msg("error.title.age")));
+                                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + " " + msg("error.title.age")));
                             }
                         }
                     } catch (NoSuchElementException | NullPointerException e) {
-                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + msg("error.title.age")));
+                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + " " + msg("error.title.age")));
                     }
                 }
 
@@ -2939,14 +2940,14 @@ public class EvaluadosView extends BaseView implements Serializable {
                         c++;
                         String strDato = row.getCell(c, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
                         if (Utilitarios.esNuloOVacio(strDato)) {
-                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + msg("error.title.hiring.time")));
+                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + " " + msg("error.title.hiring.time")));
                         } else {
                             if (!strDato.trim().equals(msg("hiring.time"))) {
-                                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + msg("error.title.hiring.time")));
+                                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + " " + msg("error.title.hiring.time")));
                             }
                         }
                     } catch (NoSuchElementException | NullPointerException e) {
-                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + msg("error.title.hiring.time")));
+                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + " " + msg("error.title.hiring.time")));
                     }
                 }
 
@@ -2956,14 +2957,14 @@ public class EvaluadosView extends BaseView implements Serializable {
                         c++;
                         String strDato = row.getCell(c, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
                         if (Utilitarios.esNuloOVacio(strDato)) {
-                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + msg("error.title.work.range")));
+                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + " " + msg("error.title.work.range")));
                         } else {
                             if (!strDato.trim().equals(msg("work.range"))) {
-                                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + msg("error.title.work.range")));
+                                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + " " + msg("error.title.work.range")));
                             }
                         }
                     } catch (NoSuchElementException | NullPointerException e) {
-                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + msg("error.title.work.range")));
+                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + " " + msg("error.title.work.range")));
                     }
                 }
 
@@ -2973,14 +2974,14 @@ public class EvaluadosView extends BaseView implements Serializable {
                         c++;
                         String strDato = row.getCell(c, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
                         if (Utilitarios.esNuloOVacio(strDato)) {
-                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + msg("error.title.working.area")));
+                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + " " + msg("error.title.working.area")));
                         } else {
                             if (!strDato.trim().equals(msg("working.area"))) {
-                                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + msg("error.title.working.area")));
+                                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + " " + msg("error.title.working.area")));
                             }
                         }
                     } catch (NoSuchElementException | NullPointerException e) {
-                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + msg("error.title.working.area")));
+                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + " " + msg("error.title.working.area")));
                     }
                 }
 
@@ -2989,14 +2990,14 @@ public class EvaluadosView extends BaseView implements Serializable {
                     c++;
                     String strDato = row.getCell(c, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
                     if (Utilitarios.esNuloOVacio(strDato)) {
-                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + msg("error.title.autoevaluate")));
+                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + " " + msg("error.title.autoevaluate")));
                     } else {
                         if (!strDato.trim().equals(msg("autoevaluate"))) {
-                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + msg("error.title.autoevaluate")));
+                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + " " + msg("error.title.autoevaluate")));
                         }
                     }
                 } catch (NoSuchElementException | NullPointerException e) {
-                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + msg("error.title.autoevaluate")));
+                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + " " + msg("error.title.autoevaluate")));
                 }
 
                 /**
@@ -3014,14 +3015,14 @@ public class EvaluadosView extends BaseView implements Serializable {
                 try {
                     String strDato = row.getCell(c, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
                     if (Utilitarios.esNuloOVacio(strDato)) {
-                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + msg("error.title.evaluated")));
+                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + " " + msg("error.title.evaluated")));
                     } else {
                         if (!strDato.trim().equals(msg("evaluated"))) {
-                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + msg("error.title.evaluated")));
+                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + " " + msg("error.title.evaluated")));
                         }
                     }
                 } catch (NoSuchElementException | NullPointerException e) {
-                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + msg("error.title.evaluated")));
+                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + " " + msg("error.title.evaluated")));
                 }
 
                 //RELACION
@@ -3029,14 +3030,14 @@ public class EvaluadosView extends BaseView implements Serializable {
                     c++;
                     String strDato = row.getCell(c, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
                     if (Utilitarios.esNuloOVacio(strDato)) {
-                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + msg("error.title.relationship")));
+                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + " " + msg("error.title.relationship")));
                     } else {
                         if (!strDato.trim().equals(msg("relationship"))) {
-                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + msg("error.title.relationship")));
+                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + " " + msg("error.title.relationship")));
                         }
                     }
                 } catch (NoSuchElementException | NullPointerException e) {
-                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + msg("error.title.relationship")));
+                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + " " + msg("error.title.relationship")));
                 }
 
                 //EVALUADOR
@@ -3044,14 +3045,14 @@ public class EvaluadosView extends BaseView implements Serializable {
                     c++;
                     String strDato = row.getCell(c, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
                     if (Utilitarios.esNuloOVacio(strDato)) {
-                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + msg("error.title.evaluator")));
+                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + " " + msg("error.title.evaluator")));
                     } else {
                         if (!strDato.trim().equals(msg("evaluator"))) {
-                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + msg("error.title.evaluator")));
+                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + " " + msg("error.title.evaluator")));
                         }
                     }
                 } catch (NoSuchElementException | NullPointerException e) {
-                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + msg("error.title.evaluator")));
+                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + " " + msg("error.title.evaluator")));
                 }
 
                 /**
@@ -3314,7 +3315,7 @@ public class EvaluadosView extends BaseView implements Serializable {
             }
 
             if (Utilitarios.noEsNuloOVacio(strTemp)) {
-                if (Utilitarios.limpiarTexto(strTemp).equals(msg("yes").toUpperCase())) {
+                if (Utilitarios.limpiarTexto(strTemp).equals(msg("a.indicator.autoevaluation").toUpperCase())) {
                     blAutoevaluar = true;
                 }
             }
@@ -3534,21 +3535,23 @@ public class EvaluadosView extends BaseView implements Serializable {
     public void iniciarRedDeCargaAvanzada() {
 
         ParticipanteDAO objParticipanteDAO = new ParticipanteDAO();
-        RedEvaluacionDAO objRedEvaluacionDAO = new RedEvaluacionDAO();
         UsuarioDAO objUsuarioDAO = new UsuarioDAO();
 
         /* CREAMOS LISTA DE USUARIOS EVALUANTES */
-        Map hUsuarios = obtieneUsuarios();
-
         List<Participante> lstParticipante = objParticipanteDAO.obtenListaParticipanteXEstado(Utilitarios.obtenerProyecto().getIntIdProyecto(), Constantes.INT_ET_ESTADO_EVALUADO_EN_PARAMETRIZACION, null);
+
+        List<String> lstCorreos = new ArrayList<>();
 
         Map hEvaluados = new HashMap();
 
         for (Participante objParticipante : lstParticipante) {
             if (!hEvaluados.containsKey(objParticipante.getPaTxCorreo())) {
+                lstCorreos.add(objParticipante.getPaTxCorreo());
                 hEvaluados.put(objParticipante.getPaTxCorreo(), objParticipante.getPaTxDescripcion());
             }
         }
+
+        Map hUsuarios = obtieneUsuarios(lstCorreos);
 
         objUsuarioDAO.crearCuentasParaProyecto(hEvaluados, hUsuarios);
 
@@ -3563,6 +3566,7 @@ public class EvaluadosView extends BaseView implements Serializable {
             objCargaAvanzadaDAO.eliminarRegistrosAvanzado(objProyecto);
 
             mostrarAlertaInfo("deleted");
+            mostrarAlertaWarning("remember.assigned.assessments.again");
 
         } catch (Exception e) {
             mostrarError(log, e);
@@ -3572,16 +3576,26 @@ public class EvaluadosView extends BaseView implements Serializable {
         init();
     }
 
-    private Map obtieneUsuarios() {
+    private Map obtieneUsuarios(List<String> lstCorreos) {
 
         UsuarioDAO objUsuarioDAO = new UsuarioDAO();
 
-        List<Usuario> lstUsuarios = objUsuarioDAO.obtenListaUsuario();
+        List lstGrupos = ListUtils.partition(lstCorreos, 50);
+
+        Iterator itLstGrupos = lstGrupos.iterator();
+
+        List<Usuario> lstUsuarios;
 
         Map hUsuarios = new HashMap();
 
-        for (Usuario objUsuario : lstUsuarios) {
-            hUsuarios.put(objUsuario.getUsIdMail(), objUsuario);
+        while (itLstGrupos.hasNext()) {
+
+            lstUsuarios = objUsuarioDAO.obtenListaUsuario((List) itLstGrupos.next());
+
+            for (Usuario objUsuario : lstUsuarios) {
+                hUsuarios.put(objUsuario.getUsIdMail(), objUsuario);
+            }
+
         }
 
         return hUsuarios;
@@ -3667,7 +3681,7 @@ public class EvaluadosView extends BaseView implements Serializable {
     public void actualizarRelacionTemporal(CellEditEvent event) {
 
         boolean flag = false;
-        
+
         try {
 
             if (Utilitarios.noEsNuloOVacio(event.getNewValue())) {
@@ -3682,7 +3696,7 @@ public class EvaluadosView extends BaseView implements Serializable {
                     }
 
                 }
-                
+
                 if (flag) {
                     objRelacionBean.setStrAbreviatura(event.getNewValue().toString().toUpperCase());
                     mostrarAlertaInfo("abbreviation.was.updated");

@@ -94,7 +94,7 @@ public class UsuarioDAO implements Serializable {
 
         return usuario;
     }
-    
+
     public Usuario obtenUsuarioByEmail(String strEmail) throws HibernateException {
         try {
             iniciaOperacion();
@@ -138,6 +138,42 @@ public class UsuarioDAO implements Serializable {
         return listaUsuario;
     }
 
+    public List<Usuario> obtenListaUsuario(List lstCorreos) throws HibernateException {
+        List<Usuario> listaUsuario = null;
+        
+        try {
+            iniciaOperacion();
+            Query query = sesion.createQuery("from Usuario u where u.usIdMail in ( :lstCorreos ) ");
+            
+            query.setParameterList("lstCorreos", lstCorreos);
+            
+            listaUsuario = query.list();
+            
+        } finally {
+            sesion.close();
+        }
+
+        return listaUsuario;
+    }
+    
+    public List<Usuario> obtenListaUsuario(List lstCorreos, Session objSession) throws HibernateException {
+        List<Usuario> listaUsuario = null;
+        
+        try {
+
+            Query query = objSession.createQuery("from Usuario u where u.usIdMail in ( :lstCorreos ) ");
+            
+            query.setParameterList("lstCorreos", lstCorreos);
+            
+            listaUsuario = query.list();
+            
+        } catch(Exception e){
+            log.error(e);
+        }
+
+        return listaUsuario;
+    }
+
     public List<Usuario> obtenListaUsuarioPorPerfil(Integer intPerfil) throws HibernateException {
         List<Usuario> listaUsuario = null;
         try {
@@ -154,7 +190,7 @@ public class UsuarioDAO implements Serializable {
 
         return listaUsuario;
     }
-    
+
     public List<Usuario> obtenListaUsuarioPorPerfil(Integer intPerfil1, Integer intPerfil2) throws HibernateException {
         List<Usuario> listaUsuario = null;
         try {

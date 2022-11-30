@@ -115,7 +115,7 @@ public class MenuPrincipalView extends BaseView implements Serializable {
             /**
              * UPGRADES
              **/
-            agregarItem(msg("upgrades"), "upgrades.jsf", "pi pi-cloud-upload", menuPrincipal);
+            agregarItem("", "upgrades.jsf", "pi pi-info-circle", menuPrincipal);
             
 
         } else if (false) {//COUNTRY MANAGER

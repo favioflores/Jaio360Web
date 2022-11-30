@@ -82,13 +82,15 @@
                                             <div class="p-field p-grid">
                                                 <div class="p-col-10">
                                                     <span class="ui-float-label">
-                                                        <p:inputText id="idRpta#{counter-1}" required="true" requiredMessage="#{msg['step2.not.valid.answer']}" value="#{crearCuestionarioView.strRptaDesc[counter-1]}" >
+                                                        <p:inputText id="idRpta#{counter-1}" required="true" requiredMessage="#{msg['step2.not.valid.answer']}" value="#{crearCuestionarioView.strRptaDesc[counter-1]}"
+                                                                     disabled="#{(importarCuestionariosView.intIdEstadoProyecto == 37 or importarCuestionariosView.intIdEstadoProyecto == 34)}">
                                                         </p:inputText>
                                                         <p:outputLabel for="@previous" value="#{msg['step2.label.answer']} #{counter}"/>
                                                     </span>
                                                 </div>
                                                 <div class="p-col-2">
                                                     <p:commandButton type="submit" process=":formMetrica:idRpta#{counter-1},@this" 
+                                                                     disabled="#{(importarCuestionariosView.intIdEstadoProyecto == 37 or importarCuestionariosView.intIdEstadoProyecto == 34)}"
                                                                      update="formMetrica" actionListener="#{crearCuestionarioView.addMetrica(counter-1)}" icon="pi pi-save" />
                                                 </div>
 
@@ -397,7 +399,8 @@
                                                 </f:facet>
                                             </p:cellEditor>
                                         </p:column>
-                                        <p:column style="width:6rem">
+
+                                        <p:column style="width:6rem" rendered="#{!(importarCuestionariosView.intIdEstadoProyecto == 37)}" >
                                             <p:rowEditor editTitle="Edit Row" cancelTitle="Cancel Edit" saveTitle="Save Row"/>
                                         </p:column>
 
@@ -433,7 +436,7 @@
                                                  immediate="true"
                                                  update="@form"
                                                  rendered="#{!(importarCuestionariosView.blExistPrevImport) or !(evaluadosView.intIdEstadoProyecto == 37 or evaluadosView.intIdEstadoProyecto == 34)}"
-                                               
+
                                                  disabled="#{!(importarCuestionariosView.blExistPrevImport) or !(evaluadosView.intIdEstadoProyecto == 32 or evaluadosView.intIdEstadoProyecto == 33)}" 
                                                  actionListener="#{importarCuestionariosView.eliminarCuestionario()}" 
                                                  styleClass="ui-button-danger"

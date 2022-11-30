@@ -55,10 +55,10 @@
                 <p:card id="cardFormUsuario">
 
                     <h3>#{msg['last.update.title']}</h3>
-                    
-                    <p:outputLabel value="#{msg['whats.new']}"/>
 
-                    <p:chronoline value="#{chronolineView.lstLastUpdateBeans}" var="lastUpdate" align="alternate" styleClass="customized-chronoline">
+                    <p:outputLabel value="#{msg['whats.new']}"/>
+                    
+                    <p:chronoline value="#{chronolineView.lstLastUpdateBeans}" align="alternate" var="lastUpdate" styleClass="customized-chronoline">
 
                         <p:card>
                             <f:facet name="title">
@@ -67,13 +67,15 @@
                             <f:facet name="subtitle">
                                 #{lastUpdate.luDtFecha}
                             </f:facet>
+                            <p:outputLabel id="outconvoper" value="#{lastUpdate.luTxDescripcion}" escape="false" />
 
-                            <p>#{lastUpdate.luTxDescripcion}</p>
-
+                            
                         </p:card>
 
                         <f:facet name="marker">
-                            <span class="custom-marker shadow-1" style="background-color: #{lastUpdate.strColor}"><i class="#{lastUpdate.strIcon}"/></span>
+                            <span class="custom-marker shadow-2" style="background-color: ##{lastUpdate.strColor}">
+                                <i class="#{lastUpdate.strIcon}"/>
+                            </span>
                         </f:facet>
                     </p:chronoline>
 

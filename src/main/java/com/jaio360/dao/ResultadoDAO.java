@@ -120,6 +120,12 @@ public class ResultadoDAO implements Serializable {
                     + "	where pa.PO_ID_PROYECTO_FK = ? "
                     + "		and pa.PA_IN_AUTOEVALUAR = true "
                     + "		and pa.PA_ID_ESTADO = ? "
+                            + " and exists (select 1 " +
+"		              from resultado rr " +
+"				     where rr.PO_ID_PROYECTO_FK = pa.PO_ID_PROYECTO_FK " +
+"				       and rr.PA_ID_PARTICIPANTE_FK = pa.PA_ID_PARTICIPANTE_PK " +
+"				       and rr.RE_ID_RELACION_FK is NULL " +
+"				       and rr.RE_ID_PARTICIPANTE_FK is null )"
                     + "               ) d  ");
 
             /*falta agregar al participante que termina su evaluacion pero no responde nada */
@@ -138,6 +144,55 @@ public class ResultadoDAO implements Serializable {
         return listaResultado;
     }
 
+    public List obtenListaTotalTerminadosXparticipante(Integer intidProyecto) throws HibernateException {
+
+        List listaResultado = null;
+
+        try {
+
+            iniciaOperacion();
+            Query query = sesion.createSQLQuery(
+                      " select g.participante, count(*) from ( "
+                    + "select distinct * from (                                                                 "
+                    + " select r.PA_ID_PARTICIPANTE_FK as participante, r.RE_ID_PARTICIPANTE_FK as relacion_participante, r.RE_ID_RELACION_FK as relacion "
+                    + "   from resultado r                                                              "
+                    + "  where r.PO_ID_PROYECTO_FK = ?                                                  "
+                    + "  UNION ALL                                                                      "
+                    + " select rp.PA_ID_PARTICIPANTE_FK, rp.RE_ID_PARTICIPANTE_FK, rp.RE_ID_RELACION_FK "
+                    + "   from relacion_participante rp, participante pa                                "
+                    + "  where rp.PA_ID_PARTICIPANTE_FK = pa.PA_ID_PARTICIPANTE_PK                      "
+                    + "    and rp.RP_ID_ESTADO = ?                                                      "
+                    + "    and pa.PO_ID_PROYECTO_FK = ?                                             "
+                    + " union all "
+                    + "	select 	pa.PA_ID_PARTICIPANTE_PK, null, null "
+                    + "	from participante pa "
+                    + "	where pa.PO_ID_PROYECTO_FK = ? "
+                    + "		and pa.PA_IN_AUTOEVALUAR = true "
+                    + "		and pa.PA_ID_ESTADO = ? "
+                            + " and exists (select 1 " +
+"		              from resultado rr " +
+"				     where rr.PO_ID_PROYECTO_FK = pa.PO_ID_PROYECTO_FK " +
+"				       and rr.PA_ID_PARTICIPANTE_FK = pa.PA_ID_PARTICIPANTE_PK " +
+"				       and rr.RE_ID_RELACION_FK is NULL " +
+"				       and rr.RE_ID_PARTICIPANTE_FK is null )"
+                    + "               ) d ) g group by participante ");
+
+            /*falta agregar al participante que termina su evaluacion pero no responde nada */
+            query.setInteger(0, intidProyecto);
+            query.setInteger(1, Constantes.INT_ET_ESTADO_RELACION_EDO_EDOR_TERMINADO);
+            query.setInteger(2, intidProyecto);
+            query.setInteger(3, intidProyecto);
+            query.setInteger(4, Constantes.INT_ET_ESTADO_EVALUADO_TERMINADO);
+
+            listaResultado = query.list();
+
+        } finally {
+            sesion.close();
+        }
+
+        return listaResultado;
+    }
+    
     public List<Resultado> obtenListaResultado(Integer intIdComponente) throws HibernateException {
 
         List<Resultado> listaResultado = null;

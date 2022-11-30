@@ -22,7 +22,7 @@
             <column name="MO_IN_CANTIDAD" not-null="true" />
         </property>
         
-        <set name="referenciaMovimientos" inverse="true">
+        <set name="referenciaMovimientos" cascade="save-update" inverse="true">
             <key>
                 <column name="MO_ID_MOVIMIENTO_FK" not-null="true" />
             </key>

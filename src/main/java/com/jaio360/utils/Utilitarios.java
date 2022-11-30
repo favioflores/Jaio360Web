@@ -898,6 +898,9 @@ public class Utilitarios extends BaseView implements Serializable{
     }
 
     public static String columnExcel(int number) {
+        
+        number++;
+        
         StringBuilder sb = new StringBuilder();
         while (number-- > 0) {
             sb.append((char) ('A' + (number % 26)));

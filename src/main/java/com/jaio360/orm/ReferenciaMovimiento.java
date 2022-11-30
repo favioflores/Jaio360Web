@@ -9,7 +9,16 @@ public class ReferenciaMovimiento implements java.io.Serializable {
     private Integer rmIdReferenciaMovPk;
     private String rmTxComentario;
     private Movimiento movimiento;
+    private Integer poIdProyectoFk;
 
+    public Integer getPoIdProyectoFk() {
+        return poIdProyectoFk;
+    }
+
+    public void setPoIdProyectoFk(Integer poIdProyectoFk) {
+        this.poIdProyectoFk = poIdProyectoFk;
+    }
+   
     public Integer getRmIdReferenciaMovPk() {
         return rmIdReferenciaMovPk;
     }

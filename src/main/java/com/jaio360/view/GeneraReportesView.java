@@ -1,15 +1,23 @@
 package com.jaio360.view;
 
+import com.jaio360.component.ExecutorBalanceMovement;
 import com.jaio360.dao.CuestionarioDAO;
 import com.jaio360.dao.DetalleMetricaDAO;
 import com.jaio360.dao.ParticipanteDAO;
 import com.jaio360.dao.RelacionDAO;
+import com.jaio360.dao.ResultadoDAO;
+import com.jaio360.dao.UsuarioSaldoDAO;
 import com.jaio360.domain.DatosReporte;
 import com.jaio360.domain.Evaluado;
 import com.jaio360.domain.ProyectoInfo;
 import com.jaio360.orm.Cuestionario;
+import com.jaio360.orm.Movimiento;
 import com.jaio360.orm.Participante;
+import com.jaio360.orm.ReferenciaMovimiento;
 import com.jaio360.orm.Relacion;
+import com.jaio360.orm.TipoMovimiento;
+import com.jaio360.orm.Usuario;
+import com.jaio360.orm.UsuarioSaldo;
 import com.jaio360.report.ElementoGrupalUtiles;
 import com.jaio360.report.ReporteGrupalCaratula;
 import com.jaio360.report.ReporteGrupalNivelParticipacion;
@@ -26,6 +34,7 @@ import com.jaio360.report.ReporteIndividualSumarioCategoria;
 import com.jaio360.report.ReporteIndividualSumarioCategoriaMismo;
 import com.jaio360.report.ReporteTodasRespuestas;
 import com.jaio360.utils.Constantes;
+import com.jaio360.utils.Movimientos;
 import com.jaio360.utils.ReportSort;
 import com.jaio360.utils.Utilitarios;
 import java.io.File;
@@ -35,9 +44,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
@@ -72,7 +83,7 @@ public class GeneraReportesView extends BaseView implements Serializable {
     private List<Evaluado> lstEvaluados;
     private List<Cuestionario> lstCuestionarios;
     private List<Cuestionario> lstCuestionariosSeleccionados;
-    private List<Participante> lstEvaluadosSeleccionados;
+    private List<Evaluado> lstEvaluadosSeleccionados;
     private List<Cuestionario> lstFiltroCuestionarios;
     private List<Participante> lstFiltroEvaluados;
 
@@ -82,6 +93,43 @@ public class GeneraReportesView extends BaseView implements Serializable {
     private StreamedContent fileGrupal;
     private StreamedContent fileIndividual;
     private StreamedContent planAccion;
+
+    private Integer intLicenciasIndividuales;
+    private Integer intLicenciasMasivas;
+    private Integer intLicenciasIndividualesRequerido;
+    private Integer intLicenciasMasivasRequerido;
+
+    public Integer getIntLicenciasIndividuales() {
+        return intLicenciasIndividuales;
+    }
+
+    public void setIntLicenciasIndividuales(Integer intLicenciasIndividuales) {
+        this.intLicenciasIndividuales = intLicenciasIndividuales;
+    }
+
+    public Integer getIntLicenciasMasivas() {
+        return intLicenciasMasivas;
+    }
+
+    public void setIntLicenciasMasivas(Integer intLicenciasMasivas) {
+        this.intLicenciasMasivas = intLicenciasMasivas;
+    }
+
+    public Integer getIntLicenciasIndividualesRequerido() {
+        return intLicenciasIndividualesRequerido;
+    }
+
+    public void setIntLicenciasIndividualesRequerido(Integer intLicenciasIndividualesRequerido) {
+        this.intLicenciasIndividualesRequerido = intLicenciasIndividualesRequerido;
+    }
+
+    public Integer getIntLicenciasMasivasRequerido() {
+        return intLicenciasMasivasRequerido;
+    }
+
+    public void setIntLicenciasMasivasRequerido(Integer intLicenciasMasivasRequerido) {
+        this.intLicenciasMasivasRequerido = intLicenciasMasivasRequerido;
+    }
 
     public StreamedContent getPlanAccion() {
 
@@ -133,11 +181,11 @@ public class GeneraReportesView extends BaseView implements Serializable {
         this.fileIndividual = fileIndividual;
     }
 
-    public List<Participante> getLstEvaluadosSeleccionados() {
+    public List<Evaluado> getLstEvaluadosSeleccionados() {
         return lstEvaluadosSeleccionados;
     }
 
-    public void setLstEvaluadosSeleccionados(List<Participante> lstEvaluadosSeleccionados) {
+    public void setLstEvaluadosSeleccionados(List<Evaluado> lstEvaluadosSeleccionados) {
         this.lstEvaluadosSeleccionados = lstEvaluadosSeleccionados;
     }
 
@@ -250,12 +298,51 @@ public class GeneraReportesView extends BaseView implements Serializable {
         lstContenidoGrupal.add(new ModeloContenido(22,"Resumen de evaluados por relaciones","",strDescripcionesGrupal[0],"EXCEL"));
          */
         ProyectoInfo objProyectoInfo = Utilitarios.obtenerProyecto();
-
         ParticipanteDAO objParticipanteDAO = new ParticipanteDAO();
+        ResultadoDAO objResultadoDAO = new ResultadoDAO();
 
+        /**
+         * OBTIENE NRO DE EVALUADORES POR PARTICIPANTE DEL PROYECTO
+         */
+        List lstParticipanteRedEvaluacion = objParticipanteDAO.obtenerNroParticipantes(objProyectoInfo.getIntIdProyecto());
+        Iterator itLstParticipanteRedEvaluacion = lstParticipanteRedEvaluacion.iterator();
+
+        Map mapEvaluados = new HashMap();
+
+        while (itLstParticipanteRedEvaluacion.hasNext()) {
+
+            Object[] obj = (Object[]) itLstParticipanteRedEvaluacion.next();
+
+            if (!mapEvaluados.containsKey(obj[0])) {
+                mapEvaluados.put(obj[0], obj[1]);
+            }
+
+        }
+
+        /**
+         * OBTIENE NRO DE EVALUACIONES TERMINADAS PR PARTICIPANTE
+         */
+        List lstEvaluacionesTerminadas = objResultadoDAO.obtenListaTotalTerminadosXparticipante(objProyectoInfo.getIntIdProyecto());
+        Iterator itLstEvaluacionesTerminadas = lstEvaluacionesTerminadas.iterator();
+
+        Map mapEvaluacionesTerminadas = new HashMap();
+
+        while (itLstEvaluacionesTerminadas.hasNext()) {
+
+            Object[] obj = (Object[]) itLstEvaluacionesTerminadas.next();
+
+            if (!mapEvaluacionesTerminadas.containsKey(obj[0])) {
+                mapEvaluacionesTerminadas.put(obj[0], obj[1]);
+            }
+
+        }
+
+        /**
+         * OBTIENE PARTICIPANTES DEL PROYECTO
+         */
         List<Participante> lstParticipantes = objParticipanteDAO.obtenListaParticipanteXEstado(objProyectoInfo.getIntIdProyecto(), Constantes.INT_ET_ESTADO_EVALUADO_EN_EJECUCION, Constantes.INT_ET_ESTADO_EVALUADO_TERMINADO);
 
-        lstEvaluados = new ArrayList<Evaluado>();
+        lstEvaluados = new ArrayList<>();
 
         Evaluado objEvaluado;
 
@@ -264,12 +351,34 @@ public class GeneraReportesView extends BaseView implements Serializable {
             objEvaluado = new Evaluado();
 
             objEvaluado.setPaIdParticipantePk(objParticipante.getPaIdParticipantePk());
-            objEvaluado.setPaTxDescripcion(objParticipante.getPaTxCorreo());
+            objEvaluado.setPaTxDescripcion(objParticipante.getPaTxDescripcion());
             objEvaluado.setPaTxNombreCargo(objParticipante.getPaTxNombreCargo());
             objEvaluado.setPaTxCorreo(objParticipante.getPaTxCorreo());
-            objEvaluado.setIntNumberEvaluators(Integer.MIN_VALUE);
-            objEvaluado.setIntNumberEvaluationFinished(1);
+            objEvaluado.setPaInAutoevaluar(objParticipante.getPaInAutoevaluar());
+            if (objParticipante.getPaInAnalizado() != null) {
+                objEvaluado.setBlAnalizado(objParticipante.getPaInAnalizado());
+                if (objParticipante.getPaInAnalizado()) {
+                    objEvaluado.setInAnalizado(111);
+                } else {
+                    objEvaluado.setInAnalizado(0);
+                }
+            } else {
+                objEvaluado.setBlAnalizado(false);
+                objEvaluado.setInAnalizado(0);
+            }
 
+            if (mapEvaluados.containsKey(objParticipante.getPaIdParticipantePk())) {
+                BigDecimal bdTemp = (BigDecimal) mapEvaluados.get(objParticipante.getPaIdParticipantePk());
+                objEvaluado.setIntNumberEvaluators(bdTemp.intValue());
+            } else {
+                objEvaluado.setIntNumberEvaluators(0);
+            }
+            if (mapEvaluacionesTerminadas.containsKey(objParticipante.getPaIdParticipantePk())) {
+                BigDecimal bdTemp = (BigDecimal) mapEvaluacionesTerminadas.get(objParticipante.getPaIdParticipantePk());
+                objEvaluado.setIntNumberEvaluationFinished(bdTemp.intValue());
+            } else {
+                objEvaluado.setIntNumberEvaluationFinished(0);
+            }
             lstEvaluados.add(objEvaluado);
 
         }
@@ -519,13 +628,13 @@ public class GeneraReportesView extends BaseView implements Serializable {
                 map.put(Constantes.INT_PARAM_GRAF_MEDIDA, utilReport);
 
                 /* INVOCA CLASES QUE GENEREN LOS TEMPORALES */
-                for (Participante objParticipante : lstEvaluadosSeleccionados) {
+                for (Evaluado objParticipante : lstEvaluadosSeleccionados) {
 
                     Map mapRelaciones = obtieneRelaciones(objParticipante.getPaIdParticipantePk());
 
                     Cuestionario objCuestionario = objCuestionarioDAO.obtenCuestionarioXEvaluado(objParticipante.getPaIdParticipantePk());
 
-                    if (objParticipante.getPaInAutoevaluar()) {
+                    if (objParticipante.isPaInAutoevaluar()) {
                         Relacion objRelacion = new Relacion();
                         objRelacion.setReIdRelacionPk(-1);
                         objRelacion.setReNuOrden(intMaxRango + 1);
@@ -968,36 +1077,155 @@ public class GeneraReportesView extends BaseView implements Serializable {
 
         } else {
 
-            //generaReporteIndividual();
-            Map<String, Object> options = new HashMap<String, Object>();
-
-            options.put(
-                    "modal", true);
-            options.put(
-                    "draggable", false);
-            options.put(
-                    "closable", true);
-            options.put(
-                    "resizable", false);
-            options.put(
-                    "showEffect", "drop");
-            options.put(
-                    "includeViewParams", true);
+            calcularLicenciasEvaluadosSeleccionados();
 
             /*
-        Map<String, List<String>> params = new HashMap<String, List<String>>();
-        List<String> values = new ArrayList<String>();
-        values.add(bookName);
-        params.put("bookName", values);
+            if (this.intLicenciasIndividualesRequerido > 0 || this.intLicenciasMasivasRequerido > 0) {
+
+                Map<String, Object> options = new HashMap<>();
+
+                options.put(
+                        "modal", true);
+                options.put(
+                        "draggable", false);
+                options.put(
+                        "closable", true);
+                options.put(
+                        "resizable", false);
+                options.put(
+                        "showEffect", "drop");
+                options.put(
+                        "includeViewParams", true);
+
+                //generarReporteIndividual();
+                PrimeFaces.current().dialog().openDynamic("useLicenses", options, null);
+
+            }
              */
-            //generarReporteIndividual();
-            PrimeFaces.current()
-                    .dialog().openDynamic("manageLicenses", options, null);
         }
     }
 
     public void closeLicenses() {
-        PrimeFaces.current().dialog().closeDynamic("manageLicenses");
+        PrimeFaces.current().dialog().closeDynamic("useLicenses");
+    }
+
+    public void calcularLicenciasEvaluadosSeleccionados() {
+
+        try {
+
+            this.intLicenciasIndividualesRequerido = 0;
+            this.intLicenciasMasivasRequerido = 0;
+
+            Integer intLicenciasIndividualesReservadas = 0;
+            Integer intLicenciasMasivasReservadas = 0;
+
+            UsuarioSaldoDAO objUsuarioSaldoDAO = new UsuarioSaldoDAO();
+            UsuarioSaldo objUsuarioSaldo = objUsuarioSaldoDAO.obtenUsuarioSaldo(Utilitarios.obtenerUsuario().getIntUsuarioPk());
+
+            if (objUsuarioSaldo != null) {
+                this.intLicenciasIndividuales = objUsuarioSaldo.getUsNrReservadoIndividual();
+                this.intLicenciasMasivas = objUsuarioSaldo.getUsNrReservadoMasivo();
+            } else {
+                this.intLicenciasIndividuales = 0;
+                this.intLicenciasMasivas = 0;
+            }
+
+            ProyectoInfo objProyectoInfo = Utilitarios.obtenerProyecto();
+
+            //Participantes
+            ParticipanteDAO objParticipanteDAO = new ParticipanteDAO();
+
+            Integer intNroEvaluadores = 0;
+
+            for (Evaluado objParticipante : lstEvaluadosSeleccionados) {
+
+                if (!objParticipante.isBlAnalizado()) {
+                    Object obj = objParticipanteDAO.obtenerNroEvaluadoresXEvaluado(objProyectoInfo.getIntIdProyecto(), objParticipante.getPaIdParticipantePk());
+                    if (obj != null) {
+                        intNroEvaluadores = ((BigDecimal) obj).intValue();
+                    }
+
+                } else {
+                    continue;
+                }
+
+                if (intNroEvaluadores > 20) {
+                    intLicenciasMasivasReservadas++;
+                } else {
+                    intLicenciasIndividualesReservadas++;
+                }
+
+            }
+
+            this.intLicenciasIndividualesRequerido = intLicenciasIndividualesReservadas;
+
+            this.intLicenciasMasivasRequerido = intLicenciasMasivasReservadas;
+
+        } catch (Exception e) {
+            mostrarError(log, e);
+        }
+    }
+
+    public void confirmaGeneracionReporteIndividual() {
+
+        try {
+            ParticipanteDAO objParticipanteDAO = new ParticipanteDAO();
+            Participante objParticipante;
+            boolean ok = true;
+
+            for (Evaluado objEvaluado : this.lstEvaluadosSeleccionados) {
+
+                if (!objEvaluado.isBlAnalizado()) {
+
+                    objParticipante = objParticipanteDAO.obtenParticipante(objEvaluado.getPaIdParticipantePk());
+                    objParticipante.setPaInAnalizado(Boolean.TRUE);
+
+                    List<Movimiento> lstMovements = new ArrayList<>();
+
+                    ReferenciaMovimiento objReferenciaMovimiento = new ReferenciaMovimiento();
+
+                    objReferenciaMovimiento.setPoIdProyectoFk(Utilitarios.obtenerProyecto().getIntIdProyecto());
+
+                    if (objEvaluado.getIntNumberEvaluators() <= 20) {
+                        Movimiento objMovimiento = new Movimiento();
+                        objMovimiento.setMoInCantidad(objEvaluado.getIntNumberEvaluators());
+                        objMovimiento.setTipoMovimiento(new TipoMovimiento(Movimientos.MOV_EJECUTA_LICENCIA_INDIVIDUAL));
+                        objReferenciaMovimiento.setMovimiento(objMovimiento);
+                        objMovimiento.getReferenciaMovimientos().add(objReferenciaMovimiento);
+                        lstMovements.add(objMovimiento);
+                    } else {
+                        Movimiento objMovimiento = new Movimiento();
+                        objMovimiento.setMoInCantidad(objEvaluado.getIntNumberEvaluators());
+                        objMovimiento.setTipoMovimiento(new TipoMovimiento(Movimientos.MOV_EJECUTA_LICENCIA_MASIVA));
+                        objReferenciaMovimiento.setMovimiento(objMovimiento);
+                        objMovimiento.getReferenciaMovimientos().add(objReferenciaMovimiento);
+                        lstMovements.add(objMovimiento);
+                    }
+
+                    Usuario objUsuario = new Usuario();
+                    objUsuario.setUsIdCuentaPk(Utilitarios.obtenerUsuario().getIntUsuarioPk());
+                    String strResult = ExecutorBalanceMovement.getInstance().execute(lstMovements, objUsuario);
+
+                    if (strResult != null) {
+                        ok = false;
+                    }
+
+                    objParticipanteDAO.actualizaParticipante(objParticipante);
+
+                }
+            }
+
+            if (ok) {
+                generaReporteIndividual();
+            } else {
+                mostrarAlertaFatal("error.was.occurred");
+            }
+
+        } catch (Exception e) {
+            mostrarError(log, e);
+            mostrarAlertaFatal("error.was.occurred");
+        }
+
     }
 
 }

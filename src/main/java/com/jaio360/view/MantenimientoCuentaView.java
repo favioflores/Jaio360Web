@@ -392,7 +392,7 @@ public class MantenimientoCuentaView extends BaseView implements Serializable {
                 objUsuarioDAO.guardaUsuario(objUsuario);
 
                 mostrarAlertaInfo("created.successfully");
-
+                resetFormUsuario();
                 obtenerListaUsuarios();
 
             } else if (usIdCuentaPk == null && objUsuario != null) { // YA EXISTE Y QUIERO CREARLO
@@ -412,6 +412,7 @@ public class MantenimientoCuentaView extends BaseView implements Serializable {
 
                 mostrarAlertaInfo("updated");
 
+                resetFormUsuario();
                 obtenerListaUsuarios();
 
             }

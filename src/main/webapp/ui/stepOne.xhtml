@@ -653,13 +653,16 @@
 
                         <c:if test="#{evaluadosView.lstEvaluado.size()>0 and evaluadosView.lstEvaluadores.size()>0}">
                             <p:commandButton value="#{msg['step1.delete.participant.networks']}" 
-                                             rendered="#{!(evaluadosView.lstEvaluado.size()>0 and evaluadosView.lstEvaluadores.size()>0) or !(evaluadosView.intIdEstadoProyecto == 37 or evaluadosView.intIdEstadoProyecto == 34)}" 
-                                             disabled="#{!(evaluadosView.lstEvaluado.size()>0 and evaluadosView.lstEvaluadores.size()>0) or (evaluadosView.intIdEstadoProyecto == 37 or evaluadosView.intIdEstadoProyecto == 34)}" 
+                                             rendered="#{(evaluadosView.lstEvaluado.size()>0 and evaluadosView.lstEvaluadores.size()>0 
+                                                         and
+                                                         !(evaluadosView.intIdEstadoProyecto == 37 or evaluadosView.intIdEstadoProyecto == 34))}" 
                                              styleClass="ui-button-danger"
                                              actionListener="#{evaluadosView.eliminarCargar()}"
                                              type="submit"
                                              update="formRed,formParametros"
-                                             icon="pi pi-times" /> 
+                                             icon="pi pi-times">
+                                <p:confirm header="#{msg['confirmation']}" message="#{msg['are.you.sure.delete.configuration']}" icon="pi pi-info-circle" />
+                            </p:commandButton>
 
                         </c:if>
 

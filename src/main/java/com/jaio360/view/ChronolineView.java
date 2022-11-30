@@ -31,7 +31,7 @@ public class ChronolineView {
     public void setLstLastUpdateBeans(List<LastUpdateBean> lstLastUpdateBeans) {
         this.lstLastUpdateBeans = lstLastUpdateBeans;
     }
-    
+
     @PostConstruct
     public void init() {
 
@@ -42,33 +42,47 @@ public class ChronolineView {
         List<LastUpdate> lstLastUpdates = objLastUpdateDAO.obtenListaLastUpdate();
 
         int i = 0;
-        LastUpdateBean objLastUpdateBean;
+        LastUpdateBean objLastUpdateBean = null;
+
+        String strDate = "";
+        String strTipo = "";
 
         for (LastUpdate objLastUpdate : lstLastUpdates) {
-            String color = Utilitarios.generaColorHtmlPreferencial(i);
 
-            objLastUpdateBean = new LastUpdateBean();
-            objLastUpdateBean.setLuDtFecha(objLastUpdate.getLuDtFecha());
-            objLastUpdateBean.setLuTxDescripcion(objLastUpdate.getLuTxDescripcion());
-            objLastUpdateBean.setLuTxTipo(objLastUpdate.getLuTxTipo());
-            objLastUpdateBean.setStrColor(color);
+            if (!(strDate.equals(objLastUpdate.getLuDtFecha().toString()) && strTipo.equals(objLastUpdate.getLuTxTipo()))) {
 
-            if (objLastUpdate.getLuTxTipo().equals("NEW")) {
-                objLastUpdateBean.setStrIcon("pi pi-star");
-            } else if (objLastUpdate.getLuTxTipo().equals("UPGRADE")) {
-                objLastUpdateBean.setStrIcon("pi pi-cog");
-            } else if (objLastUpdate.getLuTxTipo().equals("BUGFIX")) {
-                objLastUpdateBean.setStrIcon("pi pi-check");
+                if (objLastUpdateBean != null) {
+                    lstLastUpdateBeans.add(objLastUpdateBean);
+                    i++;
+                }
+                String color = Utilitarios.generaColorHtmlPreferencial(i);
+                objLastUpdateBean = new LastUpdateBean();
+                objLastUpdateBean.setLuDtFecha(objLastUpdate.getLuDtFecha());
+                objLastUpdateBean.setLuTxDescripcion("<p style=\"line-height: 1.5;\">" + objLastUpdate.getLuTxDescripcion() + "</p>");
+                objLastUpdateBean.setLuTxTipo(objLastUpdate.getLuTxTipo());
+                objLastUpdateBean.setStrColor(color);
+
+                if (objLastUpdate.getLuTxTipo().equals("NEW")) {
+                    objLastUpdateBean.setStrIcon("pi pi-star");
+                } else if (objLastUpdate.getLuTxTipo().equals("UPGRADE")) {
+                    objLastUpdateBean.setStrIcon("pi pi-cog");
+                } else if (objLastUpdate.getLuTxTipo().equals("BUGFIX")) {
+                    objLastUpdateBean.setStrIcon("pi pi-check");
+                }
+
+            } else {
+                String strtemp = objLastUpdateBean.getLuTxDescripcion();
+                objLastUpdateBean.setLuTxDescripcion(strtemp + "<p style=\"line-height: 1.5;\">" + objLastUpdate.getLuTxDescripcion() + "</p>");
             }
 
-            lstLastUpdateBeans.add(objLastUpdateBean);
-
-            if (i == 10) {
-                break;
-            }
-            
-            i++;
+            strDate = objLastUpdate.getLuDtFecha().toString();
+            strTipo = objLastUpdate.getLuTxTipo();
 
         }
+
+        if (objLastUpdateBean != null) {
+            lstLastUpdateBeans.add(objLastUpdateBean);
+        }
+
     }
 }
