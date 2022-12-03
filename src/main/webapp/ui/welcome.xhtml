@@ -8,7 +8,13 @@
 
     <ui:define name="head">
         <style>
-            .mytable {width: 100%; min-height: 100%; position: fixed; background-size: cover;}
+            #grad {
+                height: 100%;
+                width: 100%;
+                position: fixed;
+                background-color: blue;/* For browsers that do not support gradients */
+                background-image: linear-gradient(135deg, #005EA6, #006CBE 70%, #005EA6);
+            }
             .text-center {
                 text-align: center;
             }
@@ -19,14 +25,7 @@
     </ui:define>
     <ui:define name="content">
 
-        <!--
-        <h:panelGrid border="0" style="width: 100%;" bgcolor="white" columns="2" cellpadding="0" cellspacing="0" >
-            <p:graphicImage value="../images/logoJaio360.jpg" width="140" height="50" />
-        </h:panelGrid>
-        -->
-
-        <table class="mytable" background="../images/fondos/macback.png" >
-        </table>
+        <div id="grad"></div>
 
         <p:dialog header="#{msg['cabecera.bienvenido']}" widgetVar="dlgBienvenida" visible="true" width="400" fitViewport="true" modal="false" closable="false" showEffect="drop" resizable="false" >
             <h:form>
@@ -82,12 +81,12 @@
             </h:form>
         </p:dialog>
 
-        <p:dialog widgetVar="dlgEvaluaciones" header="#{msg['lista.evaluaciones.pendientes']}" style="max-width: 90%; "  draggable="false" closable="false" hideEffect="drop" showEffect="drop"  resizable="false" >
+        <p:dialog widgetVar="dlgEvaluaciones" header="#{msg['lista.evaluaciones.pendientes']}" style="max-width: 60%; "  draggable="false" closable="false" hideEffect="drop" showEffect="drop"  resizable="false" >
             <h:form>
                 <p:panel>
                     <p:dataTable var="eva" value="#{listasPrincipalView.lstEvaluaciones}"
                                  style="width: 100%;" 
-                                 rows="4"
+                                 rows="3"
                                  paginatorPosition="bottom"
                                  stripedRows="true"
                                  paginator="true"  
@@ -103,20 +102,42 @@
                             <h:outputText 
                                 value="#{index + 1}" />
                         </p:column> 
+
                         <p:column headerText="#{msg['persona.evaluar']}">
+
+                            <p:panelGrid styleClass="ui-panelgrid-blank ui-fluid" >
+                                <p:row>
+                                    <p:column width="70" style="width: 80px !important;" rendered="#{eva.strURLImagen!=null}" >
+                                        <p:graphicImage url="#{eva.strURLImagen}" height="75" width="55" class="classimg" rendered="#{eva.strURLImagen!=null}" />
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{eva.strDescEvaluado}" />
+                                        <div class="p-text-italic p-text-light ">
+                                            <h:outputText value="#{eva.strCorreoEvaluado}" />
+                                        </div>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+
+                        </p:column>
+
+                        <p:column headerText="#{msg['role']}" style="text-align: center;">
+                            <h:outputText value="#{eva.strCargoEvaluado}" /> 
+                        </p:column>
+                        <!-- p:column>
                             <h:outputText value="#{eva.strDescEvaluado}" /> 
                         </p:column>
                         <p:column headerText="#{msg['correo']}">
                             <h:outputText value="#{eva.strCorreoEvaluado}" /> 
-                        </p:column>
-                        <p:column headerText="#{msg['project']}">
-                            <h:outputText value="#{eva.strDescNombre}" /> 
-                        </p:column>
-                        <p:column>
+                        </p:column -->
+
+                        <p:column style="text-align: center;">
                             <p:commandButton type="submit" 
                                              actionListener="#{listasPrincipalView.irEvaluacion(eva)}" 
                                              value="#{msg['click.evaluar']}" />
                         </p:column>
+
+
 
                         <f:facet name="footer">
                             <p:commandButton type="submit" value="#{msg['back.to.welcome']}"
@@ -126,10 +147,6 @@
                         </f:facet>
                     </p:dataTable>
 
-                    <br/>
-                    <center>
-                        <p:graphicImage value="../images/logoJaio360.jpg" width="130" height="50" />
-                    </center>
                 </p:panel>
             </h:form>
         </p:dialog>

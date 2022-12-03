@@ -17,6 +17,17 @@ public class EvaluadoCuestionario implements Serializable{
     private String strEstadoSel;
     private String strEstadoEvaluado;
     private String strCuestionarioDesc;
+    private String paTxImgUrl;
+
+    public String getPaTxImgUrl() {
+        return paTxImgUrl;
+    }
+
+    public void setPaTxImgUrl(String paTxImgUrl) {
+        this.paTxImgUrl = paTxImgUrl;
+    }
+    
+    
 
     public String getStrCuestionarioDesc() {
         return strCuestionarioDesc;

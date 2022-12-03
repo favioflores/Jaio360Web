@@ -31,10 +31,21 @@ public class Evaluado implements Serializable{
     private Integer paNrTiempoTrabajo;
     private String paTxOcupacion;
     private String paTxAreaNegocio;
+    private String paTxImgUrl;
     
     private Integer intNumberEvaluators;
     private Integer intNumberEvaluationFinished;
 
+    public String getPaTxImgUrl() {
+        return paTxImgUrl; 
+    }
+
+    public void setPaTxImgUrl(String paTxImgUrl) {
+        this.paTxImgUrl = paTxImgUrl;
+    }
+
+    
+    
     public Integer getIntNumberEvaluators() {
         return intNumberEvaluators;
     }

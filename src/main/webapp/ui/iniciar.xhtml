@@ -8,28 +8,30 @@
 
     <ui:define name="head"> 
         <style>
-            .mytable {width: 100%; min-height: 100%; position: fixed; background-size: cover;}
-
+            #grad {
+                height: 100%;
+                width: 100%;
+                position: fixed;
+                background-color: blue;/* For browsers that do not support gradients */
+                background-image: linear-gradient(135deg, #005EA6, #006CBE 70%, #005EA6);
+            }
             .text-center {
                 text-align: center;
+            }
+            img {
+                border-radius: 100%;
             }
         </style>
     </ui:define>
     <ui:define name="content">
-        <!--
-        <h:panelGrid border="0" style="width: 100%;" bgcolor="white" columns="2" cellpadding="0" cellspacing="0" >
-            <p:graphicImage value="../images/logoJaio360.jpg" width="140" height="50" />
-        </h:panelGrid>
-        -->
 
-        <table class="mytable" background="../images/fondos/macback.png" >
-        </table>
-        
+        <div id="grad"></div>
+
         <p:dialog id="dlgLogin" widgetVar="dlgLogin" header="#{msg['iniciar.titulo']}" visible="true" modal="false" closable="false" showEffect="drop" resizable="false" style="opacity: 1.0;">
             <h:form id="loginForm">
                 <p:panel id="panel">
                     <p:growl id="growl" sticky="false" life="4000" />
-                                     
+
                     <div class="ui-fluid">
                         <div class="p-field">
                             <label for="usuario">#{msg['iniciar.input.usuario']}</label>
@@ -66,9 +68,11 @@
                             <div class="text-center">
                                 <p:graphicImage value="../images/logoJaio360.jpg" width="130" height="50" />
                             </div>
+
                         </div>
                     </div>
                 </p:panel>
+                
             </h:form>                
         </p:dialog>
     </ui:define>

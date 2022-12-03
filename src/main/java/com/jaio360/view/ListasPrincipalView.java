@@ -466,6 +466,8 @@ public class ListasPrincipalView extends BaseView implements Serializable {
                 objProyectoInfo.setStrCorreoEvaluado((String) objProyecto[12]);
                 objProyectoInfo.setStrNombreEvaluador((String) objProyecto[13]);
                 objProyectoInfo.setStrNombreEvaluado((String) objProyecto[8]);
+                objProyectoInfo.setStrURLImagen((String) objProyecto[15]);
+                objProyectoInfo.setStrCargoEvaluado((String) objProyecto[16]);
 
                 if (Utilitarios.noEsNuloOVacio(objProyecto[14])) {
 
@@ -564,7 +566,7 @@ public class ListasPrincipalView extends BaseView implements Serializable {
                     objProyecto.setPoTxDescripcion(event.getNewValue().toString());
                 }
                 
-                if(event.getColumn().getHeaderText().equals(msg("descripcion"))){
+                if(event.getColumn().getHeaderText().equals(msg("adm.descripcion"))){
                     objProyecto.setPoTxMotivo(event.getNewValue().toString());
                 } 
 

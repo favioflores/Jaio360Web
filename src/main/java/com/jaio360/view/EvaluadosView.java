@@ -24,6 +24,7 @@ import com.jaio360.utils.Constantes;
 import com.jaio360.utils.Utilitarios;
 import com.jaio360.validator.validaCorreo;
 import com.jaio360.validator.validaTextoIngresado;
+import com.jaio360.validator.validaURL;
 import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -696,6 +697,7 @@ public class EvaluadosView extends BaseView implements Serializable {
                 evaluado.setPaNrTiempoTrabajo(objParticipante.getPaNrTiempoTrabajo());
                 evaluado.setPaTxOcupacion(objParticipante.getPaTxOcupacion());
                 evaluado.setPaTxAreaNegocio(objParticipante.getPaTxAreaNegocio());
+                evaluado.setPaTxImgUrl(objParticipante.getPaTxImgUrl());
 
                 if (evaluado.getPaIdEstado().equals(Constantes.INT_ET_ESTADO_EVALUADO_REGISTRADO)) {
                     this.cantidadEvaluadosRegistrados++;
@@ -2715,6 +2717,7 @@ public class EvaluadosView extends BaseView implements Serializable {
 
                     validaTextoIngresado objvalidaTextoIngresado = new validaTextoIngresado();
                     validaCorreo objvalidaCorreo = new validaCorreo();
+                    validaURL objValidaUrl = new validaURL();
 
                     /**
                      * *************
@@ -2729,7 +2732,7 @@ public class EvaluadosView extends BaseView implements Serializable {
 
                     while (rowIteratorPersonas.hasNext()) {
                         Row row = rowIteratorPersonas.next();
-                        procesaFilaPersonasAvanzado(row, objvalidaTextoIngresado, objvalidaCorreo);
+                        procesaFilaPersonasAvanzado(row, objvalidaTextoIngresado, objvalidaCorreo, objValidaUrl);
                     }
 
                     /**
@@ -2898,6 +2901,21 @@ public class EvaluadosView extends BaseView implements Serializable {
                     }
                 } catch (NoSuchElementException | NullPointerException e) {
                     lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + " " + msg("error.title.email")));
+                }
+
+                //URL IMAGEN
+                try {
+                    c++;
+                    String strDato = row.getCell(c, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK).getStringCellValue();
+                    if (Utilitarios.esNuloOVacio(strDato)) {
+                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + " " + msg("error.title.url.image")));
+                    } else {
+                        if (!strDato.trim().equals(msg("url.image"))) {
+                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + " " + msg("error.title.url.image")));
+                        }
+                    }
+                } catch (NoSuchElementException | NullPointerException e) {
+                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("cell") + " " + Utilitarios.columnExcel(c) + " " + msg("error.title.url.image")));
                 }
 
                 //SEXO
@@ -3074,7 +3092,7 @@ public class EvaluadosView extends BaseView implements Serializable {
 
     }
 
-    private void procesaFilaPersonasAvanzado(Row row, validaTextoIngresado objvalidaTextoIngresado, validaCorreo objvalidaCorreo) {
+    private void procesaFilaPersonasAvanzado(Row row, validaTextoIngresado objvalidaTextoIngresado, validaCorreo objvalidaCorreo, validaURL objValidaURL) {
 
         boolean blRegistroOK = true;
         int c = 0;
@@ -3095,12 +3113,12 @@ public class EvaluadosView extends BaseView implements Serializable {
                 }
             } else {
                 blRegistroOK = false;
-                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + msg("error.persons.has.description.empty.not.text")));
+                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + " " + msg("error.persons.has.description.empty.not.text")));
             }
 
         } catch (NoSuchElementException | NullPointerException e) {
             blRegistroOK = false;
-            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + msg("error.persons.has.description.empty.not.text")));
+            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + " " + msg("error.persons.has.description.empty.not.text")));
         }
 
         /* CARGO */
@@ -3116,13 +3134,13 @@ public class EvaluadosView extends BaseView implements Serializable {
                         strCargo = Utilitarios.limpiarTexto(strTemp).trim();
                     } else {
                         blRegistroOK = false;
-                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + msg("error.persons.has.role") + " " + strError));
+                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + " " + msg("error.persons.has.role") + " " + strError));
                     }
                 }
 
             } else {
                 blRegistroOK = false;
-                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + msg("error.persons.has.role.empty.not.text")));
+                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + " " + msg("error.persons.has.role.empty.not.text")));
             }
 
         } catch (NoSuchElementException | NullPointerException e) {
@@ -3142,16 +3160,43 @@ public class EvaluadosView extends BaseView implements Serializable {
                     strCorreo = strTemp.trim().toLowerCase();
                 } else {
                     blRegistroOK = false;
-                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + msg("error.persons.has.email") + " " + strError));
+                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + " " + msg("error.persons.has.email") + " " + strError));
                 }
             } else {
                 blRegistroOK = false;
-                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + msg("error.persons.has.email.empty.not.text")));
+                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + " " + msg("error.persons.has.email.empty.not.text")));
             }
 
         } catch (NoSuchElementException | NullPointerException e) {
             blRegistroOK = false;
-            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + msg("error.persons.has.email.empty.not.text")));
+            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + " " + msg("error.persons.has.email.empty.not.text")));
+        }
+
+        /* URL IMAGEN */
+        String strURLImagen = null;
+        c++;
+        try {
+            String strTemp = null;
+            if (row.getCell(c).getCellType() == CellType.STRING || row.getCell(c).getCellType() == CellType.BLANK) {
+                strTemp = Utilitarios.obtieneDatoCelda(row, c);
+                
+                if (Utilitarios.noEsNuloOVacio(strTemp)) {
+                    String strError = objValidaURL.validate(strTemp);
+                    if (Utilitarios.esNuloOVacio(strError)) {
+                        strURLImagen = strTemp.trim();
+                    } else {
+                        blRegistroOK = false;
+                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + " " + msg("error.url.not.valid.url") + " " + strError));
+                    }
+                }
+            } else {
+                blRegistroOK = false;
+                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + " " + msg("error.url.not.valid.url")));
+            }
+
+        } catch (NoSuchElementException | NullPointerException e) {
+            blRegistroOK = false;
+            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + " " + msg("error.url.not.valid.url")));
         }
 
         String strSexo = null;
@@ -3167,21 +3212,21 @@ public class EvaluadosView extends BaseView implements Serializable {
                             strSexo = strTemp.trim();
                         } else {
                             blRegistroOK = false;
-                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + msg("error.persons.has.sex")));
+                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + " " + msg("error.persons.has.sex")));
                         }
                     } else {
                         blRegistroOK = false;
-                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + msg("error.persons.has.sex.empty.not.text")));
+                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + " " + msg("error.persons.has.sex.empty.not.text")));
                     }
                 } else {
                     blRegistroOK = false;
-                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + msg("error.persons.has.sex.empty.not.text")));
+                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + " " + msg("error.persons.has.sex.empty.not.text")));
                 }
 
             } catch (NoSuchElementException | NullPointerException e) {
                 blRegistroOK = false;
                 strSexo = Constantes.strVacio;
-                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + msg("error.persons.has.sex.empty.not.text")));
+                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + " " + msg("error.persons.has.sex.empty.not.text")));
             }
         }
 
@@ -3198,21 +3243,21 @@ public class EvaluadosView extends BaseView implements Serializable {
                             intEdad = bd.intValue();
                         } else {
                             blRegistroOK = false;
-                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + msg("error.persons.has.age.invalid")));
+                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + " " + msg("error.persons.has.age.invalid")));
                         }
                     } else {
                         blRegistroOK = false;
-                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + msg("error.persons.has.sex.empty.not.numeric")));
+                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + " " + msg("error.persons.has.sex.empty.not.numeric")));
                     }
 
                 } else {
                     blRegistroOK = false;
-                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + msg("error.persons.has.sex.empty.not.numeric")));
+                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + " " + msg("error.persons.has.sex.empty.not.numeric")));
                 }
 
             } catch (NoSuchElementException | NullPointerException e) {
                 blRegistroOK = false;
-                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + msg("error.persons.has.sex.empty.not.numeric")));
+                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + " " + msg("error.persons.has.sex.empty.not.numeric")));
             }
         }
 
@@ -3229,20 +3274,20 @@ public class EvaluadosView extends BaseView implements Serializable {
                             intTiempoEmpresa = bd.intValue();
                         } else {
                             blRegistroOK = false;
-                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + msg("error.persons.has.hiring.invalid")));
+                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + " " + msg("error.persons.has.hiring.invalid")));
                         }
                     } else {
                         blRegistroOK = false;
-                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + msg("error.persons.has.hiring.empty.not.numeric")));
+                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + " " + msg("error.persons.has.hiring.empty.not.numeric")));
                     }
                 } else {
                     blRegistroOK = false;
-                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + msg("error.persons.has.hiring.empty.not.numeric")));
+                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + " " + msg("error.persons.has.hiring.empty.not.numeric")));
                 }
 
             } catch (NoSuchElementException | NullPointerException e) {
                 blRegistroOK = false;
-                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + msg("error.persons.has.hiring.empty.not.numeric")));
+                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + " " + msg("error.persons.has.hiring.empty.not.numeric")));
             }
         }
 
@@ -3257,22 +3302,22 @@ public class EvaluadosView extends BaseView implements Serializable {
                         strTemp = Utilitarios.limpiarTexto(strTemp);
                         if (!hNO.containsKey(strTemp.trim())) {
                             blRegistroOK = false;
-                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + msg("error.persons.has.workrange.invalid")));
+                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + " " + msg("error.persons.has.workrange.invalid")));
                         } else {
                             strOcupacion = hNO.get(strTemp.trim()).toString();
                         }
                     } else {
                         blRegistroOK = false;
-                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + msg("error.persons.has.workrange.empty.not.text")));
+                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + " " + msg("error.persons.has.workrange.empty.not.text")));
                     }
                 } else {
                     blRegistroOK = false;
-                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + msg("error.persons.has.workrange.empty.not.text")));
+                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + " " + msg("error.persons.has.workrange.empty.not.text")));
                 }
 
             } catch (NoSuchElementException | NullPointerException e) {
                 blRegistroOK = false;
-                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + msg("error.persons.has.workrange.empty.not.text")));
+                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + " " + msg("error.persons.has.workrange.empty.not.text")));
             }
         }
 
@@ -3287,22 +3332,22 @@ public class EvaluadosView extends BaseView implements Serializable {
                         strTemp = Utilitarios.limpiarTexto(strTemp);
                         if (!hAN.containsKey(strTemp.trim())) {
                             blRegistroOK = false;
-                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + msg("error.persons.has.workingarea.invalid")));
+                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + " " + msg("error.persons.has.workingarea.invalid")));
                         } else {
                             strAreaNegocio = hAN.get(strTemp.trim()).toString();
                         }
                     } else {
                         blRegistroOK = false;
-                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + msg("error.persons.has.workingarea.empty.not.text")));
+                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + " " + msg("error.persons.has.workingarea.empty.not.text")));
                     }
                 } else {
                     blRegistroOK = false;
-                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + msg("error.persons.has.workingarea.empty.not.text")));
+                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + " " + msg("error.persons.has.workingarea.empty.not.text")));
                 }
 
             } catch (NoSuchElementException | NullPointerException e) {
                 blRegistroOK = false;
-                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + msg("error.persons.has.workingarea.empty.not.text")));
+                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + " " + msg("error.persons.has.workingarea.empty.not.text")));
             }
         }
 
@@ -3327,7 +3372,7 @@ public class EvaluadosView extends BaseView implements Serializable {
             String strKey = Utilitarios.limpiarTexto(strCorreo);
 
             if (mapPersonasAvanzado.containsKey(strKey)) {
-                this.lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + msg("error.persons.has.autoevaluate.duplicated")));
+                this.lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + " " + msg("error.persons.has.autoevaluate.duplicated")));
             } else {
 
                 EvaluadoAvan objEvaluado = new EvaluadoAvan();
@@ -3341,6 +3386,7 @@ public class EvaluadosView extends BaseView implements Serializable {
                 objEvaluado.setPaTxOcupacion(strOcupacion);
                 objEvaluado.setPaTxAreaNegocio(strAreaNegocio);
                 objEvaluado.setPaInAutoevaluar(blAutoevaluar);
+                objEvaluado.setPaTxImgUrl(strURLImagen);
 
                 mapPersonasAvanzado.put(strKey, objEvaluado);
                 lstAvanPersonas.add(objEvaluado);
@@ -3349,7 +3395,7 @@ public class EvaluadosView extends BaseView implements Serializable {
         } else {
             String strKey = Utilitarios.limpiarTexto(strCorreo);
             if (mapPersonasAvanzado.containsKey(strKey)) {
-                this.lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + msg("error.persons.has.autoevaluate.duplicated")));
+                this.lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + " " + msg("error.persons.has.autoevaluate.duplicated")));
             } else {
                 this.lstErrorAvan.addAll(lstErrorAvan);
             }
@@ -3369,18 +3415,18 @@ public class EvaluadosView extends BaseView implements Serializable {
                 strTemp = Utilitarios.obtieneDatoCelda(row, 1);
                 if (Utilitarios.limpiarTexto(strTemp).isEmpty()) {
                     blRegistroOK = false;
-                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + msg("error.network.has.relationship.empty")));
+                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + " " + msg("error.network.has.relationship.empty")));
                 } else {
                     strRelacion = strTemp;
                     procesaRelacion(strRelacion, row);
                 }
             } else {
                 blRegistroOK = false;
-                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + msg("error.network.has.relationship.empty")));
+                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + " " + msg("error.network.has.relationship.empty")));
             }
         } catch (NoSuchElementException | NullPointerException e) {
             blRegistroOK = false;
-            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + msg("error.network.has.relationship.empty")));
+            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + " " + msg("error.network.has.relationship.empty")));
         }
 
         /* EVALUADO */
@@ -3395,20 +3441,20 @@ public class EvaluadosView extends BaseView implements Serializable {
                         strCorreoEvaluado = strTemp.trim().toLowerCase();
                     } else {
                         blRegistroOK = false;
-                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + msg("error.network.email.not.exists")));
+                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + " " + msg("error.network.email.not.exists")));
                     }
                 } else {
                     blRegistroOK = false;
-                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + msg("error.network.email.column.evaluated") + strError));
+                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + " " + msg("error.network.email.column.evaluated") + " " + strError));
                 }
             } else {
                 blRegistroOK = false;
-                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + msg("error.network.email.column.evaluated.emptyortext")));
+                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + " " + msg("error.network.email.column.evaluated.emptyortext")));
             }
 
         } catch (NoSuchElementException | NullPointerException e) {
             blRegistroOK = false;
-            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + msg("error.network.email.column.evaluated.emptyortext")));
+            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + " " + msg("error.network.email.column.evaluated.emptyortext")));
         }
 
         /* EVALUADOR */
@@ -3423,20 +3469,20 @@ public class EvaluadosView extends BaseView implements Serializable {
                         strCorreoEvaluador = strTemp.trim().toLowerCase();
                     } else {
                         blRegistroOK = false;
-                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + msg("error.network.email.not.exists")));
+                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + " " + msg("error.network.email.not.exists")));
                     }
                 } else {
                     blRegistroOK = false;
-                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + msg("error.network.email.column.evaluated") + strError));
+                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + " " + msg("error.network.email.column.evaluated") + strError));
                 }
             } else {
                 blRegistroOK = false;
-                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + msg("error.network.email.column.evaluated.emptyortext")));
+                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + " " + msg("error.network.email.column.evaluated.emptyortext")));
             }
 
         } catch (NoSuchElementException | NullPointerException e) {
             blRegistroOK = false;
-            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + msg("error.network.email.column.evaluated.emptyortext")));
+            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + " " + msg("error.network.email.column.evaluated.emptyortext")));
         }
 
         try {
@@ -3445,7 +3491,7 @@ public class EvaluadosView extends BaseView implements Serializable {
 
                 if (Utilitarios.limpiarTexto(strCorreoEvaluado).equals(Utilitarios.limpiarTexto(strCorreoEvaluador))) {
 
-                    this.lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + msg("error.network.notcorrect.use.autoevaluate.mark")));
+                    this.lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + " " + msg("error.network.notcorrect.use.autoevaluate.mark")));
 
                 } else {
 
@@ -3453,7 +3499,7 @@ public class EvaluadosView extends BaseView implements Serializable {
                             + Utilitarios.limpiarTexto(strCorreoEvaluador);
 
                     if (mapRelacionesPersonasAvanzado.containsKey(strKey)) {
-                        this.lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + msg("error.network.duplicated.review.combination")));
+                        this.lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + " " + msg("error.network.duplicated.review.combination")));
                     } else {
 
                         if (!mapPerEvaluados.containsKey(Utilitarios.limpiarTexto(strCorreoEvaluado))) {
@@ -3608,8 +3654,8 @@ public class EvaluadosView extends BaseView implements Serializable {
 
             for (RelacionAvanzada objRelacionAvanzada : lstRelacionAvanzadas) {
 
-                if (objRelacionBean.getStrNombre().equals(objRelacionAvanzada.getStrRelacion())
-                        && objRelacionBean.getStrAbreviatura().equals(objRelacionAvanzada.getStrRelacionAbreviatura())) {
+                if (objRelacionBean.getStrNombre().toUpperCase().equals(objRelacionAvanzada.getStrRelacion().toUpperCase())
+                        && objRelacionBean.getStrAbreviatura().toUpperCase().equals(objRelacionAvanzada.getStrRelacionAbreviatura().toUpperCase())) {
                     objRelacionAvanzada.setStrRelacionColor(objRelacionBean.getStrColor());
                     flag = true;
                 }
@@ -3690,7 +3736,7 @@ public class EvaluadosView extends BaseView implements Serializable {
 
                 for (RelacionAvanzada objRelacionAvanzada : lstRelacionAvanzadas) {
 
-                    if (objRelacionBean.getStrNombre().equals(objRelacionAvanzada.getStrRelacion())) {
+                    if (objRelacionBean.getStrNombre().toUpperCase().equals(objRelacionAvanzada.getStrRelacion().toUpperCase())) {
                         objRelacionAvanzada.setStrRelacionAbreviatura(event.getNewValue().toString().toUpperCase());
                         flag = true;
                     }
@@ -3699,6 +3745,7 @@ public class EvaluadosView extends BaseView implements Serializable {
 
                 if (flag) {
                     objRelacionBean.setStrAbreviatura(event.getNewValue().toString().toUpperCase());
+
                     mostrarAlertaInfo("abbreviation.was.updated");
                 } else {
                     mostrarAlertaFatal("error.was.occurred");
@@ -3768,6 +3815,12 @@ public class EvaluadosView extends BaseView implements Serializable {
         HSSFRichTextString texto2 = new HSSFRichTextString(msg("email"));
         cell2.setCellValue(texto2);
 
+        c++;
+
+        HSSFCell cell9 = row.createCell(c);
+        HSSFRichTextString texto9 = new HSSFRichTextString(msg("url.image"));
+        cell9.setCellValue(texto9);
+
         if (blHabilitarSexo) {
             c++;
             HSSFCell cell3 = row.createCell(c);
@@ -3827,6 +3880,7 @@ public class EvaluadosView extends BaseView implements Serializable {
         hojaPersonas.autoSizeColumn(6);
         hojaPersonas.autoSizeColumn(7);
         hojaPersonas.autoSizeColumn(8);
+        hojaPersonas.autoSizeColumn(9);
 
         HSSFCell cellR0 = rowR.createCell(0);
         HSSFRichTextString textoR0 = new HSSFRichTextString(msg("evaluated"));

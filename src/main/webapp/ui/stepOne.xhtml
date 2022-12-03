@@ -45,8 +45,6 @@
 
             <h:form id="formParametros"  >
 
-
-
                 <p:card id="panel" >  
 
                     <p:growl life="4000" showSummary="true" />
@@ -235,7 +233,6 @@
                                         rows="10"
                                         paginator="true" 
                                         var="err"
-                                        stickyHeader="true" stickyTopAt=".layout-topbar"
                                         stripedRows="true"
                                         value="#{evaluadosView.lstErrorAvan}"
                                         paginatorPosition="bottom"
@@ -273,7 +270,7 @@
                             </div>
                         </c:if>
 
-                        <c:if test="#{evaluadosView.lstAvanPersonas.size()>0}">
+                        <c:if test="#{evaluadosView.lstAvanPersonas.size()>0 and evaluadosView.lstRelacionAvanzadas.size()>0}">
                             <div class="p-field p-col-12 p-md-12">
                                 <p:card rendered="#{evaluadosView.lstAvanPersonas.size()>0}" >
                                     <p:dataTable 
@@ -285,7 +282,6 @@
                                         resizableColumns="true"
                                         value="#{evaluadosView.lstAvanPersonas}"
                                         paginatorPosition="bottom"
-                                        stickyHeader="true" stickyTopAt=".layout-topbar"
                                         stripedRows="true"
                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                         currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords}"
@@ -310,6 +306,10 @@
                                                 value="#{index + 1}" />
                                         </p:column>
 
+                                        <p:column headerText="#{msg['photo']}">
+                                            <p:graphicImage url="#{reg.paTxImgUrl}" height="75" width="55" class="classimg" rendered="#{reg.paTxImgUrl!=null}" />
+                                            <p:graphicImage value="/images/no-picture.png" height="75" width="55"  class="classimg" rendered="#{reg.paTxImgUrl==null}" />
+                                        </p:column>
                                         <p:column headerText="#{msg['description']}">
                                             <h:outputText value="#{reg.paTxDescripcion}" />
                                         </p:column>
@@ -342,9 +342,9 @@
                                 </p:card>
                             </div>
                         </c:if>
-                        <c:if test="#{evaluadosView.lstAvanRelacion.size()>0}">
+                        <c:if test="#{evaluadosView.lstAvanRelacion.size()>0 and evaluadosView.lstRelacionAvanzadas.size()>0}">
                             <div class="p-field p-col-12 p-md-5">
-                                <p:card>
+                                <p:card id="cardTblResultado">
                                     <p:dataTable 
                                         id="tblResultadoAvanzadoRelacion"
                                         widgetVar="tblResultadoAvanzadoRelacion"
@@ -352,7 +352,6 @@
                                         paginator="true" 
                                         var="rel"
                                         value="#{evaluadosView.lstAvanRelacion}"
-                                        stickyHeader="true" stickyTopAt=".layout-topbar"
                                         paginatorPosition="bottom"
                                         resizableColumns="true"
                                         editable="true"
@@ -425,7 +424,6 @@
                                         resizableColumns="true"
                                         stripedRows="true"
                                         sortMode="single"
-                                        stickyHeader="true"
                                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                         emptyMessage="#{msg['no.items']}" 
                                         rendered="#{evaluadosView.lstRelacionAvanzadas.size()>0}" >
@@ -487,7 +485,10 @@
                                                 <h:outputText 
                                                     value="#{index + 1}" />
                                             </p:column> 
-
+                                            <p:column headerText="#{msg['photo']}"> 
+                                                <p:graphicImage url="#{reg.paTxImgUrl}" height="75" width="55" class="classimg" rendered="#{reg.paTxImgUrl!=null}" />
+                                                <p:graphicImage value="/images/no-picture.png" height="75" width="55"  class="classimg" rendered="#{reg.paTxImgUrl==null}" />
+                                            </p:column>
                                             <p:column headerText="#{msg['description']}" sortBy="#{reg.paTxDescripcion}">
                                                 <h:outputText value="#{reg.paTxDescripcion}" />
                                             </p:column>                           
@@ -533,7 +534,6 @@
                                         paginator="true" 
                                         var="rel"
                                         value="#{evaluadosView.lstRelacionBean}"
-                                        stickyHeader="true" stickyTopAt=".layout-topbar"
                                         paginatorPosition="bottom"
                                         editable="true"
                                         editMode="cell"
@@ -606,7 +606,6 @@
                                         stripedRows="true"
                                         resizableColumns="true"
                                         sortMode="single"
-                                        stickyHeader="true"
                                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                         emptyMessage="#{msg['no.items']}" 
                                         rendered="#{evaluadosView.lstRelacionesEvaluadoEvaluador.size()>0}" >

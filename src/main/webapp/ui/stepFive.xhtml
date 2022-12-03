@@ -283,6 +283,11 @@
                                                 value="#{index + 1}" />
                                         </p:column> 
 
+                                        <p:column headerText="#{msg['photo']}" width="70" style="width: 80px !important;" >
+                                            <p:graphicImage url="#{reg.paTxImgUrl}" height="75" width="55" class="classimg" rendered="#{reg.paTxImgUrl!=null}" />
+                                            <p:graphicImage value="/images/no-picture.png" height="75" width="55"  class="classimg" rendered="#{reg.paTxImgUrl==null}" />
+                                        </p:column>
+                                        
                                         <p:column headerText="#{msg['individual']}" sortBy="#{reg.paTxDescripcion}">
                                             <h:outputText value="#{reg.paTxDescripcion}" />
                                             <!--<br/><br/>
@@ -355,7 +360,7 @@
                                     <p:column headerText="#{msg['relationship']}" sortBy="#{red.strDescRelacion}">
                                         <!--<h:outputText value="#{red.strDescRelacion}" />-->
 
-                                        <p:tag value="#{red.strDescRelacion}" style=" background-color: #{red.strColorRelacion};" />
+                                        <p:tag value="#{red.strDescRelacion}" style=" background-color: ##{red.strColorRelacion};" />
                                     </p:column>
 
                                     <p:column headerText="#{msg['email']}" sortBy="#{red.strCorreoEvaluador}">

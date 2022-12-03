@@ -95,16 +95,17 @@
                                         <h:outputText 
                                             value="#{index + 1}" />
                                     </p:column> 
-
+                                    <p:column headerText="#{msg['photo']}"> 
+                                        <p:graphicImage url="#{evaluado.paTxImgUrl}" height="75" width="55" class="classimg" rendered="#{evaluado.paTxImgUrl!=null}" />
+                                        <p:graphicImage value="/images/no-picture.png" height="75" width="55"  class="classimg" rendered="#{evaluado.paTxImgUrl==null}" />
+                                    </p:column>
+                                    <p:column headerText="#{msg['description']}" filterBy="#{evaluado.strDescNombre}" sortOrder="asc" sortPriority="2" >
+                                        <h:outputText value="#{evaluado.strDescNombre}" />
+                                    </p:column>
                                     <p:column headerText="#{msg['role']}" filterBy="#{evaluado.strCargo}" groupRow="true" sortOrder="asc" sortPriority="1" >
                                         <h:outputText value="#{evaluado.strCargo}" />
                                         <!--<p:tag value="#{evaluado.strCargo}" style="background-color: ##{evaluado.strCargo};" />-->
                                     </p:column>
-
-                                    <p:column headerText="#{msg['description']}" filterBy="#{evaluado.strDescNombre}" sortOrder="asc" sortPriority="2" >
-                                        <h:outputText value="#{evaluado.strDescNombre}" />
-                                    </p:column>
-
                                     <p:column headerText="#{msg['step3.evaluation.assigned']}" filterBy="#{evaluado.strCuestionarioDesc}" sortOrder="asc" sortPriority="3" >
                                         <center>
                                             <h:outputText value="#{evaluado.strCuestionarioDesc}" />
@@ -226,7 +227,7 @@
 
                                 <p:column headerText="#{msg['step3.evaluation.assigned']}" filterBy="#{evaluado.strCuestionarioDesc}" groupRow="true"  sortOrder="asc" sortPriority="3" >
                                     <center>
-                                        <h:outputText value="#{evaluado.strCuestionarioDesc}" />
+                                        <h3>#{evaluado.strCuestionarioDesc}</h3>
                                     </center>
                                 </p:column>
 
@@ -238,10 +239,22 @@
                                         value="#{index + 1}" />
                                 </p:column> 
                                 <p:column headerText="#{msg['individual']}" filterBy="#{evaluado.strDescNombre}" sortOrder="asc" sortPriority="2" >
-                                    <h:outputText value="#{evaluado.strDescNombre}" />
-                                    <div class="p-text-italic p-text-light ">
-                                        <h:outputText value="Cargo: #{evaluado.strCargo}" />
-                                    </div>
+                                    <p:panelGrid styleClass="ui-panelgrid-blank ui-fluid" >
+                                        <p:row>
+                                            <p:column width="70" style="width: 80px !important;" >
+                                                <p:graphicImage url="#{evaluado.paTxImgUrl}" height="75" width="55" class="classimg" rendered="#{evaluado.paTxImgUrl!=null}" />
+                                                <p:graphicImage value="/images/no-picture.png" height="75" width="55"  class="classimg" rendered="#{evaluado.paTxImgUrl==null}" />
+                                            </p:column>
+                                            <p:column>
+                                                <h:outputText value="#{evaluado.strDescNombre}" />
+                                                <div class="p-text-italic p-text-light ">
+                                                    <h:outputText value="Cargo: #{evaluado.strCargo}" />
+                                                </div>
+
+                                            </p:column>
+                                        </p:row>
+                                    </p:panelGrid>
+
                                 </p:column>
 
                             </p:dataTable>

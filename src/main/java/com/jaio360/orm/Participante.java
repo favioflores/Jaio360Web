@@ -27,6 +27,7 @@ public class Participante  implements java.io.Serializable {
      private String paTxOcupacion;
      private String paTxAreaNegocio;
      private Boolean paInAnalizado;
+     private String paTxImgUrl;
      
      private Set relacionParticipantes = new HashSet(0);
      private Set cuestionarioEvaluados = new HashSet(0);
@@ -194,8 +195,13 @@ public class Participante  implements java.io.Serializable {
         this.cuestionarioEvaluados = cuestionarioEvaluados;
     }
 
+    public String getPaTxImgUrl() {
+        return paTxImgUrl;
+    }
 
-
+    public void setPaTxImgUrl(String paTxImgUrl) {
+        this.paTxImgUrl = paTxImgUrl;
+    }
 
 }
 

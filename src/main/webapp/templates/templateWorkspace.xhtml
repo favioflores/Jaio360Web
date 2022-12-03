@@ -11,14 +11,21 @@
             <f:facet name="first">
                 <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
                 <title>Jaio 360</title>
-                <h:outputScript name="js/nanoscroller.js" library="omega-layout" />
-                <h:outputScript name="js/layout.js" library="omega-layout" />
+
                 <h:outputScript name="jquery/jquery.js" library="primefaces"/>
                 <h:outputScript name="jquery/jquery-plugins.js" library="primefaces"/>
                 <link type="text/css" rel="stylesheet" href="#{request.contextPath}/resources/showcase/css/primeflex.css" />
                 <link type="text/css" rel="stylesheet" href="#{request.contextPath}/resources/showcase/css/flags/flags.css" />
                 <link rel="shortcut icon" type="image/png" href="#{request.contextPath}/images/favicon.png" />
             </f:facet>
+
+            <style>
+                .classimg {
+                    border-radius: 20% !important;
+                    border: 1px #003c36 solid !important;
+                }
+            </style>
+            
             <ui:insert name="head"/>
         </h:head>
 
@@ -33,9 +40,9 @@
                 <p:commandButton type="button" value="#{msg['cabecera.logout.confirmacion.si']}" styleClass="ui-confirmdialog-yes" />
                 <p:commandButton type="button" value="#{msg['cabecera.logout.confirmacion.no']}" styleClass="ui-confirmdialog-no" />
             </p:confirmDialog>
-            
+
             <p:ajaxStatus onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" />
-            
+
             <p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false">
                 <h5>#{msg['processing']}</h5>
                 <p:progressBar id="progressBarIndeterminate" style="height:10px;" mode="indeterminate"/>

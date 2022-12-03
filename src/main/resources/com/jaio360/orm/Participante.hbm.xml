@@ -60,6 +60,9 @@
         <property name="paInAnalizado" type="java.lang.Boolean">
             <column name="PA_IN_ANALIZADO" />
         </property>
+        <property name="paTxImgUrl" type="string">
+            <column name="PA_TX_IMG_URL" length="1000" not-null="true" />
+        </property>
         
         <set name="relacionParticipantes" inverse="true">
             <key>

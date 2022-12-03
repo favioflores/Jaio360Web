@@ -45,6 +45,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -304,7 +305,7 @@ public class GeneraReportesView extends BaseView implements Serializable {
         /**
          * OBTIENE NRO DE EVALUADORES POR PARTICIPANTE DEL PROYECTO
          */
-        List lstParticipanteRedEvaluacion = objParticipanteDAO.obtenerNroParticipantes(objProyectoInfo.getIntIdProyecto());
+        List lstParticipanteRedEvaluacion = objParticipanteDAO.obtenerNroParticipantesEnEjecucion(objProyectoInfo.getIntIdProyecto());
         Iterator itLstParticipanteRedEvaluacion = lstParticipanteRedEvaluacion.iterator();
 
         Map mapEvaluados = new HashMap();
@@ -355,6 +356,8 @@ public class GeneraReportesView extends BaseView implements Serializable {
             objEvaluado.setPaTxNombreCargo(objParticipante.getPaTxNombreCargo());
             objEvaluado.setPaTxCorreo(objParticipante.getPaTxCorreo());
             objEvaluado.setPaInAutoevaluar(objParticipante.getPaInAutoevaluar());
+            objEvaluado.setPaTxImgUrl(objParticipante.getPaTxImgUrl());
+
             if (objParticipante.getPaInAnalizado() != null) {
                 objEvaluado.setBlAnalizado(objParticipante.getPaInAnalizado());
                 if (objParticipante.getPaInAnalizado()) {
@@ -373,8 +376,8 @@ public class GeneraReportesView extends BaseView implements Serializable {
             } else {
                 objEvaluado.setIntNumberEvaluators(0);
             }
-            if (mapEvaluacionesTerminadas.containsKey(objParticipante.getPaIdParticipantePk())) {
-                BigDecimal bdTemp = (BigDecimal) mapEvaluacionesTerminadas.get(objParticipante.getPaIdParticipantePk());
+            if (!mapEvaluacionesTerminadas.isEmpty() && mapEvaluacionesTerminadas.containsKey(objParticipante.getPaIdParticipantePk())) {
+                BigInteger bdTemp = (BigInteger) mapEvaluacionesTerminadas.get(objParticipante.getPaIdParticipantePk());
                 objEvaluado.setIntNumberEvaluationFinished(bdTemp.intValue());
             } else {
                 objEvaluado.setIntNumberEvaluationFinished(0);

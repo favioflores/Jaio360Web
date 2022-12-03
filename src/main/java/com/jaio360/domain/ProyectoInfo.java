@@ -34,6 +34,7 @@ public class ProyectoInfo implements Serializable{
     private boolean boDefineArtificio;
     private String strCorreoEvaluado;
     private String strNombreEvaluado;
+    private String strCargoEvaluado;
     private String strCorreoEvaluador;
     private String strNombreEvaluador;
     private String strRelacion;
@@ -42,6 +43,7 @@ public class ProyectoInfo implements Serializable{
     /* Para lista de evaluaciones */
     private String strDescEvaluado;
     private Integer intIdEvaluado;
+    private String strURLImagen;
     
     private boolean boOculto;
 
@@ -52,6 +54,24 @@ public class ProyectoInfo implements Serializable{
         boDefineArtificio = false;
     }
 
+    public String getStrCargoEvaluado() {
+        return strCargoEvaluado;
+    }
+
+    public void setStrCargoEvaluado(String strCargoEvaluado) {
+        this.strCargoEvaluado = strCargoEvaluado;
+    }
+
+    
+    public String getStrURLImagen() {
+        return strURLImagen;
+    }
+
+    public void setStrURLImagen(String strURLImagen) {
+        this.strURLImagen = strURLImagen;
+    }
+
+    
     public String getStrRelacion() {
         return strRelacion;
     }

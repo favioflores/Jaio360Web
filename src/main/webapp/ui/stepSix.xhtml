@@ -131,6 +131,11 @@
 
                                     <p:column selectionMode="multiple" style="width:35px;text-right" />
 
+                                    <p:column headerText="#{msg['photo']}" width="70" style="width: 80px !important;" >
+                                        <p:graphicImage url="#{evaluado.paTxImgUrl}" height="75" width="55" class="classimg" rendered="#{evaluado.paTxImgUrl!=null}" />
+                                        <p:graphicImage value="/images/no-picture.png" height="75" width="55"  class="classimg" rendered="#{evaluado.paTxImgUrl==null}" />
+                                    </p:column>
+
                                     <p:column headerText="#{msg['description']}" >
                                         <h:outputText value="#{evaluado.paTxDescripcion}" />
                                     </p:column>

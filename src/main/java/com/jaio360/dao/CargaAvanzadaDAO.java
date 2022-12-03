@@ -136,6 +136,7 @@ public class CargaAvanzadaDAO implements Serializable {
                     objParticipante.setPaTxOcupacion(objEvaluadoAvan.getPaTxOcupacion());
                     objParticipante.setPaTxAreaNegocio(objEvaluadoAvan.getPaTxAreaNegocio());
                     objParticipante.setProyecto(objProyecto);
+                    objParticipante.setPaTxImgUrl(objEvaluadoAvan.getPaTxImgUrl());
                     objParticipante.setPaIdParticipantePk((Integer) sesion.save(objParticipante));
                     mParticipante.put(Utilitarios.limpiarTexto(objParticipante.getPaTxCorreo()), objParticipante);
                 }

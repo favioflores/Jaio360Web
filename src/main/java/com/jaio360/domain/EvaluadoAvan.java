@@ -29,6 +29,18 @@ public class EvaluadoAvan implements Serializable{
     private Integer paNrTiempoTrabajo;
     private String paTxOcupacion;
     private String paTxAreaNegocio;
+    
+    private String paTxImgUrl;
+
+    public String getPaTxImgUrl() {
+        return paTxImgUrl;
+    }
+
+    public void setPaTxImgUrl(String paTxImgUrl) {
+        this.paTxImgUrl = paTxImgUrl;
+    }
+    
+    
 
     public String getStrImgEvado() {
         return strImgEvado;

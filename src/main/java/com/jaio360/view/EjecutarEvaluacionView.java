@@ -51,6 +51,9 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
 
     private String strDescCuestionario;
     private String strDescEvaluado;
+    private String strCargoEvaluado;
+    private String strCorreoEvaluado;
+    private String strUrlImagen;
     private String strInstrucciones;
     private String strAgradecimiento;
     private List<Componente> lstComponenteCerrada;
@@ -71,8 +74,6 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
 
     public static int TIPO_METODOLOGIA_ESCALA = 30;
     public static int TIPO_METODOLOGIA_ELECCION_FORZADA = 31;
-
-    private int number2;
 
     /**
      * ** NUEVO PREGUNTA CERRADA ***
@@ -98,6 +99,31 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
     private Integer intNroPreguntasActual;
     private Integer intNroTotalPreguntasRespondidas;
 
+    public String getStrCargoEvaluado() {
+        return strCargoEvaluado;
+    }
+
+    public void setStrCargoEvaluado(String strCargoEvaluado) {
+        this.strCargoEvaluado = strCargoEvaluado;
+    }
+
+    public String getStrCorreoEvaluado() {
+        return strCorreoEvaluado;
+    }
+
+    public void setStrCorreoEvaluado(String strCorreoEvaluado) {
+        this.strCorreoEvaluado = strCorreoEvaluado;
+    }
+
+    public String getStrUrlImagen() {
+        return strUrlImagen;
+    }
+
+    public void setStrUrlImagen(String strUrlImagen) {
+        this.strUrlImagen = strUrlImagen;
+    }
+
+    
     public String getStrDescripcionPreguntaAbiertaActual() {
         return strDescripcionPreguntaAbiertaActual;
     }
@@ -192,14 +218,6 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
 
     public void setStrRptaComentario(String[] strRptaComentario) {
         this.strRptaComentario = strRptaComentario;
-    }
-
-    public int getNumber2() {
-        return number2;
-    }
-
-    public void setNumber2(int number2) {
-        this.number2 = number2;
     }
 
     public String getStrDescEvaluado() {
@@ -451,6 +469,10 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
                 strDescEvaluado = msg("you.are.evaluating") + " " + objProyectoInfo.getStrNombreEvaluado();
             }
 
+            this.strUrlImagen = objProyectoInfo.getStrURLImagen();
+            this.strCargoEvaluado = objProyectoInfo.getStrCargoEvaluado();
+            this.strCorreoEvaluado = objProyectoInfo.getStrCorreoEvaluado();
+                    
             EjecutarEvaluacionDAO eEvaluadoDAO = new EjecutarEvaluacionDAO();
 
             ProyectoDAO proyectoDAO = new ProyectoDAO();

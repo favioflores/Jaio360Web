@@ -307,8 +307,43 @@ public class ParticipanteDAO implements Serializable {
 
         return objParticipante;
     }
-
+    
     public List obtenerNroParticipantes(Integer intProyectoPk) throws HibernateException {
+
+        try {
+
+            iniciaOperacion();
+
+            String sql
+                    = "  select idParticipante, sum(cantidad_participantes) from ( "
+                    + "select p.PA_ID_PARTICIPANTE_PK as idParticipante, "
+                    + "1 as cantidad_participantes "
+                    + "from jaio.participante p "
+                    + "where p.PA_ID_ESTADO in (72) "
+                    + "and p.PO_ID_PROYECTO_FK = :intProyectoPk "
+                    + "and p.PA_IN_AUTOEVALUAR = true "
+                    + "union ALL "
+                    + "select p.PA_ID_PARTICIPANTE_PK as idParticipante, "
+                    + "count(rp.RE_ID_PARTICIPANTE_FK) as cantidad_participantes "
+                    + "from jaio.participante p, jaio.relacion_participante rp "
+                    + "where p.PA_ID_ESTADO in (72) "
+                    + "and p.PO_ID_PROYECTO_FK = :intProyectoPk "
+                    + "and p.PA_ID_PARTICIPANTE_PK = rp.PA_ID_PARTICIPANTE_FK "
+                    + "and rp.RP_ID_ESTADO = 79 group by p.PA_ID_PARTICIPANTE_PK ) datos group by idParticipante ";
+
+            Query query = sesion.createSQLQuery(sql);
+
+            query.setInteger("intProyectoPk", intProyectoPk);
+
+            return query.list();
+
+        } finally {
+            sesion.close();
+        }
+
+    }
+
+    public List obtenerNroParticipantesEnEjecucion(Integer intProyectoPk) throws HibernateException {
 
         try {
 

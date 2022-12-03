@@ -471,6 +471,7 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
                 objEvaluado.setPaTxNombreCargo(objParticipante.getPaTxNombreCargo());
                 objEvaluado.setBdPorcentajeAvance(BigDecimal.ZERO);
                 objEvaluado.setBoCheckFilterSeg(Boolean.FALSE);
+                objEvaluado.setPaTxImgUrl(objParticipante.getPaTxImgUrl());
 
                 for (CuestionarioEvaluado objCuestionarioEvaluado : lstCuestionarioEvaluado) {
                     if (objCuestionarioEvaluado.getId().getPaIdParticipanteFk().equals(objEvaluado.getPaIdParticipantePk())) {

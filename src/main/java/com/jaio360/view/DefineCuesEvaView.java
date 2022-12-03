@@ -212,6 +212,7 @@ public class DefineCuesEvaView extends BaseView implements Serializable {
                     objEvaluadoCuestionario.setStrEstadoEvaluado(msg(objParticipante.getPaIdEstado().toString()));
                     objEvaluadoCuestionario.setIntIdEstadoSel(Constantes.INT_ET_ESTADO_SELECCION_REGISTRADO);
                     objEvaluadoCuestionario.setStrCuestionarioDesc("--");
+                    objEvaluadoCuestionario.setPaTxImgUrl(objParticipante.getPaTxImgUrl());
                     objEvaluadoCuestionario.setStrEstadoSel(msg(Constantes.INT_ET_ESTADO_SELECCION_REGISTRADO.toString()));
 
                     if (!map.isEmpty()) {
