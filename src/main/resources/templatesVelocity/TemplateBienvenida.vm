@@ -129,13 +129,13 @@
                                                 </tr>
                                                 <tr style="height: 60px;">
                                                     <td>&nbsp;</td>
-                                                    <td><div class="divCarita">$TEMPLATE-WELCOME-LABEL-WELCOME $NOMBRE,</div></td>
+                                                    <td><div class="divCarita">$TEMPLATEWELCOMELABELWELCOME $NOMBRE,</div></td>
                                                     <td>&nbsp;</td>
                                                 </tr>
 
                                                 <tr>
                                                     <td>&nbsp;</td>
-                                                    <td class="divDatosR"><div align="left">$TEMPLATE-WELCOME-LABEL-RECOMENDATIONS:</div></td>
+                                                    <td class="divDatosR"><div align="left">$TEMPLATEWELCOMELABELRECOMENDATIONS:</div></td>
                                                     <td>&nbsp;</td>
                                                 </tr>
                                                 <tr>
@@ -152,7 +152,7 @@
                                                 </tr>
                                                 <tr>
                                                     <td>&nbsp;</td>
-                                                    <td class="divDatosR"><div align="left">$TEMPLATE-WELCOME-LABEL-CONFIDENTIAL:</div></td>
+                                                    <td class="divDatosR"><div align="left">$TEMPLATEWELCOMELABELCONFIDENTIAL:</div></td>
                                                     <td>&nbsp;</td>
                                                 </tr>
                                                 <tr>

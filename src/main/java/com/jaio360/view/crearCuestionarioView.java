@@ -466,7 +466,7 @@ public class crearCuestionarioView extends BaseView implements Serializable {
         Proyecto proyecto = this.proyectoDAO.obtenProyecto(Utilitarios.obtenerProyecto().getIntIdProyecto());
 
         this.strRptaDesc = new String[10];
-        
+
         this.metrica = this.metricaDAO.obtenMetricaProyecto(proyecto);
 
         if (metrica != null) {
@@ -551,32 +551,36 @@ public class crearCuestionarioView extends BaseView implements Serializable {
 
     }
 
-    public void addMetrica(Integer idNuOrden) {
+    public void addMetrica() {
 
         try {
 
             Proyecto objProyecto = this.proyectoDAO.obtenProyecto(Utilitarios.obtenerProyecto().getIntIdProyecto());
 
-            DetalleMetrica objDetalleMetrica = detalleMetricaDAO.obtenDetalleMetrica(objProyecto.getPoIdProyectoPk(), idNuOrden);
+            for (int i = 0; i <= intRangos - 1; i++) {
 
-            if (objDetalleMetrica == null) {
+                DetalleMetrica objDetalleMetrica = detalleMetricaDAO.obtenDetalleMetrica(objProyecto.getPoIdProyectoPk(), i);
 
-                objDetalleMetrica = new DetalleMetrica();
-                objDetalleMetrica.setDeNuOrden(idNuOrden);
-                this.strRangoSelec = strRptaDesc[idNuOrden];
-                objDetalleMetrica.setDeTxValor(this.strRangoSelec);
-                objDetalleMetrica.setMetrica(this.metrica);
-                objDetalleMetrica.setDeIdDetalleEscalaPk(detalleMetricaDAO.guardaDetalleMetrica(objDetalleMetrica));
-                
-            } else {
-                
-                this.strRangoSelec = strRptaDesc[idNuOrden];
-                objDetalleMetrica.setDeTxValor(this.strRangoSelec);
-                objDetalleMetrica.setMetrica(this.metrica);
-                detalleMetricaDAO.actualizaDetalleMetrica(objDetalleMetrica);
+                if (objDetalleMetrica == null) {
+
+                    objDetalleMetrica = new DetalleMetrica();
+                    objDetalleMetrica.setDeNuOrden(i);
+                    this.strRangoSelec = strRptaDesc[i];
+                    objDetalleMetrica.setDeTxValor(this.strRangoSelec);
+                    objDetalleMetrica.setMetrica(this.metrica);
+                    objDetalleMetrica.setDeIdDetalleEscalaPk(detalleMetricaDAO.guardaDetalleMetrica(objDetalleMetrica));
+
+                } else {
+
+                    this.strRangoSelec = strRptaDesc[i];
+                    objDetalleMetrica.setDeTxValor(this.strRangoSelec);
+                    objDetalleMetrica.setMetrica(this.metrica);
+                    detalleMetricaDAO.actualizaDetalleMetrica(objDetalleMetrica);
+
+                }
 
             }
-            
+
             loadRango();
             mostrarAlertaInfo("step2.answer.saved");
 
@@ -602,7 +606,7 @@ public class crearCuestionarioView extends BaseView implements Serializable {
             FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Eliminar metrica", 
                     "Al menos debes tener una metrica si tienes cuestionarios creados");
             FacesContext.getCurrentInstance().addMessage(null, msg);
-            */
+             */
         }
 
     }
@@ -616,9 +620,9 @@ public class crearCuestionarioView extends BaseView implements Serializable {
                     this.metrica = this.metricaDAO.obtenMetricaProyecto(proyecto);
                     this.metrica.setMeNuRango(this.intRangos);
                     this.metricaDAO.actualizaMetricaEliminaDetalle(metrica);
-                    
+
                     loadRango();
-                    
+
                     mostrarAlertaInfo("success");
 
                 } else {

@@ -80,24 +80,25 @@
                                         <c:forEach var="counter" begin="1" end="#{crearCuestionarioView.intRangos}">
 
                                             <div class="p-field p-grid">
-                                                <div class="p-col-10">
+                                                <div class="p-col-12">
                                                     <span class="ui-float-label">
-                                                        <p:inputText id="idRpta#{counter-1}" required="true" requiredMessage="#{msg['step2.not.valid.answer']}" value="#{crearCuestionarioView.strRptaDesc[counter-1]}"
+                                                        <p:inputText id="idRpta#{counter-1}" required="true" value="#{crearCuestionarioView.strRptaDesc[counter-1]}"
                                                                      disabled="#{(importarCuestionariosView.intIdEstadoProyecto == 37 or importarCuestionariosView.intIdEstadoProyecto == 34)}">
                                                         </p:inputText>
                                                         <p:outputLabel for="@previous" value="#{msg['step2.label.answer']} #{counter}"/>
                                                     </span>
                                                 </div>
-                                                <div class="p-col-2">
-                                                    <p:commandButton type="submit" process=":formMetrica:idRpta#{counter-1},@this" 
-                                                                     disabled="#{(importarCuestionariosView.intIdEstadoProyecto == 37 or importarCuestionariosView.intIdEstadoProyecto == 34)}"
-                                                                     update="formMetrica" actionListener="#{crearCuestionarioView.addMetrica(counter-1)}" icon="pi pi-save" />
-                                                </div>
+
 
                                             </div>
 
                                         </c:forEach>
-
+                                        <p:commandButton type="submit" value="#{msg['save']}"
+                                                         disabled="#{(importarCuestionariosView.intIdEstadoProyecto == 37 or importarCuestionariosView.intIdEstadoProyecto == 34)}"
+                                                         icon="pi pi-save" 
+                                                         process="formMetrica" 
+                                                         update="formMetrica" 
+                                                         actionListener="#{crearCuestionarioView.addMetrica()}" />
                                     </div>
                                 </div>
                             </p:card>
@@ -114,7 +115,7 @@
 
                                     <div class="p-field p-col-12 p-md-12 p-text-center">
                                         <p:outputLabel>
-                                            ¿Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa.?
+                                            #{msg['pregunta.ejemplo']}
                                         </p:outputLabel>
                                     </div>
 
@@ -333,10 +334,18 @@
                                             <p:outputLabel value="#{msg['step2.list.element.evaluation']} #{importarCuestionariosView.strCuestionario}" style="text-align: left;" />
                                         </f:facet>  
 
-                                        <p:column headerText="#{msg['step2.element.type']}" groupRow="true" style="width: 150px;" >
+                                        <p:column headerText="#{msg['step2.element.type']}" style="width: 150px;" >
                                             <p:button value="#{cuesprev.strDato1}" style="height: 100%;" styleClass="ui-button-#{cuesprev.strDato3}" disabled="true" />
                                         </p:column>
 
+                                        <p:column style="width: 60px;">
+                                            <f:facet name="header">
+                                                <h:outputText value="#" />
+                                            </f:facet>
+                                            <h:outputText 
+                                                value="#{index + 1}" />
+                                        </p:column>
+                                        
                                         <p:column headerText="#{msg['description']}" >
                                             <h:outputText value="#{cuesprev.strDato2}" />
                                         </p:column>

@@ -64,13 +64,13 @@
             <column name="PA_TX_IMG_URL" length="1000" not-null="true" />
         </property>
         
-        <set name="relacionParticipantes" inverse="true">
+        <set name="relacionParticipantes" inverse="true" lazy="true">
             <key>
                 <column name="PA_ID_PARTICIPANTE_FK" not-null="true" />
             </key>
             <one-to-many class="com.jaio360.orm.RelacionParticipante" />
         </set>
-        <set name="cuestionarioEvaluados" inverse="true">
+        <set name="cuestionarioEvaluados" inverse="true" lazy="true" >
             <key>
                 <column name="PA_ID_PARTICIPANTE_FK" not-null="true" />
             </key>

@@ -6,7 +6,9 @@ package com.jaio360.domain;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -41,9 +43,10 @@ public class ProyectoInfo implements Serializable{
     private String strRelacionColor;
     
     /* Para lista de evaluaciones */
-    private String strDescEvaluado;
     private Integer intIdEvaluado;
-    private String strURLImagen;
+    private Integer intCantidadEvaluaciones;
+    private boolean blGrupal;
+    private List<EvaluacionesXEjecutar> lstEvaluacionesXEjecutar;
     
     private boolean boOculto;
 
@@ -52,6 +55,7 @@ public class ProyectoInfo implements Serializable{
         blInstrucciones = false;
         blAgradecimiento = false;
         boDefineArtificio = false;
+        lstEvaluacionesXEjecutar = new ArrayList<>();
     }
 
     public String getStrCargoEvaluado() {
@@ -62,15 +66,14 @@ public class ProyectoInfo implements Serializable{
         this.strCargoEvaluado = strCargoEvaluado;
     }
 
+    public Integer getIntCantidadEvaluaciones() {
+        return intCantidadEvaluaciones;
+    }
+
+    public void setIntCantidadEvaluaciones(Integer intCantidadEvaluaciones) {
+        this.intCantidadEvaluaciones = intCantidadEvaluaciones;
+    }
     
-    public String getStrURLImagen() {
-        return strURLImagen;
-    }
-
-    public void setStrURLImagen(String strURLImagen) {
-        this.strURLImagen = strURLImagen;
-    }
-
     
     public String getStrRelacion() {
         return strRelacion;
@@ -162,18 +165,27 @@ public class ProyectoInfo implements Serializable{
         this.intIdCuestionario = intIdCuestionario;
     }
 
-    public String getStrDescEvaluado() {
-        return strDescEvaluado;
-    }
-
-    public void setStrDescEvaluado(String strDescEvaluado) {
-        this.strDescEvaluado = strDescEvaluado;
-    }
-
     public String getStrCorreoEvaluado() {
         return strCorreoEvaluado;
     }
 
+    public boolean isBlGrupal() {
+        return blGrupal;
+    }
+
+    public void setBlGrupal(boolean blGrupal) {
+        this.blGrupal = blGrupal;
+    }
+
+    public List<EvaluacionesXEjecutar> getLstEvaluacionesXEjecutar() {
+        return lstEvaluacionesXEjecutar;
+    }
+
+    public void setLstEvaluacionesXEjecutar(List<EvaluacionesXEjecutar> lstEvaluacionesXEjecutar) {
+        this.lstEvaluacionesXEjecutar = lstEvaluacionesXEjecutar;
+    }
+
+    
     public void setStrCorreoEvaluado(String strCorreoEvaluado) {
         this.strCorreoEvaluado = strCorreoEvaluado;
     }

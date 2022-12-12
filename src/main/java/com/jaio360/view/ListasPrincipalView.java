@@ -6,6 +6,7 @@ package com.jaio360.view;
 
 import com.jaio360.dao.ProyectoDAO;
 import com.jaio360.dao.RelacionDAO;
+import com.jaio360.domain.EvaluacionesXEjecutar;
 import com.jaio360.domain.ProyectoInfo;
 import com.jaio360.domain.UsuarioInfo;
 import com.jaio360.orm.Proyecto;
@@ -16,6 +17,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -69,7 +71,6 @@ public class ListasPrincipalView extends BaseView implements Serializable {
     private Date txtFechaEjecucionInicial;
     private Date txtFechaEjecucionFinal;
     private boolean blOcultos = false;
-    private LinkedHashMap<String, String> mapRelacion;
 
     private int intLicenciasRequeridas;
     private int intLicenciasDisponibles;
@@ -87,8 +88,6 @@ public class ListasPrincipalView extends BaseView implements Serializable {
     public void setFilterValue(String filterValue) {
         this.filterValue = filterValue;
     }
-    
-    
 
     public boolean isGlobalFilterOnly() {
         return globalFilterOnly;
@@ -322,7 +321,7 @@ public class ListasPrincipalView extends BaseView implements Serializable {
         UsuarioInfo objUsuarioInfo = objUsuarioSesion.obtenerUsuarioInfo();
 
         buscarProyectos();
-        poblarListaRedes(objUsuarioInfo);
+        //poblarListaRedes(objUsuarioInfo);
         poblarListaEvaluaciones(objUsuarioInfo);
 
         if (!lstProyectos.isEmpty()) {
@@ -444,44 +443,81 @@ public class ListasPrincipalView extends BaseView implements Serializable {
 
         if (!lstEvaluacion.isEmpty()) {
 
-            List<ProyectoInfo> lstEvaluaciones = new ArrayList<>();
+            LinkedHashMap<String, ProyectoInfo> mapEvaluaciones = new LinkedHashMap<>();
 
             Iterator itLstEvaluaciones = lstEvaluacion.iterator();
 
             ProyectoInfo objProyectoInfo;
-
-            RelacionDAO objRelacionDAO = new RelacionDAO();
+            EvaluacionesXEjecutar objEvaluacionesXEjecutar;
 
             while (itLstEvaluaciones.hasNext()) {
 
                 Object[] objProyecto = (Object[]) itLstEvaluaciones.next();
-                objProyectoInfo = new ProyectoInfo();
 
-                objProyectoInfo.setIntIdProyecto((Integer) objProyecto[0]);
-                objProyectoInfo.setStrDescNombre((String) objProyecto[2]);
-                objProyectoInfo.setStrDescEvaluado((String) objProyecto[8]);
-                objProyectoInfo.setStrDescCuestionario((String) objProyecto[9]);
-                objProyectoInfo.setIntIdCuestionario((Integer) objProyecto[10]);
-                objProyectoInfo.setIntIdEvaluado((Integer) objProyecto[11]);
-                objProyectoInfo.setStrCorreoEvaluado((String) objProyecto[12]);
-                objProyectoInfo.setStrNombreEvaluador((String) objProyecto[13]);
-                objProyectoInfo.setStrNombreEvaluado((String) objProyecto[8]);
-                objProyectoInfo.setStrURLImagen((String) objProyecto[15]);
-                objProyectoInfo.setStrCargoEvaluado((String) objProyecto[16]);
+                if (!mapEvaluaciones.containsKey((objProyecto[0] + "-" + objProyecto[10]))) {
 
-                if (Utilitarios.noEsNuloOVacio(objProyecto[14])) {
+                    objProyectoInfo = new ProyectoInfo();
+                    objProyectoInfo.setIntIdProyecto((Integer) objProyecto[0]);
+                    objProyectoInfo.setIntCantidadEvaluaciones(1);
+                    objProyectoInfo.setStrDescNombre((String) objProyecto[2]);
+                    objProyectoInfo.setBlGrupal(Boolean.FALSE);
+                    objProyectoInfo.setIntIdCuestionario((Integer) objProyecto[10]);
+                    objProyectoInfo.setStrNombreEvaluador(Utilitarios.obtenerUsuario().getStrDescripcion());
 
-                    Relacion objRelacion = objRelacionDAO.obtenRelacion(Integer.parseInt(objProyecto[14].toString()));
-                    objProyectoInfo.setStrRelacion(objRelacion.getReTxNombre());
-                    objProyectoInfo.setStrRelacionColor(objRelacion.getReColor());
+                    objEvaluacionesXEjecutar = new EvaluacionesXEjecutar();
+
+                    objEvaluacionesXEjecutar.setIdProyecto((Integer) objProyecto[0]);
+                    objEvaluacionesXEjecutar.setIdParticipante((Integer) objProyecto[11]);
+                    objEvaluacionesXEjecutar.setStrCorreoEvaluado((String) objProyecto[12]);
+                    objEvaluacionesXEjecutar.setStrCorreoEvaluador(Utilitarios.obtenerUsuario().getStrEmail());
+                    objEvaluacionesXEjecutar.setStrNombreEvaluado((String) objProyecto[8]);
+                    objEvaluacionesXEjecutar.setStrURLImagen((String) objProyecto[15]);
+                    if (objProyecto[12].toString().equals(Utilitarios.obtenerUsuario().getStrEmail())) {
+                        objEvaluacionesXEjecutar.setBlAutoevaluation(true);
+                    } else {
+                        objEvaluacionesXEjecutar.setBlAutoevaluation(false);
+                    }
+
+                    List<EvaluacionesXEjecutar> lstEvaluacionesXEjecutar = new ArrayList<>();
+                    lstEvaluacionesXEjecutar.add(objEvaluacionesXEjecutar);
+                    objProyectoInfo.setLstEvaluacionesXEjecutar(lstEvaluacionesXEjecutar);
+
+                    mapEvaluaciones.put((objProyecto[0] + "-" + objProyecto[10]), objProyectoInfo);
+
                 } else {
-                    objProyectoInfo.setStrRelacion("AUTOEVALUACIÓN");
+
+                    objProyectoInfo = mapEvaluaciones.get((objProyecto[0] + "-" + objProyecto[10]));
+                    objProyectoInfo.setIntCantidadEvaluaciones(objProyectoInfo.getIntCantidadEvaluaciones() + 1);
+
+                    if (objProyectoInfo.getIntCantidadEvaluaciones() > 1) {
+                        objProyectoInfo.setBlGrupal(Boolean.TRUE);
+                    } else {
+                        objProyectoInfo.setBlGrupal(Boolean.FALSE);
+                    }
+
+                    objEvaluacionesXEjecutar = new EvaluacionesXEjecutar();
+
+                    objEvaluacionesXEjecutar.setIdProyecto((Integer) objProyecto[0]);
+                    objEvaluacionesXEjecutar.setIdParticipante((Integer) objProyecto[11]);
+                    objEvaluacionesXEjecutar.setStrCorreoEvaluado((String) objProyecto[12]);
+                    objEvaluacionesXEjecutar.setStrCorreoEvaluador(Utilitarios.obtenerUsuario().getStrEmail());
+                    objEvaluacionesXEjecutar.setStrNombreEvaluado((String) objProyecto[8]);
+                    objEvaluacionesXEjecutar.setStrURLImagen((String) objProyecto[15]);
+                    if (objProyecto[12].toString().equals(Utilitarios.obtenerUsuario().getStrEmail())) {
+                        objEvaluacionesXEjecutar.setBlAutoevaluation(true);
+                    } else {
+                        objEvaluacionesXEjecutar.setBlAutoevaluation(false);
+                    }
+
+                    objProyectoInfo.getLstEvaluacionesXEjecutar().add(objEvaluacionesXEjecutar);
+                    mapEvaluaciones.replace((objProyecto[0] + "-" + objProyecto[10]), objProyectoInfo);
+
                 }
 
-                lstEvaluaciones.add(objProyectoInfo);
             }
 
-            this.lstEvaluaciones = lstEvaluaciones;
+            this.lstEvaluaciones = new ArrayList<>(mapEvaluaciones.values());
+
         }
     }
 
@@ -562,13 +598,13 @@ public class ListasPrincipalView extends BaseView implements Serializable {
 
                 Proyecto objProyecto = objProyectoDAO.obtenProyecto(objProyectoInfo.getIntIdProyecto());
 
-                if(event.getColumn().getHeaderText().equals(msg("adm.nombre"))){
+                if (event.getColumn().getHeaderText().equals(msg("adm.nombre"))) {
                     objProyecto.setPoTxDescripcion(event.getNewValue().toString());
                 }
-                
-                if(event.getColumn().getHeaderText().equals(msg("adm.descripcion"))){
+
+                if (event.getColumn().getHeaderText().equals(msg("adm.descripcion"))) {
                     objProyecto.setPoTxMotivo(event.getNewValue().toString());
-                } 
+                }
 
                 objProyectoDAO.actualizaProyecto(objProyecto);
 

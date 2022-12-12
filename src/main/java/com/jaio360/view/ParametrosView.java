@@ -27,6 +27,7 @@ public class ParametrosView extends BaseView implements Serializable {
     private boolean blNivelOcupacional = false;
     private boolean blAreaNegocio = false;
 
+    private String strSex;
     private String strRangoEdad;
     private String strRangoTiempo;
 
@@ -44,6 +45,14 @@ public class ParametrosView extends BaseView implements Serializable {
         cargarDatosExistentes();
     }
 
+    public String getStrSex() {
+        return strSex;
+    }
+
+    public void setStrSex(String strSex) {
+        this.strSex = strSex;
+    }
+    
     public String[] getSelectedAreaNegocio() {
         return selectedAreaNegocio;
     }
@@ -195,6 +204,7 @@ public class ParametrosView extends BaseView implements Serializable {
 
                 if (intIdTipoParametro.equals(Constantes.INT_ET_TIPO_PARAMETRO_SEXO)) {
                     if (!blSexo) {
+                        strSex="";
                         objParametroDAO.eliminaParametro(objParametro);
                     }
                 } else if (intIdTipoParametro.equals(Constantes.INT_ET_TIPO_PARAMETRO_EDAD)) {
@@ -218,11 +228,11 @@ public class ParametrosView extends BaseView implements Serializable {
                         objParametroDAO.eliminaParametro(objParametro);
                     }
                 }
-                
+
                 mostrarAlertaInfo("disabled");
 
             }
-            
+
         } catch (Exception e) {
             mostrarError(log, e);
             mostrarAlertaFatal("error.was.occurred");
@@ -258,6 +268,7 @@ public class ParametrosView extends BaseView implements Serializable {
 
                 if (objParametro.getPaIdTipoParametro().equals(Constantes.INT_ET_TIPO_PARAMETRO_SEXO)) {
                     blSexo = true;
+                    strSex = new String(objParametro.getPaTxPatron());
                 } else if (objParametro.getPaIdTipoParametro().equals(Constantes.INT_ET_TIPO_PARAMETRO_EDAD)) {
                     blRangoEdad = true;
                     strRangoEdad = new String(objParametro.getPaTxPatron());
@@ -290,6 +301,10 @@ public class ParametrosView extends BaseView implements Serializable {
             objParametro.setPaTxPatron(strPatron.getBytes());
             objParametroDAO.actualizaParametro(objParametro);
 
+        } else if (intIdTipoParametro.equals(Constantes.INT_ET_TIPO_PARAMETRO_SEXO)) {
+            strPatron = strSex;
+            objParametro.setPaTxPatron(strPatron.getBytes());
+            objParametroDAO.actualizaParametro(objParametro);
         } else if (intIdTipoParametro.equals(Constantes.INT_ET_TIPO_PARAMETRO_AREA)) {
             int i = 0;
             while (i < selectedAreaNegocio.length) {
@@ -325,7 +340,7 @@ public class ParametrosView extends BaseView implements Serializable {
         }
 
         cargarDatosExistentes();
-        
+
         mostrarAlertaInfo("success");
 
     }

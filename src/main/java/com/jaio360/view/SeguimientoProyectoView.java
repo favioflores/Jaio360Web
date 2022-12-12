@@ -13,6 +13,7 @@ import com.jaio360.dao.RelacionDAO;
 import com.jaio360.dao.RelacionParticipanteDAO;
 import com.jaio360.dao.ResultadoDAO;
 import com.jaio360.dao.UsuarioSaldoDAO;
+import com.jaio360.domain.EvaluacionesXEjecutar;
 import com.jaio360.domain.Evaluado;
 import com.jaio360.domain.ProyectoInfo;
 import com.jaio360.domain.RelacionEvaluadoEvaluador;
@@ -67,9 +68,11 @@ import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.mapping.Set;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.UnselectEvent;
 import org.primefaces.model.DefaultStreamedContent;
@@ -572,13 +575,19 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
             boolean apto = false;
             String strDescEvaluador = null;
 
+            CuestionarioDAO objCuestionarioDAO = new CuestionarioDAO();
+            Cuestionario objCuestionario = null;
+
             for (Participante objParticipante : lstParticipante) {
                 if (objParticipante.getPaIdParticipantePk().equals(objRelacionParticipante.getId().getPaIdParticipanteFk())) {
                     if (!(objParticipante.getPaIdEstado().equals(Constantes.INT_ET_ESTADO_EVALUADO_REGISTRADO)
                             || objParticipante.getPaIdEstado().equals(Constantes.INT_ET_ESTADO_EVALUADO_EN_PARAMETRIZACION))) {
 
                         strDescEvaluador = objParticipante.getPaTxDescripcion();
-                        apto = true;
+
+                        objCuestionario = objCuestionarioDAO.obtenCuestionarioXEvaluado(objParticipante.getPaIdParticipantePk());
+
+                        apto = true; break;
                     }
                 }
             }
@@ -592,6 +601,9 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
                 objRelacionEvaluadoEvaluador.setIntIdEvaluado(objRelacionParticipante.getId().getPaIdParticipanteFk());
                 objRelacionEvaluadoEvaluador.setIntIdEvaluador(objRelacionParticipante.getId().getReIdParticipanteFk());
                 objRelacionEvaluadoEvaluador.setIntIdRelacion(objRelacionParticipante.getId().getReIdRelacionFk());
+                if (objCuestionario != null) {
+                    objRelacionEvaluadoEvaluador.setIntIdCuestionario(objCuestionario.getCuIdCuestionarioPk());
+                }
 
                 String strKey = objRelacionEvaluadoEvaluador.getIntIdEvaluado() + Constantes.strPipe
                         + objRelacionEvaluadoEvaluador.getIntIdEvaluador() + Constantes.strPipe
@@ -651,6 +663,10 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
 
                     objRelacionEvaluadoEvaluador.setStrDescRelacion(msg("autoevaluate.cap"));
 
+                    CuestionarioDAO objCuestionarioDAO = new CuestionarioDAO();
+                    Cuestionario objCuestionario = objCuestionarioDAO.obtenCuestionarioXEvaluado(objParticipante.getPaIdParticipantePk());;
+
+                    objRelacionEvaluadoEvaluador.setIntIdCuestionario(objCuestionario.getCuIdCuestionarioPk());
                     objRelacionEvaluadoEvaluador.setStrDescEvaluador(objParticipante.getPaTxDescripcion());
                     objRelacionEvaluadoEvaluador.setStrDescEvaluado(objParticipante.getPaTxDescripcion());
                     objRelacionEvaluadoEvaluador.setStrCorreoEvaluador(objParticipante.getPaTxCorreo());
@@ -958,13 +974,33 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
             ParticipanteDAO objParticipanteDAO = new ParticipanteDAO();
             Participante objParticipante = objParticipanteDAO.obtenParticipante(Long.valueOf(objRelacionEvaluadoEvaluador.getIntIdEvaluado()));
 
-            redSeleccionada.setIntIdEvaluado(objParticipante.getPaIdParticipantePk());
-            redSeleccionada.setStrCorreoEvaluado(objParticipante.getPaTxCorreo());
-            redSeleccionada.setStrDescEvaluado(objParticipante.getPaTxDescripcion());
-            redSeleccionada.setStrCorreoEvaluador(objRelacionEvaluadoEvaluador.getStrCorreoEvaluador());
-            redSeleccionada.setStrNombreEvaluado(objRelacionEvaluadoEvaluador.getStrDescEvaluado());
+            //redSeleccionada.setIntIdEvaluado(objParticipante.getPaIdParticipantePk());
+            //redSeleccionada.setStrCorreoEvaluado(objParticipante.getPaTxCorreo());
+            //redSeleccionada.setStrNombreEvaluado(objParticipante.getPaTxDescripcion());
+            //redSeleccionada.setStrCorreoEvaluador(objRelacionEvaluadoEvaluador.getStrCorreoEvaluador());
+            //redSeleccionada.setStrNombreEvaluado(objRelacionEvaluadoEvaluador.getStrDescEvaluado());
             redSeleccionada.setStrNombreEvaluador(objRelacionEvaluadoEvaluador.getStrDescEvaluador());
-            redSeleccionada.setStrRelacion(objRelacionEvaluadoEvaluador.getStrDescRelacion());
+            //redSeleccionada.setStrRelacion(objRelacionEvaluadoEvaluador.getStrDescRelacion());
+            redSeleccionada.setIntCantidadEvaluaciones(1);
+            redSeleccionada.setIntIdCuestionario(objRelacionEvaluadoEvaluador.getIntIdCuestionario());
+
+            EvaluacionesXEjecutar objEvaluacionesXEjecutar = new EvaluacionesXEjecutar();
+
+            objEvaluacionesXEjecutar.setIdParticipante(objParticipante.getPaIdParticipantePk());
+            objEvaluacionesXEjecutar.setBlGrupal(false);
+            objEvaluacionesXEjecutar.setIdProyecto(intIdEstadoProyecto);
+            objEvaluacionesXEjecutar.setStrCorreoEvaluado(objParticipante.getPaTxCorreo());
+            objEvaluacionesXEjecutar.setStrCorreoEvaluador(objRelacionEvaluadoEvaluador.getStrCorreoEvaluador());
+            objEvaluacionesXEjecutar.setStrNombreEvaluado(objParticipante.getPaTxDescripcion());
+            objEvaluacionesXEjecutar.setStrURLImagen(objParticipante.getPaTxImgUrl());
+            
+            if(objRelacionEvaluadoEvaluador.getStrCorreoEvaluador().equals(objParticipante.getPaTxCorreo())){
+                objEvaluacionesXEjecutar.setBlAutoevaluation(true);
+            }else{
+                objEvaluacionesXEjecutar.setBlAutoevaluation(false);
+            }
+            
+            redSeleccionada.getLstEvaluacionesXEjecutar().add(objEvaluacionesXEjecutar);
 
             HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
             session.removeAttribute("evalInfo");

@@ -245,7 +245,7 @@ public class RelacionParticipanteDAO implements Serializable{
         return listaRelacionParticipante; 
     }  
     
-    public RelacionParticipanteId obtenRelacionParticipanteId(ProyectoInfo objProyectoInfo, String reTxCorreo, String paTxCorreo) throws HibernateException 
+    public RelacionParticipanteId obtenRelacionParticipanteId(ProyectoInfo objProyectoInfo, String reTxCorreo, Integer intIdEvaluado) throws HibernateException 
     { 
         RelacionParticipanteId relacionParticipanteId = null;  
         try 
@@ -278,7 +278,7 @@ public class RelacionParticipanteDAO implements Serializable{
             
             query.setInteger(0, objProyectoInfo.getIntIdProyecto());
             query.setInteger(1, objProyectoInfo.getIntIdCuestionario());
-            query.setInteger(2, objProyectoInfo.getIntIdEvaluado());
+            query.setInteger(2, intIdEvaluado);
             query.setInteger(3, Constantes.INT_ET_ESTADO_EVALUADOR_EN_EJECUCION);
             query.setInteger(4, Constantes.INT_ET_ESTADO_EVALUADO_EN_EJECUCION);
             query.setInteger(5, Constantes.INT_ET_ESTADO_EVALUADO_TERMINADO);

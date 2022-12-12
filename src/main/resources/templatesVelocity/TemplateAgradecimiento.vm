@@ -129,7 +129,7 @@
                                                 </tr>
                                                 <tr style="height: 60px;">
                                                     <td>&nbsp;</td>
-                                                    <td><div class="divCarita">$TEMPLATE-REGARDS-LABEL-THANK $NOMBRE,</div></td>
+                                                    <td><div class="divCarita">$TEMPLATEREGARDSLABELTHANK $NOMBRE,</div></td>
                                                     <td>&nbsp;</td>
                                                 </tr>
 

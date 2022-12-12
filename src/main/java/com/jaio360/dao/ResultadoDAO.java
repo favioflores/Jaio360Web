@@ -125,7 +125,7 @@ public class ResultadoDAO implements Serializable {
 "				     where rr.PO_ID_PROYECTO_FK = pa.PO_ID_PROYECTO_FK " +
 "				       and rr.PA_ID_PARTICIPANTE_FK = pa.PA_ID_PARTICIPANTE_PK " +
 "				       and rr.RE_ID_RELACION_FK is NULL " +
-"				       and rr.RE_ID_PARTICIPANTE_FK is null )"
+"				       and rr.RE_ID_PARTICIPANTE_FK is null ) "
                     + "               ) d  ");
 
             /*falta agregar al participante que termina su evaluacion pero no responde nada */

@@ -107,7 +107,7 @@ public class ElementoDAO extends BaseView implements Serializable {
         List<Elemento> listaElemento = null;
 
         try {
-            Query query = sesion.createQuery("from Elemento el where el.definicionTabla.dtIdDefinicionPk = ? order by el.elNuOrden ");
+            Query query = sesion.createQuery("from Elemento el where el.definicionTabla.dtIdDefinicionPk = ? order by el.elNuOrden asc ");
             query.setInteger(0, intDefinicion);
             listaElemento = query.list();
 

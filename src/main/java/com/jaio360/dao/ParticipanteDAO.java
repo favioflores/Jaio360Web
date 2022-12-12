@@ -1,16 +1,11 @@
 package com.jaio360.dao;
 
 import com.jaio360.domain.Evaluado;
-import com.jaio360.orm.Cuestionario;
-import com.jaio360.orm.CuestionarioEvaluado;
 import com.jaio360.orm.HibernateUtil;
 import com.jaio360.orm.Participante;
 import com.jaio360.orm.Proyecto;
-import com.jaio360.orm.RedEvaluacion;
-import com.jaio360.orm.Relacion;
 import com.jaio360.utils.Constantes;
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.logging.Log;
@@ -204,9 +199,36 @@ public class ParticipanteDAO implements Serializable {
 
         try {
             iniciaOperacion();
-            Query query = sesion.createQuery("from Participante p where p.proyecto.poIdProyectoPk = ? ");
+            //Query query = sesion.createQuery("from Participante p where p.proyecto.poIdProyectoPk = ? and paInAutoevaluar = ? ");
+
+            Query query = sesion.createQuery(" from Participante p " +
+            " where p.paIdParticipantePk in (select p1.paIdParticipantePk from Participante p1 where p1.proyecto.poIdProyectoPk = :idProyecto and p1.paInAutoevaluar = :blAutoEvaluar ) " +
+            "   or p.paIdParticipantePk in (select p2.paIdParticipantePk from Participante p2 INNER JOIN p2.relacionParticipantes rp where p2.proyecto.poIdProyectoPk = :idProyecto ) ");
+            
+            query.setInteger("idProyecto", intProyectoPk);
+            query.setBoolean("blAutoEvaluar", true);
+
+            listaParticipante = query.list();
+
+        } finally {
+            sesion.close();
+        }
+
+        return listaParticipante;
+    }
+    
+    public List<Participante> obtenListaParticipanteXEstado(Integer intProyectoPk, Integer intEstadoParticipante1, Integer intEstadoParticipante2) throws HibernateException {
+        List<Participante> listaParticipante = new ArrayList<>();
+
+        try {
+            iniciaOperacion();
+            String str = "from Participante p where p.proyecto.poIdProyectoPk = ? and p.paIdEstado in (?,?) ";
+
+            Query query = sesion.createQuery(str);
 
             query.setInteger(0, intProyectoPk);
+            query.setInteger(1, intEstadoParticipante1);
+            query.setParameter(2, intEstadoParticipante2);
 
             listaParticipante = query.list();
 
@@ -237,7 +259,7 @@ public class ParticipanteDAO implements Serializable {
         return listaParticipante;
     }
 
-    public List<Participante> obtenListaParticipanteXEstado(Integer intProyectoPk, Integer intEstadoParticipante1, Integer intEstadoParticipante2) throws HibernateException {
+    public List<Participante> obtenListaParticipanteXProyecto(Integer intProyectoPk, Integer intEstadoParticipante1, Integer intEstadoParticipante2) throws HibernateException {
         List<Participante> listaParticipante = new ArrayList<>();
 
         try {

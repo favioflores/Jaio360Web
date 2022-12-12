@@ -96,13 +96,13 @@
                                             value="#{index + 1}" />
                                     </p:column> 
                                     <p:column headerText="#{msg['photo']}"> 
-                                        <p:graphicImage url="#{evaluado.paTxImgUrl}" height="75" width="55" class="classimg" rendered="#{evaluado.paTxImgUrl!=null}" />
-                                        <p:graphicImage value="/images/no-picture.png" height="75" width="55"  class="classimg" rendered="#{evaluado.paTxImgUrl==null}" />
+                                        <p:graphicImage url="#{evaluado.paTxImgUrl}" height="75" width="75" class="classimg" rendered="#{evaluado.paTxImgUrl!=null}" />
+                                        <p:graphicImage value="/images/no-picture.png" height="75" width="75"  class="classimg" rendered="#{evaluado.paTxImgUrl==null}" />
                                     </p:column>
                                     <p:column headerText="#{msg['description']}" filterBy="#{evaluado.strDescNombre}" sortOrder="asc" sortPriority="2" >
                                         <h:outputText value="#{evaluado.strDescNombre}" />
                                     </p:column>
-                                    <p:column headerText="#{msg['role']}" filterBy="#{evaluado.strCargo}" groupRow="true" sortOrder="asc" sortPriority="1" >
+                                    <p:column headerText="#{msg['role']}" filterBy="#{evaluado.strCargo}" sortOrder="asc" sortPriority="1" >
                                         <h:outputText value="#{evaluado.strCargo}" />
                                         <!--<p:tag value="#{evaluado.strCargo}" style="background-color: ##{evaluado.strCargo};" />-->
                                     </p:column>
@@ -241,9 +241,9 @@
                                 <p:column headerText="#{msg['individual']}" filterBy="#{evaluado.strDescNombre}" sortOrder="asc" sortPriority="2" >
                                     <p:panelGrid styleClass="ui-panelgrid-blank ui-fluid" >
                                         <p:row>
-                                            <p:column width="70" style="width: 80px !important;" >
-                                                <p:graphicImage url="#{evaluado.paTxImgUrl}" height="75" width="55" class="classimg" rendered="#{evaluado.paTxImgUrl!=null}" />
-                                                <p:graphicImage value="/images/no-picture.png" height="75" width="55"  class="classimg" rendered="#{evaluado.paTxImgUrl==null}" />
+                                            <p:column style="width: 100px !important;" >
+                                                <p:graphicImage url="#{evaluado.paTxImgUrl}" height="75" width="75" class="classimg" rendered="#{evaluado.paTxImgUrl!=null}" />
+                                                <p:graphicImage value="/images/no-picture.png" height="75" width="75"  class="classimg" rendered="#{evaluado.paTxImgUrl==null}" />
                                             </p:column>
                                             <p:column>
                                                 <h:outputText value="#{evaluado.strDescNombre}" />

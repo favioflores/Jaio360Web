@@ -6,11 +6,12 @@ import java.io.Serializable;
  *
  * @author Favio
  */
-public class RelacionEvaluadoEvaluador implements Serializable{
+public class RelacionEvaluadoEvaluador implements Serializable {
 
     private Integer intIdEvaluado;
     private String strDescEvaluado;
     private Integer intIdEvaluador;
+    private Integer intIdCuestionario;
     private String strDescEvaluador;
     private String strCorreoEvaluador;
     private Integer intIdRelacion;
@@ -19,6 +20,14 @@ public class RelacionEvaluadoEvaluador implements Serializable{
     private Boolean blEnvioCorreo;
     private String strColorRelacion;
 
+    public Integer getIntIdCuestionario() {
+        return intIdCuestionario;
+    }
+
+    public void setIntIdCuestionario(Integer intIdCuestionario) {
+        this.intIdCuestionario = intIdCuestionario;
+    }
+
     public String getStrColorRelacion() {
         return strColorRelacion;
     }
@@ -26,7 +35,6 @@ public class RelacionEvaluadoEvaluador implements Serializable{
     public void setStrColorRelacion(String strColorRelacion) {
         this.strColorRelacion = strColorRelacion;
     }
-    
 
     public Boolean getBlEnvioCorreo() {
         return blEnvioCorreo;
@@ -35,7 +43,7 @@ public class RelacionEvaluadoEvaluador implements Serializable{
     public void setBlEnvioCorreo(Boolean blEnvioCorreo) {
         this.blEnvioCorreo = blEnvioCorreo;
     }
-    
+
     public String getStrCorreoEvaluador() {
         return strCorreoEvaluador;
     }
@@ -99,5 +107,5 @@ public class RelacionEvaluadoEvaluador implements Serializable{
     public void setBlEvaluacionTerminada(Boolean blEvaluacionTerminada) {
         this.blEvaluacionTerminada = blEvaluacionTerminada;
     }
-    
+
 }

@@ -115,9 +115,9 @@ public class MenuPrincipalView extends BaseView implements Serializable {
             /**
              * UPGRADES
              **/
+            agregarItem(msg("user.guide"), "userGuide.jsf", "pi pi-file-pdf", menuPrincipal);
             agregarItem("", "upgrades.jsf", "pi pi-info-circle", menuPrincipal);
             
-
         } else if (false) {//COUNTRY MANAGER
             
         } else if (objUsuarioInfo.isBoEsUsuarioMaestro()) {//PROJECT MANAGER
@@ -130,10 +130,8 @@ public class MenuPrincipalView extends BaseView implements Serializable {
             //Datos de usuarios
             DefaultSubMenu usuarios = agregarMenu(msg("users"), "pi pi-users", menuPrincipal);
             agregarItem(msg("actualizar.mis.datos"), "admProfile.jsf", "", usuarios);
-            /**
-             * UPGRADES
-             **/
-            agregarItem(msg("upgrades"), "upgrades.jsf", "pi pi-cloud-upload", menuPrincipal);
+            agregarItem(msg("user.guide"), "userGuide.jsf", "pi pi-file-pdf", menuPrincipal);
+            agregarItem("", "upgrades.jsf", "pi pi-cloud-upload", menuPrincipal);
         } else {//USER EVALUATOR / EVALUATED
             //Home
             //DefaultSubMenu home = agregarMenu("", "pi pi-fw pi-home", menuPrincipal);
@@ -141,10 +139,8 @@ public class MenuPrincipalView extends BaseView implements Serializable {
             agregarItem("", "welcome.jsf", "pi pi-fw pi-home", menuPrincipal);
             DefaultSubMenu usuarios = agregarMenu(msg("users"), "pi pi-users", menuPrincipal);
             agregarItem(msg("actualizar.mis.datos"), "admProfile.jsf", "", usuarios);
-            /**
-             * UPGRADES
-             **/
-            agregarItem(msg("upgrades"), "upgrades.jsf", "pi pi-cloud-upload", menuPrincipal);
+            agregarItem(msg("user.guide"), "userGuide.jsf", "pi pi-file-pdf", menuPrincipal);
+            agregarItem("", "upgrades.jsf", "pi pi-cloud-upload", menuPrincipal);
         }
 
     }

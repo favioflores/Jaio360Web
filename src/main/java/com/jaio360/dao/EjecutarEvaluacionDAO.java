@@ -16,17 +16,16 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
-public class EjecutarEvaluacionDAO implements Serializable
-{  
-    private Session sesion; 
-    private Transaction tx;  
+public class EjecutarEvaluacionDAO implements Serializable {
+
+    private Session sesion;
+    private Transaction tx;
     private static Log log = LogFactory.getLog(EjecutarEvaluacionView.class);
-   
 
     public EjecutarEvaluacionDAO() {
         this.sesion = HibernateUtil.getSessionFactory().openSession();
     }
-    
+
     /*
     public long guardaRedEvaluacion(RedEvaluacion redEvaluacion) throws HibernateException 
     { 
@@ -120,19 +119,17 @@ public class EjecutarEvaluacionDAO implements Serializable
 
         return listaRedEvaluacion; 
     }  
-    */ 
-    private void iniciaOperacion() throws HibernateException 
-    { 
-        sesion = HibernateUtil.getSessionFactory().openSession(); 
-        tx = sesion.beginTransaction(); 
-    }  
+     */
+    private void iniciaOperacion() throws HibernateException {
+        sesion = HibernateUtil.getSessionFactory().openSession();
+        tx = sesion.beginTransaction();
+    }
 
-    private void manejaExcepcion(HibernateException he) throws HibernateException 
-    { 
-        tx.rollback(); 
-        throw new HibernateException("Ocurrió un error en la capa de acceso a datos", he); 
-    } 
-    
+    private void manejaExcepcion(HibernateException he) throws HibernateException {
+        tx.rollback();
+        throw new HibernateException("Ocurrió un error en la capa de acceso a datos", he);
+    }
+
     /*
     public List<RedEvaluacion> obtenerListaEvaluadores(Integer intProyectoPk) throws HibernateException {
         
@@ -155,8 +152,9 @@ public class EjecutarEvaluacionDAO implements Serializable
 
         return listaRedEvaluacion; 
     }
-    */
-    public List obtenerComponenteTipo(Integer intProyectoPk, String strMail, Integer intTipoComp) throws HibernateException {
+     */
+    
+    public List obtenerComponenteTipoXEmail(Integer intProyectoPk, String strMail, Integer intTipoComp) throws HibernateException {
         
         List<Componente> listaComponente = new ArrayList<>();
 
@@ -224,26 +222,88 @@ public class EjecutarEvaluacionDAO implements Serializable
         return listaComponente; 
     }
     
-    public List<DetalleMetrica> obtenerDetalleMetrica(Integer intProyectoPk) throws HibernateException {
-        
-        List<DetalleMetrica> listaDetalleMetrica = null;  
+    public List obtenerComponenteTipoXCustionario(Integer intProyectoPk, Integer intCuestionarioPk, Integer intTipoComp) throws HibernateException {
 
-        try{
-            
-            iniciaOperacion(); 
-            Query query = sesion.createQuery("from DetalleMetrica deme where deme.metrica.proyecto.poIdProyectoPk = ? order by deme.deNuOrden "); 
-            
+        List<Componente> listaComponente = new ArrayList<>();
+
+        try {
+            iniciaOperacion();
+
+            String sql = " select distinct com.CO_ID_COMPONENTE_PK,                                      "
+                    + "         com.CU_ID_CUESTIONARIO_FK,                                    "
+                    + "         com.CO_ID_COMPONENTE_REF_FK,                                  "
+                    + "         com.CO_ID_TIPO_COMPONENTE,                                    "
+                    + "         com.CO_TX_DESCRIPCION                                         "
+                    + "   from cuestionario_evaluado cuev                         "
+                    + " 	  inner join componente com                                     "
+                    + " 	  on (com.CU_ID_CUESTIONARIO_FK = cuev.CU_ID_CUESTIONARIO_FK)   "
+                    + "   where cuev.PO_ID_PROYECTO_FK = ?                                      "
+                    + "     and cuev.CU_ID_CUESTIONARIO_FK = ?                                  ";
+
+            if (intTipoComp != null) {
+                sql += "    and com.CO_ID_TIPO_COMPONENTE = ?                                  ";
+            }
+
+            Query query = sesion.createSQLQuery(sql);
+
             query.setInteger(0, intProyectoPk);
-            
+            query.setInteger(1, intCuestionarioPk);
+
+            if (intTipoComp != null) {
+                query.setInteger(2, intTipoComp);
+            }
+
+            Iterator iterator = query.list().iterator();
+            while (iterator.hasNext()) {
+                Object[] tuple = (Object[]) iterator.next();
+
+                Componente comp = new Componente();
+
+                comp.setCoIdComponentePk((Integer) tuple[0]);
+
+                Cuestionario cuest = new Cuestionario();
+                cuest.setCuIdCuestionarioPk((Integer) tuple[1]);
+                comp.setCuestionario(cuest);
+
+                if ((tuple[2]) != null) {
+                    Componente compRef = new Componente();
+                    compRef.setCoIdComponentePk((Integer) tuple[2]);
+                    comp.setComponente(compRef);
+                }
+
+                comp.setCoIdTipoComponente((Integer) tuple[3]);
+                comp.setCoTxDescripcion((String) tuple[4]);
+                listaComponente.add(comp);
+
+            }
+
+        } finally {
+            sesion.close();
+        }
+
+        return listaComponente;
+    }
+
+    public List<DetalleMetrica> obtenerDetalleMetrica(Integer intProyectoPk) throws HibernateException {
+
+        List<DetalleMetrica> listaDetalleMetrica = null;
+
+        try {
+
+            iniciaOperacion();
+            Query query = sesion.createQuery("from DetalleMetrica deme where deme.metrica.proyecto.poIdProyectoPk = ? order by deme.deNuOrden ");
+
+            query.setInteger(0, intProyectoPk);
+
             listaDetalleMetrica = query.list();
-            
-        }catch (Exception e){
+
+        } catch (Exception e) {
             log.error(e);
-        }finally { 
-            sesion.close(); 
-        }  
+        } finally {
+            sesion.close();
+        }
 
         return listaDetalleMetrica;
     }
-   
+
 }

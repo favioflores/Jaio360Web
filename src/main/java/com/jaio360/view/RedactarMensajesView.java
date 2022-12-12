@@ -392,12 +392,12 @@ public class RedactarMensajesView extends BaseView implements Serializable {
 
             }
 
-            context.put("TEMPLATE-CONVOCATORIA-LABEL-SENDED", msg("template.convocatoria.label.sended"));
-            context.put("TEMPLATE-CONVOCATORIA-LABEL-HELLO", msg("template.convocatoria.label.hello"));
-            context.put("TEMPLATE-CONVOCATORIA-LABEL-USER", msg("template.convocatoria.label.user"));
-            context.put("TEMPLATE-CONVOCATORIA-LABEL-PASSWORD", msg("template.convocatoria.label.password"));
-            context.put("TEMPLATE-CONVOCATORIA-LABEL-SINGIN", msg("template.convocatoria.label.singin"));
-            context.put("TEMPLATE-CONVOCATORIA-FOOTER", msg("template.convocatoria.footer"));
+            context.put("TEMPLATECONVOCATORIALABELSENDED", msg("template.convocatoria.label.sended"));
+            context.put("TEMPLATECONVOCATORIALABELHELLO", msg("template.convocatoria.label.hello"));
+            context.put("TEMPLATECONVOCATORIALABELUSER", msg("template.convocatoria.label.user"));
+            context.put("TEMPLATECONVOCATORIALABELPASSWORD", msg("template.convocatoria.label.password"));
+            context.put("TEMPLATECONVOCATORIALABELSINGIN", msg("template.convocatoria.label.singin"));
+            context.put("TEMPLATECONVOCATORIAFOOTER", msg("template.convocatoria.footer"));
 
             context.put("TITULO", strTituloConvocatoria);
             context.put("PARRAFO", strParrafoConvocatoria);
@@ -437,7 +437,7 @@ public class RedactarMensajesView extends BaseView implements Serializable {
 
             }
 
-            context.put("TEMPLATE-REGARDS-LABEL-THANK", msg("template.regards.label.thank"));
+            context.put("TEMPLATEREGARDSLABELTHANK", msg("template.regards.label.thank"));
             context.put("PARRAFO_AGRADECIMIENTO", strAgradecimiento);
 
             StringWriter out = new StringWriter();
@@ -475,9 +475,9 @@ public class RedactarMensajesView extends BaseView implements Serializable {
 
             }
 
-            context.put("TEMPLATE-WELCOME-LABEL-WELCOME", msg("template.welcome.label.welcome"));
-            context.put("TEMPLATE-WELCOME-LABEL-RECOMENDATIONS", msg("template.welcome.label.recomendations"));
-            context.put("TEMPLATE-WELCOME-LABEL-CONFIDENTIAL", msg("template.welcome.label.confidential"));
+            context.put("TEMPLATEWELCOMELABELWELCOME", msg("template.welcome.label.welcome"));
+            context.put("TEMPLATEWELCOMELABELRECOMENDATIONS", msg("template.welcome.label.recomendations"));
+            context.put("TEMPLATEWELCOMELABELCONFIDENTIAL", msg("template.welcome.label.confidential"));
 
             context.put("PARRAFO_RECOMENDACION", strBienvenidaRecomendaciones);
             context.put("PARRAFO_CONFIDENCIALIDAD", strBienvenidaConfidencialidad);

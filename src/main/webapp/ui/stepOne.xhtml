@@ -43,78 +43,95 @@
     <ui:define name="content">
         <p:panel>
 
-            <h:form id="formParametros"  >
+            <p:card id="panel" >  
+                <h:form id="frmGlobal">
+                    <p:growl widgetVar="growlGlobal" life="4000" showSummary="true" />
+                </h:form>
+                <h3>#{msg['step1.title']}</h3>
 
-                <p:card id="panel" >  
+                <div class="ui-fluid p-formgrid p-grid">
 
-                    <p:growl life="4000" showSummary="true" />
+                    <div class="p-field p-col-12 p-md-12">
+                        <p:outputLabel value="#{msg['Step1.description']}" />
+                    </div>
 
-                    <h3>#{msg['step1.title']}</h3>
+                    <div class="p-field p-col-12 p-md-4">
 
-                    <div class="ui-fluid p-formgrid p-grid">
-
-                        <div class="p-field p-col-12 p-md-12">
-                            <p:outputLabel value="#{msg['Step1.description']}" />
-                        </div>
-
-                        <div class="p-field p-col-12 p-md-4">
+                        <h:form id="frmSex">
 
                             <p:toggleSwitch id="switchSexo" value="#{parametrosView.blSexo}" disabled="#{evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}">
-                                <p:ajax listener="#{parametrosView.activarParametro(82)}" update="panel" />
+                                <p:ajax listener="#{parametrosView.activarParametro(82)}" resetValues="true" update="frmSex,frmGlobal" />
                             </p:toggleSwitch>     
 
                             <div class="p-field p-grid">
                                 <div class="p-col">
                                     <p:outputLabel for="@next" value="#{msg['step1.sex.label']}" />
-                                    <p:inputText type="text" disabled="true" placeholder="#{msg['step1.sex.option']}" required="true" />
+                                    <p:inputText id="strSex" type="text" value="#{parametrosView.strSex}" 
+                                                 disabled="#{!parametrosView.blSexo or evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}" 
+                                                 maxlength="500" required="true" >
+                                        <f:validator validatorId="validarSex" />
+                                    </p:inputText>
                                     <p:spacer/>
-                                    <!--p:commandButton type="submit" icon="pi pi-save" value="#{msg['save']}" disabled="#{!parametrosView.blRangoEdad or evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}" process="@this,strRangoEdad" oncomplete="rbtnRE1();rbtnRE2();" -->
+                                    <p:commandButton type="submit" icon="pi pi-save" value="#{msg['save']}" 
+                                                     disabled="#{!parametrosView.blSexo or evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}"
+                                                     update="frmSex,frmGlobal" actionListener="#{parametrosView.guardarPreferencia(82)}" />
                                 </div>
                             </div>
-                        </div>
+                        </h:form>
+                    </div>
 
-                        <div class="p-field p-col-12 p-md-4">
+                    <div class="p-field p-col-12 p-md-4">
+                        <h:form id="frmRango">
 
                             <p:toggleSwitch value="#{parametrosView.blRangoEdad}" disabled="#{evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}" >
-                                <p:ajax listener="#{parametrosView.activarParametro(83)}" update="panel" />
+                                <p:ajax listener="#{parametrosView.activarParametro(83)}" resetValues="true" update="frmRango,frmGlobal" />
                             </p:toggleSwitch>
 
                             <div class="p-field p-grid">
                                 <div class="p-col">
                                     <p:outputLabel for="@next" value="#{msg['step1.age.label']}" />
-                                    <p:inputText id="strRangoEdad" type="text" value="#{parametrosView.strRangoEdad}" maxlength="500" placeholder="20,30,40,50,60,70,80,90" disabled="#{!parametrosView.blRangoEdad or evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}" required="true" >
-                                        <f:validator validatorId="validarRango" />
+                                    <p:inputText id="strRangoEdad" type="text" value="#{parametrosView.strRangoEdad}" maxlength="500" 
+                                                 disabled="#{!parametrosView.blRangoEdad or evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}" required="true" >
+                                        <f:validator validatorId="validarRango" />                                       
                                     </p:inputText>
                                     <p:spacer/>
-                                    <p:commandButton type="submit" icon="pi pi-save" value="#{msg['save']}" disabled="#{!parametrosView.blRangoEdad or evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}" process="@this,strRangoEdad" oncomplete="rbtnRE1();rbtnRE2();" />
-                                    <p:message for="strRangoEdad" display="text" />
+                                    <p:commandButton type="submit" icon="pi pi-save" value="#{msg['save']}"  
+                                                     disabled="#{!parametrosView.blRangoEdad or evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}" 
+                                                     update="frmRango,frmGlobal" actionListener="#{parametrosView.guardarPreferencia(83)}" />
                                 </div>
                             </div>
-                        </div>
+                        </h:form>
+                    </div>
 
-                        <div class="p-field p-col-12 p-md-4">
+                    <div class="p-field p-col-12 p-md-4">
+
+                        <h:form id="frmTiempoEmpresa">
 
                             <p:toggleSwitch value="#{parametrosView.blTiempoEmpresa}" disabled="#{evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}" >
-                                <p:ajax listener="#{parametrosView.activarParametro(84)}" update="panel" />
+                                <p:ajax listener="#{parametrosView.activarParametro(84)}" resetValues="true"  update="frmTiempoEmpresa,frmGlobal" />
                             </p:toggleSwitch>
 
                             <div class="p-field p-grid">
                                 <div class="p-col">
                                     <p:outputLabel for="@next" value="#{msg['step1.hiring.time']}" />
-                                    <p:inputText id="strRangoTiempo" value="#{parametrosView.strRangoTiempo}" maxlength="500" placeholder="1,3,5,10,20,50" disabled="#{!parametrosView.blTiempoEmpresa or evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}" required="true" >
+                                    <p:inputText id="strRangoTiempo" value="#{parametrosView.strRangoTiempo}" maxlength="500" disabled="#{!parametrosView.blTiempoEmpresa or evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}" required="true" >
                                         <f:validator validatorId="validarRango" />
                                     </p:inputText>
                                     <p:spacer/>
-                                    <p:commandButton type="submit" icon="pi pi-save" value="#{msg['save']}" disabled="#{!parametrosView.blTiempoEmpresa or evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}" process="@this,strRangoTiempo" oncomplete="rbtnRT1();rbtnRT2();"/>
-                                    <p:message for="strRangoTiempo" display="text" />
+                                    <p:commandButton type="submit" icon="pi pi-save" value="#{msg['save']}" 
+                                                     disabled="#{!parametrosView.blTiempoEmpresa or evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}" 
+                                                     update="frmTiempoEmpresa,frmGlobal" actionListener="#{parametrosView.guardarPreferencia(84)}" />
+
                                 </div>
                             </div>
-                        </div>
+                        </h:form>
+                    </div>
 
-                        <div class="p-field p-col-12 p-md-4">
+                    <div class="p-field p-col-12 p-md-4">
+                        <h:form id="frmNivelOcupacional">
 
                             <p:toggleSwitch value="#{parametrosView.blNivelOcupacional}" disabled="#{evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}" >
-                                <p:ajax listener="#{parametrosView.activarParametro(85)}" update="panel" />
+                                <p:ajax listener="#{parametrosView.activarParametro(85)}" resetValues="true"  update="frmNivelOcupacional,frmGlobal" />
                             </p:toggleSwitch>
                             <div class="p-field p-grid">
                                 <div class="p-col">
@@ -125,17 +142,20 @@
                                         <f:selectItems value="#{parametrosView.job}" />
                                     </p:selectCheckboxMenu>
                                     <p:spacer/>
-                                    <p:commandButton type="submit" icon="pi pi-save" value="#{msg['save']}" disabled="#{!parametrosView.blNivelOcupacional or evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}" process="@this,lstJob" oncomplete="rbtnNO1();rbtnNO2();"/>
-                                    <p:message for="lstJob" display="text" />
+                                    <p:commandButton type="submit" icon="pi pi-save" value="#{msg['save']}" disabled="#{!parametrosView.blNivelOcupacional or evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}" 
+                                                     update="frmNivelOcupacional,frmGlobal" actionListener="#{parametrosView.guardarPreferencia(85)}" />
 
                                 </div>
                             </div>
-                        </div>
+                        </h:form>
+                    </div>
 
-                        <div class="p-field p-col-12 p-md-4">
+                    <div class="p-field p-col-12 p-md-4">
+
+                        <h:form id="frmAreaNegocio">
 
                             <p:toggleSwitch value="#{parametrosView.blAreaNegocio}" disabled="#{evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}" >
-                                <p:ajax listener="#{parametrosView.activarParametro(86)}" update="panel" />
+                                <p:ajax listener="#{parametrosView.activarParametro(86)}" resetValues="true"  update="frmAreaNegocio,frmGlobal" />
                             </p:toggleSwitch>
                             <div class="p-field p-grid">
                                 <div class="p-col">
@@ -146,19 +166,18 @@
                                         <f:selectItems value="#{parametrosView.area}" />
                                     </p:selectCheckboxMenu>
                                     <p:spacer/>
-                                    <p:commandButton type="submit" icon="pi pi-save" value="#{msg['save']}" disabled="#{!parametrosView.blAreaNegocio or evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}" process="@this,lstAreaNegocioP" oncomplete="rbtnAN1();rbtnAN2();" />
-                                    <p:message for="lstAreaNegocioP" display="text" />
+                                    <p:commandButton type="submit" icon="pi pi-save" value="#{msg['save']}" disabled="#{!parametrosView.blAreaNegocio or evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}" 
+                                                     update="frmAreaNegocio,frmGlobal" actionListener="#{parametrosView.guardarPreferencia(86)}" />
                                 </div>
                             </div>
-                        </div>
-
+                        </h:form>
 
                     </div>
 
+                </div>
 
-                </p:card>
 
-            </h:form>
+            </p:card>
 
             <p:spacer/>
 
@@ -198,7 +217,7 @@
                                     <p:commandButton id="btnUploadFile" value="#{msg['upload']}" ajax="true" 
                                                      actionListener="#{evaluadosView.leeExcelAvanzado}" 
                                                      disabled="#{evaluadosView.lstRelacionBean.size()>0 or evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0}"
-                                                     icon="pi pi-upload" update="formRed" />
+                                                     icon="pi pi-upload" update="formRed,frmSex,frmRango,frmTiempoEmpresa,frmNivelOcupacional,frmAreaNegocio" />
                                 </div>
                             </p:card>
                         </div>
@@ -235,6 +254,7 @@
                                         var="err"
                                         stripedRows="true"
                                         value="#{evaluadosView.lstErrorAvan}"
+                                        rowsPerPageTemplate="5,10,30,{ShowAll|'All'}"
                                         paginatorPosition="bottom"
                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                         currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords}"
@@ -281,6 +301,7 @@
                                         var="reg"
                                         resizableColumns="true"
                                         value="#{evaluadosView.lstAvanPersonas}"
+                                        rowsPerPageTemplate="5,10,30,{ShowAll|'All'}"
                                         paginatorPosition="bottom"
                                         stripedRows="true"
                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
@@ -307,8 +328,8 @@
                                         </p:column>
 
                                         <p:column headerText="#{msg['photo']}">
-                                            <p:graphicImage url="#{reg.paTxImgUrl}" height="75" width="55" class="classimg" rendered="#{reg.paTxImgUrl!=null}" />
-                                            <p:graphicImage value="/images/no-picture.png" height="75" width="55"  class="classimg" rendered="#{reg.paTxImgUrl==null}" />
+                                            <p:graphicImage url="#{reg.paTxImgUrl}" height="75" width="75" class="classimg" rendered="#{reg.paTxImgUrl!=null}" />
+                                            <p:graphicImage value="/images/no-picture.png" height="75" width="75"  class="classimg" rendered="#{reg.paTxImgUrl==null}" />
                                         </p:column>
                                         <p:column headerText="#{msg['description']}">
                                             <h:outputText value="#{reg.paTxDescripcion}" />
@@ -353,6 +374,7 @@
                                         var="rel"
                                         value="#{evaluadosView.lstAvanRelacion}"
                                         paginatorPosition="bottom"
+                                        rowsPerPageTemplate="5,10,30,{ShowAll|'All'}"
                                         resizableColumns="true"
                                         editable="true"
                                         editMode="cell"
@@ -417,6 +439,7 @@
                                         id="tblRelacionAvanzadas"
                                         widgetVar="tblRelacionAvanzadas"
                                         rows="10"
+                                        rowsPerPageTemplate="5,10,30,{ShowAll|'All'}"
                                         paginator="true" 
                                         var="red"
                                         value="#{evaluadosView.lstRelacionAvanzadas}"
@@ -486,8 +509,8 @@
                                                     value="#{index + 1}" />
                                             </p:column> 
                                             <p:column headerText="#{msg['photo']}"> 
-                                                <p:graphicImage url="#{reg.paTxImgUrl}" height="75" width="55" class="classimg" rendered="#{reg.paTxImgUrl!=null}" />
-                                                <p:graphicImage value="/images/no-picture.png" height="75" width="55"  class="classimg" rendered="#{reg.paTxImgUrl==null}" />
+                                                <p:graphicImage url="#{reg.paTxImgUrl}" height="75" width="75" class="classimg" rendered="#{reg.paTxImgUrl!=null}" />
+                                                <p:graphicImage value="/images/no-picture.png" height="75" width="75"  class="classimg" rendered="#{reg.paTxImgUrl==null}" />
                                             </p:column>
                                             <p:column headerText="#{msg['description']}" sortBy="#{reg.paTxDescripcion}">
                                                 <h:outputText value="#{reg.paTxDescripcion}" />
@@ -542,6 +565,7 @@
                                         resizableColumns="true"
                                         sortMode="single"
                                         rowIndexVar="index"
+                                        rowsPerPageTemplate="5,10,30,{ShowAll|'All'}"
                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                         currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords}"
                                         emptyMessage="#{msg['no.items']}"
@@ -604,6 +628,7 @@
                                         value="#{evaluadosView.lstRelacionesEvaluadoEvaluador}"
                                         paginatorPosition="bottom"
                                         stripedRows="true"
+                                        rowsPerPageTemplate="5,10,30,{ShowAll|'All'}"
                                         resizableColumns="true"
                                         sortMode="single"
                                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
@@ -645,7 +670,7 @@
                                              actionListener="#{evaluadosView.cargarListaAvanzado()}"
                                              type="submit"
                                              style="width: 100%;" 
-                                             update="formRed,formParametros"
+                                             update="formRed,frmSex,frmRango,frmTiempoEmpresa,frmNivelOcupacional,frmAreaNegocio"
                                              icon="pi pi-save" /> 
 
                         </c:if>
@@ -658,7 +683,7 @@
                                              styleClass="ui-button-danger"
                                              actionListener="#{evaluadosView.eliminarCargar()}"
                                              type="submit"
-                                             update="formRed,formParametros"
+                                             update="formRed,frmSex,frmRango,frmTiempoEmpresa,frmNivelOcupacional,frmAreaNegocio"
                                              icon="pi pi-times">
                                 <p:confirm header="#{msg['confirmation']}" message="#{msg['are.you.sure.delete.configuration']}" icon="pi pi-info-circle" />
                             </p:commandButton>
@@ -669,23 +694,6 @@
 
                 </p:card>
 
-            </h:form>
-
-            <h:form id="frmRemotos">
-
-                <p:growl life="4000" showSummary="true" />
-
-                <p:remoteCommand name="rbtnRE1" actionListener="#{parametrosView.guardarPreferencia(83)}" update="@form" />
-                <p:remoteCommand name="rbtnRE2" actionListener="#{evaluadosView.init}" />
-
-                <p:remoteCommand name="rbtnRT1" actionListener="#{parametrosView.guardarPreferencia(84)}" update="@form" />
-                <p:remoteCommand name="rbtnRT2" actionListener="#{evaluadosView.init}"  />
-
-                <p:remoteCommand name="rbtnNO1" actionListener="#{parametrosView.guardarPreferencia(85)}" update="@form" />
-                <p:remoteCommand name="rbtnNO2" actionListener="#{evaluadosView.init}"  />
-
-                <p:remoteCommand name="rbtnAN1" actionListener="#{parametrosView.guardarPreferencia(86)}" update="@form"/>
-                <p:remoteCommand name="rbtnAN2" actionListener="#{evaluadosView.init}"  />
             </h:form>
 
         </p:panel>

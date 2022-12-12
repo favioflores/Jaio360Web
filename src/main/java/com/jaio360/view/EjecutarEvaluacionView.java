@@ -1,19 +1,17 @@
 package com.jaio360.view;
 
-import com.jaio360.dao.CuestionarioDAO;
 import com.jaio360.dao.EjecutarEvaluacionDAO;
 import com.jaio360.dao.MensajeDAO;
 import com.jaio360.dao.ParticipanteDAO;
-import com.jaio360.dao.ProyectoDAO;
 import com.jaio360.dao.RelacionParticipanteDAO;
 import com.jaio360.dao.ResultadoDAO;
 import com.jaio360.domain.ComentarioBean;
+import com.jaio360.domain.EvaluacionesXEjecutar;
 import com.jaio360.domain.PreguntaAbiertaBean;
 import com.jaio360.domain.PreguntaCerradaBean;
 import com.jaio360.domain.ProyectoInfo;
 import com.jaio360.domain.UsuarioInfo;
 import com.jaio360.orm.Componente;
-import com.jaio360.orm.Cuestionario;
 import com.jaio360.orm.DetalleMetrica;
 import com.jaio360.orm.Mensaje;
 import com.jaio360.orm.Participante;
@@ -25,19 +23,20 @@ import com.jaio360.utils.Constantes;
 import com.jaio360.utils.Utilitarios;
 import java.io.IOException;
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
-import javax.annotation.PostConstruct;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.HibernateException;
-import org.primefaces.component.outputpanel.OutputPanel;
 
 /**
  *
@@ -56,14 +55,16 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
     private String strUrlImagen;
     private String strInstrucciones;
     private String strAgradecimiento;
+    private Integer indexTocomment;
+
+    private List<EvaluacionesXEjecutar> lstEvaluacionesXEjecutar;
+    private boolean blVisualGroup;
+
     private List<Componente> lstComponenteCerrada;
     private List<Componente> lstComponenteAbierta;
     private List<Componente> lstCompComentario;
     private List<DetalleMetrica> lstDetalleMetrica;
     private RelacionParticipanteId relacionParticipanteId;
-
-    private OutputPanel objOutputPanelCerrada;
-    private OutputPanel objOutputPanelAbierta;
 
     private boolean blTerminado;
 
@@ -72,9 +73,6 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
     public static int TIPO_COMPONENTE_ABIERTA = 47;
     public static int TIPO_COMPONENTE_COMENTARIO = 48;
 
-    public static int TIPO_METODOLOGIA_ESCALA = 30;
-    public static int TIPO_METODOLOGIA_ELECCION_FORZADA = 31;
-
     /**
      * ** NUEVO PREGUNTA CERRADA ***
      */
@@ -82,7 +80,7 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
     private String strDescripcionPreguntaCerradaActual;
     private Integer intRptaSeleccionada;
     private String[] strRptaComentario = new String[50];
-    private LinkedHashMap<String, String> mapRespuestas;
+    private LinkedHashMap<Integer, String> mapRespuestas;
     private boolean isPreguntaCerradaActual;
 
     /**
@@ -98,6 +96,22 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
     private Integer intNroTotalPreguntas;
     private Integer intNroPreguntasActual;
     private Integer intNroTotalPreguntasRespondidas;
+
+    public List<EvaluacionesXEjecutar> getLstEvaluacionesXEjecutar() {
+        return lstEvaluacionesXEjecutar;
+    }
+
+    public void setLstEvaluacionesXEjecutar(List<EvaluacionesXEjecutar> lstEvaluacionesXEjecutar) {
+        this.lstEvaluacionesXEjecutar = lstEvaluacionesXEjecutar;
+    }
+
+    public Integer getIndexTocomment() {
+        return indexTocomment;
+    }
+
+    public void setIndexTocomment(Integer indexTocomment) {
+        this.indexTocomment = indexTocomment;
+    }
 
     public String getStrCargoEvaluado() {
         return strCargoEvaluado;
@@ -123,7 +137,6 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
         this.strUrlImagen = strUrlImagen;
     }
 
-    
     public String getStrDescripcionPreguntaAbiertaActual() {
         return strDescripcionPreguntaAbiertaActual;
     }
@@ -142,6 +155,14 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
 
     public boolean isIsPreguntaCerradaActual() {
         return isPreguntaCerradaActual;
+    }
+
+    public boolean isBlVisualGroup() {
+        return blVisualGroup;
+    }
+
+    public void setBlVisualGroup(boolean blVisualGroup) {
+        this.blVisualGroup = blVisualGroup;
     }
 
     public void setIsPreguntaCerradaActual(boolean isPreguntaCerradaActual) {
@@ -188,7 +209,7 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
         this.strDescripcionPreguntaCerradaActual = strDescripcionPreguntaCerradaActual;
     }
 
-    public LinkedHashMap<String, String> getMapRespuestas() {
+    public LinkedHashMap<Integer, String> getMapRespuestas() {
         return mapRespuestas;
     }
 
@@ -200,7 +221,7 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
         this.lstPreguntasCerradas = lstPreguntasCerradas;
     }
 
-    public void setMapRespuestas(LinkedHashMap<String, String> mapRespuestas) {
+    public void setMapRespuestas(LinkedHashMap<Integer, String> mapRespuestas) {
         this.mapRespuestas = mapRespuestas;
     }
 
@@ -300,22 +321,6 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
         this.lstCompComentario = lstCompComentario;
     }
 
-    public OutputPanel getObjOutputPanelCerrada() {
-        return objOutputPanelCerrada;
-    }
-
-    public void setObjOutputPanelCerrada(OutputPanel objOutputPanelCerrada) {
-        this.objOutputPanelCerrada = objOutputPanelCerrada;
-    }
-
-    public OutputPanel getObjOutputPanelAbierta() {
-        return objOutputPanelAbierta;
-    }
-
-    public void setObjOutputPanelAbierta(OutputPanel objOutputPanelAbierta) {
-        this.objOutputPanelAbierta = objOutputPanelAbierta;
-    }
-
     public void siguientePregunta() {
 
         if (this.intNroPreguntasActual < lstPreguntasCerradas.size()) {
@@ -389,16 +394,24 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
 
         Arrays.fill(this.strRptaComentario, Constantes.strVacio);
 
-        if (lstPreguntasCerradas.get(this.intNroPreguntasActual).isBlRespondido()) {
-            //Obtener respuesta previamente respondida
-            this.strDescripcionPreguntaCerradaActual = lstPreguntasCerradas.get(this.intNroPreguntasActual).getStrDescripcion();
-            this.intRptaSeleccionada = lstPreguntasCerradas.get(this.intNroPreguntasActual).getIdRespuesta();
-        } else {
-            //Se muestra la pregunta sin responder
-            this.strDescripcionPreguntaCerradaActual = lstPreguntasCerradas.get(this.intNroPreguntasActual).getStrDescripcion();
-            this.intRptaSeleccionada = null;
+        for (EvaluacionesXEjecutar objEvaluacionesXEjecutar : lstEvaluacionesXEjecutar) {
+
+            try {
+                PreguntaCerradaBean objPreguntaCerradaBean = objEvaluacionesXEjecutar.getLstPreguntasCerradas().get(this.intNroPreguntasActual);
+                if (objPreguntaCerradaBean.getIdRespuesta() != null) {
+                    objEvaluacionesXEjecutar.setIntRptaSeleccionada(objPreguntaCerradaBean.getIdRespuesta());
+                } else {
+                    objEvaluacionesXEjecutar.setIntRptaSeleccionada(null);
+                }
+            } catch (Exception e) {
+                objEvaluacionesXEjecutar.setIntRptaSeleccionada(null);
+            }
+
         }
 
+        this.strDescripcionPreguntaCerradaActual = lstPreguntasCerradas.get(this.intNroPreguntasActual).getStrDescripcion();
+
+        /*
         PreguntaCerradaBean objPreguntaCerradaBean = this.lstPreguntasCerradas.get(this.intNroPreguntasActual);
         int i = 0;
 
@@ -406,32 +419,78 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
             this.strRptaComentario[i] = objComentarioBean.getStrRespuesta();
             i++;
         }
-
+        
+         */
     }
 
     private void cargarPreguntaAbierta(Integer intNroPreguntaAbierta) {
 
         this.intNroPreguntasActual = this.intNroPreguntasActual + intNroPreguntaAbierta;
 
-        strRptaPreguntaAbierta = Constantes.strVacio;
+        try {
+            for (EvaluacionesXEjecutar objEvaluacionesXEjecutar : lstEvaluacionesXEjecutar) {
 
-        //Obtener respuesta previamente respondida
-        this.strDescripcionPreguntaAbiertaActual = lstPreguntasAbiertas.get(this.intNroPreguntasActual - this.lstPreguntasCerradas.size()).getStrDescripcion();
+                try {
 
-        if (Utilitarios.noEsNuloOVacio(lstPreguntasAbiertas.get(this.intNroPreguntasActual - this.lstPreguntasCerradas.size()).getStrRespuesta())) {
-            this.strRptaPreguntaAbierta = lstPreguntasAbiertas.get(this.intNroPreguntasActual - this.lstPreguntasCerradas.size()).getStrRespuesta();
+                    PreguntaAbiertaBean objPreguntaAbiertaBean = objEvaluacionesXEjecutar.getLstPreguntasAbiertas().get(this.intNroPreguntasActual - this.lstPreguntasCerradas.size());
+
+                    if (Utilitarios.noEsNuloOVacio(objPreguntaAbiertaBean.getStrRespuesta())) {
+                        objEvaluacionesXEjecutar.setStrRptaPreguntaAbierta(objPreguntaAbiertaBean.getStrRespuesta());
+                    } else {
+                        objEvaluacionesXEjecutar.setStrRptaPreguntaAbierta(null);
+                    }
+
+                } catch (Exception e) {
+                }
+            }
+        } catch (Exception e) {
+            mostrarError(log, e);
         }
+
+        this.strDescripcionPreguntaAbiertaActual = lstPreguntasAbiertas.get(this.intNroPreguntasActual - this.lstPreguntasCerradas.size()).getStrDescripcion();
 
     }
 
     public void grabarRespuestaCerradaActual() {
-        if (Utilitarios.noEsNuloOVacio(this.intRptaSeleccionada)) {
-            lstPreguntasCerradas.get(this.intNroPreguntasActual).setIdRespuesta(this.intRptaSeleccionada);
-            lstPreguntasCerradas.get(this.intNroPreguntasActual).setBlRespondido(true);
-        } else {
-            lstPreguntasCerradas.get(this.intNroPreguntasActual).setIdRespuesta(null);
-            lstPreguntasCerradas.get(this.intNroPreguntasActual).setBlRespondido(false);
-        }
+
+        try {
+            for (EvaluacionesXEjecutar objEvaluacionesXEjecutar : lstEvaluacionesXEjecutar) {
+
+                if (Utilitarios.noEsNuloOVacio(objEvaluacionesXEjecutar.getIntRptaSeleccionada())) {
+
+                    PreguntaCerradaBean objPreguntaCerradaBean = objEvaluacionesXEjecutar.getLstPreguntasCerradas().get(this.intNroPreguntasActual);
+
+                    //BeanUtils.copyProperties(objPreguntaCerradaBean, lstPreguntasCerradas.get(this.intNroPreguntasActual));
+                    objPreguntaCerradaBean.setIdRespuesta(objEvaluacionesXEjecutar.getIntRptaSeleccionada());
+                    objPreguntaCerradaBean.setBlRespondido(true);
+
+                    /*
+                    try {
+                        objEvaluacionesXEjecutar.getLstPreguntasCerradas().remove(this.intNroPreguntasActual.intValue());
+                    } catch (Exception e) {
+                    }
+                    objEvaluacionesXEjecutar.getLstPreguntasCerradas().add(this.intNroPreguntasActual, objPreguntaCerradaBean);
+                     */
+                    objEvaluacionesXEjecutar.setIntRptaSeleccionada(null);
+                } else {
+                    PreguntaCerradaBean objPreguntaCerradaBean = objEvaluacionesXEjecutar.getLstPreguntasCerradas().get(this.intNroPreguntasActual);
+
+                    //BeanUtils.copyProperties(objPreguntaCerradaBean, lstPreguntasCerradas.get(this.intNroPreguntasActual));
+                    objPreguntaCerradaBean.setIdRespuesta(null);
+                    objPreguntaCerradaBean.setBlRespondido(false);
+
+                    /*
+                    try {
+                        objEvaluacionesXEjecutar.getLstPreguntasCerradas().remove(this.intNroPreguntasActual.intValue());
+                    } catch (Exception e) {
+                    }
+                    objEvaluacionesXEjecutar.getLstPreguntasCerradas().add(this.intNroPreguntasActual, objPreguntaCerradaBean);
+                     */
+                    objEvaluacionesXEjecutar.setIntRptaSeleccionada(null);
+                }
+            }
+
+            /*
 
         PreguntaCerradaBean objPreguntaCerradaBean = lstPreguntasCerradas.get(intNroPreguntasActual);
 
@@ -447,42 +506,71 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
                 objComentarioBean.setStrRespuesta(strComentario);
             }
         }
-
+             */
+        } catch (Exception ex) {
+            mostrarError(log, ex);
+        }
     }
 
     public void grabarRespuestaAbiertaActual() {
-        if (Utilitarios.noEsNuloOVacio(this.strRptaPreguntaAbierta)) {
-            lstPreguntasAbiertas.get(this.intNroPreguntasActual - this.lstPreguntasCerradas.size()).setStrRespuesta(this.strRptaPreguntaAbierta);
+        try {
+            for (EvaluacionesXEjecutar objEvaluacionesXEjecutar : lstEvaluacionesXEjecutar) {
+
+                if (Utilitarios.noEsNuloOVacio(objEvaluacionesXEjecutar.getStrRptaPreguntaAbierta())) {
+
+                    PreguntaAbiertaBean objPreguntaAbiertaBean = new PreguntaAbiertaBean();
+
+                    BeanUtils.copyProperties(objPreguntaAbiertaBean, lstPreguntasAbiertas.get(this.intNroPreguntasActual - this.lstPreguntasCerradas.size()));
+
+                    objPreguntaAbiertaBean.setStrRespuesta(objEvaluacionesXEjecutar.getStrRptaPreguntaAbierta());
+
+                    try {
+                        objEvaluacionesXEjecutar.getLstPreguntasAbiertas().remove((this.intNroPreguntasActual - this.lstPreguntasCerradas.size()));
+                    } catch (Exception e) {
+                    }
+                    objEvaluacionesXEjecutar.getLstPreguntasAbiertas().add(this.intNroPreguntasActual - this.lstPreguntasCerradas.size(), objPreguntaAbiertaBean);
+                    objEvaluacionesXEjecutar.setStrRptaPreguntaAbierta(null);
+                }
+            }
+        } catch (Exception e) {
+            mostrarError(log, e);
         }
+
     }
 
     public EjecutarEvaluacionView() {
 
         try {
 
+            /* SE HACE EVALUADO POR EVALUADO */
+            blVisualGroup = false;
+
+            /* SE HACE 5 A MAS EVALUADOS A LA VEZ*/
+            blVisualGroup = true;
+
+            lstEvaluacionesXEjecutar = new ArrayList<>();
+
             ProyectoInfo objProyectoInfo = Utilitarios.obtenerEvaluacion();
 
+            this.lstEvaluacionesXEjecutar = objProyectoInfo.getLstEvaluacionesXEjecutar();
+
             if (objProyectoInfo.isBoDefineArtificio()) {
-                strDescEvaluado = msg("you.are.evaluating") + " "
+                strDescEvaluado = ""
                         + objProyectoInfo.getStrNombreEvaluado();
             } else {
-                strDescEvaluado = msg("you.are.evaluating") + " " + objProyectoInfo.getStrNombreEvaluado();
+                strDescEvaluado = objProyectoInfo.getStrNombreEvaluado();
             }
 
-            this.strUrlImagen = objProyectoInfo.getStrURLImagen();
+            this.strUrlImagen = "";//objProyectoInfo.getStrURLImagen();
             this.strCargoEvaluado = objProyectoInfo.getStrCargoEvaluado();
             this.strCorreoEvaluado = objProyectoInfo.getStrCorreoEvaluado();
-                    
+
             EjecutarEvaluacionDAO eEvaluadoDAO = new EjecutarEvaluacionDAO();
 
-            ProyectoDAO proyectoDAO = new ProyectoDAO();
-
-            proyectoDAO.obtenProyecto(objProyectoInfo.getIntIdProyecto());
-
-            this.lstComponenteCerrada = eEvaluadoDAO.obtenerComponenteTipo(objProyectoInfo.getIntIdProyecto(), objProyectoInfo.getStrCorreoEvaluado(), TIPO_COMPONENTE_CERRADA);
-            this.lstComponenteAbierta = eEvaluadoDAO.obtenerComponenteTipo(objProyectoInfo.getIntIdProyecto(), objProyectoInfo.getStrCorreoEvaluado(), TIPO_COMPONENTE_ABIERTA);
+            this.lstComponenteCerrada = eEvaluadoDAO.obtenerComponenteTipoXCustionario(objProyectoInfo.getIntIdProyecto(), objProyectoInfo.getIntIdCuestionario(), TIPO_COMPONENTE_CERRADA);
+            this.lstComponenteAbierta = eEvaluadoDAO.obtenerComponenteTipoXCustionario(objProyectoInfo.getIntIdProyecto(), objProyectoInfo.getIntIdCuestionario(), TIPO_COMPONENTE_ABIERTA);
             this.lstDetalleMetrica = eEvaluadoDAO.obtenerDetalleMetrica(objProyectoInfo.getIntIdProyecto());
-            this.lstCompComentario = eEvaluadoDAO.obtenerComponenteTipo(objProyectoInfo.getIntIdProyecto(), objProyectoInfo.getStrCorreoEvaluado(), TIPO_COMPONENTE_COMENTARIO);
+            this.lstCompComentario = eEvaluadoDAO.obtenerComponenteTipoXCustionario(objProyectoInfo.getIntIdProyecto(), objProyectoInfo.getIntIdCuestionario(), TIPO_COMPONENTE_COMENTARIO);
 
             this.intNroTotalPreguntas = lstComponenteCerrada.size() + lstComponenteAbierta.size();
             this.intNroPreguntasActual = 0;
@@ -492,8 +580,10 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
              */
             mapRespuestas = new LinkedHashMap<>();
 
+            int i = 1;
             for (DetalleMetrica objDetalleMetrica : lstDetalleMetrica) {
-                mapRespuestas.put(objDetalleMetrica.getDeTxValor(), objDetalleMetrica.getDeIdDetalleEscalaPk().toString());
+                mapRespuestas.put(i, objDetalleMetrica.getDeIdDetalleEscalaPk().toString());
+                i++;
             }
 
             isPreguntaCerradaActual = !lstComponenteCerrada.isEmpty();
@@ -539,15 +629,35 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
             UsuarioInfo objUsuarioInfo = Utilitarios.obtenerUsuario();
 
             RelacionParticipanteDAO relacionParticipanteDAO = new RelacionParticipanteDAO();
-            if (!objProyectoInfo.isBoDefineArtificio()) {
-                this.strDescCuestionario = objProyectoInfo.getStrDescCuestionario();
-                this.relacionParticipanteId = relacionParticipanteDAO.obtenRelacionParticipanteId(objProyectoInfo, objUsuarioInfo.getStrEmail(), objProyectoInfo.getStrCorreoEvaluado());
-            } else {
-                CuestionarioDAO objCuestionarioDAO = new CuestionarioDAO();
-                Cuestionario objCuestionario = objCuestionarioDAO.obtenCuestionarioXEvaluado(objProyectoInfo.getIntIdEvaluado());
-                objProyectoInfo.setIntIdCuestionario(objCuestionario.getCuIdCuestionarioPk());
-                this.strDescCuestionario = objCuestionario.getCuTxDescripcion();
-                this.relacionParticipanteId = relacionParticipanteDAO.obtenRelacionParticipanteId(objProyectoInfo, objProyectoInfo.getStrCorreoEvaluador(), objProyectoInfo.getStrCorreoEvaluado());
+            int a = 0;
+            for (EvaluacionesXEjecutar objEvaluacionesXEjecutar : lstEvaluacionesXEjecutar) {
+                if (!objEvaluacionesXEjecutar.isBlAutoevaluation()) {
+                    objEvaluacionesXEjecutar.setRelacionParticipanteId(relacionParticipanteDAO.obtenRelacionParticipanteId(objProyectoInfo, objEvaluacionesXEjecutar.getStrCorreoEvaluador(), objEvaluacionesXEjecutar.getIdParticipante()));
+                }
+
+                objEvaluacionesXEjecutar.getLstPreguntasCerradas().clear();
+
+                for (PreguntaCerradaBean objPreguntaCerradaBean : lstPreguntasCerradas) {
+
+                    PreguntaCerradaBean objPreguntaCerradaBean1 = new PreguntaCerradaBean();
+                    objPreguntaCerradaBean1.setId(objPreguntaCerradaBean.getId());
+                    objPreguntaCerradaBean1.setStrDescripcion(objPreguntaCerradaBean.getStrDescripcion());
+
+                    objPreguntaCerradaBean1.setLstComentarios(new ArrayList<>());
+
+                    for (Componente objComponenteComentario : lstCompComentario) {
+                        ComentarioBean objComentarioBean = new ComentarioBean();
+                        objComentarioBean.setId(objComponenteComentario.getCoIdComponentePk());
+                        objComentarioBean.setStrDescripcion(objComponenteComentario.getCoTxDescripcion() + a);
+                        objPreguntaCerradaBean1.getLstComentarios().add(objComentarioBean);
+                    }
+
+                    objEvaluacionesXEjecutar.getLstPreguntasCerradas().add(objPreguntaCerradaBean1);
+
+                }
+
+                a++;
+
             }
 
             MensajeDAO objMensajeDAO = new MensajeDAO();
@@ -589,7 +699,6 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
             HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
 
             Integer idProyecto = Utilitarios.obtenerEvaluacion().getIntIdProyecto();
-            Integer IdEvaluado = Utilitarios.obtenerEvaluacion().getIntIdEvaluado();
 
             UsuarioInfo objUsuarioInfo = Utilitarios.obtenerUsuario();
 
@@ -605,47 +714,50 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
                 }
             } else {
 
+                for (EvaluacionesXEjecutar objEvaluacionesXEjecutar : this.lstEvaluacionesXEjecutar) {
 
-                /* GUARDA RESPUESTAS PREGUNTAS CERRADAS */
-                for (PreguntaCerradaBean objPreguntaCerradaBean : this.lstPreguntasCerradas) {
-                    if (objPreguntaCerradaBean.isBlRespondido()) {
-                        guardarResultadoEval(objPreguntaCerradaBean.getId().toString(), objPreguntaCerradaBean.getIdRespuesta().toString(), null, idProyecto, IdEvaluado, null);
-                    }
+                    /* GUARDA RESPUESTAS PREGUNTAS CERRADAS */
+                    for (PreguntaCerradaBean objPreguntaCerradaBean : objEvaluacionesXEjecutar.getLstPreguntasCerradas()) {
+                        if (objPreguntaCerradaBean.isBlRespondido()) {
+                            guardarResultadoEval(objPreguntaCerradaBean.getId().toString(), objPreguntaCerradaBean.getIdRespuesta().toString(), null, idProyecto, objEvaluacionesXEjecutar, null);
+                        }
 
-                    for (ComentarioBean objComentarioBean : objPreguntaCerradaBean.getLstComentarios()) {
-                        if (Utilitarios.noEsNuloOVacio(objComentarioBean.getStrRespuesta())) {
-                            guardarResultadoEval(objComentarioBean.getId().toString(), null, objComentarioBean.getStrRespuesta(), idProyecto, IdEvaluado, objPreguntaCerradaBean.getId().toString());
+                        for (ComentarioBean objComentarioBean : objPreguntaCerradaBean.getLstComentarios()) {
+                            if (Utilitarios.noEsNuloOVacio(objComentarioBean.getStrRespuesta())) {
+                                guardarResultadoEval(objComentarioBean.getId().toString(), null, objComentarioBean.getStrRespuesta(), idProyecto, objEvaluacionesXEjecutar, objPreguntaCerradaBean.getId().toString());
+                            }
                         }
                     }
-                }
 
-                /* GUARDA RESPUESTAS PREGUNTAS ABIERTAS */
-                for (PreguntaAbiertaBean objPreguntaAbiertaBean : lstPreguntasAbiertas) {
-                    if (Utilitarios.noEsNuloOVacio(objPreguntaAbiertaBean.getStrRespuesta())) {
-                        this.guardarResultadoEval(objPreguntaAbiertaBean.getId().toString(), null, objPreguntaAbiertaBean.getStrRespuesta(), idProyecto, IdEvaluado, null);
+                    /* GUARDA RESPUESTAS PREGUNTAS ABIERTAS */
+                    for (PreguntaAbiertaBean objPreguntaAbiertaBean : objEvaluacionesXEjecutar.getLstPreguntasAbiertas()) {
+                        if (Utilitarios.noEsNuloOVacio(objPreguntaAbiertaBean.getStrRespuesta())) {
+                            this.guardarResultadoEval(objPreguntaAbiertaBean.getId().toString(), null, objPreguntaAbiertaBean.getStrRespuesta(), idProyecto, objEvaluacionesXEjecutar, null);
+                        }
                     }
-                }
 
-                /* ACTUALIZA EVALUACIÓN A TERMINADO */
-                if (relacionParticipanteId != null) {
+                    /* ACTUALIZA EVALUACIÓN A TERMINADO */
+                    if (objEvaluacionesXEjecutar.getRelacionParticipanteId() != null) {
 
-                    RelacionParticipanteDAO objRelacionParticipanteDAO = new RelacionParticipanteDAO();
-                    RelacionParticipante objRelacionParticipante = objRelacionParticipanteDAO.obtenRelacionParticipante(relacionParticipanteId);
-                    objRelacionParticipante.setRpIdEstado(Constantes.INT_ET_ESTADO_RELACION_EDO_EDOR_TERMINADO);
-                    objRelacionParticipanteDAO.actualizaRelacionParticipante(objRelacionParticipante);
+                        RelacionParticipanteDAO objRelacionParticipanteDAO = new RelacionParticipanteDAO();
+                        RelacionParticipante objRelacionParticipante = objRelacionParticipanteDAO.obtenRelacionParticipante(objEvaluacionesXEjecutar.getRelacionParticipanteId());
+                        objRelacionParticipante.setRpIdEstado(Constantes.INT_ET_ESTADO_RELACION_EDO_EDOR_TERMINADO);
+                        objRelacionParticipanteDAO.actualizaRelacionParticipante(objRelacionParticipante);
 
-                } else {
+                    }
+
                     ParticipanteDAO objParticipanteDAO = new ParticipanteDAO();
-                    Participante objParticipante = objParticipanteDAO.obtenParticipante(IdEvaluado);
+                    Participante objParticipante = objParticipanteDAO.obtenParticipante(objEvaluacionesXEjecutar.getIdParticipante());
                     objParticipante.setPaIdEstado(Constantes.INT_ET_ESTADO_EVALUADO_TERMINADO);
                     objParticipanteDAO.actualizaParticipante(objParticipante);
+
                 }
 
                 blTerminado = true;
 
             }
         } catch (IOException ex) {
-            log.debug(ex);
+            mostrarError(log, ex);
         }
     }
 
@@ -663,7 +775,7 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
             } else {
                 FacesContext.getCurrentInstance().getExternalContext().redirect("welcome.jsf");
             }
-            
+
             HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
             session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
             session.removeAttribute("evalInfo");
@@ -673,7 +785,7 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
         }
     }
 
-    public void guardarResultadoEval(String idComponentePk, String idDetalleMetrica, String txtComentario, Integer idProyecto, Integer idEvaluado, String idComponentePreguntaPk) {
+    public void guardarResultadoEval(String idComponentePk, String idDetalleMetrica, String txtComentario, Integer idProyecto, EvaluacionesXEjecutar objEvaluacionesXEjecutar, String idComponentePreguntaPk) {
         Resultado resultado = new Resultado();
         ResultadoDAO resultadoDAO = new ResultadoDAO();
 
@@ -695,12 +807,12 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
             resultado.setCoIdComponenteRefFk(Integer.parseInt(idComponentePreguntaPk));
         }
 
-        if (relacionParticipanteId != null) {
-            resultado.setPaIdParticipanteFk(relacionParticipanteId.getPaIdParticipanteFk());
-            resultado.setReIdParticipanteFk(relacionParticipanteId.getReIdParticipanteFk());
-            resultado.setReIdRelacionFk(relacionParticipanteId.getReIdRelacionFk());
+        if (objEvaluacionesXEjecutar.getRelacionParticipanteId() != null) {
+            resultado.setPaIdParticipanteFk(objEvaluacionesXEjecutar.getRelacionParticipanteId().getPaIdParticipanteFk());
+            resultado.setReIdParticipanteFk(objEvaluacionesXEjecutar.getRelacionParticipanteId().getReIdParticipanteFk());
+            resultado.setReIdRelacionFk(objEvaluacionesXEjecutar.getRelacionParticipanteId().getReIdRelacionFk());
         } else {
-            resultado.setPaIdParticipanteFk(idEvaluado);
+            resultado.setPaIdParticipanteFk(objEvaluacionesXEjecutar.getIdParticipante());
         }
 
         Proyecto objProyecto = new Proyecto();
@@ -719,6 +831,27 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
 
         this.intRptaSeleccionada = idPresionado;
 
+    }
+
+    public void generateComment(int index) {
+        try {
+
+            this.indexTocomment = index;
+
+        } catch (Exception e) {
+            mostrarError(log, e);
+        }
+    }
+
+    public void saveTempComment() {
+        try {
+
+            EvaluacionesXEjecutar objEvaluacionesXEjecutar = this.lstEvaluacionesXEjecutar.get(this.indexTocomment);
+            objEvaluacionesXEjecutar.getIdProyecto();
+
+        } catch (Exception e) {
+            mostrarError(log, e);
+        }
     }
 
 }

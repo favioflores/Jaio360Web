@@ -292,7 +292,7 @@ public class ProyectoDAO implements Serializable {
                     + " po.PO_FE_EJECUCION, "
                     + " po.PO_ID_METODOLOGIA, "
                     + " po.PO_TX_MOTIVO, pa.PA_TX_DESCRIPCION, cu.CU_TX_DESCRIPCION, cu.CU_ID_CUESTIONARIO_PK, pa.PA_ID_PARTICIPANTE_PK, pa.PA_TX_CORREO, RE_TX_DESCRIPCION, RE_ID_RELACION_FK, "
-                    + " pa.PA_TX_IMG_URL, pa.PA_TX_NOMBRE_CARGO "
+                    + " pa.PA_TX_IMG_URL, pa.PA_TX_NOMBRE_CARGO, PA_IN_AUTOEVALUAR "
                     + "   from red_evaluacion re,                                        "
                     + " 	   participante pa,                                            "
                     + " 	   relacion_participante rp,                                   "
@@ -322,7 +322,7 @@ public class ProyectoDAO implements Serializable {
                     + " po.PO_FE_EJECUCION, "
                     + " po.PO_ID_METODOLOGIA, "
                     + " po.PO_TX_MOTIVO, pa.PA_TX_DESCRIPCION, cu.CU_TX_DESCRIPCION, cu.CU_ID_CUESTIONARIO_PK, pa.PA_ID_PARTICIPANTE_PK, pa.PA_TX_CORREO, PA_TX_DESCRIPCION, NULL, "
-                    + " pa.PA_TX_IMG_URL, pa.PA_TX_NOMBRE_CARGO "
+                    + " pa.PA_TX_IMG_URL, pa.PA_TX_NOMBRE_CARGO, PA_IN_AUTOEVALUAR "
                     + "   from participante pa,                                          "
                     + " 	   proyecto po,                                                "
                     + "	   cuestionario_evaluado ce,                                   "
@@ -338,7 +338,7 @@ public class ProyectoDAO implements Serializable {
                     + "    and pa.PA_TX_CORREO = ?               "
                     + "    and po.PO_ID_PROYECTO_PK = pa.PO_ID_PROYECTO_FK               "
                     + "    and po.PO_ID_ESTADO = ? "
-                    + "    and pa.PA_ID_ESTADO = ? ) d                                  ");
+                    + "    and pa.PA_ID_ESTADO = ? ) d order by PO_ID_PROYECTO_PK desc, CU_ID_CUESTIONARIO_PK desc ");
 
             query.setInteger(0, Constantes.INT_ET_ESTADO_CUESTIONARIO_EN_EJECUCION);
             query.setInteger(1, Constantes.INT_ET_ESTADO_CUES_EVA_EN_EJECUCION);

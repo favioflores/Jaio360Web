@@ -2660,8 +2660,14 @@ public class EvaluadosView extends BaseView implements Serializable {
                 }
             } else if (objParametro.getPaIdTipoParametro().equals(Constantes.INT_ET_TIPO_PARAMETRO_SEXO)) {
                 blHabilitarSexo = true;
-                hSexo.put(msg("male"), msg("male"));
-                hSexo.put(msg("female"), msg("female"));
+                byte[] bdata = objParametro.getPaTxPatron();
+                String data = new String(bdata);
+                String[] strDatos = data.split(",");
+                int i = 0;
+                while (i < strDatos.length) {
+                    hSexo.put(strDatos[i].toUpperCase(), strDatos[i]);
+                    i++;
+                }
             } else if (objParametro.getPaIdTipoParametro().equals(Constantes.INT_ET_TIPO_PARAMETRO_TIEMPO)) {
                 blHabilitarTiempoEmpresa = true;
             }
@@ -2758,7 +2764,11 @@ public class EvaluadosView extends BaseView implements Serializable {
                     for (EvaluadoAvan objEvaluadoAvan : this.lstAvanPersonas) {
 
                         if (!mapPerEvaluados.containsKey(Utilitarios.limpiarTexto(objEvaluadoAvan.getPaTxCorreo()))) {
-                            mapPerEvaluados.put(Utilitarios.limpiarTexto(objEvaluadoAvan.getPaTxCorreo()), objEvaluadoAvan.getPaTxCorreo());
+                            if (objEvaluadoAvan.isPaInAutoevaluar()) {
+                                mapPerEvaluados.put(Utilitarios.limpiarTexto(objEvaluadoAvan.getPaTxCorreo()), objEvaluadoAvan.getPaTxCorreo());
+                            }else{
+                                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("email") + " " + objEvaluadoAvan.getPaTxCorreo() + " " + msg("step1.person.without.evaluator")));
+                            }
                         }
 
                         if (objEvaluadoAvan.isPaInAutoevaluar()) {
@@ -2776,9 +2786,15 @@ public class EvaluadosView extends BaseView implements Serializable {
 
                 if (!lstErrorAvan.isEmpty() && lstAvanPersonas.isEmpty() && lstAvanRelacion.isEmpty()) {
                     blCargarCorrectoAvan = false;
+                    this.lstAvanPersonas.clear();
+                    this.lstAvanRelacion.clear();
+                    this.lstRelacionAvanzadas.clear();
                     mostrarAlertaFatal("file.has.data.errors");
                 } else if (!lstErrorAvan.isEmpty()) {
                     blCargarCorrectoAvan = true;
+                    this.lstAvanPersonas.clear();
+                    this.lstAvanRelacion.clear(); 
+                    this.lstRelacionAvanzadas.clear();
                     mostrarAlertaInfo("file.has.data.warnings");
                 } else {
                     blCargarCorrectoAvan = true;
@@ -3177,23 +3193,24 @@ public class EvaluadosView extends BaseView implements Serializable {
         c++;
         try {
             String strTemp = null;
-            if (row.getCell(c).getCellType() == CellType.STRING || row.getCell(c).getCellType() == CellType.BLANK) {
-                strTemp = Utilitarios.obtieneDatoCelda(row, c);
-                
-                if (Utilitarios.noEsNuloOVacio(strTemp)) {
-                    String strError = objValidaURL.validate(strTemp);
-                    if (Utilitarios.esNuloOVacio(strError)) {
-                        strURLImagen = strTemp.trim();
-                    } else {
-                        blRegistroOK = false;
-                        lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + " " + msg("error.url.not.valid.url") + " " + strError));
-                    }
-                }
-            } else {
-                blRegistroOK = false;
-                lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + " " + msg("error.url.not.valid.url")));
-            }
+            if (row.getCell(c) != null) {
+                if (row.getCell(c).getCellType() == CellType.STRING || row.getCell(c).getCellType() == CellType.BLANK) {
+                    strTemp = Utilitarios.obtieneDatoCelda(row, c);
 
+                    if (Utilitarios.noEsNuloOVacio(strTemp)) {
+                        String strError = objValidaURL.validate(strTemp);
+                        if (Utilitarios.esNuloOVacio(strError)) {
+                            strURLImagen = strTemp.trim();
+                        } else {
+                            blRegistroOK = false;
+                            lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + " " + msg("error.url.not.valid.url") + " " + strError));
+                        }
+                    }
+                } else {
+                    blRegistroOK = false;
+                    lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + " " + msg("error.url.not.valid.url")));
+                }
+            }
         } catch (NoSuchElementException | NullPointerException e) {
             blRegistroOK = false;
             lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("row") + " " + (row.getRowNum() + 1) + " " + msg("error.url.not.valid.url")));
@@ -3208,7 +3225,7 @@ public class EvaluadosView extends BaseView implements Serializable {
                     strTemp = Utilitarios.obtieneDatoCelda(row, c);
                     if (Utilitarios.noEsNuloOVacio(strTemp)) {
                         strTemp = Utilitarios.limpiarTexto(strTemp);
-                        if (strTemp.equals(msg("male").toUpperCase()) || strTemp.equals(msg("female").toUpperCase())) {
+                        if (hSexo.containsKey(strTemp.trim())) {
                             strSexo = strTemp.trim();
                         } else {
                             blRegistroOK = false;
@@ -3355,13 +3372,15 @@ public class EvaluadosView extends BaseView implements Serializable {
         c++;
         try {
             String strTemp = null;
-            if (row.getCell(c).getCellType() == CellType.STRING || row.getCell(c).getCellType() == CellType.BLANK) {
-                strTemp = Utilitarios.obtieneDatoCelda(row, c);
-            }
+            if (row.getCell(c) != null) {
+                if (row.getCell(c).getCellType() == CellType.STRING || row.getCell(c).getCellType() == CellType.BLANK) {
+                    strTemp = Utilitarios.obtieneDatoCelda(row, c);
+                }
 
-            if (Utilitarios.noEsNuloOVacio(strTemp)) {
-                if (Utilitarios.limpiarTexto(strTemp).equals(msg("a.indicator.autoevaluation").toUpperCase())) {
-                    blAutoevaluar = true;
+                if (Utilitarios.noEsNuloOVacio(strTemp)) {
+                    if (Utilitarios.limpiarTexto(strTemp).equals(msg("a.indicator.autoevaluation").toUpperCase())) {
+                        blAutoevaluar = true;
+                    }
                 }
             }
         } catch (NoSuchElementException | NullPointerException e) {

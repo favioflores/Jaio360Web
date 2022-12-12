@@ -7,6 +7,21 @@
                 template="../templates/templateLogin.xhtml">    
 
     <ui:define name="head"> 
+        <style>
+            #grad {
+                height: 100%;
+                width: 100%;
+                position: fixed;
+                background-color: #005EA6;/* For browsers that do not support gradients */
+                background-image: linear-gradient(to right, #005EA6 , #006CBE);
+            }
+            .text-center {
+                text-align: center;
+            }
+            img {
+                border-radius: 100%;
+            }
+        </style>
         <script>
             function toSetAsParent() {
                 var delay = 20000;//1 seconds
@@ -16,27 +31,10 @@
             }
 
         </script>
-        <style>
-            .mytable {
-                width: 100%;
-                min-height: 100%;
-                position: fixed;
-                background-size: cover;
-            }
-
-            .text-center {
-                text-align: center;
-            }
-
-            .g-recaptcha {
-                display: inline-block;
-            }
-        </style>
     </ui:define>
     <ui:define name="content">
 
-        <table class="mytable" background="../images/fondos/macback.png" >
-        </table>
+        <div id="grad"></div>
 
         <h:body onload="toSetAsParent();PF('timeoutDlg').show();">
 

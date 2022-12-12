@@ -76,11 +76,11 @@ public class CuestionarioFisico implements Serializable {
         EjecutarEvaluacionDAO objEjecutarEvaluacionDAO = new EjecutarEvaluacionDAO();
         MetricaDAO objMetricaDAO = new MetricaDAO();
 
-        List<Componente> lstCompCerrada = objEjecutarEvaluacionDAO.obtenerComponenteTipo(Utilitarios.obtenerProyecto().getIntIdProyecto(), objEvaluado.getPaTxCorreo(), TIPO_COMPONENTE_CERRADA);
+        List<Componente> lstCompCerrada = objEjecutarEvaluacionDAO.obtenerComponenteTipoXEmail(Utilitarios.obtenerProyecto().getIntIdProyecto(), objEvaluado.getPaTxCorreo(), TIPO_COMPONENTE_CERRADA);
         Metrica objMetrica = objMetricaDAO.obtenMetricaProyecto(Utilitarios.obtenerProyecto().getIntIdProyecto());
         List<DetalleMetrica> lstDetalleMetrica = objEjecutarEvaluacionDAO.obtenerDetalleMetrica(Utilitarios.obtenerProyecto().getIntIdProyecto());
-        List<Componente> lstCompComentario = objEjecutarEvaluacionDAO.obtenerComponenteTipo(Utilitarios.obtenerProyecto().getIntIdProyecto(), objEvaluado.getPaTxCorreo(), TIPO_COMPONENTE_COMENTARIO);
-        List<Componente> lstCompAbierta = objEjecutarEvaluacionDAO.obtenerComponenteTipo(Utilitarios.obtenerProyecto().getIntIdProyecto(), objEvaluado.getPaTxCorreo(), TIPO_COMPONENTE_ABIERTA);
+        List<Componente> lstCompComentario = objEjecutarEvaluacionDAO.obtenerComponenteTipoXEmail(Utilitarios.obtenerProyecto().getIntIdProyecto(), objEvaluado.getPaTxCorreo(), TIPO_COMPONENTE_COMENTARIO);
+        List<Componente> lstCompAbierta = objEjecutarEvaluacionDAO.obtenerComponenteTipoXEmail(Utilitarios.obtenerProyecto().getIntIdProyecto(), objEvaluado.getPaTxCorreo(), TIPO_COMPONENTE_ABIERTA);
 
         MultiPageListBuilder multiPageList = cmp.multiPageList();
 
