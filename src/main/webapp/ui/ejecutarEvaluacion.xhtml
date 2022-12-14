@@ -82,13 +82,13 @@
                                                                              update="dlgComments"
                                                                              icon="pi pi-book" styleClass="ui-button-outlined "
                                                                              rendered="#{ejecutarEvaluacionView.lstCompComentario.size()>0}" />
-                                                            
+<!--
                                                             <c:forEach var="countComment" begin="0" end="#{ejecutarEvaluacionView.lstCompComentario.size()-1}">
                                                                 <h:panelGrid columns="1" cellpadding="0" border="0" style="width: 100%; text-align: left;" >
                                                                     <p:outputLabel value="#{ejecutarEvaluacionView.lstEvaluacionesXEjecutar.get(ejecutarEvaluacionView.indexTocomment).lstPreguntasCerradas.get(ejecutarEvaluacionView.intNroPreguntasActual).lstComentarios.get(countComment).strRespuesta}" style="font-style: normal; font-weight: normal; font-size: 10px !important; text-align: left;" />
                                                                 </h:panelGrid>
                                                             </c:forEach>
-                                                            
+-->
                                                         </h:panelGrid>
 
                                                     </c:forEach>
@@ -265,44 +265,49 @@
                   closable="true" hideEffect="drop" showEffect="drop" 
                   resizable="false" >
             <h:form>
-                <p:panel>
-                    <p:outputLabel value="#{msg['comment.to.person']}" />
-                    <p:panelGrid styleClass="ui-panelgrid-blank ui-fluid" style="width: 100%;" >
-                        <p:row>
-                            <p:column>
-                                <div class="p-field p-col-12 p-md-12">
-                                    <h:panelGrid columns="2" cellpadding="15" border="0" style="width: 100%;" >
+                <c:if test="#{ejecutarEvaluacionView.isPreguntaCerradaActual}" >
+                    <c:if  test="#{ejecutarEvaluacionView.intNroPreguntasActual.intValue() le ejecutarEvaluacionView.lstPreguntasCerradas.size()}" >
 
-                                        <h:panelGrid columns="1"  cellpadding="0" border="0" style="text-align: center; width: 100%;" >
-                                            <p:graphicImage url="#{ejecutarEvaluacionView.lstEvaluacionesXEjecutar.get(ejecutarEvaluacionView.indexTocomment).strURLImagen}" height="100" width="100" class="classimg" 
-                                                            rendered="#{ejecutarEvaluacionView.lstEvaluacionesXEjecutar.get(ejecutarEvaluacionView.indexTocomment).strURLImagen!=null}" />
-                                            <p:outputLabel value="#{ejecutarEvaluacionView.lstEvaluacionesXEjecutar.get(ejecutarEvaluacionView.indexTocomment).strNombreEvaluado}" />
-                                        </h:panelGrid>
+                        <p:panel>
+                            <p:outputLabel value="#{msg['comment.to.person']}" />
+                            <p:panelGrid styleClass="ui-panelgrid-blank ui-fluid" style="width: 100%;" >
+                                <p:row>
+                                    <p:column>
+                                        <div class="p-field p-col-12 p-md-12">
+                                            <h:panelGrid columns="1" cellpadding="15" border="0" style="width: 100%;" >
 
-                                        <c:forEach var="counter" begin="0" end="#{ejecutarEvaluacionView.lstCompComentario.size()-1}">
-                                            <h:panelGrid columns="1" cellpadding="5" border="0" style="width: 100%;" >
-                                                <p:outputLabel for="@next" value="#{ejecutarEvaluacionView.lstEvaluacionesXEjecutar.get(ejecutarEvaluacionView.indexTocomment).lstPreguntasCerradas.get(ejecutarEvaluacionView.intNroPreguntasActual).lstComentarios.get(counter).strDescripcion}"/>
-                                                <p:inputTextarea style="width: 100%;" autoResize="true" maxlength="200" counter="display#{counter}" counterTemplate="{0} #{msg['remaining.characters']}" 
-                                                                 value="#{ejecutarEvaluacionView.lstEvaluacionesXEjecutar.get(ejecutarEvaluacionView.indexTocomment).lstPreguntasCerradas.get(ejecutarEvaluacionView.intNroPreguntasActual).lstComentarios.get(counter).strRespuesta}" />
-                                                <h:outputText id="display#{counter}" class="p-d-block" />
+                                                <h:panelGrid columns="1"  cellpadding="0" border="0" style="text-align: center; width: 100%;" >
+                                                    <p:graphicImage url="#{ejecutarEvaluacionView.lstEvaluacionesXEjecutar.get(ejecutarEvaluacionView.indexTocomment).strURLImagen}" height="100" width="100" class="classimg" 
+                                                                    rendered="#{ejecutarEvaluacionView.lstEvaluacionesXEjecutar.get(ejecutarEvaluacionView.indexTocomment).strURLImagen!=null}" />
+                                                    <p:outputLabel value="#{ejecutarEvaluacionView.lstEvaluacionesXEjecutar.get(ejecutarEvaluacionView.indexTocomment).strNombreEvaluado}" />
+                                                </h:panelGrid>
+
+                                                <c:forEach var="counter" begin="0" end="#{ejecutarEvaluacionView.lstCompComentario.size()-1}">
+                                                    <h:panelGrid columns="1" cellpadding="5" border="0" style="width: 100%;" >
+                                                        <p:outputLabel for="@next" value="#{ejecutarEvaluacionView.lstEvaluacionesXEjecutar.get(ejecutarEvaluacionView.indexTocomment).lstPreguntasCerradas.get(ejecutarEvaluacionView.intNroPreguntasActual).lstComentarios.get(counter).strDescripcion}"/>
+                                                        <p:inputTextarea style="width: 100%;" autoResize="true" maxlength="200" counter="display#{counter}" counterTemplate="{0} #{msg['remaining.characters']}" 
+                                                                         value="#{ejecutarEvaluacionView.lstEvaluacionesXEjecutar.get(ejecutarEvaluacionView.indexTocomment).lstPreguntasCerradas.get(ejecutarEvaluacionView.intNroPreguntasActual).lstComentarios.get(counter).strRespuesta}" />
+                                                        <h:outputText id="display#{counter}" class="p-d-block" />
+                                                    </h:panelGrid>
+                                                </c:forEach>
+
                                             </h:panelGrid>
-                                        </c:forEach>
-
-                                    </h:panelGrid>
-                                </div>
-                            </p:column>
-                        </p:row>
+                                        </div>
+                                    </p:column>
+                                </p:row>
 
 
-                    </p:panelGrid>
-                    <f:facet name="footer">
-                        <p:commandButton process="@form" 
-                                         actionListener="#{ejecutarEvaluacionView.saveTempComment}"
-                                         oncomplete="PF('dlgComments').hide()" value="#{msg['save.comments']}" 
-                                         update="formEjecutarEvaluacion"
-                                         icon="pi pi-save" />
-                    </f:facet>
-                </p:panel>
+                            </p:panelGrid>
+                            <f:facet name="footer">
+                                <p:commandButton process="@form" 
+                                                 actionListener="#{ejecutarEvaluacionView.saveTempComment}"
+                                                 oncomplete="PF('dlgComments').hide()" value="#{msg['save.comments']}" 
+                                                 update="formEjecutarEvaluacion"
+                                                 icon="pi pi-save" />
+                            </f:facet>
+                        </p:panel>
+                    </c:if>
+                </c:if>
             </h:form>
         </p:dialog>
 

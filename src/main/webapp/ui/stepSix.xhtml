@@ -66,197 +66,178 @@
 
                         <div class="p-field p-col-12 p-md-12">
 
-                            <p:card>
-                                <h4>#{msg['step3.evaluated.list']}</h4>
-                                <p:dataTable id="checkboxDT3"
-                                             widgetVar="checkboxDT3"
-                                             var="evaluado" 
-                                             value="#{generaReportesView.lstEvaluados}" 
-                                             selection="#{generaReportesView.lstEvaluadosSeleccionados}" 
-                                             rowKey="#{evaluado.paIdParticipantePk}" 
-                                             rows="5"
-                                             size="small"
-                                             paginator="true"
-                                             stripedRows="true"
-                                             paginatorPosition="bottom"
-                                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                             rowsPerPageTemplate="5,10,15"
-                                             rowIndexVar="index"
-                                             emptyMessage="#{msg['no.items']}">
+                            <h4>#{msg['step3.evaluated.list']}</h4>
+                            <p:dataTable id="checkboxDT3"
+                                         widgetVar="checkboxDT3"
+                                         var="evaluado" 
+                                         value="#{generaReportesView.lstEvaluados}" 
+                                         selection="#{generaReportesView.lstEvaluadosSeleccionados}" 
+                                         rowKey="#{evaluado.paIdParticipantePk}" 
+                                         rows="5"
+                                         size="small"
+                                         paginator="true"
+                                         stripedRows="true"
+                                         paginatorPosition="bottom"
+                                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                         rowsPerPageTemplate="5,10,15"
+                                         rowIndexVar="index"
+                                         emptyMessage="#{msg['no.items']}">
 
-                                    <!--
-                                    <f:facet name="header">
-                                        <p:outputPanel style="text-align: right;" >
-                                            <h:outputText value="Busca en todas las etiquetas : " />
-                                            <p:inputText id="globalFilter" onkeyup="PF('checkboxDT3').filter()" style="width:150px" placeholder="Ingresa un texto"/>
-                                        </p:outputPanel>
-                                    </f:facet>
-                                    --> 
+                                <f:facet name="footer">
+                                    <div class="ui-fluid p-formgrid p-grid">
+                                        <div class="p-field p-col-12 p-md-3">
+                                            <p:selectCheckboxMenu id="idCheckIndividual" value="#{generaReportesView.lstSeleccionadosIndividual}" 
+                                                                  filter="true" 
+                                                                  label="#{msg['please.select.reports']}"
+                                                                  filterMatchMode="startsWith" 
+                                                                  panelStyle="width: 30rem">
+                                                <f:selectItems value="#{generaReportesView.lstContenidoIndividual}"/>
+                                            </p:selectCheckboxMenu>
 
-                                    <f:facet name="footer">
-                                        <div class="ui-fluid p-formgrid p-grid">
-                                            <div class="p-field p-col-12 p-md-3">
-                                                <p:selectCheckboxMenu id="idCheckIndividual" value="#{generaReportesView.lstSeleccionadosIndividual}" 
-                                                                      filter="true" 
-                                                                      label="#{msg['please.select.reports']}"
-                                                                      filterMatchMode="startsWith" 
-                                                                      panelStyle="width: 30rem" 
-                                                                      scrollHeight="250">
-                                                    <f:selectItems value="#{generaReportesView.lstContenidoIndividual}"/>
-                                                </p:selectCheckboxMenu>
-
-                                            </div>
-                                            <div class="p-field p-col-12 p-md-3">
-                                                <p:commandButton value="#{msg['step6.button.generate.individual']}" ajax="true" update="formIndividual,formDLGIndividual" actionListener="#{generaReportesView.generarReporteIndividual()}" oncomplete="PF('dlgLicencias').show()"  icon="pi pi-file" />
-                                            </div>
-                                            <div class="p-field p-col-12 p-md-3">
-                                                <p:commandButton value="#{msg['step6.button.download.individual']}" ajax="false" disabled="#{generaReportesView.fileIndividual==null?true:false}" update="@this" icon="pi pi-download" >
-                                                    <p:fileDownload value="#{generaReportesView.fileIndividual}" />
-                                                </p:commandButton>
-                                            </div>
-                                            <div class="p-field p-col-12 p-md-3">
-                                                <p:commandButton value="#{msg['step6.button.plan.individual']}" ajax="false" styleClass="ui-button-warning" icon="pi pi-download">
-                                                    <p:fileDownload value="#{generaReportesView.planAccion}" />
-                                                </p:commandButton>
-                                            </div>
                                         </div>
+                                        <div class="p-field p-col-12 p-md-3">
+                                            <p:commandButton value="#{msg['step6.button.generate.individual']}" ajax="true" update="formIndividual,formDLGIndividual" actionListener="#{generaReportesView.generarReporteIndividual()}" oncomplete="PF('dlgLicencias').show()"  icon="pi pi-file" />
+                                        </div>
+                                        <div class="p-field p-col-12 p-md-3">
+                                            <p:commandButton value="#{msg['step6.button.download.individual']}" ajax="false" disabled="#{generaReportesView.fileIndividual==null?true:false}" update="@this" icon="pi pi-download" >
+                                                <p:fileDownload value="#{generaReportesView.fileIndividual}" />
+                                            </p:commandButton>
+                                        </div>
+                                        <div class="p-field p-col-12 p-md-3">
+                                            <p:commandButton value="#{msg['step6.button.plan.individual']}" ajax="false" styleClass="ui-button-warning" icon="pi pi-download">
+                                                <p:fileDownload value="#{generaReportesView.planAccion}" />
+                                            </p:commandButton>
+                                        </div>
+                                    </div>
+                                </f:facet>
+                                <p:column style="width: 40px; text-align: center;">
+                                    <f:facet name="header">
+                                        <h:outputText value="#" />
                                     </f:facet>
-                                    <p:column style="width: 40px;">
-                                        <f:facet name="header">
-                                            <h:outputText value="#" />
-                                        </f:facet>
-                                        <h:outputText 
-                                            value="#{index + 1}" />
-                                    </p:column> 
+                                    <h:outputText 
+                                        value="#{index + 1}" />
+                                </p:column> 
 
-                                    <p:column selectionMode="multiple" style="width:35px;text-right" />
+                                <p:column selectionMode="multiple" style="width:35px;text-right" />
 
-                                    <p:column headerText="#{msg['photo']}" width="70" style="width: 80px !important;" >
-                                        <p:graphicImage url="#{evaluado.paTxImgUrl}" height="75" width="75" class="classimg" rendered="#{evaluado.paTxImgUrl!=null}" />
-                                        <p:graphicImage value="/images/no-picture.png" height="75" width="75"  class="classimg" rendered="#{evaluado.paTxImgUrl==null}" />
-                                    </p:column>
+                                <p:column headerText="#{msg['photo']}" width="70" style="width: 80px !important;" >
+                                    <p:graphicImage url="#{evaluado.paTxImgUrl}" height="75" width="75" class="classimg" rendered="#{evaluado.paTxImgUrl!=null}" />
+                                    <p:graphicImage value="/images/no-picture.png" height="75" width="75"  class="classimg" rendered="#{evaluado.paTxImgUrl==null}" />
+                                </p:column>
 
-                                    <p:column headerText="#{msg['description']}" >
-                                        <h:outputText value="#{evaluado.paTxDescripcion}" />
-                                    </p:column>
+                                <p:column headerText="#{msg['description']}" >
+                                    <h:outputText value="#{evaluado.paTxDescripcion}" />
+                                </p:column>
 
-                                    <p:column headerText="#{msg['role']}" >
-                                        <h:outputText value="#{evaluado.paTxNombreCargo}" />
-                                    </p:column>
+                                <p:column headerText="#{msg['role']}" >
+                                    <h:outputText value="#{evaluado.paTxNombreCargo}" />
+                                </p:column>
 
-                                    <p:column headerText="#{msg['email']}" >
-                                        <h:outputText value="#{evaluado.paTxCorreo}" />
-                                    </p:column>
+                                <p:column headerText="#{msg['email']}" >
+                                    <h:outputText value="#{evaluado.paTxCorreo}" />
+                                </p:column>
 
-                                    <p:column headerText="#{msg['nro.evaluators']}" style="text-align: right;" >
-                                        <h:outputText value="#{evaluado.intNumberEvaluators}" />
-                                    </p:column>
+                                <p:column headerText="#{msg['nro.evaluators']}" style="text-align: center;" >
+                                    <h:outputText value="#{evaluado.intNumberEvaluators}" />
+                                </p:column>
 
-                                    <p:column headerText="#{msg['nro.evaluators.finished']}" style="text-align: right;" >
-                                        <h:outputText value="#{evaluado.intNumberEvaluationFinished}" /> 
-                                    </p:column>
+                                <p:column headerText="#{msg['nro.evaluators.finished']}" style="text-align: center;" >
+                                    <h:outputText value="#{evaluado.intNumberEvaluationFinished}" /> 
+                                </p:column>
 
-                                    <p:column headerText="#{msg['license']}" sortBy="#{evaluado.blAnalizado}" style="text-align: center;">
-                                        <p:tag  value="#{evaluado.blAnalizado==true?msg['used']:msg['not.used']}" 
-                                                severity="#{evaluado.blAnalizado==true?'success':''}" />
-                                    </p:column> 
+                                <p:column headerText="#{msg['license']}" sortBy="#{evaluado.blAnalizado}" style="text-align: center;">
+                                    <p:tag  value="#{evaluado.blAnalizado==true?msg['used']:msg['not.used']}" 
+                                            severity="#{evaluado.blAnalizado==true?'success':''}" />
+                                </p:column> 
 
-                                </p:dataTable>
-                            </p:card>
+                            </p:dataTable>
+
                         </div>
                     </div>
                 </p:card>
             </h:form>
 
-            <!--
-                        <p:divider/>
-            
-                        <h:form>
-                            <p:card>
-                                <h3>#{msg['step6.title2']}</h3>
-            
-                                <div class="ui-fluid p-formgrid p-grid">
-            
-                                    <div class="p-field p-col-12 p-md-12">
-                                        <p:outputLabel value="#{msg['step6.title2']}" />
+
+            <p:divider/>
+
+
+            <h:form>
+                <p:card>
+                    <h3>#{msg['step6.title2']}</h3>
+
+                    <div class="ui-fluid p-formgrid p-grid">
+
+                        <div class="p-field p-col-12 p-md-12">
+                            <p:outputLabel value="#{msg['step6.desc2']}" />
+                        </div>
+                    </div>
+                    <div class="ui-fluid p-formgrid p-grid">
+
+                        <div class="p-field p-col-12 p-md-12">
+
+                            <h4>#{msg['step2.list.evaluations']}</h4>
+                            <p:dataTable id="dtCuestionarios"
+                                         widgetVar="dtCuestionarios"
+                                         var="cuestionario" 
+                                         value="#{generaReportesView.lstCuestionarios}" 
+                                         selection="#{generaReportesView.lstCuestionariosSeleccionados}" 
+                                         rowKey="#{cuestionario.cuIdCuestionarioPk}" 
+                                         rows="5"
+                                         paginator="true"
+                                         size="small"
+                                         stripedRows="false"
+                                         paginatorPosition="bottom"
+                                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                         rowsPerPageTemplate="5,10,15"
+                                         emptyMessage="No se encontraron cuestionarios"
+                                         rowIndexVar="index" >
+
+                                <p:column style="width: 40px; text-align: center;">
+                                    <f:facet name="header">
+                                        <h:outputText value="#" />
+                                    </f:facet>
+                                    <h:outputText 
+                                        value="#{index + 1}" />
+                                </p:column> 
+                                <p:column selectionMode="multiple" style="width:35px;text-right" />
+
+                                <p:column headerText="Descripción" >
+                                    <h:outputText value="#{cuestionario.cuTxDescripcion}" />
+                                </p:column>
+                                <f:facet name="footer">
+                                    <div class="ui-fluid p-formgrid p-grid">
+                                        <div class="p-field p-col-12 p-md-3">
+                                            <p:selectCheckboxMenu id="idCheckIndividual" value="#{generaReportesView.lstSeleccionadosGrupal}" 
+                                                                  filter="true" 
+                                                                  label="#{msg['please.select.reports']}"
+                                                                  filterMatchMode="startsWith" 
+                                                                  panelStyle="width: 30rem" >
+                                                <f:selectItems value="#{generaReportesView.lstContenidoGrupal}"/>
+                                            </p:selectCheckboxMenu>
+
+
+                                        </div>
+                                        <div class="p-field p-col-12 p-md-3">
+                                            <p:commandButton value="#{msg['step6.button.generate.individual']}" ajax="true" update="@form" actionListener="#{generaReportesView.generarReporteGrupal}" icon="pi pi-file" />
+                                        </div>
+                                        <div class="p-field p-col-12 p-md-3">
+                                            <p:commandButton value="#{msg['step6.button.download.individual']}" ajax="false" disabled="#{generaReportesView.fileGrupal==null?true:false}" update="@this" icon="pi pi-download" >
+                                                <p:fileDownload value="#{generaReportesView.fileGrupal}" />
+                                            </p:commandButton>
+                                        </div>
+ 
                                     </div>
-                                </div>
-                                <div class="ui-fluid p-formgrid p-grid">
-            
-                                    <div class="p-field p-col-12 p-md-5">
-                                        <p:card>
-                                            <h4>Lista de cuestionarios</h4>
-                                            <p:dataTable id="dtCuestionarios"
-                                                         widgetVar="dtCuestionarios"
-                                                         var="cuestionario" 
-                                                         value="#{generaReportesView.lstCuestionarios}" 
-                                                         selection="#{generaReportesView.lstCuestionariosSeleccionados}" 
-                                                         rowKey="#{cuestionario.cuIdCuestionarioPk}" 
-                                                         rows="15"
-                                                         paginator="true"
-                                                         size="small"
-                                                         stripedRows="false"
-                                                         paginatorPosition="bottom"
-                                                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                                         rowsPerPageTemplate="5,10,15"
-                                                         emptyMessage="No se encontraron cuestionarios"
-                                                         rowIndexVar="index" >
-            
-                                                <p:column style="width: 40px;">
-                                                    <f:facet name="header">
-                                                        <h:outputText value="#" />
-                                                    </f:facet>
-                                                    <h:outputText 
-                                                        value="#{index + 1}" />
-                                                </p:column> 
-                                                <p:column selectionMode="multiple" style="width:35px;text-right" />
-            
-                                                <p:column headerText="Descripción" >
-                                                    <h:outputText value="#{cuestionario.cuTxDescripcion}" />
-                                                </p:column>
-            
-            
-                                            </p:dataTable>
-                                        </p:card>
-                                    </div>
-                                    <div class="p-field p-col-12 p-md-4">
-            
-                                        <p:card>
-                                            <h4>Modelos disponibles</h4>
-                                            <p:dataTable id="checkboxDT2" 
-                                                         var="parte" 
-                                                         size="small"
-                                                         stripedRows="true"
-                                                         value="#{generaReportesView.lstContenidoGrupal}" 
-                                                         selection="#{generaReportesView.lstSeleccionadosGrupal}" 
-                                                         rowKey="#{parte.intModeloPk}" style="margin-bottom:0" >
-            
-                                                <p:column selectionMode="multiple" style="width:35px;text-align:center"/>
-                                                <p:column headerText="Descripción">
-                                                    <h:outputText value="#{parte.strDescModelo}" />
-                                                </p:column>
-            
-                                            </p:dataTable>
-                                        </p:card>
-                                    </div>
-            
-                                    <div class="p-field p-col-12 p-md-3">
-                                        <p:card>
-                                            <div class="p-field">
-                                                <p:commandButton value="Generar informe grupal" ajax="true" update="@form" actionListener="#{generaReportesView.generarReporteGrupal}" />
-                                            </div>
-                                            <div class="p-field">
-                                                <p:commandButton value="Descargar informe grupal" ajax="false" disabled="#{generaReportesView.fileGrupal==null?true:false}" update="@this" >
-                                                    <p:fileDownload value="#{generaReportesView.fileGrupal}" />
-                                                </p:commandButton>
-                                            </div>
-                                        </p:card>
-                                    </div>
-                                </div>
-                            </p:card>
-            
-                        </h:form>
-            -->
+                                </f:facet>
+
+                            </p:dataTable>
+
+                        </div>
+
+                    </div>
+                </p:card>
+
+            </h:form>
+
         </p:panel>
 
 

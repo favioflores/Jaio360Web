@@ -875,7 +875,6 @@ public class Utilitarios extends BaseView implements Serializable{
 
     public static String generaColorHtmlPreferencial(int i) {
 
-        String code = "";
         String[] colors = {"046BBB",
             "DDE4EB",
             "F3C305",

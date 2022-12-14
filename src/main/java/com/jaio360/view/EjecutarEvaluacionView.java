@@ -648,7 +648,7 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
                     for (Componente objComponenteComentario : lstCompComentario) {
                         ComentarioBean objComentarioBean = new ComentarioBean();
                         objComentarioBean.setId(objComponenteComentario.getCoIdComponentePk());
-                        objComentarioBean.setStrDescripcion(objComponenteComentario.getCoTxDescripcion() + a);
+                        objComentarioBean.setStrDescripcion(objComponenteComentario.getCoTxDescripcion());
                         objPreguntaCerradaBean1.getLstComentarios().add(objComentarioBean);
                     }
 

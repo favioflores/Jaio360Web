@@ -279,6 +279,10 @@ public class GeneraReportesView extends BaseView implements Serializable {
         for (int i = 1; i <= 12; i++) {
             lstContenidoIndividual.add(new SelectItem(i, msg("report." + i)));
         }
+        
+        for (int i = 100; i <= 102; i++) {
+            lstContenidoGrupal.add(new SelectItem(i, msg("report." + i)));
+        }
 
         //Resultados Generales - Competencias y preguntas
         /*
@@ -454,6 +458,8 @@ public class GeneraReportesView extends BaseView implements Serializable {
                 objUtil.setBlDefinitivo(false);
                 map.put(Constantes.INT_PARAM_GRAF_MEDIDA, utilReport);
 
+                boolean flag = true;
+                
                 /* INVOCA CLASES QUE GENEREN LOS TEMPORALES */
                 for (Cuestionario objCuestionario : lstCuestionariosSeleccionados) {
 
@@ -473,13 +479,28 @@ public class GeneraReportesView extends BaseView implements Serializable {
 
                         objDatosReporte.setStrID(strNombreTemp + "_" + msg("report." + objModeloContenido) + "_" + strFirma);
                         objDatosReporte.setStrNombreEvaluado(objCuestionario.getCuTxDescripcion());
+                        
+                        if(flag){
+                            DatosReporte objDatosReporteC = (DatosReporte) SerializationUtils.clone(objDatosReporte);
 
-                        log.debug("Genera documento - " + objDatosReporte.getStrID());
+                            String strNTempC = Utilitarios.reemplazar(objCuestionario.getCuTxDescripcion(), " ", "C_");
+                            String strFC = Utilitarios.formatearFecha(Utilitarios.getCurrentDate(), Constantes.DDMMYYYYHH24MISS);
+
+                            objDatosReporteC.setStrID(strNTempC + "_" + msg("report." + objModeloContenido) + "_" + strFC);
+
+                            ReporteGrupalCaratula objReporteC = new ReporteGrupalCaratula();
+                            objDatosReporteC.setStrID(objReporteC.build(objDatosReporteC));
+                            objDatosReporteC.setBlDefinitivo(true);
+                            lstTemporales.add(objDatosReporteC);
+                            
+                            flag = false;
+                        }
 
                         if (objModeloContenido.equals(Constantes.INT_REPORTE_GRUPAL_SUMARIO_X_CATEGORIA)) {
 
                             List<DatosReporte> lstTemp = new ArrayList();
 
+                            /*
                             DatosReporte objDatosReporteC = (DatosReporte) SerializationUtils.clone(objDatosReporte);
 
                             String strNTempC = Utilitarios.reemplazar(objCuestionario.getCuTxDescripcion(), " ", "C_");
@@ -491,6 +512,7 @@ public class GeneraReportesView extends BaseView implements Serializable {
                             objDatosReporteC.setStrID(objReporteC.build(objDatosReporteC));
                             objDatosReporteC.setBlDefinitivo(false);
                             lstTemp.add(objDatosReporteC);
+                            */
 
                             DatosReporte objDatosReporteR = (DatosReporte) SerializationUtils.clone(objDatosReporte);
 
@@ -507,7 +529,7 @@ public class GeneraReportesView extends BaseView implements Serializable {
                             objDatosReporte.setStrID(Utilitarios.combinaReportesPDF(lstTemp, objDatosReporte));
                             objDatosReporte.setBlDefinitivo(true);
 
-                            lstTemporales.add(objDatosReporteC);
+                            //lstTemporales.add(objDatosReporteC);
                             lstTemporales.add(objDatosReporteR);
                             lstTemporales.add(objDatosReporte);
 
@@ -515,6 +537,7 @@ public class GeneraReportesView extends BaseView implements Serializable {
 
                             List<DatosReporte> lstTemp = new ArrayList();
 
+                            /*
                             DatosReporte objDatosReporteC = (DatosReporte) SerializationUtils.clone(objDatosReporte);
 
                             String strNTempC = Utilitarios.reemplazar(objCuestionario.getCuTxDescripcion(), " ", "C_");
@@ -526,6 +549,7 @@ public class GeneraReportesView extends BaseView implements Serializable {
                             objDatosReporteC.setStrID(objReporteC.build(objDatosReporteC));
                             objDatosReporteC.setBlDefinitivo(false);
                             lstTemp.add(objDatosReporteC);
+                            */
 
                             DatosReporte objDatosReporteR = (DatosReporte) SerializationUtils.clone(objDatosReporte);
 
@@ -542,12 +566,11 @@ public class GeneraReportesView extends BaseView implements Serializable {
                             objDatosReporte.setStrID(Utilitarios.combinaReportesPDF(lstTemp, objDatosReporte));
                             objDatosReporte.setBlDefinitivo(true);
 
-                            lstTemporales.add(objDatosReporteC);
+                            //lstTemporales.add(objDatosReporteC);
                             lstTemporales.add(objDatosReporteR);
                             lstTemporales.add(objDatosReporte);
 
                         } else if (objModeloContenido.equals(Constantes.INT_REPORTE_GRUPAL_RESPUESTAS)) {
-                            log.debug("Hace Excel");
                             ReporteTodasRespuestas objReporte = new ReporteTodasRespuestas();
                             objDatosReporte.setStrID(objReporte.build(objDatosReporte, map, objCuestionario.getCuIdCuestionarioPk()));
                             objDatosReporte.setBlDefinitivo(true);
@@ -578,9 +601,9 @@ public class GeneraReportesView extends BaseView implements Serializable {
 
                     FileOutputStream salida = new FileOutputStream(objFile);
 
-                    boolean flag = Utilitarios.zipArchivos(lstDefinitivos, salida);
+                    boolean flagFinal = Utilitarios.zipArchivos(lstDefinitivos, salida);
 
-                    if (flag) {
+                    if (flagFinal) {
                         InputStream stream = new FileInputStream(objFile.getAbsolutePath());
 
                         fileGrupal = DefaultStreamedContent.builder()
@@ -588,6 +611,8 @@ public class GeneraReportesView extends BaseView implements Serializable {
                                 .contentType("application/zip")
                                 .stream(() -> stream)
                                 .build();
+                        
+                        mostrarAlertaInfo("step6.reports.generated.success");
 
                     } else {
                         mostrarAlertaError("error.was.occurred");

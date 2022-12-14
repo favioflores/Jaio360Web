@@ -487,7 +487,7 @@ public class ResultadoDAO implements Serializable {
                     + "        componente ca,                                                                           "
                     + "        componente cp                                                                            "
                     + "        left join resultado re on re.CO_ID_COMPONENTE_FK = cp.CO_ID_COMPONENTE_PK                "
-                    + "        left join detalle_metrica dm on dm.DE_ID_DETALLE_ESCALA_PK = re.DE_ID_DETALLE_ESCALA_FK  "
+                    + "        join detalle_metrica dm on dm.DE_ID_DETALLE_ESCALA_PK = re.DE_ID_DETALLE_ESCALA_FK  "
                     + "        left join participante pa on pa.PA_ID_PARTICIPANTE_PK = re.PA_ID_PARTICIPANTE_FK         "
                     + "  where cu.PO_ID_PROYECTO_FK = ?                                                                 "
                     + "    and cu.CU_ID_CUESTIONARIO_PK = ? "

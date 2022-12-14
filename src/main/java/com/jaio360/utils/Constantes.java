@@ -190,10 +190,11 @@ public class Constantes {
     /************/
     
     public static Integer INT_REPORTE_GRUPAL_CARATULA = 0;
-    public static Integer INT_REPORTE_GRUPAL_RESPUESTAS = 10;
-    public static Integer INT_REPORTE_GRUPAL_SUMARIO_X_CATEGORIA = 11;
     
-    public static Integer INT_REPORTE_GRUPAL_NIVEL_DE_PARTICIPACION = 12;
+    public static Integer INT_REPORTE_GRUPAL_SUMARIO_X_CATEGORIA = 100;
+    public static Integer INT_REPORTE_GRUPAL_NIVEL_DE_PARTICIPACION = 101;
+    public static Integer INT_REPORTE_GRUPAL_RESPUESTAS = 102;
+    
     public static Integer INT_REPORTE_GRUPAL_PROMEDIO_GENERAL_POR_COMPETENCIA = 11;
     public static Integer INT_REPORTE_GRUPAL_PROMEDIO_GENERAL_POR_PREGUNTA = 12;
     public static Integer INT_REPORTE_GRUPAL_PROMEDIO_POR_PREGUNTAS_ORDENADO_DESCENDENTE = 13;

@@ -2763,10 +2763,11 @@ public class EvaluadosView extends BaseView implements Serializable {
                     boolean blAlMenosUnAutoevaluado = false;
                     for (EvaluadoAvan objEvaluadoAvan : this.lstAvanPersonas) {
 
-                        if (!mapPerEvaluados.containsKey(Utilitarios.limpiarTexto(objEvaluadoAvan.getPaTxCorreo()))) {
+                        if (!mapPerEvaluados.containsKey(Utilitarios.limpiarTexto(objEvaluadoAvan.getPaTxCorreo()))
+                                && !mapPerEvaluadores.containsKey(Utilitarios.limpiarTexto(objEvaluadoAvan.getPaTxCorreo()))) {
                             if (objEvaluadoAvan.isPaInAutoevaluar()) {
-                                mapPerEvaluados.put(Utilitarios.limpiarTexto(objEvaluadoAvan.getPaTxCorreo()), objEvaluadoAvan.getPaTxCorreo());
-                            }else{
+                                mapRelacionesPersonasAvanzado.put(Utilitarios.limpiarTexto(objEvaluadoAvan.getPaTxCorreo()), objEvaluadoAvan.getPaTxCorreo());
+                            } else {
                                 lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("email") + " " + objEvaluadoAvan.getPaTxCorreo() + " " + msg("step1.person.without.evaluator")));
                             }
                         }
@@ -2793,7 +2794,7 @@ public class EvaluadosView extends BaseView implements Serializable {
                 } else if (!lstErrorAvan.isEmpty()) {
                     blCargarCorrectoAvan = true;
                     this.lstAvanPersonas.clear();
-                    this.lstAvanRelacion.clear(); 
+                    this.lstAvanRelacion.clear();
                     this.lstRelacionAvanzadas.clear();
                     mostrarAlertaInfo("file.has.data.warnings");
                 } else {
