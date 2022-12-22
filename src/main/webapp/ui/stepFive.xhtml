@@ -251,7 +251,6 @@
                                         id="tbEva"
                                         var="reg"
                                         widgetVar="tbEva"
-                                        resizableColumns="true"
                                         value="#{seguimientoProyectoView.lstParticipantesIniciados}" 
                                         rows="10"
                                         rowsPerPageTemplate="5,10,{ShowAll|'All'}"
@@ -275,7 +274,7 @@
                                         <p:ajax event="rowSelect" listener="#{seguimientoProyectoView.onRowSelect}" update="@form"/>
                                         <p:ajax event="rowUnselect" listener="#{seguimientoProyectoView.onRowUnselect}" update="@form"/>
 
-                                        <p:column style="width: 40px;">
+                                        <p:column style="width: 15px;">
                                             <f:facet name="header">
                                                 <h:outputText value="#" />
                                             </f:facet>
@@ -287,9 +286,23 @@
                                             <p:graphicImage url="#{reg.paTxImgUrl}" height="75" width="75" class="classimg" rendered="#{reg.paTxImgUrl!=null}" />
                                             <p:graphicImage value="/images/no-picture.png" height="75" width="75"  class="classimg" rendered="#{reg.paTxImgUrl==null}" />
                                         </p:column>
-                                        
+
                                         <p:column headerText="#{msg['individual']}" sortBy="#{reg.paTxDescripcion}">
                                             <h:outputText value="#{reg.paTxDescripcion}" />
+                                            <!--<
+                                                <p:panelGrid styleClass="ui-panelgrid-blank ui-fluid" style="padding: 0px;" >
+                                                    <p:row>
+                                                        <p:column  >
+                                                            <h:outputText value="#{reg.paTxDescripcion}" />
+                                                        </p:column>
+                                                    </p:row>
+                                                    <p:row>
+                                                        <p:column>
+                                                            <p:outputLabel value="#{reg.paTxCorreo}" style="font-style: normal; font-weight: normal; font-size: 12px !important;" />
+                                                        </p:column>
+                                                    </p:row>
+                                                </p:panelGrid>
+                                            -->
                                             <!--<br/><br/>
                                             <p:progressBar value="#{reg.bdPorcentajeAvance}" labelTemplate="#{reg.bdPorcentajeAvance}%" />-->
                                         </p:column>                           
@@ -309,7 +322,7 @@
                                         </p:column>
                                         -->
 
-                                        <p:column headerText="#{msg['step5.percent.progress.evaluted']}" sortBy="#{reg.bdPorcentajeAvance}" style="max-width: 100px; " >
+                                        <p:column headerText="#{msg['step5.percent.progress.evaluted']}" sortBy="#{reg.bdPorcentajeAvance}" style="width: 90px; " >
                                             <p:progressBar value="#{reg.bdPorcentajeAvance}" displayOnly="true" labelTemplate="#{reg.bdPorcentajeAvance}%" />
                                         </p:column>
 
@@ -330,7 +343,6 @@
                                     id="tblRed"
                                     var="red"
                                     widgetVar="tblRed"
-                                    resizableColumns="true"
                                     value="#{seguimientoProyectoView.lstRelacionEvaluadoEvaluador}" 
                                     rows="30"
                                     rowsPerPageTemplate="5,10,30,{ShowAll|'All'}"
@@ -347,6 +359,10 @@
                                         </f:facet>
                                     </c:if>
 
+
+                                    <p:column headerText="#{msg['evaluated']}" sortBy="#{red.strDescEvaluado}" sortPriority="1" groupRow="true" >
+                                        <h:outputText value="#{red.strDescEvaluado}" />
+                                    </p:column>   
                                     <p:column style="width: 40px;">
                                         <f:facet name="header">
                                             <h:outputText value="#" />
@@ -354,22 +370,20 @@
                                         <h:outputText 
                                             value="#{index + 1}" />
                                     </p:column> 
-                                    <p:column headerText="#{msg['evaluator']}" sortBy="#{red.strDescEvaluador}" groupRow="true" sortPriority="0" sortOrder="asc">
-                                        <h:outputText value="#{red.strDescEvaluador}" />
-                                    </p:column>                
                                     <p:column headerText="#{msg['relationship']}" sortBy="#{red.strDescRelacion}">
                                         <!--<h:outputText value="#{red.strDescRelacion}" />-->
 
                                         <p:tag value="#{red.strDescRelacion}" style=" background-color: ##{red.strColorRelacion};" />
                                     </p:column>
-
+                                    <!--
                                     <p:column headerText="#{msg['email']}" sortBy="#{red.strCorreoEvaluador}">
                                         <h:outputText value="#{red.strCorreoEvaluador}" />
-                                    </p:column>    
+                                    </p:column>  
+                                    -->
+                                    <p:column headerText="#{msg['evaluator']}" sortBy="#{red.strDescEvaluador}" groupRow="true" sortOrder="asc">
+                                        <h:outputText value="#{red.strDescEvaluador}" />
+                                    </p:column>   
 
-                                    <p:column headerText="#{msg['evaluated']}" sortBy="#{red.strDescEvaluado}" groupRow="true" >
-                                        <h:outputText value="#{red.strDescEvaluado}" />
-                                    </p:column>
 
                                     <p:column headerText="#{msg['status']}" sortBy="#{red.blEvaluacionTerminada}">
                                         <p:tag  value="#{red.blEvaluacionTerminada==true?msg['complete']:msg['pending']}" 

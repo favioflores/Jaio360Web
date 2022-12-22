@@ -4,10 +4,13 @@ import com.jaio360.dao.CuestionarioDAO;
 import com.jaio360.dao.ProyectoDAO;
 import com.jaio360.dao.ComponenteDAO;
 import com.jaio360.domain.Categorias;
+import com.jaio360.domain.ComentarioBean;
 import com.jaio360.domain.CuestionarioImportado;
 import com.jaio360.domain.DosDatos;
 import com.jaio360.domain.ElementoCuestionario;
 import com.jaio360.domain.ErrorBean;
+import com.jaio360.domain.PreguntaAbiertaBean;
+import com.jaio360.domain.PreguntaCerradaBean;
 import com.jaio360.orm.Componente;
 import com.jaio360.orm.Cuestionario;
 import com.jaio360.orm.Proyecto;
@@ -341,28 +344,34 @@ public class importarCuestionariosView extends BaseView implements Serializable 
                         objCuestionarioImportado = new CuestionarioImportado();
                         objCuestionarioImportado.setIdCuestionario(i);
                         objCuestionarioImportado.setStrDescCuestionario(strElemento);
-                        objCuestionarioImportado.setLstCategorias(new ArrayList<Categorias>());
-                        objCuestionarioImportado.setLstComentarios(new ArrayList<String>());
-                        objCuestionarioImportado.setLstPreguntasAbiertas(new ArrayList<String>());
+                        objCuestionarioImportado.setLstCategorias(new ArrayList<>());
+                        objCuestionarioImportado.setLstComentarios(new ArrayList<>());
+                        objCuestionarioImportado.setLstPreguntasAbiertas(new ArrayList<>());
                         i++;
 
                     }
 
                     if (strTipo.equals(Constantes.LINEA_COMENTARIO)) {
-                        objCuestionarioImportado.getLstComentarios().add(strElemento);
+                        ComentarioBean objComentarioBean = new ComentarioBean();
+                        objComentarioBean.setStrDescripcion(strElemento);
+                        objCuestionarioImportado.getLstComentarios().add(objComentarioBean);
                     }
 
                     if (strTipo.equals(Constantes.LINEA_PREGUNTA_ABIERTA)) {
-                        objCuestionarioImportado.getLstPreguntasAbiertas().add(strElemento);
+                        PreguntaAbiertaBean objPreguntaAbiertaBean = new PreguntaAbiertaBean();
+                        objPreguntaAbiertaBean.setStrDescripcion(strElemento);
+                        objCuestionarioImportado.getLstPreguntasAbiertas().add(objPreguntaAbiertaBean);
                     }
 
                     if (strTipo.equals(Constantes.LINEA_CATEGORIA)) {
-                        objCuestionarioImportado.getLstCategorias().add(new Categorias(strElemento, new ArrayList<String>()));
+                        objCuestionarioImportado.getLstCategorias().add(new Categorias(strElemento, null, new ArrayList<>()));
                         objCategorias = objCuestionarioImportado.getLstCategorias().get(objCuestionarioImportado.getLstCategorias().size() - 1);
                     }
 
                     if (strTipo.equals(Constantes.LINEA_PREGUNTA_CERRADA)) {
-                        objCategorias.getLstPreguntasCerradas().add(strElemento);
+                        PreguntaCerradaBean objPreguntaCerradaBean = new PreguntaCerradaBean();
+                        objPreguntaCerradaBean.setStrDescripcion(strElemento);
+                        objCategorias.getLstPreguntasCerradas().add(objPreguntaCerradaBean);
                     }
 
                 }
@@ -393,19 +402,19 @@ public class importarCuestionariosView extends BaseView implements Serializable 
         try {
 
             for (Categorias objCat : objElementos.getLstCategorias()) {
-                lstElementosDelCuestionarios.add(new DosDatos(msg("category"), objCat.getStrCategoria(), null));
+                lstElementosDelCuestionarios.add(new DosDatos(msg("category"), objCat.getStrCategoria(), null, objCat.getIntIdComponente()));
 
-                for (String strPreguntaC : objCat.getLstPreguntasCerradas()) {
-                    lstElementosDelCuestionarios.add(new DosDatos(msg("close.question"), strPreguntaC, "secondary"));
+                for (PreguntaCerradaBean objPreguntaCerradaBean : objCat.getLstPreguntasCerradas()) {
+                    lstElementosDelCuestionarios.add(new DosDatos(msg("close.question"), objPreguntaCerradaBean.getStrDescripcion(), "secondary", objPreguntaCerradaBean.getId()));
                 }
             }
 
-            for (String strComment : objElementos.getLstComentarios()) {
-                lstElementosDelCuestionarios.add(new DosDatos(msg("comment"), strComment, "warning"));
+            for (ComentarioBean objComentarioBean : objElementos.getLstComentarios()) {
+                lstElementosDelCuestionarios.add(new DosDatos(msg("comment"), objComentarioBean.getStrDescripcion(), "warning", objComentarioBean.getId()));
             }
 
-            for (String strPreguntaA : objElementos.getLstPreguntasAbiertas()) {
-                lstElementosDelCuestionarios.add(new DosDatos(msg("open.question"), strPreguntaA, "success"));
+            for (PreguntaAbiertaBean objPreguntaAbiertaBean : objElementos.getLstPreguntasAbiertas()) {
+                lstElementosDelCuestionarios.add(new DosDatos(msg("open.question"), objPreguntaAbiertaBean.getStrDescripcion(), "success", objPreguntaAbiertaBean.getId()));
             }
 
             mostrarAlertaInfo(msg("step2.evaluation.selected") + " " + objElementos.getStrDescCuestionario());
@@ -440,15 +449,15 @@ public class importarCuestionariosView extends BaseView implements Serializable 
 
     public void loadCuestionarios() {
 
-        List<Cuestionario> lstCuestionario;
+        List<Cuestionario> lstCuestionarios;
 
         CuestionarioDAO objCuestionarioDAO = new CuestionarioDAO();
 
-        lstCuestionario = objCuestionarioDAO.obtenListaCuestionario(Utilitarios.obtenerProyecto().getIntIdProyecto());
+        lstCuestionarios = objCuestionarioDAO.obtenListaCuestionario(Utilitarios.obtenerProyecto().getIntIdProyecto());
 
         CuestionarioImportado objCuestionarioImportado;
 
-        for (Cuestionario objCuestionario : lstCuestionario) {
+        for (Cuestionario objCuestionario : lstCuestionarios) {
 
             blExistPrevImport = true;
 
@@ -457,40 +466,41 @@ public class importarCuestionariosView extends BaseView implements Serializable 
             objCuestionarioImportado.setIdCuestionario(objCuestionario.getCuIdCuestionarioPk());
             objCuestionarioImportado.setStrDescCuestionario(objCuestionario.getCuTxDescripcion());
 
-            lstCuestionariosImportados.add(objCuestionarioImportado);
-
             ComponenteDAO objComponenteDao = new ComponenteDAO();
 
             List<Componente> lstComponente = objComponenteDao.listaComponenteXCuestionario(objCuestionario.getCuIdCuestionarioPk());
 
-            lstElementoCuestionario = new ArrayList();
-
-            ElementoCuestionario objElementoCuestionario;
-
             for (Componente objComponente : lstComponente) {
 
-                objElementoCuestionario = new ElementoCuestionario();
-
                 if (objComponente.getCoIdTipoComponente().equals(Constantes.INT_ET_TIPO_COMPONENTE_CATEGORIA)) {
-                    objElementoCuestionario.setStrTipo(msg(Constantes.INT_ET_TIPO_COMPONENTE_CATEGORIA.toString()));
-                } else if (objComponente.getCoIdTipoComponente().equals(Constantes.INT_ET_TIPO_COMPONENTE_PREGUNTA_CERRADA)) {
-                    objElementoCuestionario.setStrTipo(msg(Constantes.INT_ET_TIPO_COMPONENTE_PREGUNTA_CERRADA.toString()));
-                    objElementoCuestionario.setStrColor("secondary");
+
+                    Categorias objCategorias = new Categorias(objComponente.getCoIdComponentePk());
+                    objCategorias.setStrCategoria(objComponente.getCoTxDescripcion());
+
+                    for (Componente objComponentePC : objComponenteDao.listaComponenteRed(objComponente)) {
+                        PreguntaCerradaBean objPreguntaCerradaBean = new PreguntaCerradaBean();
+                        objPreguntaCerradaBean.setId(objComponentePC.getCoIdComponentePk());
+                        objPreguntaCerradaBean.setStrDescripcion(objComponentePC.getCoTxDescripcion());
+                        objCategorias.getLstPreguntasCerradas().add(objPreguntaCerradaBean);
+                    }
+
+                    objCuestionarioImportado.getLstCategorias().add(objCategorias);
+
                 } else if (objComponente.getCoIdTipoComponente().equals(Constantes.INT_ET_TIPO_COMPONENTE_COMENTARIO)) {
-                    objElementoCuestionario.setStrTipo(msg(Constantes.INT_ET_TIPO_COMPONENTE_COMENTARIO.toString()));
-                    objElementoCuestionario.setStrColor("warning");
+                    ComentarioBean objComentarioBean = new ComentarioBean();
+                    objComentarioBean.setId(objComponente.getCoIdComponentePk());
+                    objComentarioBean.setStrDescripcion(objComponente.getCoTxDescripcion());
+                    objCuestionarioImportado.getLstComentarios().add(objComentarioBean);
                 } else if (objComponente.getCoIdTipoComponente().equals(Constantes.INT_ET_TIPO_COMPONENTE_PREGUNTA_ABIERTA)) {
-                    objElementoCuestionario.setStrTipo(msg(Constantes.INT_ET_TIPO_COMPONENTE_PREGUNTA_ABIERTA.toString()));
-                    objElementoCuestionario.setStrColor("success");
+                    PreguntaAbiertaBean objPreguntaAbiertaBean = new PreguntaAbiertaBean();
+                    objPreguntaAbiertaBean.setId(objComponente.getCoIdComponentePk());
+                    objPreguntaAbiertaBean.setStrDescripcion(objComponente.getCoTxDescripcion());
+                    objCuestionarioImportado.getLstPreguntasAbiertas().add(objPreguntaAbiertaBean);
                 }
-
-                objElementoCuestionario.setStrDescripcion(objComponente.getCoTxDescripcion());
-                objElementoCuestionario.setObjComponente(objComponente);
-
-                lstElementoCuestionario.add(objElementoCuestionario);
 
             }
 
+            lstCuestionariosImportados.add(objCuestionarioImportado);
         }
 
     }
@@ -509,19 +519,21 @@ public class importarCuestionariosView extends BaseView implements Serializable 
 
     }
 
-    public void onRowEdit(RowEditEvent<ElementoCuestionario> event) {
+    public void onRowEdit(RowEditEvent<DosDatos> event) {
 
         try {
             
-            Componente objComponente = event.getObject().getObjComponente();
-            objComponente.setCoTxDescripcion(event.getObject().getStrDescripcion());
-            
+            ComponenteDAO objComponenteDao = new ComponenteDAO();
+
+            Componente objComponente = objComponenteDao.obtenComponente(event.getObject().getIntComponente());
+            objComponente.setCoTxDescripcion(event.getObject().getStrDato2());
+
             ComponenteDAO objComponenteDAO = new ComponenteDAO();
             objComponenteDAO.actualizaComponente(objComponente);
-            
+
             FacesMessage msg = new FacesMessage("El cuestionario fue actualizado exitosamente", null);
             FacesContext.getCurrentInstance().addMessage(null, msg);
-            
+
         } catch (Exception e) {
             log.error(e);
             FacesMessage msg = new FacesMessage("Ocurrió un error al actualizar el cuestionario", null);
@@ -530,7 +542,7 @@ public class importarCuestionariosView extends BaseView implements Serializable 
 
     }
 
-    public void onRowCancel(RowEditEvent<ElementoCuestionario> event) {
+    public void onRowCancel(RowEditEvent<DosDatos> event) {
         FacesMessage msg = new FacesMessage("Edit Cancelled", String.valueOf(event.getObject()));
         FacesContext.getCurrentInstance().addMessage(null, msg);
     }

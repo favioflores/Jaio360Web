@@ -242,7 +242,7 @@ public class UsuarioSesion extends BaseView implements Serializable {
 
                     EncryptDecrypt objEncryptDecrypt = new EncryptDecrypt();
 
-                    String strNotificacion = objElementoDAO.obtenElemento(Constantes.INT_ET_NOTIFICACION_CLAVE).getElCadena().toString();
+                    String strNotificacion = Utilitarios.decodeUTF8(objElementoDAO.obtenElemento(Constantes.INT_ET_NOTIFICACION_CLAVE).getElCadena());
 
                     Utilitarios objUtilitarios = new Utilitarios();
 
@@ -258,7 +258,7 @@ public class UsuarioSesion extends BaseView implements Serializable {
                     objNotificaciones.setNoIdRefProceso(0);
                     objNotificaciones.setNoIdTipoProceso(0);
                     objNotificaciones.setNoTxAsunto("Notificacion de clave");
-                    objNotificaciones.setNoTxMensaje(strNotificacion.getBytes());
+                    objNotificaciones.setNoTxMensaje(Utilitarios.encodeUTF8(strNotificacion));
 
                     objNotificaciones.setNoIdNotificacionPk(objNotificacionesDAO.guardaNotificacion(objNotificaciones));
 

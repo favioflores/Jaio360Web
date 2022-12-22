@@ -8,8 +8,20 @@
 
     <ui:define name="head"> 
         <script src='https://www.google.com/recaptcha/api.js'></script>
-        <style>
-            .mytable {width: 100%; min-height: 100%; position: fixed; background-size: cover;}
+<style>
+            #grad {
+                height: 100%;
+                width: 100%;
+                position: fixed;
+                background-color: #005EA6;/* For browsers that do not support gradients */
+                background-image: linear-gradient(to right, #005EA6 , #006CBE);
+            }
+            .text-center {
+                text-align: center;
+            }
+            img {
+                border-radius: 100%;
+            }
         </style>
     </ui:define>
     <ui:define name="content">
@@ -20,10 +32,9 @@
         
         -->
 
-        <table class="mytable" background="../images/fondos/macback.png" >
-        </table>
+        <div id="grad"></div>
 
-        <p:dialog id="dlgLogin" widgetVar="dlgLogin" header="#{msg['clave.titulo.form']}" visible="true" modal="false" closable="false" showEffect="drop" resizable="false" >
+        <p:dialog id="dlgLogin" widgetVar="dlgLogin" width="500" header="#{msg['clave.titulo.form']}" visible="true" modal="false" closable="false" showEffect="drop" resizable="false" >
             <h:form id="loginForm">
                 <p:panel>
                     <p:growl id="growl" sticky="false" showDetail="true" life="4000" />
@@ -31,7 +42,7 @@
                     <div class="ui-fluid">
                         <div class="p-field">
                             <label for="usuario">#{msg['clave.input.msg.usuario']}</label>
-                            <p:inputText id="usuario" value="#{usuarioSesion.usuario}" maxlength="50" >
+                            <p:inputText id="usuario" value="#{usuarioSesion.usuario}" maxlength="200" >
                                 <f:validator validatorId="validarCorreo" /> 
                             </p:inputText>
                         </div>
@@ -44,6 +55,13 @@
                         </div>
                         <div class="p-field">
                             <p:commandButton id="salir" action="iniciar.xhtml?faces-redirect=true" immediate="true" value="#{msg['clave.input.btn.regresar']}" />
+                        </div>
+                        <div class="p-field">
+                            <br/>
+                            <div class="text-center">
+                                <p:graphicImage value="../images/logoJaio360.jpg" width="130" height="50" />
+                            </div>
+
                         </div>
                     </div>
                 </p:panel>

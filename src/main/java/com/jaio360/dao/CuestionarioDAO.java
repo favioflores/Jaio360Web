@@ -1,9 +1,12 @@
 package com.jaio360.dao;
 
 import com.jaio360.domain.Categorias;
+import com.jaio360.domain.ComentarioBean;
 import com.jaio360.domain.CuestionarioImportado;
 import com.jaio360.domain.Evaluado;
 import com.jaio360.domain.EvaluadoCuestionario;
+import com.jaio360.domain.PreguntaAbiertaBean;
+import com.jaio360.domain.PreguntaCerradaBean;
 import com.jaio360.orm.Componente;
 import com.jaio360.orm.Cuestionario;
 import com.jaio360.orm.CuestionarioEvaluado;
@@ -481,10 +484,10 @@ public class CuestionarioDAO implements Serializable
                     objComponenteCat.setCuestionario(objCuestionario);
                     objComponenteCat.setCoIdComponentePk((Integer)sesion.save(objComponenteCat));
                     
-                    for(String strPreguntaC : objCategorias.getLstPreguntasCerradas()){
+                    for(PreguntaCerradaBean strPreguntaC : objCategorias.getLstPreguntasCerradas()){
                         Componente objComponentePreC = new Componente();
                         objComponentePreC.setCoIdTipoComponente(Constantes.INT_ET_TIPO_COMPONENTE_PREGUNTA_CERRADA);
-                        objComponentePreC.setCoTxDescripcion(strPreguntaC);
+                        objComponentePreC.setCoTxDescripcion(strPreguntaC.getStrDescripcion());
                         objComponentePreC.setCuestionario(objCuestionario);
                         objComponentePreC.setComponente(objComponenteCat);
                         objComponentePreC.setCoIdComponentePk((Integer)sesion.save(objComponentePreC));                    
@@ -492,22 +495,22 @@ public class CuestionarioDAO implements Serializable
                     
                 }
 
-                List<String> lstComentarios = objCuestionarioImportado.getLstComentarios();
+                List<ComentarioBean> lstComentarios = objCuestionarioImportado.getLstComentarios();
                 
-                for(String strComentario : lstComentarios){
+                for(ComentarioBean strComentario : lstComentarios){
                     Componente objComponenteCom = new Componente();
                     objComponenteCom.setCoIdTipoComponente(Constantes.INT_ET_TIPO_COMPONENTE_COMENTARIO);
-                    objComponenteCom.setCoTxDescripcion(strComentario);
+                    objComponenteCom.setCoTxDescripcion(strComentario.getStrDescripcion());
                     objComponenteCom.setCuestionario(objCuestionario);
                     objComponenteCom.setCoIdComponentePk((Integer)sesion.save(objComponenteCom));
                 }
                                 
-                List<String> lstPreguntasAbiertas = objCuestionarioImportado.getLstPreguntasAbiertas();
+                List<PreguntaAbiertaBean> lstPreguntasAbiertas = objCuestionarioImportado.getLstPreguntasAbiertas();
                 
-                for(String strComentario : lstPreguntasAbiertas){
+                for(PreguntaAbiertaBean strComentario : lstPreguntasAbiertas){
                     Componente objComponentePre = new Componente();
                     objComponentePre.setCoIdTipoComponente(Constantes.INT_ET_TIPO_COMPONENTE_PREGUNTA_ABIERTA);
-                    objComponentePre.setCoTxDescripcion(strComentario);
+                    objComponentePre.setCoTxDescripcion(strComentario.getStrDescripcion());
                     objComponentePre.setCuestionario(objCuestionario);
                     objComponentePre.setCoIdComponentePk((Integer)sesion.save(objComponentePre));
                 }

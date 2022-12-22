@@ -7,15 +7,26 @@ public class DosDatos implements Serializable{
     private String strDato1;
     private String strDato2;
     private String strDato3;
+    private Integer intComponente;
 
-    public DosDatos(String a, String b, String c){
+    public DosDatos(String a, String b, String c, Integer d){
     
         strDato1 = a;
         strDato2 = b;
         strDato3 = c;
+        intComponente = d;
         
     }
-            
+
+    public Integer getIntComponente() {
+        return intComponente;
+    }
+
+    public void setIntComponente(Integer intComponente) {
+        this.intComponente = intComponente;
+    }
+    
+    
     public String getStrDato1() {
         return strDato1;
     }

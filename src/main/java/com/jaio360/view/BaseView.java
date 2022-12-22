@@ -44,7 +44,7 @@ public abstract class BaseView extends VelocityViewServlet implements Serializab
             }
 
         } catch (MissingResourceException e) {
-            logBase.error(e);
+            logBase.error(e.getLocalizedMessage(), e);
             return key;
         }
         return result;
@@ -72,14 +72,14 @@ public abstract class BaseView extends VelocityViewServlet implements Serializab
                 FacesContext.getCurrentInstance().addMessage(null, message);
 
                 if (Utilitarios.noEsNuloOVacio(e)) {
-                    log.error(e);
+                    log.error(e.getLocalizedMessage(),e);
                 }
             } else {
                 FacesMessage message = new FacesMessage(severity, key, null);
                 FacesContext.getCurrentInstance().addMessage(null, message);
             }
         } catch (Exception ex) {
-            logBase.error(ex);
+            logBase.error(ex.getLocalizedMessage() ,ex);
             mostrarError(ex);
         }
     }
@@ -95,7 +95,7 @@ public abstract class BaseView extends VelocityViewServlet implements Serializab
                 FacesContext.getCurrentInstance().addMessage(null, message);
             }
         } catch (Exception ex) {
-            logBase.error(ex);
+            logBase.error(ex.getLocalizedMessage(),ex);
             mostrarError(ex);
         }
     }
@@ -111,7 +111,7 @@ public abstract class BaseView extends VelocityViewServlet implements Serializab
                 FacesContext.getCurrentInstance().addMessage(null, message);
             }
         } catch (Exception ex) {
-            logBase.error(ex);
+            logBase.error(ex.getLocalizedMessage(), ex);
             mostrarError(ex);
         }
     }
@@ -127,7 +127,7 @@ public abstract class BaseView extends VelocityViewServlet implements Serializab
                 FacesContext.getCurrentInstance().addMessage(null, message);
             }
         } catch (Exception ex) {
-            logBase.error(ex);
+            logBase.error(ex.getLocalizedMessage(), ex);
             mostrarError(ex);
         }
     }
@@ -143,7 +143,7 @@ public abstract class BaseView extends VelocityViewServlet implements Serializab
                 FacesContext.getCurrentInstance().addMessage(null, message);
             }
         } catch (Exception ex) {
-            logBase.error(ex);
+            logBase.error(ex.getLocalizedMessage() ,ex);
             mostrarError(ex);
         }
     }
@@ -159,7 +159,7 @@ public abstract class BaseView extends VelocityViewServlet implements Serializab
                 FacesContext.getCurrentInstance().addMessage(null, message);
             }
         } catch (Exception ex) {
-            logBase.error(ex);
+            logBase.error(ex.getLocalizedMessage() ,ex);
             mostrarError(ex);
         }
     }
@@ -175,7 +175,7 @@ public abstract class BaseView extends VelocityViewServlet implements Serializab
                 FacesContext.getCurrentInstance().addMessage(null, message);
             }
         } catch (Exception ex) {
-            logBase.error(ex);
+            logBase.error(ex.getLocalizedMessage() ,ex);
             mostrarError(ex);
         }
     }
@@ -191,7 +191,7 @@ public abstract class BaseView extends VelocityViewServlet implements Serializab
                 FacesContext.getCurrentInstance().addMessage(null, message);
             }
         } catch (Exception ex) {
-            logBase.error(ex);
+            logBase.error(ex.getLocalizedMessage() ,ex);
             mostrarError(ex);
         }
     }
@@ -207,7 +207,7 @@ public abstract class BaseView extends VelocityViewServlet implements Serializab
                 FacesContext.getCurrentInstance().addMessage(null, message);
             }
         } catch (Exception ex) {
-            logBase.error(ex);
+            logBase.error(ex.getLocalizedMessage() ,ex);
             mostrarError(ex);
         }
     }
@@ -217,7 +217,7 @@ public abstract class BaseView extends VelocityViewServlet implements Serializab
             FacesMessage message = new FacesMessage(FATAL, msg("error.was.occurred", null), null);
             FacesContext.getCurrentInstance().addMessage(null, message);
         } catch (Exception ex) {
-            logBase.error(ex);
+            logBase.error(ex.getLocalizedMessage() ,ex);
         }
     }
 
@@ -225,9 +225,9 @@ public abstract class BaseView extends VelocityViewServlet implements Serializab
         try {
             FacesMessage message = new FacesMessage(FATAL, msg("error.was.occurred", null), null);
             FacesContext.getCurrentInstance().addMessage(null, message);
-            log.error(e);
+            log.error(e.getLocalizedMessage() ,e);
         } catch (Exception ex) {
-            logBase.error(ex);
+            logBase.error(ex.getLocalizedMessage() ,ex);
         }
     }
 

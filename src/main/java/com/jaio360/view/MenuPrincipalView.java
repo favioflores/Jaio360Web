@@ -139,8 +139,8 @@ public class MenuPrincipalView extends BaseView implements Serializable {
             agregarItem("", "welcome.jsf", "pi pi-fw pi-home", menuPrincipal);
             DefaultSubMenu usuarios = agregarMenu(msg("users"), "pi pi-users", menuPrincipal);
             agregarItem(msg("actualizar.mis.datos"), "admProfile.jsf", "", usuarios);
-            agregarItem(msg("user.guide"), "userGuide.jsf", "pi pi-file-pdf", menuPrincipal);
-            agregarItem("", "upgrades.jsf", "pi pi-cloud-upload", menuPrincipal);
+            //agregarItem(msg("user.guide"), "userGuide.jsf", "pi pi-file-pdf", menuPrincipal);
+            //agregarItem("", "upgrades.jsf", "pi pi-cloud-upload", menuPrincipal);
         }
 
     }

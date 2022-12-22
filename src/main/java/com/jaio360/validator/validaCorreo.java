@@ -27,13 +27,13 @@ public class validaCorreo implements Validator {
         }
          
         if(!pattern.matcher(value.toString().trim()).matches()) {
-            throw new ValidatorException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Debe ingresar un correo electronico válido", null));
+            throw new ValidatorException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Debe ingresar un correo electrónico válido", null));
         }
     }
     
     public String valida(Object value) throws ValidatorException {
         if(Utilitarios.esNuloOVacio(value)) {
-            return "vacio";
+            return "vacío";
         }
          
         if(!pattern.matcher(value.toString().trim()).matches()) {
@@ -44,11 +44,11 @@ public class validaCorreo implements Validator {
     
     public String validate(Object value) throws ValidatorException {
         if(Utilitarios.esNuloOVacio(value)) {
-            return "Esta vacio";
+            return "Está vacío";
         }
          
         if(!pattern.matcher(value.toString().trim()).matches()) {
-            return "No es un correo electronico";
+            return "No es un correo electrónico";
         }
         return null;
     }

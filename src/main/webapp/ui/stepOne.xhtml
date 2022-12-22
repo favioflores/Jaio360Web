@@ -246,6 +246,25 @@
                                                      detail="#{msg['step1.detail.label']}" 
                                                      style="width: 100%"/>
                                     <p:spacer/>
+                                    <h:panelGrid columns="4">
+                                        <p:commandButton value="#{msg['export.xls']}" styleClass="mr-2 mb-2">
+                                            <p:dataExporter type="xls" target="tblErrorAvan" fileName="#{msg['name.file.error.list.downloaded']}"/>
+                                        </p:commandButton>
+
+                                        <p:commandButton value="#{msg['export.xlsx']}" styleClass="mr-2 mb-2">
+                                            <p:dataExporter type="xlsxstream" target="tblErrorAvan" fileName="#{msg['name.file.error.list.downloaded']}"/>
+                                        </p:commandButton>
+
+                                        <p:commandButton value="#{msg['export.csv']}" styleClass="mr-2 mb-2">
+                                            <p:dataExporter type="csv" target="tblErrorAvan" fileName="#{msg['name.file.error.list.downloaded']}" />
+                                        </p:commandButton>
+
+                                        <p:commandButton value="#{msg['export.xml']}" styleClass="mr-2 mb-2">
+                                            <p:dataExporter type="xml" target="tblErrorAvan" fileName="#{msg['name.file.error.list.downloaded']}"/>
+                                        </p:commandButton>
+
+                                    </h:panelGrid>
+
                                     <p:dataTable 
                                         id="tblErrorAvan"
                                         widgetVar="tblErrorAvan"
@@ -270,17 +289,14 @@
                                             #{msg['step1.errores.encontrados']} #{evaluadosView.lstErrorAvan.size()}
                                         </f:facet>
 
-                                        <p:column style="width: 20px;">
-                                            <f:facet name="header">
-                                                <h:outputText value="#" />
-                                            </f:facet>
+                                        <p:column style="width: 20px;" headerText="#" exportHeaderValue="#{msg['number']}" >
                                             <h:outputText 
                                                 value="#{index + 1}" />
                                         </p:column> 
                                         <p:column headerText="#{msg['description']}">
                                             <h:outputText value="#{err.strDesc}" />
                                         </p:column>                      
-                                        <p:column headerText="#{msg['status']}">
+                                        <p:column headerText="#{msg['status']}" exportable="false">
                                             <p:tag value="#{msg['step1.please.resolve']}" severity="danger" />
                                         </p:column>
 

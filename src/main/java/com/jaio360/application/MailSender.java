@@ -11,6 +11,7 @@ import com.jaio360.orm.Elemento;
 import com.jaio360.orm.Notificaciones;
 import com.jaio360.utils.Constantes;
 import com.jaio360.utils.Utilitarios;
+import com.sun.media.jfxmedia.logging.Logger;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.ArrayList;
@@ -66,33 +67,27 @@ public class MailSender extends Thread implements Serializable {
 
                 if (lstCorreos.isEmpty()) {
 
-                    log.debug("Buscando mails");
-
                     /* Busca nuevos correos */
                     lstCorreos = objNotificacionesDAO.obtieneNotificaciones(new Date(), 20);
 
                     if (!lstCorreos.isEmpty()) {
-
-                        log.debug("Notificaciones encontradas " + lstCorreos.size());
 
                         realizarEnvios(lstCorreos);
 
                         lstCorreos.clear();
 
                     }
-                    this.sleep(30000);
+                    MailSender.sleep(30000);
 
                 } else {
 
                     log.debug("Ocurrio un error");
 
                     this.stop();
-
-                    /* Enviar Alerta por BD */
                 }
 
             } catch (InterruptedException ex) {
-                log.error(ex);
+                log.error(ex.getLocalizedMessage(), ex);
             }
         }
 
@@ -106,27 +101,18 @@ public class MailSender extends Thread implements Serializable {
 
         while (itLstCorreos.hasNext()) {
 
-            if (transport == null || !transport.isConnected()) {
-                conectarCorreoExterno();
-                break;
-            }
+            Object[] obj = (Object[]) itLstCorreos.next();
 
-            if (transport.isConnected()) {
+            Notificaciones objNotificaciones = (Notificaciones) obj[0];
 
-                Object[] obj = (Object[]) itLstCorreos.next();
+            boEnvioCorrecto = enviaNotificaciones(objNotificaciones, (List<Destinatarios>) obj[1]);
 
-                Notificaciones objNotificaciones = (Notificaciones) obj[0];
-
-                boEnvioCorrecto = enviaNotificaciones(objNotificaciones, (List<Destinatarios>) obj[1]);
-
-                if (boEnvioCorrecto) {
-                    objNotificaciones.setNoIdEstado(Constantes.INT_ET_ESTADO_NOTIFICACION_ENVIADO);
-                    objNotificaciones.setNoFeEnvio(new java.sql.Date(new Date().getTime()));
-                    objNotificacionesDAO.actualizaNotificacion(objNotificaciones);
-                } else {
-                    this.sleep(30000);
-                }
-
+            if (boEnvioCorrecto) {
+                objNotificaciones.setNoIdEstado(Constantes.INT_ET_ESTADO_NOTIFICACION_ENVIADO);
+                objNotificaciones.setNoFeEnvio(new java.sql.Date(new Date().getTime()));
+                objNotificacionesDAO.actualizaNotificacion(objNotificaciones);
+            } else {
+                MailSender.sleep(30000);
             }
 
         }
@@ -137,20 +123,38 @@ public class MailSender extends Thread implements Serializable {
 
         try {
 
+            ElementoDAO objElementoDAO = new ElementoDAO();
+
+            Elemento objElementoDominio = objElementoDAO.obtenElemento(Constantes.INT_ET_SENDER_DOMINIO);
+            Elemento objElementoPuerto = objElementoDAO.obtenElemento(Constantes.INT_ET_SENDER_PUERTO_ENVIO);
+            Elemento objElementoUsuario = objElementoDAO.obtenElemento(Constantes.INT_ET_SENDER_USUARIO);
+            Elemento objElementoContrasenia = objElementoDAO.obtenElemento(Constantes.INT_ET_SENDER_CONTRASEÑA);
+
+            strDominio = objElementoDominio.getElTxValor1();
+            strPuerto = objElementoPuerto.getElTxValor1();
+            strUsuario = objElementoUsuario.getElTxValor1();
+            strContraseña = objElementoContrasenia.getElTxValor1();
+
+            Properties props = new Properties();
+
+            props.put("mail.transport.protocol", "smtp");
+            props.put("mail.smtp.port", strPuerto);
+            props.put("mail.smtp.starttls.enable", "true");
+            props.put("mail.smtp.auth", "true");
+
+            Session session = Session.getDefaultInstance(props, null);
+
             byte[] bdata = objNotificaciones.getNoTxMensaje();
             String mensaje = new String(Utilitarios.decodeUTF8(bdata));
             String subject = objNotificaciones.getNoTxAsunto();
 
             MimeMessage message = new MimeMessage(session);
 
-            message.setSubject(subject , "UTF-8");
+            message.setSubject(subject, "UTF-8");
+            
+            message.setFrom(new InternetAddress("favio.flores.olaza@gmail.com", "JAIO 360"));
 
-            message.setFrom(new InternetAddress(strUsuario, "JAIO 360 Notificaciones"));
-
-            Iterator itLstDestinatarios = lstDestinatarios.iterator();
-
-            while (itLstDestinatarios.hasNext()) {
-                Destinatarios objDestinatarios = (Destinatarios) itLstDestinatarios.next();
+            for (Destinatarios objDestinatarios : lstDestinatarios) {
                 message.addRecipient(Message.RecipientType.TO, new InternetAddress(objDestinatarios.getDeTxMail()));
             }
 
@@ -175,28 +179,24 @@ public class MailSender extends Thread implements Serializable {
             MimeMultipart content = new MimeMultipart("related");
             message.setContent(content, "UTF-8");
             content.addBodyPart(wrap);
-            /*
-            if (objNotificaciones.getNoAdjunto() != null) {
-                BodyPart adjunto = new MimeBodyPart();
-                adjunto.setDataHandler(new DataHandler(new FileDataSource(objNotificaciones.getNoAdjunto())));
-                adjunto.setFileName(adjunto.getDataHandler().getName());
-                cover.addBodyPart(adjunto);
-            }
-             */
 
             // SEND THE MESSAGE
             message.setSentDate(new Date());
 
-            this.transport.sendMessage(message, message.getAllRecipients());
+            Transport transport = session.getTransport("smtp");
 
-            return true;
+            transport.connect(strDominio, Integer.parseInt(strPuerto), strUsuario, strContraseña);
+
+            transport.sendMessage(message, message.getAllRecipients());
+
+            transport.close();
 
         } catch (Exception e) {
-            log.error(e);
+            log.error(e.getLocalizedMessage(), e);
             return false;
         }
 
-        //return true;
+        return true;
     }
 
     private void conectarCorreoExterno() {
@@ -216,36 +216,24 @@ public class MailSender extends Thread implements Serializable {
             strContraseña = objElementoContrasenia.getElTxValor1();
 
             Properties props = new Properties();
-            props.put("mail.smtp.host", strDominio);
-            props.put("mail.smtp.socketFactory.port", strPuerto);
-            props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-            props.put("mail.smtp.auth", "true");
+
+            props.put("mail.transport.protocol", "smtp");
             props.put("mail.smtp.port", strPuerto);
-            props.put("mail.smtp.user", strUsuario);
-            props.setProperty("mail.smtp.starttls.enable", "true");
+            props.put("mail.smtp.starttls.enable", "true");
+            props.put("mail.smtp.auth", "true");
 
-            //Session se = Session.getDefaultInstance(props, null);
-            Session se = Session.getDefaultInstance(props,
-                    new javax.mail.Authenticator() {
-                protected PasswordAuthentication getPasswordAuthentication() {
-                    return new PasswordAuthentication(strUsuario, strContraseña);
-                }
-            });
-            //se.setDebug(true);
+            Session session = Session.getDefaultInstance(props, null);
 
-            //Transport.send(message);
-            Transport tr = se.getTransport("smtp");
+            Transport transport = session.getTransport("smtp");
 
-            //tr.connect(strUsuario, strContraseña);
+            transport.connect(strDominio, Integer.parseInt(strPuerto), strUsuario, strContraseña);
 
-            tr.connect();
-            log.debug("Conectado : " + tr.isConnected());
+            this.session = session;
 
-            this.session = se;
-            this.transport = tr;
+            this.transport = transport;
 
         } catch (Exception e) {
-            log.error(e);
+            log.error(e.getLocalizedMessage(), e);
         }
 
     }

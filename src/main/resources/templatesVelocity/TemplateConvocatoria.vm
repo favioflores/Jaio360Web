@@ -197,9 +197,6 @@
                 </td>
             </tr>
             <tr>
-                <td height="60"><div class="divDatoEnvio">$TEMPLATECONVOCATORIAFOOTER</div></td>
-            </tr>
-            <tr>
                 <td height="60"><div class="divDatoEnvio">Copyright © 2022 JAIO360</div></td>
             </tr>
         </table>

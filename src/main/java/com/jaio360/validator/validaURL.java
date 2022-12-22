@@ -48,7 +48,7 @@ public class validaURL implements Validator {
         }
          
         if(!pattern.matcher(value.toString().trim()).matches()) {
-            return "No es un URL";
+            return " ";
         }
         return null;
     }

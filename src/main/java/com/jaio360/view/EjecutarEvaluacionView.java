@@ -744,12 +744,13 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
                         objRelacionParticipante.setRpIdEstado(Constantes.INT_ET_ESTADO_RELACION_EDO_EDOR_TERMINADO);
                         objRelacionParticipanteDAO.actualizaRelacionParticipante(objRelacionParticipante);
 
-                    }
+                    } else {
 
-                    ParticipanteDAO objParticipanteDAO = new ParticipanteDAO();
-                    Participante objParticipante = objParticipanteDAO.obtenParticipante(objEvaluacionesXEjecutar.getIdParticipante());
-                    objParticipante.setPaIdEstado(Constantes.INT_ET_ESTADO_EVALUADO_TERMINADO);
-                    objParticipanteDAO.actualizaParticipante(objParticipante);
+                        ParticipanteDAO objParticipanteDAO = new ParticipanteDAO();
+                        Participante objParticipante = objParticipanteDAO.obtenParticipante(objEvaluacionesXEjecutar.getIdParticipante());
+                        objParticipante.setPaIdEstado(Constantes.INT_ET_ESTADO_EVALUADO_TERMINADO);
+                        objParticipanteDAO.actualizaParticipante(objParticipante);
+                    }
 
                 }
 

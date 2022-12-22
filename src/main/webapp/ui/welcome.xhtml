@@ -62,7 +62,7 @@
                                   menuPrincipal.usuarioInfo.boEsUsuarioMaestro == false) and
                                   listasPrincipalView.cantidadLstEvaluaciones==0 }">
                         <p>#{msg['bienvenida.agradecimiento']}</p>
-                        <p:commandButton id="btcerrarSesion" widgetVar="btcerrarSesion" actionListener="#{usuarioSesion.cerrarSesion}" value="#{msg['cabecera.cerrar.sesionCerrar']}" >
+                        <p:commandButton id="btcerrarSesion" widgetVar="btcerrarSesion" actionListener="#{usuarioSesion.cerrarSesion}" value="#{msg['cabecera.cerrar.sesion']}" >
                             <p:confirm header="#{msg['cabecera.logout.confirmacion.title']}" message="#{msg['cabecera.logout.confirmacion.mensaje']}" icon="pi pi-info-circle" /> 
                         </p:commandButton>
                         <p:confirmDialog global="true" >
@@ -103,7 +103,7 @@
                                 value="#{index + 1}" />
                         </p:column> 
                         <p:column headerText="#{msg['type']}" style="width: 100px;">
-                            <p:outputLabel value="#{eva.blGrupal==false?msg['individual']:msg['grupal']}"/>
+                            <p:outputLabel value="#{eva.blGrupal==false?msg['type.individual']:msg['type.grupal']}"/>
                         </p:column>
 
                         <p:column headerText="Proyecto"> 

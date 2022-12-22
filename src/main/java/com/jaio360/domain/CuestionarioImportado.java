@@ -1,15 +1,22 @@
 package com.jaio360.domain;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
-public class CuestionarioImportado  implements Serializable {
+public class CuestionarioImportado implements Serializable {
 
     private Integer idCuestionario;
     private String strDescCuestionario;
     private List<Categorias> lstCategorias;
-    private List<String> lstComentarios;
-    private List<String> lstPreguntasAbiertas;
+    private List<ComentarioBean> lstComentarios;
+    private List<PreguntaAbiertaBean> lstPreguntasAbiertas;
+
+    public CuestionarioImportado() {
+        this.lstCategorias = new ArrayList<>();
+        this.lstComentarios = new ArrayList<>();
+        this.lstPreguntasAbiertas = new ArrayList<>();
+    }
 
     public Integer getIdCuestionario() {
         return idCuestionario;
@@ -19,7 +26,6 @@ public class CuestionarioImportado  implements Serializable {
         this.idCuestionario = idCuestionario;
     }
 
-    
     public String getStrDescCuestionario() {
         return strDescCuestionario;
     }
@@ -36,19 +42,19 @@ public class CuestionarioImportado  implements Serializable {
         this.lstCategorias = lstCategorias;
     }
 
-    public List<String> getLstComentarios() {
+    public List<ComentarioBean> getLstComentarios() {
         return lstComentarios;
     }
 
-    public void setLstComentarios(List<String> lstComentarios) {
+    public void setLstComentarios(List<ComentarioBean> lstComentarios) {
         this.lstComentarios = lstComentarios;
     }
 
-    public List<String> getLstPreguntasAbiertas() {
+    public List<PreguntaAbiertaBean> getLstPreguntasAbiertas() {
         return lstPreguntasAbiertas;
     }
 
-    public void setLstPreguntasAbiertas(List<String> lstPreguntasAbiertas) {
+    public void setLstPreguntasAbiertas(List<PreguntaAbiertaBean> lstPreguntasAbiertas) {
         this.lstPreguntasAbiertas = lstPreguntasAbiertas;
     }
 

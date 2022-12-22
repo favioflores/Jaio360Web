@@ -161,7 +161,7 @@
                         <div class="p-field p-col-12 p-md-6">
                             <p:card>
                                 <f:facet name="title">
-                                    #{msg['step1.upload.configuration']}
+                                    #{msg['step2.upload.configuration']}
                                 </f:facet>
                                 <div class="p-field">
 
@@ -302,7 +302,7 @@
                                             <h:outputText value="#{cue.strDescCuestionario}" />
                                         </p:column> 
                                         <p:column style="width: 100px;" headerText="#{msg['step2.view.content']}" >
-                                            <p:commandButton icon="pi pi-eye" update="@form" styleClass="rounded-button ui-button-outlined"  actionListener="#{importarCuestionariosView.verElementos(cue.idCuestionario)}" />
+                                            <p:commandButton icon="pi pi-eye" update="@form" styleClass="rounded-button ui-button-outlined"  actionListener="#{importarCuestionariosView.verElementos(index)}" />
                                         </p:column> 
 
                                     </p:dataTable>
@@ -311,9 +311,9 @@
                             </div>
 
                             <div class="p-field p-col-12 p-md-8">
-
-                                <p:card rendered="#{importarCuestionariosView.lstElementosDelCuestionarios.size()>0}">
-
+<!--
+                                <p:<card rendered="#{importarCuestionariosView.lstElementosDelCuestionarios.size()>0}">
+                                    
                                     <p:dataTable 
                                         rendered="#{importarCuestionariosView.lstElementosDelCuestionarios!=null}"
                                         id="tblCuestionarioImportado"
@@ -354,15 +354,16 @@
 
 
                                 </p:card>
+                                -->
 
-                                <p:card rendered="#{importarCuestionariosView.lstElementoCuestionario.size()>0}">
+                                <p:card rendered="#{importarCuestionariosView.lstElementosDelCuestionarios.size()>0}">
 
                                     <p:dataTable 
-                                        rendered="#{importarCuestionariosView.lstElementoCuestionario!=null}"
+                                        rendered="#{importarCuestionariosView.lstElementosDelCuestionarios!=null}"
                                         id="lstElementoCuestionario"
                                         var="cues"
                                         widgetVar="lstElementoCuestionario"
-                                        value="#{importarCuestionariosView.lstElementoCuestionario}" 
+                                        value="#{importarCuestionariosView.lstElementosDelCuestionarios}" 
                                         rows="50"
                                         paginator="true" 
                                         size="small"
@@ -383,7 +384,7 @@
                                         </f:facet>  
 
                                         <p:column headerText="#{msg['step2.element.type']}" style="width: 160px;" >
-                                            <p:button value="#{cues.strTipo}" style="height: 100%;" styleClass="ui-button-#{cues.strColor}" disabled="true" />
+                                            <p:button value="#{cues.strDato1}" style="height: 100%;" styleClass="ui-button-#{cues.strDato3}" disabled="true" />
                                         </p:column>
 
                                         <p:column style="width: 60px;">
@@ -397,10 +398,10 @@
                                         <p:column headerText="#{msg['description']}" >
                                             <p:cellEditor>
                                                 <f:facet name="output">
-                                                    <p:outputLabel value="#{cues.strDescripcion}"/>
+                                                    <p:outputLabel value="#{cues.strDato2}"/>
                                                 </f:facet>
                                                 <f:facet name="input">
-                                                    <p:inputTextarea value="#{cues.strDescripcion}" />
+                                                    <p:inputTextarea value="#{cues.strDato2}" />
                                                 </f:facet>
                                             </p:cellEditor>
                                         </p:column>
@@ -435,7 +436,7 @@
                     <c:if test="#{importarCuestionariosView.blExistPrevImport and importarCuestionariosView.lstCuestionariosImportados.size()>0}">
                         <div class="ui-fluid p-formgrid p-grid">
                             <div class="p-field p-col-12 p-md-12">
-                                <!-- FAFO FALTA UNA CONDICION PARA NO BORRAR EL CUESTIONARIO SI YA ESTÁ ASIGNADO A UN EVALUADO -->
+                                
                                 <p:commandButton value="#{msg['step2.delete.evaluation']}"
                                                  type="submit"
                                                  immediate="true"

@@ -397,7 +397,7 @@ public class RedactarMensajesView extends BaseView implements Serializable {
             context.put("TEMPLATECONVOCATORIALABELUSER", msg("template.convocatoria.label.user"));
             context.put("TEMPLATECONVOCATORIALABELPASSWORD", msg("template.convocatoria.label.password"));
             context.put("TEMPLATECONVOCATORIALABELSINGIN", msg("template.convocatoria.label.singin"));
-            context.put("TEMPLATECONVOCATORIAFOOTER", msg("template.convocatoria.footer"));
+            //context.put("TEMPLATECONVOCATORIAFOOTER", msg("template.convocatoria.footer"));
 
             context.put("TITULO", strTituloConvocatoria);
             context.put("PARRAFO", strParrafoConvocatoria);
