@@ -36,6 +36,7 @@ public class Constantes {
     
     public static Integer INT_ESTADO_ELEMENTO_ACTIVO = 1;
     public static Integer INT_ET_ESTADO_NOTIFICACION_ENVIADO = 55;
+    public static Integer INT_ET_ESTADO_NOTIFICACION_CON_ERROR = 211;
     public static Integer INT_ET_ESTADO_NOTIFICACION_PENDIENTE = 56;
     public static Integer INT_ET_ESTADO_NOTIFICACION_ENVIANDO = 57;
     public static Integer INT_ET_SENDER_DOMINIO = 58;
@@ -43,6 +44,7 @@ public class Constantes {
     public static Integer INT_ET_SENDER_PUERTO_RECEPCION = 60;
     public static Integer INT_ET_SENDER_USUARIO = 61;
     public static Integer INT_ET_SENDER_CONTRASEÑA = 62;
+    public static Integer INT_ET_SENDER_FROM = 210;
     
     //public static Integer INT_ET_TIPO_USUARIO_ADMINISTRADOR = 3;
     public static Integer INT_ET_TIPO_USUARIO_MANAGING_DIRECTOR = 3;

@@ -154,11 +154,6 @@
         <load-on-startup>2</load-on-startup>
     </servlet>
     <servlet>
-        <servlet-name>mailSenderInit</servlet-name>
-        <servlet-class>com.jaio360.initial.MailSenderInit</servlet-class>
-        <load-on-startup>2</load-on-startup>
-    </servlet>
-    <servlet>
         <servlet-name>Faces Servlet</servlet-name>
         <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
     </servlet>

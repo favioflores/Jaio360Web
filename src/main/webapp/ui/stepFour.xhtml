@@ -112,13 +112,15 @@
                                         </div>
                                         <div class="p-field">
                                             <p:commandButton value="#{msg['preview']}" styleClass="ui-button-warning" process="cardConvocatoriaDatos" update="@form"
-                                                             icon="pi pi-eye" actionListener="#{redactarMensajesView.armarTemplateConvocatoria(true)}">
+                                                             icon="pi pi-eye" actionListener="#{redactarMensajesView.previewConvocatoria()}">
                                             </p:commandButton>
                                         </div>   
+                                        <!--
                                         <div class="p-field">
                                             <p:commandButton value="#{msg['save']}" process="cardConvocatoriaDatos" update="@form" icon="pi pi-save" actionListener="#{redactarMensajesView.guardarNotificacion(redactarMensajesView.ID_CONVOCATORIA)}">
                                             </p:commandButton>
                                         </div>
+                                        -->
                                     </p:card>
                                     <p:divider/>
                                     <p:card id="cardPruebaEnvioCorreo" >
@@ -233,7 +235,7 @@
                                         </div>
 
                                         <div class="p-field">
-                                            <p:commandButton value="#{msg['preview']}" styleClass="ui-button-warning" update="@form" icon="pi pi-eye" actionListener="#{redactarMensajesView.armarTemplateBienvenida(true)}">
+                                            <p:commandButton value="#{msg['preview']}" styleClass="ui-button-warning" update="@form" icon="pi pi-eye" actionListener="#{redactarMensajesView.previewBienvenida()}">
                                             </p:commandButton>
                                         </div>   
                                         <!--
@@ -242,11 +244,12 @@
                                             </p:commandButton>
                                         </div>   
                                         -->
+                                        <!--
                                         <div class="p-field">
                                             <p:commandButton value="#{msg['save']}" update="@form" icon="pi pi-save" actionListener="#{redactarMensajesView.guardarNotificacion(redactarMensajesView.ID_INSTRUCCIONES)}">
                                             </p:commandButton>
                                         </div>
-
+                                        -->
 
                                     </p:card>
                                 </div>
@@ -302,7 +305,7 @@
                                         </div>
 
                                         <div class="p-field">
-                                            <p:commandButton value="#{msg['preview']}" styleClass="ui-button-warning" update="@form" icon="pi pi-eye" actionListener="#{redactarMensajesView.armarTemplateAgradecimiento(true)}">
+                                            <p:commandButton value="#{msg['preview']}" styleClass="ui-button-warning" update="@form" icon="pi pi-eye" actionListener="#{redactarMensajesView.previewAgradecimiento()}">
                                             </p:commandButton>
                                         </div>   
                                         <!--
@@ -311,10 +314,12 @@
                                             </p:commandButton>
                                         </div>   
                                         -->
+                                        <!--
                                         <div class="p-field">
                                             <p:commandButton value="#{msg['save']}" update="@form" icon="pi pi-save" actionListener="#{redactarMensajesView.guardarNotificacion(redactarMensajesView.ID_AGRADECIMIENTO)}">
                                             </p:commandButton>
                                         </div>
+                                        -->
 
 
                                     </p:card>

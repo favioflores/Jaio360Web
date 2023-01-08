@@ -20,6 +20,7 @@ public class Notificaciones  implements java.io.Serializable {
      private int noIdEstado;
      private String noTxAsunto;
      private byte[] noTxMensaje;
+     private String noTxError;
      private String noAdjunto;
      private Set destinatarioses = new HashSet(0);
 
@@ -118,8 +119,13 @@ public class Notificaciones  implements java.io.Serializable {
         this.destinatarioses = destinatarioses;
     }
 
+    public String getNoTxError() {
+        return noTxError;
+    }
 
-
+    public void setNoTxError(String noTxError) {
+        this.noTxError = noTxError;
+    }
 
 }
 

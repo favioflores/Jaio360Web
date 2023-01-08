@@ -11,15 +11,12 @@ import com.jaio360.orm.Elemento;
 import com.jaio360.orm.Notificaciones;
 import com.jaio360.utils.Constantes;
 import com.jaio360.utils.Utilitarios;
-import com.sun.media.jfxmedia.logging.Logger;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import javax.mail.Message;
-import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
@@ -36,90 +33,41 @@ import org.apache.commons.logging.LogFactory;
  */
 public class MailSender extends Thread implements Serializable {
 
-    private List lstCorreos = new ArrayList();
-
     private Log log = LogFactory.getLog(MailSender.class);
 
     private NotificacionesDAO objNotificacionesDAO;
-
-    private EHCacheManager cache;
-
-    private Transport transport;
-
-    private Session session;
-
-    String strDominio;
-    String strPuerto;
-    String strUsuario;
-    String strContraseña;
+    private Integer idProyecto;
 
     public MailSender() {
+    }
+
+    public MailSender(Integer idProyecto) {
         objNotificacionesDAO = new NotificacionesDAO();
-        cache = new EHCacheManager();
+        this.idProyecto = idProyecto;
     }
 
     @Override
     public void run() {
 
-        while (true) {
+        List lstNotificaciones = objNotificacionesDAO.obtieneNotificaciones(this.idProyecto);
 
-            try {
+        Iterator itLstNotificaciones = lstNotificaciones.iterator();
 
-                if (lstCorreos.isEmpty()) {
-
-                    /* Busca nuevos correos */
-                    lstCorreos = objNotificacionesDAO.obtieneNotificaciones(new Date(), 20);
-
-                    if (!lstCorreos.isEmpty()) {
-
-                        realizarEnvios(lstCorreos);
-
-                        lstCorreos.clear();
-
-                    }
-                    MailSender.sleep(30000);
-
-                } else {
-
-                    log.debug("Ocurrio un error");
-
-                    this.stop();
-                }
-
-            } catch (InterruptedException ex) {
-                log.error(ex.getLocalizedMessage(), ex);
-            }
+        while (itLstNotificaciones.hasNext()) {
+            Object[] obj = (Object[]) itLstNotificaciones.next();
+            enviaCorreo((Notificaciones) obj[0], (List<Destinatarios>) obj[1]);
         }
 
     }
 
-    private void realizarEnvios(List lstCorreos) throws InterruptedException {
-
-        Iterator itLstCorreos = lstCorreos.iterator();
-
-        boolean boEnvioCorrecto = true;
-
-        while (itLstCorreos.hasNext()) {
-
-            Object[] obj = (Object[]) itLstCorreos.next();
-
-            Notificaciones objNotificaciones = (Notificaciones) obj[0];
-
-            boEnvioCorrecto = enviaNotificaciones(objNotificaciones, (List<Destinatarios>) obj[1]);
-
-            if (boEnvioCorrecto) {
-                objNotificaciones.setNoIdEstado(Constantes.INT_ET_ESTADO_NOTIFICACION_ENVIADO);
-                objNotificaciones.setNoFeEnvio(new java.sql.Date(new Date().getTime()));
-                objNotificacionesDAO.actualizaNotificacion(objNotificaciones);
-            } else {
-                MailSender.sleep(30000);
-            }
-
-        }
-
+    public void enviarListaDeNotificacionesProyecto(Integer idProyecto) {
+        MailSender thread = new MailSender(idProyecto);
+        thread.start();
     }
 
-    public boolean enviaNotificaciones(Notificaciones objNotificaciones, List<Destinatarios> lstDestinatarios) {
+    private void enviaCorreo(Notificaciones objNotificaciones, List<Destinatarios> lstDestinatarios) {
+
+        boolean blSended = false;
 
         try {
 
@@ -129,11 +77,12 @@ public class MailSender extends Thread implements Serializable {
             Elemento objElementoPuerto = objElementoDAO.obtenElemento(Constantes.INT_ET_SENDER_PUERTO_ENVIO);
             Elemento objElementoUsuario = objElementoDAO.obtenElemento(Constantes.INT_ET_SENDER_USUARIO);
             Elemento objElementoContrasenia = objElementoDAO.obtenElemento(Constantes.INT_ET_SENDER_CONTRASEÑA);
+            Elemento objElementoFrom = objElementoDAO.obtenElemento(Constantes.INT_ET_SENDER_FROM);
 
-            strDominio = objElementoDominio.getElTxValor1();
-            strPuerto = objElementoPuerto.getElTxValor1();
-            strUsuario = objElementoUsuario.getElTxValor1();
-            strContraseña = objElementoContrasenia.getElTxValor1();
+            String strDominio = objElementoDominio.getElTxValor1();
+            String strPuerto = objElementoPuerto.getElTxValor1();
+            String strUsuario = objElementoUsuario.getElTxValor1();
+            String strContraseña = objElementoContrasenia.getElTxValor1();
 
             Properties props = new Properties();
 
@@ -145,14 +94,14 @@ public class MailSender extends Thread implements Serializable {
             Session session = Session.getDefaultInstance(props, null);
 
             byte[] bdata = objNotificaciones.getNoTxMensaje();
-            String mensaje = new String(Utilitarios.decodeUTF8(bdata));
+            String mensaje = Utilitarios.decodeUTF8(bdata);
             String subject = objNotificaciones.getNoTxAsunto();
 
             MimeMessage message = new MimeMessage(session);
 
             message.setSubject(subject, "UTF-8");
-            
-            message.setFrom(new InternetAddress("favio.flores.olaza@gmail.com", "JAIO 360"));
+
+            message.setFrom(new InternetAddress(objElementoFrom.getElTxValor1(), objElementoFrom.getElTxDescripcion()));
 
             for (Destinatarios objDestinatarios : lstDestinatarios) {
                 message.addRecipient(Message.RecipientType.TO, new InternetAddress(objDestinatarios.getDeTxMail()));
@@ -191,49 +140,21 @@ public class MailSender extends Thread implements Serializable {
 
             transport.close();
 
-        } catch (Exception e) {
-            log.error(e.getLocalizedMessage(), e);
-            return false;
-        }
-
-        return true;
-    }
-
-    private void conectarCorreoExterno() {
-
-        try {
-
-            ElementoDAO objElementoDAO = new ElementoDAO();
-
-            Elemento objElementoDominio = objElementoDAO.obtenElemento(Constantes.INT_ET_SENDER_DOMINIO);
-            Elemento objElementoPuerto = objElementoDAO.obtenElemento(Constantes.INT_ET_SENDER_PUERTO_ENVIO);
-            Elemento objElementoUsuario = objElementoDAO.obtenElemento(Constantes.INT_ET_SENDER_USUARIO);
-            Elemento objElementoContrasenia = objElementoDAO.obtenElemento(Constantes.INT_ET_SENDER_CONTRASEÑA);
-
-            strDominio = objElementoDominio.getElTxValor1();
-            strPuerto = objElementoPuerto.getElTxValor1();
-            strUsuario = objElementoUsuario.getElTxValor1();
-            strContraseña = objElementoContrasenia.getElTxValor1();
-
-            Properties props = new Properties();
-
-            props.put("mail.transport.protocol", "smtp");
-            props.put("mail.smtp.port", strPuerto);
-            props.put("mail.smtp.starttls.enable", "true");
-            props.put("mail.smtp.auth", "true");
-
-            Session session = Session.getDefaultInstance(props, null);
-
-            Transport transport = session.getTransport("smtp");
-
-            transport.connect(strDominio, Integer.parseInt(strPuerto), strUsuario, strContraseña);
-
-            this.session = session;
-
-            this.transport = transport;
+            blSended = true;
 
         } catch (Exception e) {
             log.error(e.getLocalizedMessage(), e);
+            objNotificaciones.setNoTxError(e.getMessage().length() > 500 ? e.getMessage().substring(0, 500) : e.getMessage());
+            blSended = false;
+        } finally {
+            if (blSended) {
+                objNotificaciones.setNoIdEstado(Constantes.INT_ET_ESTADO_NOTIFICACION_ENVIADO);
+            } else {
+                objNotificaciones.setNoIdEstado(Constantes.INT_ET_ESTADO_NOTIFICACION_CON_ERROR);
+            }
+            objNotificaciones.setNoFeEnvio(new java.sql.Date(new Date().getTime()));
+
+            objNotificacionesDAO.actualizaNotificacion(objNotificaciones);
         }
 
     }

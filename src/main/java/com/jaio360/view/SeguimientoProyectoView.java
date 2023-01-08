@@ -1,7 +1,7 @@
 package com.jaio360.view;
 
+import com.jaio360.application.MailSender;
 import com.jaio360.component.ExecutorBalanceMovement;
-import com.jaio360.dao.ContratoDAO;
 import com.jaio360.dao.CuestionarioDAO;
 import com.jaio360.dao.MensajeDAO;
 import com.jaio360.dao.NotificacionesDAO;
@@ -17,7 +17,6 @@ import com.jaio360.domain.EvaluacionesXEjecutar;
 import com.jaio360.domain.Evaluado;
 import com.jaio360.domain.ProyectoInfo;
 import com.jaio360.domain.RelacionEvaluadoEvaluador;
-import com.jaio360.orm.Contrato;
 import com.jaio360.orm.Cuestionario;
 import com.jaio360.orm.CuestionarioEvaluado;
 import com.jaio360.orm.HibernateUtil;
@@ -31,7 +30,6 @@ import com.jaio360.orm.ReferenciaMovimiento;
 import com.jaio360.orm.Relacion;
 import com.jaio360.orm.RelacionParticipante;
 import com.jaio360.orm.RelacionParticipanteId;
-import com.jaio360.orm.Tarifa;
 import com.jaio360.orm.TipoMovimiento;
 import com.jaio360.orm.Usuario;
 import com.jaio360.orm.UsuarioSaldo;
@@ -55,7 +53,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
-import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.ExternalContext;
@@ -68,11 +65,9 @@ import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.mapping.Set;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.UnselectEvent;
 import org.primefaces.model.DefaultStreamedContent;
@@ -134,6 +129,7 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
     private List<RelacionEvaluadoEvaluador> lstRelacionEvaluadoEvaluador;
 
     private StreamedContent fileIndividual;
+    private StreamedContent fileIndividualFisico;
 
     private Boolean flagDescargaFisico = Boolean.FALSE;
     private Boolean flagFiltrarRed = Boolean.FALSE;
@@ -141,6 +137,14 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
 
     private Integer idParametroElegido;
     private LinkedHashMap<String, String> mapItemsParametros;
+
+    public StreamedContent getFileIndividualFisico() {
+        return fileIndividualFisico;
+    }
+
+    public void setFileIndividualFisico(StreamedContent fileIndividualFisico) {
+        this.fileIndividualFisico = fileIndividualFisico;
+    }
 
     public Integer getIdParametroElegido() {
         return idParametroElegido;
@@ -587,7 +591,8 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
 
                         objCuestionario = objCuestionarioDAO.obtenCuestionarioXEvaluado(objParticipante.getPaIdParticipantePk());
 
-                        apto = true; break;
+                        apto = true;
+                        break;
                     }
                 }
             }
@@ -871,7 +876,7 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
                     Utilitarios.zipArchivosCualquiera(lstArchivos, salida);
                     InputStream stream = new FileInputStream(objFile.getAbsolutePath());
 
-                    fileIndividual = DefaultStreamedContent.builder()
+                    fileIndividualFisico = DefaultStreamedContent.builder()
                             .name(ZipName)
                             .contentType("application/zip")
                             .stream(() -> stream)
@@ -993,13 +998,13 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
             objEvaluacionesXEjecutar.setStrCorreoEvaluador(objRelacionEvaluadoEvaluador.getStrCorreoEvaluador());
             objEvaluacionesXEjecutar.setStrNombreEvaluado(objParticipante.getPaTxDescripcion());
             objEvaluacionesXEjecutar.setStrURLImagen(objParticipante.getPaTxImgUrl());
-            
-            if(objRelacionEvaluadoEvaluador.getStrCorreoEvaluador().equals(objParticipante.getPaTxCorreo())){
+
+            if (objRelacionEvaluadoEvaluador.getStrCorreoEvaluador().equals(objParticipante.getPaTxCorreo())) {
                 objEvaluacionesXEjecutar.setBlAutoevaluation(true);
-            }else{
+            } else {
                 objEvaluacionesXEjecutar.setBlAutoevaluation(false);
             }
-            
+
             redSeleccionada.getLstEvaluacionesXEjecutar().add(objEvaluacionesXEjecutar);
 
             HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
@@ -1107,6 +1112,8 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
             NotificacionesDAO objNotificacionesDAO = new NotificacionesDAO();
             try {
                 if (objNotificacionesDAO.guardaNotificacionesEvaluadores(lstRelacionEvaluadoEvaluador)) {
+                    MailSender objMailSender = new MailSender();
+                    objMailSender.enviarListaDeNotificacionesProyecto(Utilitarios.obtenerProyecto().getIntIdProyecto());
                     mostrarAlertaInfo("step5.sended.reminders.project");
                 } else {
                     mostrarAlertaFatal("error.was.occurred");
@@ -1134,6 +1141,9 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
             lstEvaluadoEvaluadors.add(objRelacionEvaluadoEvaluador);
 
             if (objNotificacionesDAO.guardaNotificacionesEvaluadores(lstEvaluadoEvaluadors)) {
+                MailSender objMailSender = new MailSender();
+                objMailSender.enviarListaDeNotificacionesProyecto(Utilitarios.obtenerProyecto().getIntIdProyecto());
+
                 mostrarAlertaInfo("step5.sended.reminder.project");
             } else {
                 mostrarAlertaFatal("error.was.occurred");

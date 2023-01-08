@@ -102,11 +102,13 @@
                             <h:outputText 
                                 value="#{index + 1}" />
                         </p:column> 
+                        <!--
                         <p:column headerText="#{msg['type']}" style="width: 100px;">
                             <p:outputLabel value="#{eva.blGrupal==false?msg['type.individual']:msg['type.grupal']}"/>
                         </p:column>
+                        -->
 
-                        <p:column headerText="Proyecto"> 
+                        <p:column headerText="#{msg['step2.evaluation.name']}"> 
                             <h:outputText value="#{eva.strDescNombre}" /> 
                         </p:column>
 

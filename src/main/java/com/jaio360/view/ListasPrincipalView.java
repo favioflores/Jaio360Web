@@ -459,7 +459,7 @@ public class ListasPrincipalView extends BaseView implements Serializable {
                     objProyectoInfo = new ProyectoInfo();
                     objProyectoInfo.setIntIdProyecto((Integer) objProyecto[0]);
                     objProyectoInfo.setIntCantidadEvaluaciones(1);
-                    objProyectoInfo.setStrDescNombre((String) objProyecto[2]);
+                    objProyectoInfo.setStrDescNombre((String) objProyecto[9]);
                     objProyectoInfo.setBlGrupal(Boolean.FALSE);
                     objProyectoInfo.setIntIdCuestionario((Integer) objProyecto[10]);
                     objProyectoInfo.setStrNombreEvaluador(Utilitarios.obtenerUsuario().getStrDescripcion());

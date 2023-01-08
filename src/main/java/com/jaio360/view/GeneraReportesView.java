@@ -137,15 +137,15 @@ public class GeneraReportesView extends BaseView implements Serializable {
         try {
             ServletContext servletContext = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
 
-            String fullPath = servletContext.getRealPath(File.separator + "WEB-INF" + File.separator + "resources" + File.separator + "PlanDeAccion.doc");
+            String fullPath = servletContext.getRealPath(File.separator + "WEB-INF" + File.separator + "resources" + File.separator + "PlanDeAccion.docx");
 
             File objFile = new File(fullPath);
             InputStream stream = new FileInputStream(objFile.getAbsolutePath());
             //planAccion = new DefaultStreamedContent(stream, "application/doc", "PlanDeAccion.doc");
 
             planAccion = DefaultStreamedContent.builder()
-                    .name("PlanDeAccion.doc")
-                    .contentType("application/doc")
+                    .name("PlanDeAccion.docx")
+                    .contentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document")
                     .stream(() -> FacesContext.getCurrentInstance().getExternalContext().getResourceAsStream(objFile.getAbsolutePath()))
                     .build();
 
@@ -279,7 +279,7 @@ public class GeneraReportesView extends BaseView implements Serializable {
         for (int i = 1; i <= 12; i++) {
             lstContenidoIndividual.add(new SelectItem(i, msg("report." + i)));
         }
-        
+
         for (int i = 100; i <= 102; i++) {
             lstContenidoGrupal.add(new SelectItem(i, msg("report." + i)));
         }
@@ -459,7 +459,7 @@ public class GeneraReportesView extends BaseView implements Serializable {
                 map.put(Constantes.INT_PARAM_GRAF_MEDIDA, utilReport);
 
                 boolean flag = true;
-                
+
                 /* INVOCA CLASES QUE GENEREN LOS TEMPORALES */
                 for (Cuestionario objCuestionario : lstCuestionariosSeleccionados) {
 
@@ -479,8 +479,8 @@ public class GeneraReportesView extends BaseView implements Serializable {
 
                         objDatosReporte.setStrID(strNombreTemp + "_" + msg("report." + objModeloContenido) + "_" + strFirma);
                         objDatosReporte.setStrNombreEvaluado(objCuestionario.getCuTxDescripcion());
-                        
-                        if(flag){
+
+                        if (flag) {
                             DatosReporte objDatosReporteC = (DatosReporte) SerializationUtils.clone(objDatosReporte);
 
                             String strNTempC = Utilitarios.reemplazar(objCuestionario.getCuTxDescripcion(), " ", "C_");
@@ -492,7 +492,7 @@ public class GeneraReportesView extends BaseView implements Serializable {
                             objDatosReporteC.setStrID(objReporteC.build(objDatosReporteC));
                             objDatosReporteC.setBlDefinitivo(true);
                             lstTemporales.add(objDatosReporteC);
-                            
+
                             flag = false;
                         }
 
@@ -512,8 +512,7 @@ public class GeneraReportesView extends BaseView implements Serializable {
                             objDatosReporteC.setStrID(objReporteC.build(objDatosReporteC));
                             objDatosReporteC.setBlDefinitivo(false);
                             lstTemp.add(objDatosReporteC);
-                            */
-
+                             */
                             DatosReporte objDatosReporteR = (DatosReporte) SerializationUtils.clone(objDatosReporte);
 
                             String strNTempR = Utilitarios.reemplazar(objCuestionario.getCuTxDescripcion(), " ", "R_");
@@ -549,8 +548,7 @@ public class GeneraReportesView extends BaseView implements Serializable {
                             objDatosReporteC.setStrID(objReporteC.build(objDatosReporteC));
                             objDatosReporteC.setBlDefinitivo(false);
                             lstTemp.add(objDatosReporteC);
-                            */
-
+                             */
                             DatosReporte objDatosReporteR = (DatosReporte) SerializationUtils.clone(objDatosReporte);
 
                             String strNTempR = Utilitarios.reemplazar(objCuestionario.getCuTxDescripcion(), " ", "R_");
@@ -588,11 +586,11 @@ public class GeneraReportesView extends BaseView implements Serializable {
                         objDatosReporte.setBlDefinitivo(true);
                         lstDefinitivos.add(objDatosReporte);
 
-                        Utilitarios.eliminaArchivosTemporales(lstTemporales);
-
                     }
 
                 }
+
+                Utilitarios.eliminaArchivosTemporales(lstTemporales);
 
                 if (!lstDefinitivos.isEmpty()) {
 
@@ -611,7 +609,7 @@ public class GeneraReportesView extends BaseView implements Serializable {
                                 .contentType("application/zip")
                                 .stream(() -> stream)
                                 .build();
-                        
+
                         mostrarAlertaInfo("step6.reports.generated.success");
 
                     } else {
@@ -1189,6 +1187,8 @@ public class GeneraReportesView extends BaseView implements Serializable {
 
             this.intLicenciasMasivasRequerido = intLicenciasMasivasReservadas;
 
+            confirmaGeneracionReporteIndividual();
+
         } catch (Exception e) {
             mostrarError(log, e);
         }
@@ -1216,14 +1216,14 @@ public class GeneraReportesView extends BaseView implements Serializable {
 
                     if (objEvaluado.getIntNumberEvaluators() <= 20) {
                         Movimiento objMovimiento = new Movimiento();
-                        objMovimiento.setMoInCantidad(objEvaluado.getIntNumberEvaluators());
+                        objMovimiento.setMoInCantidad(1);
                         objMovimiento.setTipoMovimiento(new TipoMovimiento(Movimientos.MOV_EJECUTA_LICENCIA_INDIVIDUAL));
                         objReferenciaMovimiento.setMovimiento(objMovimiento);
                         objMovimiento.getReferenciaMovimientos().add(objReferenciaMovimiento);
                         lstMovements.add(objMovimiento);
                     } else {
                         Movimiento objMovimiento = new Movimiento();
-                        objMovimiento.setMoInCantidad(objEvaluado.getIntNumberEvaluators());
+                        objMovimiento.setMoInCantidad(1);
                         objMovimiento.setTipoMovimiento(new TipoMovimiento(Movimientos.MOV_EJECUTA_LICENCIA_MASIVA));
                         objReferenciaMovimiento.setMovimiento(objMovimiento);
                         objMovimiento.getReferenciaMovimientos().add(objReferenciaMovimiento);
@@ -1244,6 +1244,7 @@ public class GeneraReportesView extends BaseView implements Serializable {
             }
 
             if (ok) {
+                init();
                 generaReporteIndividual();
             } else {
                 mostrarAlertaFatal("error.was.occurred");

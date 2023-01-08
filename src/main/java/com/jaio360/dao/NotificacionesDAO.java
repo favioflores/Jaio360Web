@@ -1,5 +1,6 @@
 package com.jaio360.dao;
 
+import com.jaio360.application.MailSender;
 import com.jaio360.domain.RelacionEvaluadoEvaluador;
 import com.jaio360.orm.Destinatarios;
 import com.jaio360.orm.HibernateUtil;
@@ -40,30 +41,24 @@ public class NotificacionesDAO implements Serializable {
         throw new HibernateException("Ocurrió un error en la capa de acceso a datos", he);
     }
 
-    public List obtieneNotificaciones(Date dtFechaEntrega, Integer intLimiteNotificaciones) throws HibernateException {
+    public List obtieneNotificaciones(Integer intProyecto) throws HibernateException {
 
         iniciaOperacion();
 
         List lstMails = new ArrayList();
 
-        Query query = sesion.createQuery("from Notificaciones where noIdEstado = ? ");
+        Query query = sesion.createQuery("from Notificaciones where noIdEstado = ? and noIdRefProceso = ? ");
 
         query.setInteger(0, Constantes.INT_ET_ESTADO_NOTIFICACION_PENDIENTE);
-        query.setMaxResults(intLimiteNotificaciones);
+        query.setInteger(1, intProyecto);
 
         List<Notificaciones> lstNotificaciones = query.list();
 
         if (!lstNotificaciones.isEmpty()) {
 
-            Iterator itLstNotificaciones = lstNotificaciones.iterator();
-
             DestinatariosDAO objDestinatariosDAO = new DestinatariosDAO();
 
-            Notificaciones objNotificaciones;
-
-            while (itLstNotificaciones.hasNext()) {
-
-                objNotificaciones = (Notificaciones) itLstNotificaciones.next();
+            for (Notificaciones objNotificaciones : lstNotificaciones) {
 
                 List<Destinatarios> lstDestinatarios = objDestinatariosDAO.obtieneDestinatarios(objNotificaciones.getNoIdNotificacionPk(), sesion);
 
@@ -74,6 +69,9 @@ public class NotificacionesDAO implements Serializable {
                     lstMails.add(obj);
 
                 }
+                objNotificaciones.setNoIdEstado(Constantes.INT_ET_ESTADO_NOTIFICACION_ENVIANDO);
+                
+                sesion.update(objNotificaciones);
 
             }
 

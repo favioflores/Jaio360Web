@@ -89,14 +89,14 @@
                                             <p:selectCheckboxMenu id="idCheckIndividual" value="#{generaReportesView.lstSeleccionadosIndividual}" 
                                                                   filter="true" 
                                                                   label="#{msg['please.select.reports']}"
-                                                                  filterMatchMode="startsWith" 
+                                                                  filterMatchMode="startsWith" required="true"
                                                                   panelStyle="width: 30rem">
                                                 <f:selectItems value="#{generaReportesView.lstContenidoIndividual}"/>
                                             </p:selectCheckboxMenu>
 
                                         </div>
                                         <div class="p-field p-col-12 p-md-3">
-                                            <p:commandButton value="#{msg['step6.button.generate.individual']}" ajax="true" update="formIndividual,formDLGIndividual" actionListener="#{generaReportesView.generarReporteIndividual()}" oncomplete="PF('dlgLicencias').show()"  icon="pi pi-file" />
+                                            <p:commandButton value="#{msg['step6.button.generate.individual']}" ajax="true" update="formIndividual,formDLGIndividual" actionListener="#{generaReportesView.generarReporteIndividual()}" icon="pi pi-file" />
                                         </div>
                                         <div class="p-field p-col-12 p-md-3">
                                             <p:commandButton value="#{msg['step6.button.download.individual']}" ajax="false" disabled="#{generaReportesView.fileIndividual==null?true:false}" update="@this" icon="pi pi-download" >
@@ -104,7 +104,7 @@
                                             </p:commandButton>
                                         </div>
                                         <div class="p-field p-col-12 p-md-3">
-                                            <p:commandButton value="#{msg['step6.button.plan.individual']}" ajax="false" styleClass="ui-button-warning" icon="pi pi-download">
+                                            <p:commandButton value="#{msg['step6.button.plan.individual']}" immediate="true" ajax="false" styleClass="ui-button-warning" icon="pi pi-download">
                                                 <p:fileDownload value="#{generaReportesView.planAccion}" />
                                             </p:commandButton>
                                         </div>

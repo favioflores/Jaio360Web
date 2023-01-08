@@ -1,5 +1,6 @@
 package com.jaio360.view;
 
+import com.jaio360.application.MailSender;
 import com.jaio360.dao.MensajeDAO;
 import com.jaio360.dao.NotificacionesDAO;
 import com.jaio360.dao.ProyectoDAO;
@@ -328,24 +329,41 @@ public class RedactarMensajesView extends BaseView implements Serializable {
             setDataConvocatoria();
             armarTemplateConvocatoria(false);
             guardarNotificacion(Constantes.INT_ET_NOTIFICACION_CONVOCATORIA.toString());
+        } else {
+            armarTemplateConvocatoria(true);
         }
 
         if (!blBienvenida) {
             setDataBienvenida();
             armarTemplateBienvenida(false);
             guardarNotificacion(Constantes.INT_ET_NOTIFICACION_INSTRUCCIONES.toString());
+        } else {
+            armarTemplateBienvenida(true);
         }
 
         if (!blAgradecimiento) {
             setDataAgradecimiento();
             armarTemplateAgradecimiento(false);
             guardarNotificacion(Constantes.INT_ET_NOTIFICACION_AGRADECIMIENTO.toString());
+        } else {
+            armarTemplateAgradecimiento(true);
         }
 
-        armarTemplateConvocatoria(true);
-        armarTemplateBienvenida(true);
-        armarTemplateAgradecimiento(true);
+    }
 
+    public void previewConvocatoria() {
+        armarTemplateConvocatoria(true);
+        guardarNotificacion(Constantes.INT_ET_NOTIFICACION_CONVOCATORIA.toString());
+    }
+
+    public void previewBienvenida() {
+        armarTemplateBienvenida(true);
+        guardarNotificacion(Constantes.INT_ET_NOTIFICACION_INSTRUCCIONES.toString());
+    }
+
+    public void previewAgradecimiento() {
+        armarTemplateAgradecimiento(true);
+        guardarNotificacion(Constantes.INT_ET_NOTIFICACION_AGRADECIMIENTO.toString());
     }
 
     private void setDataConvocatoria() {
@@ -446,7 +464,7 @@ public class RedactarMensajesView extends BaseView implements Serializable {
             strPreviewAgradecimientoTemplate = out.toString();
 
         } catch (Exception e) {
-            log.error(e);
+            mostrarError(log, e);
         }
 
     }
@@ -490,7 +508,7 @@ public class RedactarMensajesView extends BaseView implements Serializable {
             strPreviewBienvenidaTemplate = out.toString();
 
         } catch (Exception e) {
-            log.error(e);
+            mostrarError(log, e);
         }
 
     }
@@ -523,6 +541,9 @@ public class RedactarMensajesView extends BaseView implements Serializable {
                 lstCorreosExtra.add(this.correoExtra);
 
                 if (objNotificacionesDAO.guardarmeComunicados(lstCorreosExtra, strPreviewConvocatoriaTemplate)) {
+                    MailSender objMailSender = new MailSender();
+                    objMailSender.enviarListaDeNotificacionesProyecto(Utilitarios.obtenerProyecto().getIntIdProyecto());
+                    
                     mostrarAlertaInfo("sended.correctly");
 
                     this.correoExtra = Constantes.strVacio;
@@ -609,7 +630,6 @@ public class RedactarMensajesView extends BaseView implements Serializable {
                     objMensaje.setMeTxConvocatoriaParrafo(Utilitarios.encodeUTF8(strParrafoConvocatoria));
 
                     armarTemplateConvocatoria(false);
-
                     objMensaje.setMeTxCuerpo(Utilitarios.encodeUTF8(strPreviewConvocatoriaTemplate));
 
                     objProyecto.setPoIdProyectoPk(objProyectoInfo.getIntIdProyecto());
@@ -623,7 +643,6 @@ public class RedactarMensajesView extends BaseView implements Serializable {
                     }
 
                     armarTemplateConvocatoria(true);
-
                     if (blConvocatoria) {
                         mostrarAlertaInfo("success");
                     }
@@ -659,7 +678,6 @@ public class RedactarMensajesView extends BaseView implements Serializable {
                     objMensaje.setMeTxBienvenidaAgradecimiento(Utilitarios.encodeUTF8(strBienvenidaAgradecimiento));
 
                     armarTemplateBienvenida(false);
-
                     objMensaje.setMeTxCuerpo(Utilitarios.encodeUTF8(strPreviewBienvenidaTemplate));
 
                     objProyecto.setPoIdProyectoPk(objProyectoInfo.getIntIdProyecto());
@@ -673,7 +691,6 @@ public class RedactarMensajesView extends BaseView implements Serializable {
                     }
 
                     armarTemplateBienvenida(true);
-
                     if (blBienvenida) {
                         mostrarAlertaInfo("success");
                     }
@@ -702,7 +719,6 @@ public class RedactarMensajesView extends BaseView implements Serializable {
                     objMensaje.setMeTxAgradecimiento(Utilitarios.encodeUTF8(strAgradecimiento));
 
                     armarTemplateAgradecimiento(false);
-
                     objMensaje.setMeTxCuerpo(Utilitarios.encodeUTF8(strPreviewAgradecimientoTemplate));
 
                     objProyecto.setPoIdProyectoPk(objProyectoInfo.getIntIdProyecto());
@@ -716,7 +732,6 @@ public class RedactarMensajesView extends BaseView implements Serializable {
                     }
 
                     armarTemplateAgradecimiento(true);
-
                     if (blAgradecimiento) {
                         mostrarAlertaInfo("success");
                     }

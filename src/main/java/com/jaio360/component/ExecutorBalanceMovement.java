@@ -95,7 +95,7 @@ public class ExecutorBalanceMovement extends BaseView {
 
             TipoMovimiento objTipoMovimiento = objMovimiento.getTipoMovimiento();
 
-            Integer intQuantity = objMovimiento.getMoInCantidad();
+            Integer intQuantity = objMovimiento.getMoInCantidad(); 
 
             objMovimiento.setMoFeCreacion(new Date());
 

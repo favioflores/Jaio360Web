@@ -232,14 +232,16 @@
                   closeOnEscape="true"
                   fitViewport="true"
                   maximizable="false">
-            <p:scrollPanel style="height:500px; border: 0px;" >
+            <p:scrollPanel style="height:690px;  border: 0px;" >
                 <h:outputText value="#{ejecutarEvaluacionView.strInstrucciones}" escape="false" />
             </p:scrollPanel>
+            <!--
             <f:facet name="footer">
                 <center>
                     <p:commandButton value="#{msg['close']}" type="button" onclick="PF('dlgInstrucciones').hide()" />
                 </center>
             </f:facet>  
+            -->
         </p:dialog>
 
         <p:dialog header="#{msg['template.regards.label.thank']}" modal="true" 

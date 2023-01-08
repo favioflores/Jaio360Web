@@ -112,10 +112,10 @@ public class MenuPrincipalView extends BaseView implements Serializable {
             agregarItem(msg("actualizar.mis.datos"), "admProfile.jsf", "", usuarios);
             agregarItem(msg("actualizar.todos.usuarios"), "admAllUsers.jsf", "", usuarios);
             agregarItem(msg("gestionar.licencias"), "admLicencias.jsf", "", usuarios);
-            /**
-             * UPGRADES
-             **/
+            //User guide
             agregarItem(msg("user.guide"), "userGuide.jsf", "pi pi-file-pdf", menuPrincipal);
+            agregarItem(msg("participant.guide"), "participantGuide.jsf", "pi pi-file-pdf", menuPrincipal);
+            //Upgrades
             agregarItem("", "upgrades.jsf", "pi pi-info-circle", menuPrincipal);
             
         } else if (false) {//COUNTRY MANAGER
@@ -130,7 +130,10 @@ public class MenuPrincipalView extends BaseView implements Serializable {
             //Datos de usuarios
             DefaultSubMenu usuarios = agregarMenu(msg("users"), "pi pi-users", menuPrincipal);
             agregarItem(msg("actualizar.mis.datos"), "admProfile.jsf", "", usuarios);
+            //User guide
             agregarItem(msg("user.guide"), "userGuide.jsf", "pi pi-file-pdf", menuPrincipal);
+            agregarItem(msg("participant.guide"), "participantGuide.jsf", "pi pi-file-pdf", menuPrincipal);
+            //Upgrades
             agregarItem("", "upgrades.jsf", "pi pi-cloud-upload", menuPrincipal);
         } else {//USER EVALUATOR / EVALUATED
             //Home
@@ -139,7 +142,9 @@ public class MenuPrincipalView extends BaseView implements Serializable {
             agregarItem("", "welcome.jsf", "pi pi-fw pi-home", menuPrincipal);
             DefaultSubMenu usuarios = agregarMenu(msg("users"), "pi pi-users", menuPrincipal);
             agregarItem(msg("actualizar.mis.datos"), "admProfile.jsf", "", usuarios);
-            //agregarItem(msg("user.guide"), "userGuide.jsf", "pi pi-file-pdf", menuPrincipal);
+            //Participant guide
+            agregarItem(msg("participant.guide"), "participantGuide.jsf", "pi pi-file-pdf", menuPrincipal);
+            //Upgrades
             //agregarItem("", "upgrades.jsf", "pi pi-cloud-upload", menuPrincipal);
         }
 
