@@ -167,7 +167,7 @@ public class UsuarioDAO implements Serializable {
             
             listaUsuario = query.list();
             
-        } catch(Exception e){
+        } catch(HibernateException e){
             log.error(e);
         }
 
@@ -260,10 +260,9 @@ public class UsuarioDAO implements Serializable {
                 objUsuario = lstUsuarios.get(0);
             }
 
-        } catch (Exception ex) {
+        } catch (HibernateException ex) {
             log.error(ex);
         } finally {
-            log.debug(strEmail);
             sesion.close();
         }
 

@@ -12,11 +12,13 @@ import com.jaio360.orm.Notificaciones;
 import com.jaio360.utils.Constantes;
 import com.jaio360.utils.Utilitarios;
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import javax.mail.Message;
+import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
@@ -26,6 +28,7 @@ import javax.mail.internet.MimeMultipart;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.HibernateException;
 
 /**
  *
@@ -39,6 +42,7 @@ public class MailSender extends Thread implements Serializable {
     private Integer idProyecto;
 
     public MailSender() {
+        objNotificacionesDAO = new NotificacionesDAO();
     }
 
     public MailSender(Integer idProyecto) {
@@ -63,6 +67,17 @@ public class MailSender extends Thread implements Serializable {
     public void enviarListaDeNotificacionesProyecto(Integer idProyecto) {
         MailSender thread = new MailSender(idProyecto);
         thread.start();
+    }
+
+    public void enviarNotificacion(Notificaciones objNotificaciones) {
+        List lstNotificaciones = objNotificacionesDAO.obtieneNotificaciones(objNotificaciones);
+
+        Iterator itLstNotificaciones = lstNotificaciones.iterator();
+
+        while (itLstNotificaciones.hasNext()) {
+            Object[] obj = (Object[]) itLstNotificaciones.next();
+            enviaCorreo((Notificaciones) obj[0], (List<Destinatarios>) obj[1]);
+        }
     }
 
     private void enviaCorreo(Notificaciones objNotificaciones, List<Destinatarios> lstDestinatarios) {
@@ -142,7 +157,7 @@ public class MailSender extends Thread implements Serializable {
 
             blSended = true;
 
-        } catch (Exception e) {
+        } catch (UnsupportedEncodingException | NumberFormatException | MessagingException | HibernateException e) {
             log.error(e.getLocalizedMessage(), e);
             objNotificaciones.setNoTxError(e.getMessage().length() > 500 ? e.getMessage().substring(0, 500) : e.getMessage());
             blSended = false;

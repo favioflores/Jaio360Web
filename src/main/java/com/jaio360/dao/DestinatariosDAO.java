@@ -26,6 +26,7 @@ public class DestinatariosDAO implements Serializable{
         tx.rollback(); 
         throw new HibernateException("Ocurrió un error en la capa de acceso a datos", he); 
     } 
+    
     public List obtieneDestinatarios(Integer intNotificacionPk, Session sesion) throws HibernateException { 
         
         List <Destinatarios> lstDestinatarios;

@@ -179,14 +179,7 @@
                                                      actionListener="#{defineCuesEvaView.guardarRelacionCuestionarios()}"
                                                      disabled="#{defineCuesEvaView.intCantidadAsignados.intValue()==0?true:false}"
                                                      icon="pi pi-save" >
-                                        <c:choose>
-                                            <c:when test="#{defineCuesEvaView.intCantidadPendientesAsignar.toString()=='0'}">
-                                                <p:confirm header="#{msg['confirmation']}" message="#{msg['are.you.sure.to.save']}" icon="pi pi-info-circle"  />
-                                            </c:when>
-                                            <c:otherwise>
-                                                <p:confirm header="#{msg['confirmation']}" message="#{msg['are.you.sure.to.save.incomplete']}" icon="pi pi-info-circle"  />                                            
-                                            </c:otherwise>
-                                        </c:choose>
+                                        <p:confirm header="#{msg['confirmation']}" message="#{defineCuesEvaView.intCantidadPendientesAsignar==0?msg['are.you.sure.to.save']:msg['are.you.sure.to.save.incomplete']}" icon="pi pi-info-circle"  />
                                     </p:commandButton>
 
                                 </div>

@@ -213,6 +213,20 @@
                                         <p:confirm header="#{msg['confirmation']}" message="#{msg['step5.confirmation.pending.reminders']}" icon="pi pi-info-circle" />                 
                                     </p:commandButton>
                                 </div>
+
+                                <div class="p-field">
+                                    <p:commandButton id="btnLogMail" 
+                                                     value="#{msg['step5.log.emails']}" 
+                                                     type="submit"
+                                                     update="@form"
+                                                     disabled="#{seguimientoProyectoView.intIdEstadoProyecto==37?true:seguimientoProyectoView.boProyectoEjecutado==true?false:true}"
+                                                     actionListener="#{seguimientoProyectoView.verLogMail}"
+                                                     icon="pi pi-search"
+                                                     oncomplete="PF('dlgLogMail').show()"
+                                                     styleClass="ui-button-warning">
+                                    </p:commandButton>
+                                </div>
+
                                 <div class="p-field">
                                     <p:commandButton actionListener="#{seguimientoProyectoView.descargarFisico}" 
                                                      value="#{msg['step5.download.paper.evaluations']}" 
@@ -480,6 +494,80 @@
                 </p:panel>
             </h:form>
         </p:dialog>        
+
+        <p:dialog widgetVar="dlgLogMail" header="#{msg['step5.search.notification.title']}" width="1200"
+                  draggable="false" closable="true" hideEffect="drop" closeOnEscape="true" showEffect="drop" 
+                  modal="true"
+                  resizable="false" >
+            <h:form id="frmLogmail" >
+                <p:panel>
+
+                    <p:growl id="growlFormLog" showDetail="false" life="4000" />
+
+                    <div class="p-field p-formgrid p-grid">
+                        <div class="p-col" >
+                            <p:outputLabel for="ini" value="#{msg['step5.search.send.ini.date']}"/>
+                            <p:datePicker id="ini" value="#{seguimientoProyectoView.ini}" required="true" readonlyInput="false"/>
+                        </div>
+                        <div class="p-col" >
+                            <p:outputLabel for="end" value="#{msg['step5.search.send.end.date']}"/>
+                            <p:datePicker id="end" value="#{seguimientoProyectoView.end}" required="true" readonlyInput="false"/>
+                        </div>
+                    </div>
+                    <div class="p-field p-formgrid p-grid">
+                        <div class="p-col" >
+                            <p:commandButton value="#{msg['search']}" style="width: 100%;"  icon="pi pi-search" update="frmLogmail"
+                                             actionListener="#{seguimientoProyectoView.buscarEmails}" oncomplete="PF('dlgLicencias').hide()" />
+                        </div>
+                    </div>
+                    <div class="p-field p-formgrid p-grid">
+                        <div class="p-col">
+                            <p:dataTable 
+                                var="reg"
+                                value="#{seguimientoProyectoView.lstNotificacion}" 
+                                rows="5"
+                                paginatorPosition="bottom"
+                                stripedRows="true"
+                                paginator="true" 
+                                size="small"
+                                paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                emptyMessage="#{msg['no.items']}"
+                                rowKey="#{reg.noIdNotificacionPk}"
+                                rowIndexVar="index"
+                                >
+
+                                <p:column style="width: 15px;">
+                                    <f:facet name="header">
+                                        <h:outputText value="#" />
+                                    </f:facet>
+                                    <h:outputText 
+                                        value="#{index + 1}" />
+                                </p:column> 
+                                <!--
+                                <p:column headerText="#{msg['step5.asunto']}" sortable="true">
+                                    <p:outputLabel value="#{reg.noTxAsunto}" />
+                                </p:column>
+                                -->
+                                <p:column headerText="#{msg['step5.to']}" sortable="true" >
+                                    <p:outputLabel value="#{reg.lstDestinatarios}" />
+                                </p:column>
+                                <p:column headerText="#{msg['step5.register.date']}" sortable="true">
+                                    <p:outputLabel value="#{reg.noFeCreacion}" />
+                                </p:column>
+                                <p:column headerText="#{msg['step5.sended.date']}" sortable="true">
+                                    <p:outputLabel value="#{reg.noFeEnvio}" />
+                                </p:column>
+                                <p:column headerText="#{msg['step5.status']}" sortable="true">
+                                    <p:outputLabel value="#{reg.noTxEstado}" title="#{reg.noTxError}" />
+                                </p:column>
+                            </p:dataTable>
+
+                        </div>      
+                    </div>  
+
+                </p:panel>
+            </h:form>
+        </p:dialog>     
 
     </ui:define>
 </ui:composition>

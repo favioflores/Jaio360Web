@@ -239,7 +239,7 @@ public class ProyectoDAO implements Serializable {
 
             return query.list();
 
-        } catch (Exception e) {
+        } catch (HibernateException e) {
             log.error(e);
         } finally {
             sesion.close();
@@ -266,7 +266,7 @@ public class ProyectoDAO implements Serializable {
 
             return query.list();
 
-        } catch (Exception e) {
+        } catch (HibernateException e) {
             log.error(e);
         } finally {
             sesion.close();
@@ -358,7 +358,7 @@ public class ProyectoDAO implements Serializable {
 
             lstEvaluacion = query.list();
 
-        } catch (Exception e) {
+        } catch (HibernateException e) {
             log.error(e);
         } finally {
             sesion.close();

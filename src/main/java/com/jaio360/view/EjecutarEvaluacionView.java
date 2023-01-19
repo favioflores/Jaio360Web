@@ -516,21 +516,20 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
         try {
             for (EvaluacionesXEjecutar objEvaluacionesXEjecutar : lstEvaluacionesXEjecutar) {
 
-                if (Utilitarios.noEsNuloOVacio(objEvaluacionesXEjecutar.getStrRptaPreguntaAbierta())) {
+                //if (Utilitarios.noEsNuloOVacio(objEvaluacionesXEjecutar.getStrRptaPreguntaAbierta())) {
+                PreguntaAbiertaBean objPreguntaAbiertaBean = new PreguntaAbiertaBean();
 
-                    PreguntaAbiertaBean objPreguntaAbiertaBean = new PreguntaAbiertaBean();
+                BeanUtils.copyProperties(objPreguntaAbiertaBean, lstPreguntasAbiertas.get(this.intNroPreguntasActual - this.lstPreguntasCerradas.size()));
 
-                    BeanUtils.copyProperties(objPreguntaAbiertaBean, lstPreguntasAbiertas.get(this.intNroPreguntasActual - this.lstPreguntasCerradas.size()));
+                objPreguntaAbiertaBean.setStrRespuesta(objEvaluacionesXEjecutar.getStrRptaPreguntaAbierta());
 
-                    objPreguntaAbiertaBean.setStrRespuesta(objEvaluacionesXEjecutar.getStrRptaPreguntaAbierta());
-
-                    try {
-                        objEvaluacionesXEjecutar.getLstPreguntasAbiertas().remove((this.intNroPreguntasActual - this.lstPreguntasCerradas.size()));
-                    } catch (Exception e) {
-                    }
-                    objEvaluacionesXEjecutar.getLstPreguntasAbiertas().add(this.intNroPreguntasActual - this.lstPreguntasCerradas.size(), objPreguntaAbiertaBean);
-                    objEvaluacionesXEjecutar.setStrRptaPreguntaAbierta(null);
+                try {
+                    objEvaluacionesXEjecutar.getLstPreguntasAbiertas().remove((this.intNroPreguntasActual - this.lstPreguntasCerradas.size()));
+                } catch (Exception e) {
                 }
+                objEvaluacionesXEjecutar.getLstPreguntasAbiertas().add(this.intNroPreguntasActual - this.lstPreguntasCerradas.size(), objPreguntaAbiertaBean);
+                objEvaluacionesXEjecutar.setStrRptaPreguntaAbierta(null);
+                //}
             }
         } catch (Exception e) {
             mostrarError(log, e);

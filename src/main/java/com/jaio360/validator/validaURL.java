@@ -37,18 +37,18 @@ public class validaURL implements Validator {
         }
          
         if(!pattern.matcher(value.toString().trim()).matches()) {
-            return "no válido o con digitos especiales";
+            return "No es un URL";
         }
         return null;
     }
     
     public String validate(Object value) throws ValidatorException {
         if(Utilitarios.esNuloOVacio(value)) {
-            return "Esta vacio";
+            return "esta vacio";
         }
          
         if(!pattern.matcher(value.toString().trim()).matches()) {
-            return " ";
+            return "el texto ingresado debe tener formato de URL";
         }
         return null;
     }

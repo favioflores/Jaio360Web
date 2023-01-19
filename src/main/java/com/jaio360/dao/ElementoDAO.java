@@ -96,7 +96,7 @@ public class ElementoDAO extends BaseView implements Serializable {
                 }
             }
             
-        } catch (Exception e) {
+        } catch (HibernateException e) {
             log.error(e);
         }
 
@@ -119,7 +119,7 @@ public class ElementoDAO extends BaseView implements Serializable {
                 }
             }
 
-        } catch (Exception e) {
+        } catch (HibernateException e) {
             log.error(e);
         }
 

@@ -66,7 +66,7 @@ public class TipoMovimientoDAO implements Serializable {
         TipoMovimiento usuario = null;
         try {
             iniciaOperacion();
-            usuario = (TipoMovimiento) sesion.get(TipoMovimientoDAO.class, (int) idUsuario);
+            usuario = (TipoMovimiento) sesion.get(TipoMovimiento.class, (int) idUsuario);
         } finally {
             sesion.close();
         }
@@ -77,7 +77,7 @@ public class TipoMovimientoDAO implements Serializable {
     public TipoMovimiento obtenTipoMovimiento(long idUsuario, Session sesion) throws HibernateException {
         TipoMovimiento usuario = null;
         try {
-            usuario = (TipoMovimiento) sesion.get(TipoMovimientoDAO.class, (int) idUsuario);
+            usuario = (TipoMovimiento) sesion.get(TipoMovimiento.class, (int) idUsuario);
         } catch (HibernateException ex) {
             log.error(ex);
         }

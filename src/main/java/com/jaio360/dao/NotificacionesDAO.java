@@ -12,6 +12,7 @@ import com.jaio360.utils.Constantes;
 import com.jaio360.utils.EncryptDecrypt;
 import com.jaio360.utils.Utilitarios;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -43,43 +44,144 @@ public class NotificacionesDAO implements Serializable {
 
     public List obtieneNotificaciones(Integer intProyecto) throws HibernateException {
 
-        iniciaOperacion();
-
         List lstMails = new ArrayList();
 
-        Query query = sesion.createQuery("from Notificaciones where noIdEstado = ? and noIdRefProceso = ? ");
+        try {
 
-        query.setInteger(0, Constantes.INT_ET_ESTADO_NOTIFICACION_PENDIENTE);
-        query.setInteger(1, intProyecto);
+            iniciaOperacion();
 
-        List<Notificaciones> lstNotificaciones = query.list();
+            Query query = sesion.createQuery("from Notificaciones where noIdEstado = ? and noIdRefProceso = ? ");
 
-        if (!lstNotificaciones.isEmpty()) {
+            query.setInteger(0, Constantes.INT_ET_ESTADO_NOTIFICACION_PENDIENTE);
+            query.setInteger(1, intProyecto);
 
-            DestinatariosDAO objDestinatariosDAO = new DestinatariosDAO();
+            List<Notificaciones> lstNotificaciones = query.list();
 
-            for (Notificaciones objNotificaciones : lstNotificaciones) {
+            if (!lstNotificaciones.isEmpty()) {
 
-                List<Destinatarios> lstDestinatarios = objDestinatariosDAO.obtieneDestinatarios(objNotificaciones.getNoIdNotificacionPk(), sesion);
+                DestinatariosDAO objDestinatariosDAO = new DestinatariosDAO();
 
-                if (!lstDestinatarios.isEmpty()) {
+                for (Notificaciones objNotificaciones : lstNotificaciones) {
 
-                    Object[] obj = {objNotificaciones, lstDestinatarios};
+                    List<Destinatarios> lstDestinatarios = objDestinatariosDAO.obtieneDestinatarios(objNotificaciones.getNoIdNotificacionPk(), sesion);
 
-                    lstMails.add(obj);
+                    if (!lstDestinatarios.isEmpty()) {
+
+                        Object[] obj = {objNotificaciones, lstDestinatarios};
+
+                        lstMails.add(obj);
+
+                    }
+                    objNotificaciones.setNoIdEstado(Constantes.INT_ET_ESTADO_NOTIFICACION_ENVIANDO);
+
+                    sesion.update(objNotificaciones);
 
                 }
-                objNotificaciones.setNoIdEstado(Constantes.INT_ET_ESTADO_NOTIFICACION_ENVIANDO);
-                
-                sesion.update(objNotificaciones);
 
             }
 
+            tx.commit();
+
+        } catch (HibernateException e) {
+            manejaExcepcion(e);
+        } finally {
+            sesion.close();
         }
 
-        tx.commit();
-        sesion.close();
+        return lstMails;
 
+    }
+
+    public List obtieneNotificacionesForLog(Integer intProyecto, Date ini, Date end) throws HibernateException {
+
+        List lstMails = new ArrayList();
+
+        try {
+            iniciaOperacion();
+
+            Query query = sesion.createQuery("from Notificaciones where noIdRefProceso = ? and noFeCreacion >= ? and noFeCreacion <= ? order by noFeCreacion desc ");
+
+            query.setInteger(0, intProyecto);
+            query.setDate(1, ini);
+            query.setDate(2, Utilitarios.sumarRestarDiasFecha(end, 1));
+
+            List<Notificaciones> lstNotificaciones = query.list();
+
+            if (!lstNotificaciones.isEmpty()) {
+
+                DestinatariosDAO objDestinatariosDAO = new DestinatariosDAO();
+
+                for (Notificaciones objNotificaciones : lstNotificaciones) {
+
+                    List<Destinatarios> lstDestinatarios = objDestinatariosDAO.obtieneDestinatarios(objNotificaciones.getNoIdNotificacionPk(), sesion);
+
+                    if (!lstDestinatarios.isEmpty()) {
+
+                        Object[] obj = {objNotificaciones, lstDestinatarios};
+
+                        lstMails.add(obj);
+
+                    }
+
+                }
+
+            }
+
+            tx.commit();
+            
+        } catch (HibernateException he) {
+            manejaExcepcion(he);
+        } finally {
+            sesion.close();
+        }
+
+        return lstMails;
+    }
+
+    public List obtieneNotificaciones(Notificaciones objNotificacion) throws HibernateException {
+
+        List lstMails = new ArrayList();
+
+        try {
+
+            iniciaOperacion();
+
+            Query query = sesion.createQuery("from Notificaciones where noIdNotificacionPk = ? ");
+
+            query.setInteger(0, objNotificacion.getNoIdNotificacionPk());
+
+            List<Notificaciones> lstNotificaciones = query.list();
+
+            if (!lstNotificaciones.isEmpty()) {
+
+                DestinatariosDAO objDestinatariosDAO = new DestinatariosDAO();
+
+                for (Notificaciones objNotificaciones : lstNotificaciones) {
+
+                    List<Destinatarios> lstDestinatarios = objDestinatariosDAO.obtieneDestinatarios(objNotificaciones.getNoIdNotificacionPk(), sesion);
+
+                    if (!lstDestinatarios.isEmpty()) {
+
+                        Object[] obj = {objNotificaciones, lstDestinatarios};
+
+                        lstMails.add(obj);
+
+                    }
+                    objNotificaciones.setNoIdEstado(Constantes.INT_ET_ESTADO_NOTIFICACION_ENVIANDO);
+
+                    sesion.update(objNotificaciones);
+
+                }
+
+            }
+
+            tx.commit();
+
+        } catch (HibernateException e) {
+            manejaExcepcion(e);
+        } finally {
+            sesion.close();
+        }
         return lstMails;
     }
 
@@ -374,6 +476,7 @@ public class NotificacionesDAO implements Serializable {
 
                 } else {
                     tx.rollback();
+                    sesion.close();
                     return false;
                 }
 
@@ -382,7 +485,7 @@ public class NotificacionesDAO implements Serializable {
             tx.commit();
 
         } catch (HibernateException he) {
-            tx.rollback();
+            manejaExcepcion(he);
             log.error(he);
             m = false;
         }
@@ -487,8 +590,10 @@ public class NotificacionesDAO implements Serializable {
             tx.commit();
 
         } catch (HibernateException he) {
-            log.error(he);
+            manejaExcepcion(he);
             m = false;
+        } finally {
+            sesion.close();
         }
 
         return m;
