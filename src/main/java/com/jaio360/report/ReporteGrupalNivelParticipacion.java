@@ -41,11 +41,11 @@ public class ReporteGrupalNivelParticipacion implements Serializable  {
     ResultadoDAO resultadoDAO = new ResultadoDAO();
     DatosReporte objDatosReporte;
     
-    public String build(DatosReporte objDatosReporte, Map map) throws IOException {
+    public String build(DatosReporte objDatosReporte, Map map, String strNameFile) throws IOException {
         
         this.objDatosReporte = objDatosReporte;
         
-        String strNombreReporte = objDatosReporte.getStrID() + Constantes.STR_EXTENSION_PDF; 
+        String strNombreReporte = strNameFile + Constantes.STR_EXTENSION_PDF; 
         
         JasperPdfExporterBuilder pdfExporter = export.pdfExporter(Constantes.STR_INBOX_PRELIMINAR + File.separator + strNombreReporte)
                                                      .setEncrypted(Boolean.FALSE);

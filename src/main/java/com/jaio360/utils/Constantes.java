@@ -31,7 +31,7 @@ public class Constantes {
     public static String STR_HTM = ".htm";
     public static String STR_SWF = ".swf";
     
-    public static Integer INT_LONGITUD_CLAVE_DEFECTO_ACTIVO = 10;
+    public static Integer INT_LONGITUD_CLAVE_DEFECTO_ACTIVO = 15;
     public static Integer INT_LONGITUD_ARCHIVOS = 20;
     
     public static Integer INT_ESTADO_ELEMENTO_ACTIVO = 1;

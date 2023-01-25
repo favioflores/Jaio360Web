@@ -46,8 +46,6 @@
 
                 <p:growl life="4000" showSummary="true" />
 
-
-
                 <p:card id="panelMetrica" >  
 
                     <h3>#{msg['step3.title']}</h3>
@@ -247,8 +245,21 @@
                                             </p:column>
                                         </p:row>
                                     </p:panelGrid>
-
                                 </p:column>
+
+                                <p:column headerText="#{msg['step3.unassign.button']}">
+                                    <p:commandButton id="btnEliminarAsignacion" 
+                                                     type="submit"
+                                                     update="@form"
+                                                     immediate="true"
+                                                     actionListener="#{defineCuesEvaView.eliminarRelacionCuestionario(evaluado.intIdEvaluado)}"
+                                                     disabled="#{(defineCuesEvaView.intItEstadoProyecto == 37 or defineCuesEvaView.intItEstadoProyecto == 34)}"
+                                                     icon="pi pi-trash" styleClass="ui-button-outlined rounded-button ui-button-danger" >
+                                        <p:confirm header="#{msg['confirmation']}" message="#{msg['are.you.sure.to.unnassign']}" icon="pi pi-info-circle"  />
+                                    </p:commandButton>
+                                </p:column>
+
+
 
                             </p:dataTable>
 

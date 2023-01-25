@@ -130,16 +130,18 @@
 
                             <p:columnGroup type="header">
                                 <p:row>
-                                    <p:column colspan="3" headerText="Licencias individuales"/>
-                                    <p:column colspan="3" headerText="Licencias masivos"/>
+                                    <p:column colspan="4" headerText="Licencias individuales"/>
+                                    <p:column colspan="4" headerText="Licencias masivos"/>
                                 </p:row>
                                 <p:row>
                                     <p:column headerText="Total"/>
                                     <p:column headerText="Disponible"/>
                                     <p:column headerText="Reservado"/>
+                                    <p:column headerText="Utilizado"/>
                                     <p:column headerText="Total"/>
                                     <p:column headerText="Disponible"/>
                                     <p:column headerText="Reservado"/>
+                                    <p:column headerText="Utilizado"/>
                                 </p:row>
                             </p:columnGroup>
 
@@ -153,6 +155,9 @@
                                 <h:outputText value="#{usuarioSaldo.intReservadoIndividual}" />
                             </p:column>
                             <p:column>
+                                <h:outputText value="#{usuarioSaldo.intUtilizadoIndividual}" />
+                            </p:column>
+                            <p:column>
                                 <h:outputText value="#{usuarioSaldo.intTotalMasivo}" />
                             </p:column>                            
                             <p:column>
@@ -161,7 +166,9 @@
                             <p:column  headerText="Total Masivo">
                                 <h:outputText value="#{usuarioSaldo.intReservadoMasivo}" />
                             </p:column>
-
+                            <p:column>
+                                <h:outputText value="#{usuarioSaldo.intUtilizadoMasivo}" />
+                            </p:column>
 
                         </p:dataTable>
 

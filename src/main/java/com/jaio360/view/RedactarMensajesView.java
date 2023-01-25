@@ -27,6 +27,9 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
+import org.apache.velocity.exception.MethodInvocationException;
+import org.apache.velocity.exception.ParseErrorException;
+import org.apache.velocity.exception.ResourceNotFoundException;
 import org.primefaces.PrimeFaces;
 
 @ManagedBean(name = "redactarMensajesView")
@@ -56,6 +59,7 @@ public class RedactarMensajesView extends BaseView implements Serializable {
     /* CAMPOS DE CONVOCATORIA */
     private String strAsuntoConvocatoria;
     private String strTituloConvocatoria;
+    private String strURLLogoCliente;
     private String strParrafoConvocatoria;
 
     /* BIENVENIDA */
@@ -78,6 +82,14 @@ public class RedactarMensajesView extends BaseView implements Serializable {
 
     public String getStrAgradecimiento() {
         return strAgradecimiento;
+    }
+
+    public String getStrURLLogoCliente() {
+        return strURLLogoCliente;
+    }
+
+    public void setStrURLLogoCliente(String strURLLogoCliente) {
+        this.strURLLogoCliente = strURLLogoCliente;
     }
 
     public void setStrAgradecimiento(String strAgradecimiento) {
@@ -287,6 +299,7 @@ public class RedactarMensajesView extends BaseView implements Serializable {
                     strPreviewConvocatoriaTemplate = Utilitarios.decodeUTF8(objMensaje.getMeTxCuerpo());
                     strAsuntoConvocatoria = objMensaje.getMeTxAsunto();
                     strTituloConvocatoria = Utilitarios.decodeUTF8(objMensaje.getMeTxConvocatoriaTitulo());
+                    strURLLogoCliente = Utilitarios.decodeUTF8(objMensaje.getMeTxConvocatoriaURL());
                     strParrafoConvocatoria = Utilitarios.decodeUTF8(objMensaje.getMeTxConvocatoriaParrafo());
                 } catch (Exception e) {
                     blConvocatoria = false;
@@ -351,17 +364,33 @@ public class RedactarMensajesView extends BaseView implements Serializable {
 
     }
 
+    private void limpiarTextoConvocatoria() {
+        this.strAsuntoConvocatoria = this.strAsuntoConvocatoria.trim();
+        this.strTituloConvocatoria = this.strTituloConvocatoria.trim();
+        this.strParrafoConvocatoria = this.strParrafoConvocatoria.trim();
+        this.strURLLogoCliente = this.strURLLogoCliente.trim();
+    }
+
+    private void limpiarTextoBienvenida() {
+        this.strBienvenidaRecomendaciones = this.strBienvenidaRecomendaciones.trim();
+        this.strBienvenidaConfidencialidad = this.strBienvenidaConfidencialidad.trim();
+        this.strBienvenidaAgradecimiento = this.strBienvenidaAgradecimiento.trim();
+    }
+
     public void previewConvocatoria() {
+        limpiarTextoConvocatoria();
         armarTemplateConvocatoria(true);
         guardarNotificacion(Constantes.INT_ET_NOTIFICACION_CONVOCATORIA.toString());
     }
 
     public void previewBienvenida() {
+        limpiarTextoBienvenida();
         armarTemplateBienvenida(true);
         guardarNotificacion(Constantes.INT_ET_NOTIFICACION_INSTRUCCIONES.toString());
     }
 
     public void previewAgradecimiento() {
+        this.strAgradecimiento = this.strAgradecimiento.trim();
         armarTemplateAgradecimiento(true);
         guardarNotificacion(Constantes.INT_ET_NOTIFICACION_AGRADECIMIENTO.toString());
     }
@@ -370,6 +399,7 @@ public class RedactarMensajesView extends BaseView implements Serializable {
         this.strAsuntoConvocatoria = msg("step4.announcement.text1");
         this.strTituloConvocatoria = msg("step4.announcement.text2");
         this.strParrafoConvocatoria = msg("step4.announcement.text3");
+        this.strURLLogoCliente = msg("step4.announcement.text4");
     }
 
     private void setDataBienvenida() {
@@ -403,14 +433,14 @@ public class RedactarMensajesView extends BaseView implements Serializable {
             if (isPreview) {
 
                 context.put("NOMBRE", "Joanquin Inga Solaza");
-                context.put("TIEMPO", Utilitarios.obtieneFechaSistema(Constantes.FORMAT_DATE_FULL));
+                //context.put("TIEMPO", Utilitarios.obtieneFechaSistema(Constantes.FORMAT_DATE_FULL));
                 context.put("CUENTA", "example@gmail.com");
                 context.put("CLAVE", "49SCNO28#");
                 context.put("URL", "#");
 
             }
 
-            context.put("TEMPLATECONVOCATORIALABELSENDED", msg("template.convocatoria.label.sended"));
+            //context.put("TEMPLATECONVOCATORIALABELSENDED", msg("template.convocatoria.label.sended"));
             context.put("TEMPLATECONVOCATORIALABELHELLO", msg("template.convocatoria.label.hello"));
             context.put("TEMPLATECONVOCATORIALABELUSER", msg("template.convocatoria.label.user"));
             context.put("TEMPLATECONVOCATORIALABELPASSWORD", msg("template.convocatoria.label.password"));
@@ -419,13 +449,14 @@ public class RedactarMensajesView extends BaseView implements Serializable {
 
             context.put("TITULO", strTituloConvocatoria);
             context.put("PARRAFO", strParrafoConvocatoria);
+            context.put("URLLOGO", strURLLogoCliente);
 
             StringWriter out = new StringWriter();
             t.merge(context, out);
 
             strPreviewConvocatoriaTemplate = out.toString();
 
-        } catch (Exception e) {
+        } catch (MethodInvocationException | ParseErrorException | ResourceNotFoundException e) {
             mostrarError(log, e);
         }
 
@@ -543,7 +574,7 @@ public class RedactarMensajesView extends BaseView implements Serializable {
                 if (objNotificacionesDAO.guardarmeComunicados(lstCorreosExtra, strPreviewConvocatoriaTemplate)) {
                     MailSender objMailSender = new MailSender();
                     objMailSender.enviarListaDeNotificacionesProyecto(Utilitarios.obtenerProyecto().getIntIdProyecto());
-                    
+
                     mostrarAlertaInfo("sended.correctly");
 
                     this.correoExtra = Constantes.strVacio;
@@ -601,7 +632,7 @@ public class RedactarMensajesView extends BaseView implements Serializable {
 
         try {
 
-            boolean blContenidoOk = true;
+            boolean blContenidoOk;
             Mensaje objMensaje = new Mensaje();
             Proyecto objProyecto = new Proyecto();
             MensajeDAO objMensajeDAO = new MensajeDAO();
@@ -609,8 +640,7 @@ public class RedactarMensajesView extends BaseView implements Serializable {
             //NOTIFICACION CONVOCATORIA
             if (strIdNotificacion.equals(this.ID_CONVOCATORIA)) {
 
-                blContenidoOk = contenidoValido(strTituloConvocatoria, "título") && contenidoValido(strParrafoConvocatoria, "párrafo");
-
+                //blContenidoOk = contenidoValido(strTituloConvocatoria, "título") && contenidoValido(strParrafoConvocatoria, "párrafo");
                 if (strPreviewConvocatoriaTemplate.contains(strTituloConvocatoria) && strPreviewConvocatoriaTemplate.contains(strParrafoConvocatoria)) {
                     blContenidoOk = true;
                 } else {
@@ -628,6 +658,7 @@ public class RedactarMensajesView extends BaseView implements Serializable {
                     objMensaje.setMeTxAsunto(strAsuntoConvocatoria);
                     objMensaje.setMeTxConvocatoriaTitulo(Utilitarios.encodeUTF8(strTituloConvocatoria));
                     objMensaje.setMeTxConvocatoriaParrafo(Utilitarios.encodeUTF8(strParrafoConvocatoria));
+                    objMensaje.setMeTxConvocatoriaURL(Utilitarios.encodeUTF8(strURLLogoCliente));
 
                     armarTemplateConvocatoria(false);
                     objMensaje.setMeTxCuerpo(Utilitarios.encodeUTF8(strPreviewConvocatoriaTemplate));

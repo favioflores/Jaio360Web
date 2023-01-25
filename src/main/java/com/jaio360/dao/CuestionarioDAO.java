@@ -386,6 +386,32 @@ public class CuestionarioDAO implements Serializable
         return flag; 
 
     }
+    
+    public boolean eliminaSeleccion(Integer IdEvaluado, Integer intIdProyecto) {
+        
+        boolean flag = true;
+        try{ 
+            
+            iniciaOperacion(); 
+            
+            Query query = sesion.createQuery("delete from CuestionarioEvaluado c where c.id.poIdProyectoFk = ? and c.participante.paIdParticipantePk = ? ");
+            query.setInteger(0, intIdProyecto);
+            query.setInteger(1, IdEvaluado);
+            query.executeUpdate();
+            
+            tx.commit(); 
+            
+        } catch (HibernateException he){ 
+            log.error(he);
+            manejaExcepcion(he); 
+            flag = false;
+        } finally { 
+            sesion.close(); 
+        }  
+
+        return flag; 
+
+    }
  
     
     

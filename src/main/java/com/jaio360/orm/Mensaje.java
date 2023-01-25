@@ -13,6 +13,7 @@ public class Mensaje implements java.io.Serializable {
     private byte[] meTxCuerpo;
     private byte[] meTxConvocatoriaTitulo;
     private byte[] meTxConvocatoriaParrafo;
+    private byte[] meTxConvocatoriaURL;
     private byte[] meTxBienvenidaRecomendacion;
     private byte[] meTxBienvenidaConfidencialidad;
     private byte[] meTxBienvenidaAgradecimiento;
@@ -30,6 +31,14 @@ public class Mensaje implements java.io.Serializable {
         return meTxBienvenidaRecomendacion;
     }
 
+    public byte[] getMeTxConvocatoriaURL() {
+        return meTxConvocatoriaURL;
+    }
+
+    public void setMeTxConvocatoriaURL(byte[] meTxConvocatoriaURL) {
+        this.meTxConvocatoriaURL = meTxConvocatoriaURL;
+    }
+    
     public void setMeTxBienvenidaRecomendacion(byte[] meTxBienvenidaRecomendacion) {
         this.meTxBienvenidaRecomendacion = meTxBienvenidaRecomendacion;
     }

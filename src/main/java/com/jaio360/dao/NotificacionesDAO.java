@@ -99,11 +99,11 @@ public class NotificacionesDAO implements Serializable {
         try {
             iniciaOperacion();
 
-            Query query = sesion.createQuery("from Notificaciones where noIdRefProceso = ? and noFeCreacion >= ? and noFeCreacion <= ? order by noFeCreacion desc ");
+            Query query = sesion.createQuery("from Notificaciones where noIdRefProceso = ? order by noFeCreacion desc ");
 
             query.setInteger(0, intProyecto);
-            query.setDate(1, ini);
-            query.setDate(2, Utilitarios.sumarRestarDiasFecha(end, 1));
+            //query.setDate(1, ini);
+            //query.setDate(2, Utilitarios.setEndOfDate(end));
 
             List<Notificaciones> lstNotificaciones = query.list();
 

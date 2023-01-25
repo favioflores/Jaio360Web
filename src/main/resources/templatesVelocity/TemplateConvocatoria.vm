@@ -111,9 +111,9 @@
             <tr>
                 <td height="40"><div class="divTittle">$TITULO</div></td>
             </tr>
-            <tr>
+            <!-- tr>
                 <td height="35"><div class="divDatoEnvio">$TEMPLATECONVOCATORIALABELSENDED: $TIEMPO</div></td>
-            </tr>
+            </tr -->
             <tr>
                 <td>
                     <table width="400" align="center" class="border_tabla">
@@ -130,7 +130,12 @@
                                                 </tr>
                                                 <tr>
                                                     <td>&nbsp;</td>
-                                                    <td><img id="j_idt9" src="https://www.jaio360-app.com/images/logoJaio360.jpg?pfdrid_c=true" alt="" width="130" height="50" /></td>
+                                                    <td>
+                                                        <table  width="100%" align="center" >
+                                                            <td><img src="https://www.jaio360-app.com/images/logoJaio360.jpg?pfdrid_c=true" alt="" width="130"  /></td>
+                                                            <td><img src="$URLLOGO" alt="" width="130" /></td>
+                                                        </table>
+                                                    </td>
                                                     <td>&nbsp;</td>
                                                 </tr>
                                                 <tr style="height: 60px;">

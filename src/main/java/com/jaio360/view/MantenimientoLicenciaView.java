@@ -266,6 +266,8 @@ public class MantenimientoLicenciaView extends BaseView implements Serializable 
                     objUsuarioSaldoBean.setIntDisponibleMasivo(objUsuarioSaldo.getUsNrDisponibleMasivo());
                     objUsuarioSaldoBean.setIntReservadoIndividual(objUsuarioSaldo.getUsNrReservadoIndividual());
                     objUsuarioSaldoBean.setIntReservadoMasivo(objUsuarioSaldo.getUsNrReservadoMasivo());
+                    objUsuarioSaldoBean.setIntUtilizadoIndividual(objUsuarioSaldo.getUsNrUsadoIndividual());
+                    objUsuarioSaldoBean.setIntUtilizadoMasivo(objUsuarioSaldo.getUsNrUsadoMasivo());
                     
                     lstUsuarioSaldo.add(objUsuarioSaldoBean);
 

@@ -1391,6 +1391,7 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
             this.lstNotificacion = new ArrayList<>();
             this.ini = null;
             this.end = null;
+            buscarEmails();
         } catch (Exception e) {
             mostrarError(log, e);
         }
@@ -1398,6 +1399,8 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
 
     public void buscarEmails() {
         try {
+            
+            this.lstNotificacion = new ArrayList<>();
 
             NotificacionesDAO objNotificacionesDAO = new NotificacionesDAO();
 

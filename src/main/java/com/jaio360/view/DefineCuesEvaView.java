@@ -8,6 +8,7 @@ import com.jaio360.domain.EvaluadoCuestionario;
 import com.jaio360.domain.ProyectoInfo;
 import com.jaio360.orm.Cuestionario;
 import com.jaio360.orm.Participante;
+import com.jaio360.orm.Proyecto;
 import com.jaio360.utils.Constantes;
 import com.jaio360.utils.Utilitarios;
 import java.io.Serializable;
@@ -179,6 +180,9 @@ public class DefineCuesEvaView extends BaseView implements Serializable {
         CuestionarioDAO objCuestionarioDAO = new CuestionarioDAO();
 
         ProyectoDAO objProyectoDAO = new ProyectoDAO();
+        Proyecto objProyecto = objProyectoDAO.obtenProyecto(Utilitarios.obtenerProyecto().getIntIdProyecto());
+        
+        this.intItEstadoProyecto = objProyecto.getPoIdEstado();
 
         List<Cuestionario> lstCuestionarios = objCuestionarioDAO.obtenListaCuestionario(Utilitarios.obtenerProyecto().getIntIdProyecto());
 
@@ -350,12 +354,27 @@ public class DefineCuesEvaView extends BaseView implements Serializable {
         }
 
     }
+    public void eliminarRelacionCuestionario(Integer IdEvaluado){
+        try {
+            CuestionarioDAO objCuestionarioDAO = new CuestionarioDAO();
+            boolean result = objCuestionarioDAO.eliminaSeleccion(IdEvaluado, Utilitarios.obtenerProyecto().getIntIdProyecto());
+            
+            if(result){
+                mostrarAlertaInfo("relation.to.evaluation.deleted");
+                init();
+            }else{
+                mostrarAlertaError("error.was.occurred");
+            }
+        } catch (Exception e) {
+            mostrarError(log, e);
+        }
+    }
 
     public void guardarRelacionCuestionarios() {
 
         try {
 
-            boolean flagGuardado = false;
+            boolean flagGuardado;
 
             CuestionarioDAO objCuestionarioDAO = new CuestionarioDAO();
 

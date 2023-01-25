@@ -437,7 +437,8 @@ public class GeneraReportesView extends BaseView implements Serializable {
 
             verificaDirectorios();
 
-            List<DatosReporte> lstTemporales = new ArrayList<>();
+            List<DatosReporte> lstTemporalesPDFxCombinar = new ArrayList<>();
+            List<DatosReporte> lstTemporalesOtros = new ArrayList<>();
             List<DatosReporte> lstDefinitivos = new ArrayList<>();
 
             if (!lstSeleccionadosGrupal.isEmpty() && !lstCuestionariosSeleccionados.isEmpty()) {
@@ -448,149 +449,105 @@ public class GeneraReportesView extends BaseView implements Serializable {
 
                 Integer intMaxRango = detalleMetricaDAO.obtenMaxMetricaProyecto(Utilitarios.obtenerProyecto().getIntIdProyecto());
 
-                //CuestionarioDAO objCuestionarioDAO = new CuestionarioDAO();
                 Map map = new HashMap();
 
                 ElementoGrupalUtiles objElementoGrupalUtiles = new ElementoGrupalUtiles();
-                String utilReport = objElementoGrupalUtiles.build(intMaxRango);
-                DatosReporte objUtil = new DatosReporte();
-                objUtil.setStrID(utilReport);
-                objUtil.setBlDefinitivo(false);
+                String utilReport = objElementoGrupalUtiles.build(intMaxRango, lstTemporalesOtros);
                 map.put(Constantes.INT_PARAM_GRAF_MEDIDA, utilReport);
 
                 boolean flag = true;
+
 
                 /* INVOCA CLASES QUE GENEREN LOS TEMPORALES */
                 for (Cuestionario objCuestionario : lstCuestionariosSeleccionados) {
 
                     for (Integer objModeloContenido : lstSeleccionadosGrupal) {
 
-                        DatosReporte objDatosReporte = new DatosReporte();
-                        objDatosReporte.setStrNombre(msg("report." + objModeloContenido));
-                        objDatosReporte.setStrDescripcion(msg("report." + objModeloContenido));
-                        //objDatosReporte.setMapRelaciones(mapRelaciones);
-                        objDatosReporte.setIntIdCuestionario(objCuestionario.getCuIdCuestionarioPk());
-                        objDatosReporte.setStrCuestionario(objCuestionario.getCuTxDescripcion());
-                        objDatosReporte.setIntMaxRango(intMaxRango);
-
-                        String strNombreTemp = Utilitarios.reemplazar(objCuestionario.getCuTxDescripcion(), " ", "_");
-                        String strFirma = Utilitarios.formatearFecha(Utilitarios.getCurrentDate(), Constantes.DDMMYYYYHH24MISS) + "_"
-                                + Utilitarios.generateRandom(strNombreTemp);
-
-                        objDatosReporte.setStrID(strNombreTemp + "_" + msg("report." + objModeloContenido) + "_" + strFirma);
-                        objDatosReporte.setStrNombreEvaluado(objCuestionario.getCuTxDescripcion());
+                        DatosReporte objDatosReportePrincipal = new DatosReporte();
+                        objDatosReportePrincipal.setStrNombre(msg("report." + objModeloContenido));
+                        objDatosReportePrincipal.setStrDescripcion(msg("report." + objModeloContenido));
+                        objDatosReportePrincipal.setIntIdCuestionario(objCuestionario.getCuIdCuestionarioPk());
+                        objDatosReportePrincipal.setStrCuestionario(objCuestionario.getCuTxDescripcion());
+                        objDatosReportePrincipal.setIntMaxRango(intMaxRango);
 
                         if (flag) {
-                            DatosReporte objDatosReporteC = (DatosReporte) SerializationUtils.clone(objDatosReporte);
 
-                            String strNTempC = Utilitarios.reemplazar(objCuestionario.getCuTxDescripcion(), " ", "C_");
-                            String strFC = Utilitarios.formatearFecha(Utilitarios.getCurrentDate(), Constantes.DDMMYYYYHH24MISS);
-
-                            objDatosReporteC.setStrID(strNTempC + "_" + msg("report." + objModeloContenido) + "_" + strFC);
+                            String strNameFile = Utilitarios.generaIDReporte() + "_" + Utilitarios.formatearFecha(Utilitarios.getCurrentDate(), Constantes.DDMMYYYYHH24MISS);
 
                             ReporteGrupalCaratula objReporteC = new ReporteGrupalCaratula();
-                            objDatosReporteC.setStrID(objReporteC.build(objDatosReporteC));
-                            objDatosReporteC.setBlDefinitivo(true);
-                            lstTemporales.add(objDatosReporteC);
+
+                            DatosReporte DRCaratula = new DatosReporte();
+                            DRCaratula.setIntIdCuestionario(objDatosReportePrincipal.getIntIdCuestionario());
+
+                            DRCaratula.setStrID(objReporteC.build(objDatosReportePrincipal, strNameFile));
+                            lstTemporalesPDFxCombinar.add(DRCaratula);
 
                             flag = false;
                         }
 
                         if (objModeloContenido.equals(Constantes.INT_REPORTE_GRUPAL_SUMARIO_X_CATEGORIA)) {
 
-                            List<DatosReporte> lstTemp = new ArrayList();
+                            String strNameFile = Utilitarios.generaIDReporte() + "_" + Utilitarios.formatearFecha(Utilitarios.getCurrentDate(), Constantes.DDMMYYYYHH24MISS);
 
-                            /*
-                            DatosReporte objDatosReporteC = (DatosReporte) SerializationUtils.clone(objDatosReporte);
-
-                            String strNTempC = Utilitarios.reemplazar(objCuestionario.getCuTxDescripcion(), " ", "C_");
-                            String strFC = Utilitarios.formatearFecha(Utilitarios.getCurrentDate(), Constantes.DDMMYYYYHH24MISS);
-
-                            objDatosReporteC.setStrID(strNTempC + "_" + msg("report." + objModeloContenido) + "_" + strFC);
-
-                            ReporteGrupalCaratula objReporteC = new ReporteGrupalCaratula();
-                            objDatosReporteC.setStrID(objReporteC.build(objDatosReporteC));
-                            objDatosReporteC.setBlDefinitivo(false);
-                            lstTemp.add(objDatosReporteC);
-                             */
-                            DatosReporte objDatosReporteR = (DatosReporte) SerializationUtils.clone(objDatosReporte);
-
-                            String strNTempR = Utilitarios.reemplazar(objCuestionario.getCuTxDescripcion(), " ", "R_");
-                            String strFR = Utilitarios.formatearFecha(Utilitarios.getCurrentDate(), Constantes.DDMMYYYYHH24MISS);
-
-                            objDatosReporteR.setStrID(strNTempR + "_" + msg("report." + objModeloContenido) + "_" + strFR);
+                            DatosReporte objDatosReporte = new DatosReporte();
+                            objDatosReporte.setIntIdCuestionario(objDatosReportePrincipal.getIntIdCuestionario());
+                            objDatosReporte.setStrCuestionario(objDatosReportePrincipal.getStrCuestionario());
+                            objDatosReporte.setIntMaxRango(objDatosReportePrincipal.getIntMaxRango());
 
                             ReporteGrupalSumarioCategoriaGeneral objReporteR = new ReporteGrupalSumarioCategoriaGeneral();
-                            objDatosReporteR.setStrID(objReporteR.build(objDatosReporteR, map));
-                            objDatosReporteR.setBlDefinitivo(false);
-                            lstTemp.add(objDatosReporteR);
-
-                            objDatosReporte.setStrID(Utilitarios.combinaReportesPDF(lstTemp, objDatosReporte));
-                            objDatosReporte.setBlDefinitivo(true);
-
-                            //lstTemporales.add(objDatosReporteC);
-                            lstTemporales.add(objDatosReporteR);
-                            lstTemporales.add(objDatosReporte);
+                            objDatosReporte.setStrID(objReporteR.build(objDatosReporte, map, strNameFile));
+                            
+                            lstTemporalesPDFxCombinar.add(objDatosReporte);
 
                         } else if (objModeloContenido.equals(Constantes.INT_REPORTE_GRUPAL_NIVEL_DE_PARTICIPACION)) {
 
-                            List<DatosReporte> lstTemp = new ArrayList();
+                            String strNameFile = Utilitarios.generaIDReporte() + "_" + Utilitarios.formatearFecha(Utilitarios.getCurrentDate(), Constantes.DDMMYYYYHH24MISS);
 
-                            /*
-                            DatosReporte objDatosReporteC = (DatosReporte) SerializationUtils.clone(objDatosReporte);
-
-                            String strNTempC = Utilitarios.reemplazar(objCuestionario.getCuTxDescripcion(), " ", "C_");
-                            String strFC = Utilitarios.formatearFecha(Utilitarios.getCurrentDate(), Constantes.DDMMYYYYHH24MISS);
-
-                            objDatosReporteC.setStrID(strNTempC + "_" + msg("report." + objModeloContenido) + "_" + strFC);
-
-                            ReporteGrupalCaratula objReporteC = new ReporteGrupalCaratula();
-                            objDatosReporteC.setStrID(objReporteC.build(objDatosReporteC));
-                            objDatosReporteC.setBlDefinitivo(false);
-                            lstTemp.add(objDatosReporteC);
-                             */
-                            DatosReporte objDatosReporteR = (DatosReporte) SerializationUtils.clone(objDatosReporte);
-
-                            String strNTempR = Utilitarios.reemplazar(objCuestionario.getCuTxDescripcion(), " ", "R_");
-                            String strFR = Utilitarios.formatearFecha(Utilitarios.getCurrentDate(), Constantes.DDMMYYYYHH24MISS);
-
-                            objDatosReporteR.setStrID(strNTempR + "_" + msg("report." + objModeloContenido) + "_" + strFR);
+                            DatosReporte objDatosReporte = new DatosReporte();
+                            objDatosReporte.setIntIdCuestionario(objDatosReportePrincipal.getIntIdCuestionario());
+                            objDatosReporte.setStrCuestionario(objDatosReportePrincipal.getStrCuestionario());
 
                             ReporteGrupalNivelParticipacion objReporteR = new ReporteGrupalNivelParticipacion();
-                            objDatosReporteR.setStrID(objReporteR.build(objDatosReporteR, map));
-                            objDatosReporteR.setBlDefinitivo(false);
-                            lstTemp.add(objDatosReporteR);
+                            objDatosReporte.setStrID(objReporteR.build(objDatosReporte, map, strNameFile));
 
-                            objDatosReporte.setStrID(Utilitarios.combinaReportesPDF(lstTemp, objDatosReporte));
-                            objDatosReporte.setBlDefinitivo(true);
-
-                            //lstTemporales.add(objDatosReporteC);
-                            lstTemporales.add(objDatosReporteR);
-                            lstTemporales.add(objDatosReporte);
+                            lstTemporalesPDFxCombinar.add(objDatosReporte);
 
                         } else if (objModeloContenido.equals(Constantes.INT_REPORTE_GRUPAL_RESPUESTAS)) {
+
+                            String strNameFile = Utilitarios.generaIDReporte() + "_" + Utilitarios.formatearFecha(Utilitarios.getCurrentDate(), Constantes.DDMMYYYYHH24MISS);
+
+                            DatosReporte objDatosReporte = new DatosReporte();
+                            objDatosReporte.setIntIdCuestionario(objDatosReportePrincipal.getIntIdCuestionario());
+                            objDatosReporte.setStrCuestionario(objDatosReportePrincipal.getStrCuestionario());
+
                             ReporteTodasRespuestas objReporte = new ReporteTodasRespuestas();
-                            objDatosReporte.setStrID(objReporte.build(objDatosReporte, map, objCuestionario.getCuIdCuestionarioPk()));
-                            objDatosReporte.setBlDefinitivo(true);
+                            objDatosReporte.setStrID(objReporte.build(objDatosReporte, map, objCuestionario.getCuIdCuestionarioPk(), strNameFile));
+
                             lstDefinitivos.add(objDatosReporte);
+                            
                         }
 
                     }
 
-                    if (!lstTemporales.isEmpty()) {
+                    if (!lstTemporalesPDFxCombinar.isEmpty()) {
 
-                        DatosReporte objDatosReporte = new DatosReporte();
-                        objDatosReporte.setStrID(objCuestionario.getCuTxDescripcion() + "_" + Utilitarios.formatearFecha(Utilitarios.getCurrentDate(), Constantes.DDMMYYYYHH24MISS));
-                        objDatosReporte.setStrID(Utilitarios.combinaReportesPDFDefinitivos(lstTemporales, objDatosReporte));
-                        objDatosReporte.setStrID(Utilitarios.putPageNumber(objDatosReporte.getStrID()));
-                        objDatosReporte.setBlDefinitivo(true);
-                        lstDefinitivos.add(objDatosReporte);
+                        DatosReporte objDatosReporteCombine = new DatosReporte();
+                        objDatosReporteCombine.setStrID(objCuestionario.getCuTxDescripcion() + "_" + Utilitarios.formatearFecha(Utilitarios.getCurrentDate(), Constantes.DDMMYYYYHH24MISS));
+                        objDatosReporteCombine.setStrID(Utilitarios.combinaReportesPDFDefinitivos(lstTemporalesPDFxCombinar, objDatosReporteCombine));
+                        lstTemporalesPDFxCombinar.add(objDatosReporteCombine);
+
+                        DatosReporte objDatosReporteFinal = new DatosReporte();
+                        objDatosReporteFinal.setStrID(Utilitarios.putPageNumber(objDatosReporteCombine.getStrID()));
+                        objDatosReporteFinal.setBlDefinitivo(true);
+                        lstDefinitivos.add(objDatosReporteFinal);
 
                     }
 
                 }
 
-                Utilitarios.eliminaArchivosTemporales(lstTemporales);
+                Utilitarios.eliminaArchivosTemporales(lstTemporalesPDFxCombinar);
+
+                Utilitarios.eliminaArchivosTemporales(lstTemporalesOtros);
 
                 if (!lstDefinitivos.isEmpty()) {
 
@@ -602,6 +559,7 @@ public class GeneraReportesView extends BaseView implements Serializable {
                     boolean flagFinal = Utilitarios.zipArchivos(lstDefinitivos, salida);
 
                     if (flagFinal) {
+
                         InputStream stream = new FileInputStream(objFile.getAbsolutePath());
 
                         fileGrupal = DefaultStreamedContent.builder()
@@ -632,6 +590,7 @@ public class GeneraReportesView extends BaseView implements Serializable {
             verificaDirectorios();
 
             List<DatosReporte> lstTemporales = new ArrayList<>();
+            List<DatosReporte> lstTemporalesOtros = new ArrayList<>();
             List<DatosReporte> lstDefinitivos = new ArrayList<>();
 
             if (!lstSeleccionadosIndividual.isEmpty() && !lstEvaluadosSeleccionados.isEmpty()) {
@@ -647,7 +606,7 @@ public class GeneraReportesView extends BaseView implements Serializable {
                 Map map = new HashMap();
 
                 ElementoGrupalUtiles objElementoGrupalUtiles = new ElementoGrupalUtiles();
-                String utilReport = objElementoGrupalUtiles.build(intMaxRango);
+                String utilReport = objElementoGrupalUtiles.build(intMaxRango, lstTemporalesOtros);
                 DatosReporte objUtil = new DatosReporte();
                 objUtil.setStrID(utilReport);
                 objUtil.setBlDefinitivo(false);

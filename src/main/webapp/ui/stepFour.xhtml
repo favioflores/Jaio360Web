@@ -92,6 +92,14 @@
                                             <small class="p-d-block">#{msg['step4.announcement.label.2']}</small>
                                         </div>
                                         <div class="p-field">
+                                            <p:outputLabel for="strURLLogoCliente" value="#{msg['url.logo.client']}" />
+                                            <p:inputText id="strURLLogoCliente" value="#{redactarMensajesView.strURLLogoCliente}" 
+                                                         maxlength="500">
+                                                <f:validator validatorId="validaURLNotRequired" />
+                                            </p:inputText>
+                                            <small class="p-d-block">#{msg['step4.announcement.label.4']}</small>
+                                        </div>
+                                        <div class="p-field">
                                             <p:outputLabel for="strParrafoConvocatoria" value="#{msg['step4.announcement.content.paragraph']}" />
                                             <p:textEditor id="strParrafoConvocatoria" value="#{redactarMensajesView.strParrafoConvocatoria}" 
                                                           required="true" requiredMessage="#{msg['adm.least.value']}" 

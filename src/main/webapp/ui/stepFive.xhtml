@@ -218,7 +218,7 @@
                                     <p:commandButton id="btnLogMail" 
                                                      value="#{msg['step5.log.emails']}" 
                                                      type="submit"
-                                                     update="@form"
+                                                     update="@form,frmLogmail"
                                                      disabled="#{seguimientoProyectoView.intIdEstadoProyecto==37?true:seguimientoProyectoView.boProyectoEjecutado==true?false:true}"
                                                      actionListener="#{seguimientoProyectoView.verLogMail}"
                                                      icon="pi pi-search"
@@ -503,7 +503,7 @@
                 <p:panel>
 
                     <p:growl id="growlFormLog" showDetail="false" life="4000" />
-
+                    <!--
                     <div class="p-field p-formgrid p-grid">
                         <div class="p-col" >
                             <p:outputLabel for="ini" value="#{msg['step5.search.send.ini.date']}"/>
@@ -514,10 +514,11 @@
                             <p:datePicker id="end" value="#{seguimientoProyectoView.end}" required="true" readonlyInput="false"/>
                         </div>
                     </div>
+                    -->
                     <div class="p-field p-formgrid p-grid">
                         <div class="p-col" >
-                            <p:commandButton value="#{msg['search']}" style="width: 100%;"  icon="pi pi-search" update="frmLogmail"
-                                             actionListener="#{seguimientoProyectoView.buscarEmails}" oncomplete="PF('dlgLicencias').hide()" />
+                            <p:commandButton value="#{msg['refresh']}" style="width: 100%;"  icon="pi pi-refresh" update="frmLogmail"
+                                             actionListener="#{seguimientoProyectoView.buscarEmails}"/>
                         </div>
                     </div>
                     <div class="p-field p-formgrid p-grid">

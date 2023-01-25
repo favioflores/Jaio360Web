@@ -67,7 +67,7 @@ import org.apache.poi.ss.usermodel.Row;
  *
  * @author Favio
  */
-public class Utilitarios extends BaseView implements Serializable{
+public class Utilitarios extends BaseView implements Serializable {
 
     private static Log log = LogFactory.getLog(Utilitarios.class);
 
@@ -330,8 +330,7 @@ public class Utilitarios extends BaseView implements Serializable{
             PdfContentByte cb = writer.getDirectContent();
 
             for (DatosReporte objDatosReporte : list) {
-                if (objDatosReporte.isBlDefinitivo()) {
-                    InputStream in = new FileInputStream(Constantes.STR_INBOX_PRELIMINAR + File.separator + objDatosReporte.getStrID());
+                try ( InputStream in = new FileInputStream(Constantes.STR_INBOX_PRELIMINAR + File.separator + objDatosReporte.getStrID())) {
                     PdfReader reader = new PdfReader(in);
                     for (int i = 1; i <= reader.getNumberOfPages(); i++) {
                         document.newPage();
@@ -339,8 +338,6 @@ public class Utilitarios extends BaseView implements Serializable{
                         cb.addTemplate(page, 0, 0);
                     }
                     reader.close();
-                    in.close();
-                    objDatosReporte.setBlDefinitivo(false);
                 }
             }
 
@@ -365,19 +362,15 @@ public class Utilitarios extends BaseView implements Serializable{
 
         try {
 
-            Document document = new Document();
-
-            OutputStream outputStream = new FileOutputStream(Constantes.STR_INBOX_PRELIMINAR + File.separator + "Final_" + IdReporteSalida);
-
-            PdfWriter writer = PdfWriter.getInstance(document, outputStream);
-
-            document.open();
-
-            PdfContentByte cb = writer.getDirectContent();
+            //Document document = new Document();
+            //OutputStream outputStream = new FileOutputStream(Constantes.STR_INBOX_PRELIMINAR + File.separator + "Final_" + IdReporteSalida);
+            //PdfWriter writer = PdfWriter.getInstance(document, outputStream);
+            //document.open();
+            PdfContentByte cb;// = writer.getDirectContent();
 
             PdfReader reader = new PdfReader(Constantes.STR_INBOX_PRELIMINAR + File.separator + IdReporteSalida);
             reader.makeRemoteNamedDestinationsLocal();
-            PdfStamper stamper = new PdfStamper(reader, new FileOutputStream(Constantes.STR_INBOX_PRELIMINAR + File.separator + "Final " + IdReporteSalida));
+            PdfStamper stamper = new PdfStamper(reader, new FileOutputStream(Constantes.STR_INBOX_PRELIMINAR + File.separator + "Final_" + IdReporteSalida));
             BaseFont bf = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
 
             int n = reader.getNumberOfPages();
@@ -400,12 +393,11 @@ public class Utilitarios extends BaseView implements Serializable{
             stamper.close();
             reader.close();
 
-            outputStream.flush();
+            //outputStream.flush();
             //document.close();
             //writer.close();
-            outputStream.close();
-
-            IdReporteSalida = "Final " + IdReporteSalida;
+            //outputStream.close();
+            IdReporteSalida = "Final_" + IdReporteSalida;
 
         } catch (FileNotFoundException ex) {
             log.error(ex);
@@ -528,7 +520,7 @@ public class Utilitarios extends BaseView implements Serializable{
 
     public static boolean eliminaArchivosTemporales(List<DatosReporte> lstReportes) {
 
-        boolean blSave = false;
+        boolean blSave;
 
         log.debug("Inicia zipArchivos");
 
@@ -539,7 +531,9 @@ public class Utilitarios extends BaseView implements Serializable{
                 File fl = new File(Constantes.STR_INBOX_PRELIMINAR + File.separator + objDatosReporte.getStrID());
 
                 try {
+                    
                     Files.delete(fl.toPath());
+                    
                 } catch (NoSuchFileException x) {
                     log.error("%s: no such" + " file or directory%n");
                 } catch (DirectoryNotEmptyException x) {
@@ -564,7 +558,7 @@ public class Utilitarios extends BaseView implements Serializable{
 
     public static boolean zipArchivos(List<DatosReporte> lstReportes, FileOutputStream outPut) {
 
-        boolean blSave = false;
+        boolean blSave;
 
         try {
 
@@ -897,9 +891,9 @@ public class Utilitarios extends BaseView implements Serializable{
     }
 
     public static String columnExcel(int number) {
-        
+
         number++;
-        
+
         StringBuilder sb = new StringBuilder();
         while (number-- > 0) {
             sb.append((char) ('A' + (number % 26)));
@@ -927,6 +921,18 @@ public class Utilitarios extends BaseView implements Serializable{
         calendar.setTime(fecha); // Configuramos la fecha que se recibe
         calendar.add(Calendar.DAY_OF_YEAR, dias);  // numero de días a añadir, o restar en caso de días<0
         return calendar.getTime(); // Devuelve el objeto Date con los nuevos días añadidos	
+    }
+
+    public static Date setEndOfDate(Date fecha) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(fecha);
+        calendar.set(Calendar.HOUR_OF_DAY, 23);
+        calendar.set(Calendar.MINUTE, 59);
+        calendar.set(Calendar.SECOND, 59);
+        calendar.set(Calendar.MILLISECOND, 999);
+
+        fecha = calendar.getTime();
+        return fecha;
     }
 
     public static String decodeUTF8(byte[] bytes) {

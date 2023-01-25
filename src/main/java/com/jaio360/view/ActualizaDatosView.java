@@ -1,6 +1,5 @@
 package com.jaio360.view;
 
-import com.jaio360.application.EHCacheManager;
 import com.jaio360.dao.ElementoDAO;
 import com.jaio360.dao.UbigeoDAO;
 import com.jaio360.dao.UsuarioDAO;
@@ -17,12 +16,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.RequestScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
-import javax.inject.Named;
 import javax.servlet.http.HttpSession;
 import javax.validation.constraints.Email;
 import org.apache.commons.logging.Log;
