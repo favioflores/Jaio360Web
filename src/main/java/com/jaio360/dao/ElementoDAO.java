@@ -95,7 +95,7 @@ public class ElementoDAO extends BaseView implements Serializable {
                     }
                 }
             }
-            
+
         } catch (HibernateException e) {
             log.error(e);
         }
@@ -134,5 +134,23 @@ public class ElementoDAO extends BaseView implements Serializable {
     private void manejaExcepcion(HibernateException he) throws HibernateException {
         tx.rollback();
         throw new HibernateException("Ocurrió un error en la capa de acceso a datos", he);
+    }
+
+    public void dummy() throws HibernateException {
+
+        try {
+
+            iniciaOperacion();
+
+            Query query = sesion.createSQLQuery("SELECT NOW() FROM DUAL");
+
+            query.uniqueResult();
+
+        } catch (HibernateException e) {
+            log.error(e);
+        } finally {
+            sesion.close();
+        }
+
     }
 }

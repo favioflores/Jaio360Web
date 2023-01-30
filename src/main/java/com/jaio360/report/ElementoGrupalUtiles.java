@@ -76,7 +76,7 @@ public class ElementoGrupalUtiles implements Serializable {
             temppdf.setStrID(strNombreReporte + Constantes.STR_EXTENSION_PDF);
             lstFilesTemp.add(temppdf);
 
-            File file = new File(strNombreReporte + Constantes.STR_EXTENSION_PNG);
+            File file = new File(Constantes.STR_INBOX_PRELIMINAR + File.separator + strNombreReporte + Constantes.STR_EXTENSION_PNG);
             if (file.exists()) {
                 DatosReporte temp = new DatosReporte();
                 temp.setStrID(strNombreReporte + Constantes.STR_EXTENSION_PNG);
@@ -136,7 +136,7 @@ public class ElementoGrupalUtiles implements Serializable {
 
             ChartRenderingInfo info = new ChartRenderingInfo(new StandardEntityCollection());
 
-            File file = new File(strNombreReporte + Constantes.STR_EXTENSION_PNG);
+            File file = new File(Constantes.STR_INBOX_PRELIMINAR + File.separator + strNombreReporte + Constantes.STR_EXTENSION_PNG);
 
             try {
                 ChartUtilities.saveChartAsPNG(file, chart, 426, 17, info);

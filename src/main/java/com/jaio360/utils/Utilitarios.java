@@ -522,8 +522,6 @@ public class Utilitarios extends BaseView implements Serializable {
 
         boolean blSave;
 
-        log.debug("Inicia zipArchivos");
-
         try {
 
             for (DatosReporte objDatosReporte : lstReportes) {
@@ -531,13 +529,49 @@ public class Utilitarios extends BaseView implements Serializable {
                 File fl = new File(Constantes.STR_INBOX_PRELIMINAR + File.separator + objDatosReporte.getStrID());
 
                 try {
-                    
+
                     Files.delete(fl.toPath());
-                    
+
                 } catch (NoSuchFileException x) {
-                    log.error("%s: no such" + " file or directory%n");
+                    log.error(x);
                 } catch (DirectoryNotEmptyException x) {
-                    log.error("%s not empty%n");
+                    log.error(x);
+                } catch (IOException x) {
+                    log.error(x);
+                }
+
+            }
+
+            blSave = true;
+
+        } catch (Exception e) {
+
+            blSave = false;
+            log.error(e);
+
+        }
+
+        return blSave;
+    }
+
+    public static boolean eliminaArchivosTemporalesByPath(List<String> lstReportes) {
+
+        boolean blSave;
+
+        try {
+
+            for (String objDatosReporte : lstReportes) {
+
+                File fl = new File(Constantes.STR_INBOX_PRELIMINAR + File.separator + objDatosReporte);
+
+                try {
+
+                    Files.delete(fl.toPath());
+
+                } catch (NoSuchFileException x) {
+                    log.error(x);
+                } catch (DirectoryNotEmptyException x) {
+                    log.error(x);
                 } catch (IOException x) {
                     log.error(x);
                 }

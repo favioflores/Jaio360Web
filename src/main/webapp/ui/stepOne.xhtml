@@ -60,7 +60,7 @@
                         <h:form id="frmSex">
 
                             <p:toggleSwitch id="switchSexo" value="#{parametrosView.blSexo}" disabled="#{evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}">
-                                <p:ajax listener="#{parametrosView.activarParametro(82)}" resetValues="true" update="frmSex,frmGlobal" />
+                                <p:ajax listener="#{parametrosView.activarParametro(82)}" resetValues="true" update="frmSex,formRed,frmGlobal" />
                             </p:toggleSwitch>     
 
                             <div class="p-field p-grid">
@@ -74,7 +74,7 @@
                                     <p:spacer/>
                                     <p:commandButton type="submit" icon="pi pi-save" value="#{msg['save']}" 
                                                      disabled="#{!parametrosView.blSexo or evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}"
-                                                     update="frmSex,frmGlobal" actionListener="#{parametrosView.guardarPreferencia(82)}" />
+                                                     update="frmSex,frmGlobal,formRed" actionListener="#{parametrosView.guardarPreferencia(82)}" />
                                 </div>
                             </div>
                         </h:form>
@@ -84,7 +84,7 @@
                         <h:form id="frmRango">
 
                             <p:toggleSwitch value="#{parametrosView.blRangoEdad}" disabled="#{evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}" >
-                                <p:ajax listener="#{parametrosView.activarParametro(83)}" resetValues="true" update="frmRango,frmGlobal" />
+                                <p:ajax listener="#{parametrosView.activarParametro(83)}" resetValues="true" update="frmRango,frmGlobal,formRed" />
                             </p:toggleSwitch>
 
                             <div class="p-field p-grid">
@@ -97,7 +97,7 @@
                                     <p:spacer/>
                                     <p:commandButton type="submit" icon="pi pi-save" value="#{msg['save']}"  
                                                      disabled="#{!parametrosView.blRangoEdad or evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}" 
-                                                     update="frmRango,frmGlobal" actionListener="#{parametrosView.guardarPreferencia(83)}" />
+                                                     update="frmRango,frmGlobal,formRed" actionListener="#{parametrosView.guardarPreferencia(83)}" />
                                 </div>
                             </div>
                         </h:form>
@@ -108,7 +108,7 @@
                         <h:form id="frmTiempoEmpresa">
 
                             <p:toggleSwitch value="#{parametrosView.blTiempoEmpresa}" disabled="#{evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}" >
-                                <p:ajax listener="#{parametrosView.activarParametro(84)}" resetValues="true"  update="frmTiempoEmpresa,frmGlobal" />
+                                <p:ajax listener="#{parametrosView.activarParametro(84)}" resetValues="true"  update="frmTiempoEmpresa,frmGlobal,formRed" />
                             </p:toggleSwitch>
 
                             <div class="p-field p-grid">
@@ -120,7 +120,7 @@
                                     <p:spacer/>
                                     <p:commandButton type="submit" icon="pi pi-save" value="#{msg['save']}" 
                                                      disabled="#{!parametrosView.blTiempoEmpresa or evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}" 
-                                                     update="frmTiempoEmpresa,frmGlobal" actionListener="#{parametrosView.guardarPreferencia(84)}" />
+                                                     update="frmTiempoEmpresa,frmGlobal,formRed" actionListener="#{parametrosView.guardarPreferencia(84)}" />
 
                                 </div>
                             </div>
@@ -131,7 +131,7 @@
                         <h:form id="frmNivelOcupacional">
 
                             <p:toggleSwitch value="#{parametrosView.blNivelOcupacional}" disabled="#{evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}" >
-                                <p:ajax listener="#{parametrosView.activarParametro(85)}" resetValues="true"  update="frmNivelOcupacional,frmGlobal" />
+                                <p:ajax listener="#{parametrosView.activarParametro(85)}" resetValues="true"  update="frmNivelOcupacional,frmGlobal,formRed" />
                             </p:toggleSwitch>
                             <div class="p-field p-grid">
                                 <div class="p-col">
@@ -143,7 +143,7 @@
                                     </p:selectCheckboxMenu>
                                     <p:spacer/>
                                     <p:commandButton type="submit" icon="pi pi-save" value="#{msg['save']}" disabled="#{!parametrosView.blNivelOcupacional or evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}" 
-                                                     update="frmNivelOcupacional,frmGlobal" actionListener="#{parametrosView.guardarPreferencia(85)}" />
+                                                     update="frmNivelOcupacional,frmGlobal,formRed" actionListener="#{parametrosView.guardarPreferencia(85)}" />
 
                                 </div>
                             </div>
@@ -155,7 +155,7 @@
                         <h:form id="frmAreaNegocio">
 
                             <p:toggleSwitch value="#{parametrosView.blAreaNegocio}" disabled="#{evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}" >
-                                <p:ajax listener="#{parametrosView.activarParametro(86)}" resetValues="true"  update="frmAreaNegocio,frmGlobal" />
+                                <p:ajax listener="#{parametrosView.activarParametro(86)}" resetValues="true"  update="frmAreaNegocio,frmGlobal,formRed" />
                             </p:toggleSwitch>
                             <div class="p-field p-grid">
                                 <div class="p-col">
@@ -167,7 +167,7 @@
                                     </p:selectCheckboxMenu>
                                     <p:spacer/>
                                     <p:commandButton type="submit" icon="pi pi-save" value="#{msg['save']}" disabled="#{!parametrosView.blAreaNegocio or evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}" 
-                                                     update="frmAreaNegocio,frmGlobal" actionListener="#{parametrosView.guardarPreferencia(86)}" />
+                                                     update="frmAreaNegocio,frmGlobal,formRed" actionListener="#{parametrosView.guardarPreferencia(86)}" />
                                 </div>
                             </div>
                         </h:form>

@@ -3808,6 +3808,8 @@ public class EvaluadosView extends BaseView implements Serializable {
     }
 
     public void generaModeloAzanvado() {
+        
+        habilitarParametros();
 
         HSSFWorkbook xlsEvaluados = new HSSFWorkbook();
 

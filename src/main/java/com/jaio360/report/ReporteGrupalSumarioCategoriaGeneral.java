@@ -1,7 +1,5 @@
 package com.jaio360.report;
 
-import com.jaio360.dao.ComponenteDAO;
-import com.jaio360.dao.CuestionarioDAO;
 import com.jaio360.dao.ResultadoDAO;
 import com.jaio360.domain.DatosReporte;
 import com.jaio360.model.ModeloGeneral;
@@ -62,17 +60,23 @@ public class ReporteGrupalSumarioCategoriaGeneral extends BaseView implements Se
         JasperPdfExporterBuilder pdfExporter = export.pdfExporter(Constantes.STR_INBOX_PRELIMINAR + File.separator + strNombreReporte)
                 .setEncrypted(Boolean.FALSE);
 
+        InputStream medida = new FileInputStream(map.get(Constantes.INT_PARAM_GRAF_MEDIDA) + Constantes.STR_EXTENSION_PNG);
+
         try {
+
             report().setTemplate(ModeloGeneral.reportTemplate)
                     .setSummaryWithPageHeaderAndFooter(Boolean.TRUE)
-                    .pageHeader(generaCabecera(map))
+                    .pageHeader(generaCabecera(map, medida))
                     .summary(generaConenido())
                     .pageFooter(generaPie(map))
                     .toPdf(pdfExporter);
+
         } catch (DRException ex) {
             log.error(ex);
-            return null;
+        } finally {
+            medida.close();
         }
+
         return strNombreReporte;
     }
 
@@ -83,7 +87,7 @@ public class ReporteGrupalSumarioCategoriaGeneral extends BaseView implements Se
         TextColumnBuilder<String> evaluacion = col.column("Evaluacion", "evaluacion", type.stringType());
         TextColumnBuilder<String> relacion = col.column("Relacion", "relacion", type.stringType());
         TextColumnBuilder<Double> cantidad = col.column("Cantidad", "cantidad", type.doubleType());
-        Map<String, Color> seriesColors = new HashMap();
+        Map<String, Color> seriesColors;
 
         MultiPageListBuilder multiPageList = cmp.multiPageList();
 
@@ -171,19 +175,18 @@ public class ReporteGrupalSumarioCategoriaGeneral extends BaseView implements Se
         return dataSource;
     }
 
-    private ComponentBuilder<?, ?> generaCabecera(Map map) throws FileNotFoundException {
-        InputStream medida = new FileInputStream(map.get(Constantes.INT_PARAM_GRAF_MEDIDA) + Constantes.STR_EXTENSION_PNG);
+    private ComponentBuilder<?, ?> generaCabecera(Map map, InputStream medida) throws FileNotFoundException {
 
         return cmp.verticalList(
                 cmp.verticalGap(5),//SALTO DE LINEA
 
-                 cmp.horizontalList(
+                cmp.horizontalList(
                         cmp.text(objDatosReporte.getStrDescripcion()).setStyle(ModeloGeneral.styleTituloPrincipal)
                 ) //,//SALTO DE LINEA
                 //cmp.line().setPen(stl.pen(new Float("0.1"), LineStyle.SOLID))
                 ,//SALTO DE LINEA
                  cmp.verticalGap(10), //SALTO DE LINEA
-                 cmp.horizontalList(
+                cmp.horizontalList(
                         //cmp.text("Medida").setStyle(styleColumnaSubtitulo).setWidth(350), 
                         cmp.image(medida).setFixedDimension(225, 20),
                         cmp.horizontalGap(50),

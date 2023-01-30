@@ -4,20 +4,16 @@
     <session-factory>
         <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
         <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
-        <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/jaio</property>
+        <property name="hibernate.connection.url">jdbc:mysql://localhost:3309/jaio</property>
         <property name="hibernate.connection.username">root</property>
-        <property name="hibernate.connection.password">Frozen4play</property>
-        <property name="hibernate.show_sql">false</property>
+        <property name="hibernate.connection.password">frozen4play</property>
+        <property name="hibernate.show_sql">true</property>
         <property name="connection.autoReconnect">true</property>
         <property name="connection.autoReconnectForPools">true</property>
         <property name="connection.is-connection-validation-required">true</property>
         <property name="hibernate.connection.autocommit">false</property>
-        <property name="hibernate.c3p0.min_size">5</property>
-        <property name="hibernate.c3p0.max_size">20</property>
-        <property name="hibernate.c3p0.timeout">300</property>
-        <property name="hibernate.c3p0.max_statements">50</property>
-        <property name="hibernate.c3p0.idle_test_period">3000</property>
         <property name="current_session_context_class">thread</property>
+        
         <mapping resource="com/jaio360/orm/Usuario.hbm.xml"/>
         <mapping resource="com/jaio360/orm/Elemento.hbm.xml"/>
         <mapping resource="com/jaio360/orm/DefinicionTabla.hbm.xml"/>

@@ -30,12 +30,12 @@ public class ReporteIndividualPreguntasAbiertas implements Serializable {
     DatosReporte objDatosReporte;
     
 
-    public String build(DatosReporte objDatosReporte, Map map, Integer intIdEvaluado) throws IOException {
+    public String build(DatosReporte objDatosReporte, Map map, Integer intIdEvaluado, String strNameFile) throws IOException {
     
         this.objDatosReporte = objDatosReporte;
         List lstRptaAbiertas = this.resultadoDAO.obtieneListaResultadoPreguntasAbiertas(intIdEvaluado);
         
-        String strNombreReporte = objDatosReporte.getStrID() + Constantes.STR_EXTENSION_PDF; 
+        String strNombreReporte = strNameFile + Constantes.STR_EXTENSION_PDF; 
         objDatosReporte.setStrID(strNombreReporte);
         JasperPdfExporterBuilder pdfExporter = export.pdfExporter(Constantes.STR_INBOX_PRELIMINAR + File.separator + strNombreReporte)
                                                      .setEncrypted(Boolean.FALSE);

@@ -15,9 +15,9 @@ import net.sf.dynamicreports.report.exception.DRException;
 
 public class ReporteIndividualCaratula implements Serializable {
     
-    public String build(DatosReporte objDatosReporte) throws IOException {
+    public String build(DatosReporte objDatosReporte, String strNameFile) throws IOException {
 
-        String strNombreReporte = objDatosReporte.getStrID() + Constantes.STR_EXTENSION_PDF; 
+        String strNombreReporte = strNameFile + Constantes.STR_EXTENSION_PDF; 
 
         JasperPdfExporterBuilder pdfExporter = export.pdfExporter(Constantes.STR_INBOX_PRELIMINAR + File.separator + strNombreReporte)
                                                      .setEncrypted(Boolean.FALSE);
