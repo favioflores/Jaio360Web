@@ -453,7 +453,7 @@ public class GeneraReportesView extends BaseView implements Serializable {
 
                 ElementoGrupalUtiles objElementoGrupalUtiles = new ElementoGrupalUtiles();
                 String utilReport = objElementoGrupalUtiles.build(intMaxRango, lstTemporalesOtros);
-                map.put(Constantes.INT_PARAM_GRAF_MEDIDA, utilReport);
+                map.put(Constantes.INT_PARAM_GRAF_MEDIDA, Constantes.STR_INBOX_PRELIMINAR + File.separator + utilReport);
 
                 boolean flag = true;
 
@@ -493,6 +493,8 @@ public class GeneraReportesView extends BaseView implements Serializable {
                             objDatosReporte.setIntIdCuestionario(objDatosReportePrincipal.getIntIdCuestionario());
                             objDatosReporte.setStrCuestionario(objDatosReportePrincipal.getStrCuestionario());
                             objDatosReporte.setIntMaxRango(objDatosReportePrincipal.getIntMaxRango());
+                            objDatosReporte.setStrNombre(objDatosReportePrincipal.getStrNombre());
+                            objDatosReporte.setStrDescripcion(objDatosReportePrincipal.getStrDescripcion());
 
                             ReporteGrupalSumarioCategoriaGeneral objReporteR = new ReporteGrupalSumarioCategoriaGeneral();
                             objDatosReporte.setStrID(objReporteR.build(objDatosReporte, map, strNameFile));
@@ -506,6 +508,8 @@ public class GeneraReportesView extends BaseView implements Serializable {
                             DatosReporte objDatosReporte = new DatosReporte();
                             objDatosReporte.setIntIdCuestionario(objDatosReportePrincipal.getIntIdCuestionario());
                             objDatosReporte.setStrCuestionario(objDatosReportePrincipal.getStrCuestionario());
+                            objDatosReporte.setStrNombre(objDatosReportePrincipal.getStrNombre());
+                            objDatosReporte.setStrDescripcion(objDatosReportePrincipal.getStrDescripcion());
 
                             ReporteGrupalNivelParticipacion objReporteR = new ReporteGrupalNivelParticipacion();
                             objDatosReporte.setStrID(objReporteR.build(objDatosReporte, map, strNameFile));
@@ -514,14 +518,17 @@ public class GeneraReportesView extends BaseView implements Serializable {
 
                         } else if (objModeloContenido.equals(Constantes.INT_REPORTE_GRUPAL_RESPUESTAS)) {
 
-                            String strNameFile = Utilitarios.generaIDReporte() + "_" + Utilitarios.formatearFecha(Utilitarios.getCurrentDate(), Constantes.DDMMYYYYHH24MISS);
+                            String strNameFile = "Final_" + objDatosReportePrincipal.getStrCuestionario() + "_" + Utilitarios.generaIDReporte() + "_" + Utilitarios.formatearFecha(Utilitarios.getCurrentDate(), Constantes.DDMMYYYYHH24MISS);
 
                             DatosReporte objDatosReporte = new DatosReporte();
                             objDatosReporte.setIntIdCuestionario(objDatosReportePrincipal.getIntIdCuestionario());
                             objDatosReporte.setStrCuestionario(objDatosReportePrincipal.getStrCuestionario());
+                            objDatosReporte.setStrNombre(objDatosReportePrincipal.getStrNombre());
+                            objDatosReporte.setStrDescripcion(objDatosReportePrincipal.getStrDescripcion());
 
                             ReporteTodasRespuestas objReporte = new ReporteTodasRespuestas();
                             objDatosReporte.setStrID(objReporte.build(objDatosReporte, map, objCuestionario.getCuIdCuestionarioPk(), strNameFile));
+                            objDatosReporte.setBlDefinitivo(true);
 
                             lstDefinitivos.add(objDatosReporte);
 
@@ -589,7 +596,7 @@ public class GeneraReportesView extends BaseView implements Serializable {
 
             verificaDirectorios();
 
-            List<DatosReporte> lstTemporalesPDFxCombinar = new ArrayList<>();
+            List<DatosReporte> lstTemporalesPDFxCombinar;
             List<DatosReporte> lstTemporalesOtros = new ArrayList<>();
             List<DatosReporte> lstDefinitivos = new ArrayList<>();
 
@@ -613,6 +620,8 @@ public class GeneraReportesView extends BaseView implements Serializable {
 
                 /* INVOCA CLASES QUE GENEREN LOS TEMPORALES */
                 for (Evaluado objParticipante : lstEvaluadosSeleccionados) {
+
+                    lstTemporalesPDFxCombinar = new ArrayList<>();
 
                     Map mapRelaciones = obtieneRelaciones(objParticipante.getPaIdParticipantePk());
 
@@ -815,7 +824,7 @@ public class GeneraReportesView extends BaseView implements Serializable {
                     if (!lstTemporalesPDFxCombinar.isEmpty()) {
 
                         DatosReporte objDatosReporteCombine = new DatosReporte();
-                        objDatosReporteCombine.setStrID(objCuestionario.getCuTxDescripcion() + "_" + Utilitarios.formatearFecha(Utilitarios.getCurrentDate(), Constantes.DDMMYYYYHH24MISS));
+                        objDatosReporteCombine.setStrID(objParticipante.getPaTxDescripcion() + "_" + Utilitarios.formatearFecha(Utilitarios.getCurrentDate(), Constantes.DDMMYYYYHH24MISS));
                         objDatosReporteCombine.setStrID(Utilitarios.combinaReportesPDFDefinitivos(lstTemporalesPDFxCombinar, objDatosReporteCombine));
                         lstTemporalesPDFxCombinar.add(objDatosReporteCombine);
 

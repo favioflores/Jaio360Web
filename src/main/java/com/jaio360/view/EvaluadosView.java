@@ -2691,7 +2691,7 @@ public class EvaluadosView extends BaseView implements Serializable {
         btnUploadDisabled = false;
     }
 
-    public void leeExcelAvanzado() {
+    public void leeExcelAvanzado(FileUploadEvent event) {
 
         habilitarParametros();
 
@@ -2705,6 +2705,8 @@ public class EvaluadosView extends BaseView implements Serializable {
         mapRelacionesPersonasAvanzado = new HashMap();
         mapPerEvaluados = new HashMap();
         mapPerEvaluadores = new HashMap();
+        
+        fileAvanzado = event.getFile();
 
         if (fileAvanzado == null) {
 

@@ -165,22 +165,30 @@
                                 </f:facet>
                                 <div class="p-field">
 
-                                    <p:fileUpload widgetVar="archivoMasivoEvaluado" value="#{importarCuestionariosView.inputFile}" 
-                                                  mode="simple"
-                                                  skinSimple="true"
-                                                  dragDropSupport="false" 
-                                                  multiple="false" 
-                                                  sizeLimit="2000000" 
+                                    <p:fileUpload widgetVar="archivoMasivoEvaluado" 
+                                                  mode="advanced"
+                                                  fileLimit="1" 
+                                                  update="formCuestionario"
+                                                  sizeLimit="4000000" 
+                                                  invalidSizeMessage="#{msg['max.file.upload.error']}"
+                                                  validateContentType="true"
                                                   allowTypes="/(\.|\/)(xls)$/"
                                                   label="#{msg['search']}" 
+                                                  uploadLabel="#{msg['upload']}" global="false"
+                                                  cancelLabel="#{msg['cancel']}"
+                                                  listener="#{importarCuestionariosView.cargaCuestionarios}"
+                                                  virusScan="true"
                                                   disabled="#{importarCuestionariosView.blExistPrevImport or importarCuestionariosView.intIdEstadoProyecto==37}" />
+
                                 </div>
+                                <!--
                                 <div class="p-field">
                                     <p:commandButton id="btnUploadFile" value="#{msg['upload']}" ajax="true" 
                                                      actionListener="#{importarCuestionariosView.cargaCuestionarios}" 
                                                      disabled="#{importarCuestionariosView.blExistPrevImport or importarCuestionariosView.intIdEstadoProyecto==37}" 
                                                      icon="pi pi-upload" update="formCuestionario" />
                                 </div>
+                                -->
                             </p:card>
                         </div>
                         <div class="p-field p-col-12 p-md-6">
@@ -311,49 +319,49 @@
                             </div>
 
                             <div class="p-field p-col-12 p-md-8">
-<!--
-                                <p:<card rendered="#{importarCuestionariosView.lstElementosDelCuestionarios.size()>0}">
-                                    
-                                    <p:dataTable 
-                                        rendered="#{importarCuestionariosView.lstElementosDelCuestionarios!=null}"
-                                        id="tblCuestionarioImportado"
-                                        widgetVar="tblCuestionarioImportado"
-                                        value="#{importarCuestionariosView.lstElementosDelCuestionarios}" 
-                                        rows="50"
-                                        var="cuesprev"
-                                        paginator="true" 
-                                        stripedRows="true"
-                                        size="small"
-                                        rowIndexVar="index"
-                                        paginatorPosition="bottom"
-                                        paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                        currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords}"                                    
-                                        emptyMessage="#{msg['not.items']}" >                 
-
-                                        <f:facet name="header">
-                                            <p:outputLabel value="#{msg['step2.list.element.evaluation']} #{importarCuestionariosView.strCuestionario}" style="text-align: left;" />
-                                        </f:facet>  
-
-                                        <p:column headerText="#{msg['step2.element.type']}" style="width: 150px;" >
-                                            <p:button value="#{cuesprev.strDato1}" style="height: 100%;" styleClass="ui-button-#{cuesprev.strDato3}" disabled="true" />
-                                        </p:column>
-
-                                        <p:column style="width: 60px;">
-                                            <f:facet name="header">
-                                                <h:outputText value="#" />
-                                            </f:facet>
-                                            <h:outputText 
-                                                value="#{index + 1}" />
-                                        </p:column>
-                                        
-                                        <p:column headerText="#{msg['description']}" >
-                                            <h:outputText value="#{cuesprev.strDato2}" />
-                                        </p:column>
-
-                                    </p:dataTable>
-
-
-                                </p:card>
+                                <!--
+                                                                <p:<card rendered="#{importarCuestionariosView.lstElementosDelCuestionarios.size()>0}">
+                                                                    
+                                                                    <p:dataTable 
+                                                                        rendered="#{importarCuestionariosView.lstElementosDelCuestionarios!=null}"
+                                                                        id="tblCuestionarioImportado"
+                                                                        widgetVar="tblCuestionarioImportado"
+                                                                        value="#{importarCuestionariosView.lstElementosDelCuestionarios}" 
+                                                                        rows="50"
+                                                                        var="cuesprev"
+                                                                        paginator="true" 
+                                                                        stripedRows="true"
+                                                                        size="small"
+                                                                        rowIndexVar="index"
+                                                                        paginatorPosition="bottom"
+                                                                        paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                                        currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords}"                                    
+                                                                        emptyMessage="#{msg['not.items']}" >                 
+                                
+                                                                        <f:facet name="header">
+                                                                            <p:outputLabel value="#{msg['step2.list.element.evaluation']} #{importarCuestionariosView.strCuestionario}" style="text-align: left;" />
+                                                                        </f:facet>  
+                                
+                                                                        <p:column headerText="#{msg['step2.element.type']}" style="width: 150px;" >
+                                                                            <p:button value="#{cuesprev.strDato1}" style="height: 100%;" styleClass="ui-button-#{cuesprev.strDato3}" disabled="true" />
+                                                                        </p:column>
+                                
+                                                                        <p:column style="width: 60px;">
+                                                                            <f:facet name="header">
+                                                                                <h:outputText value="#" />
+                                                                            </f:facet>
+                                                                            <h:outputText 
+                                                                                value="#{index + 1}" />
+                                                                        </p:column>
+                                                                        
+                                                                        <p:column headerText="#{msg['description']}" >
+                                                                            <h:outputText value="#{cuesprev.strDato2}" />
+                                                                        </p:column>
+                                
+                                                                    </p:dataTable>
+                                
+                                
+                                                                </p:card>
                                 -->
 
                                 <p:card rendered="#{importarCuestionariosView.lstElementosDelCuestionarios.size()>0}">
@@ -436,7 +444,7 @@
                     <c:if test="#{importarCuestionariosView.blExistPrevImport and importarCuestionariosView.lstCuestionariosImportados.size()>0}">
                         <div class="ui-fluid p-formgrid p-grid">
                             <div class="p-field p-col-12 p-md-12">
-                                
+
                                 <p:commandButton value="#{msg['step2.delete.evaluation']}"
                                                  type="submit"
                                                  immediate="true"

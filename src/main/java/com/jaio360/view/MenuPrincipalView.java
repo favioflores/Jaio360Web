@@ -99,7 +99,7 @@ public class MenuPrincipalView extends BaseView implements Serializable {
 
         UsuarioInfo objUsuarioInfo = objUsuarioSesion.obtenerUsuarioInfo();
 
-        if (objUsuarioInfo.isBoEsAdministrador()) {//MANAGING DIRECTOR
+        if (objUsuarioInfo.isManagingDirector()) {//MANAGING DIRECTOR
             //Home
             //DefaultSubMenu home = agregarMenu("", "pi pi-fw pi-home", menuPrincipal);
             //agregarItem(msg("ir.a.bienvenida"), "welcome.jsf", "", home);
@@ -111,16 +111,38 @@ public class MenuPrincipalView extends BaseView implements Serializable {
             DefaultSubMenu usuarios = agregarMenu(msg("users"), "pi pi-users", menuPrincipal);
             agregarItem(msg("actualizar.mis.datos"), "admProfile.jsf", "", usuarios);
             agregarItem(msg("actualizar.todos.usuarios"), "admAllUsers.jsf", "", usuarios);
+            agregarItem(msg("manage.my.clients"), "admClients.jsf", "", usuarios);
             agregarItem(msg("gestionar.licencias"), "admLicencias.jsf", "", usuarios);
+            agregarItem(msg("manage.licences.clients"), "admLicenceClient.jsf", "", usuarios);
             //User guide
             agregarItem(msg("user.guide"), "userGuide.jsf", "pi pi-file-pdf", menuPrincipal);
             agregarItem(msg("participant.guide"), "participantGuide.jsf", "pi pi-file-pdf", menuPrincipal);
             //Upgrades
             agregarItem("", "upgrades.jsf", "pi pi-info-circle", menuPrincipal);
             
-        } else if (false) {//COUNTRY MANAGER
+        } else if (objUsuarioInfo.isCountryManager()) {//COUNTRY MANAGER
             
-        } else if (objUsuarioInfo.isBoEsUsuarioMaestro()) {//PROJECT MANAGER
+            //Home
+            //DefaultSubMenu home = agregarMenu("", "pi pi-fw pi-home", menuPrincipal);
+            //agregarItem(msg("ir.a.bienvenida"), "welcome.jsf", "", home);
+            agregarItem("", "welcome.jsf", "pi pi-fw pi-home", menuPrincipal);
+            //Proyectos
+            //DefaultSubMenu proyectos = agregarMenu(msg("projects"), "pi pi-fw pi-briefcase", menuPrincipal);
+            //agregarItem(msg("administrar.proyectos"), "admProyectos.jsf", "", proyectos);
+            //Datos de usuarios
+            DefaultSubMenu usuarios = agregarMenu(msg("users"), "pi pi-users", menuPrincipal);
+            agregarItem(msg("actualizar.mis.datos"), "admProfile.jsf", "", usuarios);
+            //agregarItem(msg("actualizar.todos.usuarios"), "admAllUsers.jsf", "", usuarios);
+            agregarItem(msg("manage.my.clients"), "admClients.jsf", "", usuarios);
+            //agregarItem(msg("gestionar.licencias"), "admLicencias.jsf", "", usuarios);
+            agregarItem(msg("manage.licences.clients"), "admLicenceClient.jsf", "", usuarios);
+            //User guide
+            agregarItem(msg("user.guide"), "userGuide.jsf", "pi pi-file-pdf", menuPrincipal);
+            agregarItem(msg("participant.guide"), "participantGuide.jsf", "pi pi-file-pdf", menuPrincipal);
+            //Upgrades
+            agregarItem("", "upgrades.jsf", "pi pi-info-circle", menuPrincipal);
+            
+        } else if (objUsuarioInfo.isProjectManager()) {//PROJECT MANAGER
             //Home
             //DefaultSubMenu home = agregarItem("", "pi pi-fw pi-home", menuPrincipal);
             agregarItem("", "welcome.jsf", "pi pi-fw pi-home", menuPrincipal);
@@ -156,11 +178,7 @@ public class MenuPrincipalView extends BaseView implements Serializable {
         usuarioInfo = Utilitarios.obtenerUsuario();
         proyectoInfo = Utilitarios.obtenerProyecto();
 
-        if (proyectoInfo != null) {
-            existProyecto = true;
-        } else {
-            existProyecto = false;
-        }
+        existProyecto = proyectoInfo != null;
 
     }
 

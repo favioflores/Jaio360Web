@@ -105,6 +105,23 @@ public class TarifaDAO implements Serializable
 
         return listaTarifa; 
     }  
+    
+    public List<Tarifa> obtenListaTarifaParaClientes() throws HibernateException 
+    { 
+        List<Tarifa> listaTarifa = null;  
+
+        try 
+        { 
+            iniciaOperacion(); 
+            listaTarifa = sesion.createQuery("from Tarifa t where t.taDePrecio > 0 ").list(); 
+            
+        } finally 
+        { 
+            sesion.close(); 
+        }  
+
+        return listaTarifa; 
+    }  
 
     private void iniciaOperacion() throws HibernateException 
     { 

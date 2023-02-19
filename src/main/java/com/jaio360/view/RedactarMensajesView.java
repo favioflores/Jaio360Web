@@ -299,7 +299,9 @@ public class RedactarMensajesView extends BaseView implements Serializable {
                     strPreviewConvocatoriaTemplate = Utilitarios.decodeUTF8(objMensaje.getMeTxCuerpo());
                     strAsuntoConvocatoria = objMensaje.getMeTxAsunto();
                     strTituloConvocatoria = Utilitarios.decodeUTF8(objMensaje.getMeTxConvocatoriaTitulo());
-                    strURLLogoCliente = Utilitarios.decodeUTF8(objMensaje.getMeTxConvocatoriaURL());
+                    if(Utilitarios.noEsNuloOVacio(objMensaje.getMeTxConvocatoriaURL())){
+                        strURLLogoCliente = Utilitarios.decodeUTF8(objMensaje.getMeTxConvocatoriaURL());
+                    }
                     strParrafoConvocatoria = Utilitarios.decodeUTF8(objMensaje.getMeTxConvocatoriaParrafo());
                 } catch (Exception e) {
                     blConvocatoria = false;

@@ -203,22 +203,29 @@
                                 </f:facet>
                                 <div class="p-field">
 
-                                    <p:fileUpload widgetVar="archivoMasivoEvaluado" value="#{evaluadosView.fileAvanzado}" 
-                                                  mode="simple"
-                                                  skinSimple="true"
-                                                  dragDropSupport="false" 
-                                                  multiple="false" 
-                                                  sizeLimit="2000000" 
+                                    <p:fileUpload widgetVar="archivoMasivoEvaluado" 
+                                                  mode="advanced"
+                                                  fileLimit="1" 
+                                                  update="formRed,frmSex,frmRango,frmTiempoEmpresa,frmNivelOcupacional,frmAreaNegocio"
+                                                  sizeLimit="4000000" 
+                                                  invalidSizeMessage="#{msg['max.file.upload.error']}"
+                                                  validateContentType="true"
                                                   allowTypes="/(\.|\/)(xls)$/"
                                                   label="#{msg['search']}" 
-                                                  disabled="#{evaluadosView.lstRelacionBean.size()>0 or evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0}" />
+                                                  uploadLabel="#{msg['upload']}" global="false"
+                                                  cancelLabel="#{msg['cancel']}"
+                                                  listener="#{evaluadosView.leeExcelAvanzado}"
+                                                  disabled="#{evaluadosView.lstRelacionBean.size()>0 or evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0}" 
+                                                  />
                                 </div>
+                                <!--
                                 <div class="p-field">
                                     <p:commandButton id="btnUploadFile" value="#{msg['upload']}" ajax="true" 
                                                      actionListener="#{evaluadosView.leeExcelAvanzado}" 
                                                      disabled="#{evaluadosView.lstRelacionBean.size()>0 or evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0}"
                                                      icon="pi pi-upload" update="formRed,frmSex,frmRango,frmTiempoEmpresa,frmNivelOcupacional,frmAreaNegocio" />
                                 </div>
+                                -->
                             </p:card>
                         </div>
                         <div class="p-field p-col-12 p-md-6">

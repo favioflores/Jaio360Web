@@ -255,6 +255,8 @@
                                     <p:progressBar value="#{seguimientoProyectoView.intPorcentajeGeneral}" labelTemplate="#{seguimientoProyectoView.intPorcentajeGeneral}%" id="IdPorcentajeGeneral" />
                                 </div>
 
+
+
                                 <p:divider/>                            
 
                                 <h4>#{msg['evaluated']}</h4>
@@ -517,8 +519,11 @@
                     -->
                     <div class="p-field p-formgrid p-grid">
                         <div class="p-col" >
-                            <p:commandButton value="#{msg['refresh']}" style="width: 100%;"  icon="pi pi-refresh" update="frmLogmail"
+                            <p:commandButton value="#{msg['refresh']}" icon="pi pi-refresh" update="frmLogmail"
                                              actionListener="#{seguimientoProyectoView.buscarEmails}"/>
+
+                            <p:clock value="dt" pattern="dd/MM/yyyy HH:mm"   />
+                            <p:inputText type="hidden" value="" />
                         </div>
                     </div>
                     <div class="p-field p-formgrid p-grid">

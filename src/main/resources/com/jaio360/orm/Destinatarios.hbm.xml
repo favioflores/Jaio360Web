@@ -8,11 +8,14 @@
             <column name="DE_ID_DESTINATARIO_PK" />
             <generator class="identity" />
         </id>
-        <many-to-one name="notificaciones" class="com.jaio360.orm.Notificaciones" fetch="select">
+        <many-to-one name="notificaciones" class="com.jaio360.orm.Notificaciones" fetch="select"  >
             <column name="NO_ID_NOTIFICACION_FK" not-null="true" />
         </many-to-one>
         <property name="deTxMail" type="string">
             <column name="DE_TX_MAIL" length="3000" not-null="true" />
+        </property>
+        <property name="deTxMailCc" type="string">
+            <column name="DE_TX_MAIL_CC" length="3000" not-null="false" />
         </property>
     </class>
 </hibernate-mapping>

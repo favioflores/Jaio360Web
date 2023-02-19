@@ -35,7 +35,7 @@
         <property name="noTxError" type="string">
             <column name="NO_TX_ERROR" length="500" />
         </property>
-        <set name="destinatarioses" inverse="true">
+        <set name="destinatarioses" inverse="true" lazy="true">
             <key>
                 <column name="NO_ID_NOTIFICACION_FK" not-null="true" />
             </key>

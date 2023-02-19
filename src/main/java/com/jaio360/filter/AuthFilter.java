@@ -45,9 +45,8 @@ public class AuthFilter implements Filter {
             if (validaUri(req)) {
 
                 String reqURI = req.getRequestURI();
-                if (reqURI.contains("/ui/iniciar.jsf")) {
+                if (reqURI.contains("/ui/login.jsf") || reqURI.contains("/ui/test.jsf")) {
                     chain.doFilter(request, response);
-                    log.debug("Sin validacion en login");
                 } else if (ses == null
                         || ses.getAttribute("usuarioInfo") == null
                         && !reqURI.contains("/public/")
@@ -55,7 +54,6 @@ public class AuthFilter implements Filter {
                     log.debug("Session invalida");
                     res.sendRedirect(req.getContextPath() + "/ui/sesionExpirada.jsf");  // Anonymous user. Redirect to login page
                 } else {
-                    log.debug("Session valida");
                     chain.doFilter(request, response);
                 }
 

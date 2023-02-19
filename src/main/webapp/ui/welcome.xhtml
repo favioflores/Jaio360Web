@@ -34,8 +34,9 @@
                     <h4>#{msg['bienvenida.hola']} #{menuPrincipal.usuarioInfo.strDescripcion},</h4>
                     <p style="text-align: justify">#{msg['bienvenida.text1']}</p>
 
-                    <c:if test="#{(menuPrincipal.usuarioInfo.boEsAdministrador == true ||
-                                  menuPrincipal.usuarioInfo.boEsUsuarioMaestro == true) and
+                    <c:if test="#{(menuPrincipal.usuarioInfo.managingDirector == true ||
+                                  menuPrincipal.usuarioInfo.countryManager == true ||
+                                  menuPrincipal.usuarioInfo.evaluatedEvaluator == true) and
                                   listasPrincipalView.cantidadLstProyectos>=0}">
                         <p style="text-align: justify">#{msg['bienvenida.text2']}</p>
                         <h:form>
@@ -58,8 +59,9 @@
 
                     </c:if>
 
-                    <c:if test="#{(menuPrincipal.usuarioInfo.boEsAdministrador == false and
-                                  menuPrincipal.usuarioInfo.boEsUsuarioMaestro == false) and
+                    <c:if test="#{(menuPrincipal.usuarioInfo.managingDirector == false and
+                                  menuPrincipal.usuarioInfo.countryManager == false and
+                                  menuPrincipal.usuarioInfo.projectManager == false) and
                                   listasPrincipalView.cantidadLstEvaluaciones==0 }">
                         <p>#{msg['bienvenida.agradecimiento']}</p>
                         <p:commandButton id="btcerrarSesion" widgetVar="btcerrarSesion" actionListener="#{usuarioSesion.cerrarSesion}" value="#{msg['cabecera.cerrar.sesion']}" >

@@ -424,7 +424,7 @@ public class ActualizaDatosView extends BaseView implements Serializable {
      */
     private void refrescarUsuarioSession(Usuario objUsuario) {
 
-        UsuarioInfo usuarioInfo = new UsuarioInfo(objUsuario);
+        UsuarioInfo usuarioInfo = new UsuarioInfo(objUsuario, true);
 
         HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
         session.removeAttribute("usuarioInfo");

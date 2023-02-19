@@ -17,6 +17,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Session;
@@ -53,13 +54,10 @@ public class MailSender extends Thread implements Serializable {
     @Override
     public void run() {
 
-        List lstNotificaciones = objNotificacionesDAO.obtieneNotificaciones(this.idProyecto);
+        List<Notificaciones> lstNotificaciones = objNotificacionesDAO.obtieneNotificaciones(this.idProyecto);
 
-        Iterator itLstNotificaciones = lstNotificaciones.iterator();
-
-        while (itLstNotificaciones.hasNext()) {
-            Object[] obj = (Object[]) itLstNotificaciones.next();
-            enviaCorreo((Notificaciones) obj[0], (List<Destinatarios>) obj[1]);
+        for (Notificaciones objNotificaciones : lstNotificaciones) {
+            enviaCorreo(objNotificaciones);
         }
 
     }
@@ -69,18 +67,12 @@ public class MailSender extends Thread implements Serializable {
         thread.start();
     }
 
-    public void enviarNotificacion(Notificaciones objNotificaciones) {
-        List lstNotificaciones = objNotificacionesDAO.obtieneNotificaciones(objNotificaciones);
-
-        Iterator itLstNotificaciones = lstNotificaciones.iterator();
-
-        while (itLstNotificaciones.hasNext()) {
-            Object[] obj = (Object[]) itLstNotificaciones.next();
-            enviaCorreo((Notificaciones) obj[0], (List<Destinatarios>) obj[1]);
-        }
+    public void enviarNotificacion(Notificaciones objNotificacion) {
+        List<Notificaciones> lstNotificaciones = objNotificacionesDAO.obtieneNotificaciones(objNotificacion);
+        enviaCorreo(lstNotificaciones.get(0));
     }
 
-    private void enviaCorreo(Notificaciones objNotificaciones, List<Destinatarios> lstDestinatarios) {
+    private void enviaCorreo(Notificaciones objNotificacion) {
 
         boolean blSended = false;
 
@@ -108,9 +100,9 @@ public class MailSender extends Thread implements Serializable {
 
             Session session = Session.getDefaultInstance(props, null);
 
-            byte[] bdata = objNotificaciones.getNoTxMensaje();
+            byte[] bdata = objNotificacion.getNoTxMensaje();
             String mensaje = Utilitarios.decodeUTF8(bdata);
-            String subject = objNotificaciones.getNoTxAsunto();
+            String subject = objNotificacion.getNoTxAsunto();
 
             MimeMessage message = new MimeMessage(session);
 
@@ -118,8 +110,16 @@ public class MailSender extends Thread implements Serializable {
 
             message.setFrom(new InternetAddress(objElementoFrom.getElTxValor1(), objElementoFrom.getElTxDescripcion()));
 
-            for (Destinatarios objDestinatarios : lstDestinatarios) {
-                message.addRecipient(Message.RecipientType.TO, new InternetAddress(objDestinatarios.getDeTxMail()));
+            objNotificacion.getDestinatarioses().size();
+
+            Set<Destinatarios> objDestinatarios = objNotificacion.getDestinatarioses();
+            
+            for (Destinatarios objDestinatario : objDestinatarios) {
+                message.addRecipient(Message.RecipientType.TO, new InternetAddress(objDestinatario.getDeTxMail()));
+
+                if (Utilitarios.noEsNuloOVacio(objDestinatario.getDeTxMailCc())) {
+                    message.addRecipient(Message.RecipientType.CC, new InternetAddress(objDestinatario.getDeTxMailCc()));
+                }
             }
 
             // COVER WRAP
@@ -159,17 +159,17 @@ public class MailSender extends Thread implements Serializable {
 
         } catch (UnsupportedEncodingException | NumberFormatException | MessagingException | HibernateException e) {
             log.error(e.getLocalizedMessage(), e);
-            objNotificaciones.setNoTxError(e.getMessage().length() > 500 ? e.getMessage().substring(0, 500) : e.getMessage());
+            objNotificacion.setNoTxError(e.getMessage().length() > 500 ? e.getMessage().substring(0, 500) : e.getMessage());
             blSended = false;
         } finally {
             if (blSended) {
-                objNotificaciones.setNoIdEstado(Constantes.INT_ET_ESTADO_NOTIFICACION_ENVIADO);
+                objNotificacion.setNoIdEstado(Constantes.INT_ET_ESTADO_NOTIFICACION_ENVIADO);
             } else {
-                objNotificaciones.setNoIdEstado(Constantes.INT_ET_ESTADO_NOTIFICACION_CON_ERROR);
+                objNotificacion.setNoIdEstado(Constantes.INT_ET_ESTADO_NOTIFICACION_CON_ERROR);
             }
-            objNotificaciones.setNoFeEnvio(new java.sql.Date(new Date().getTime()));
+            objNotificacion.setNoFeEnvio(new java.sql.Date(new Date().getTime()));
 
-            objNotificacionesDAO.actualizaNotificacion(objNotificaciones);
+            objNotificacionesDAO.actualizaNotificacion(objNotificacion);
         }
 
     }

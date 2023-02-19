@@ -7,6 +7,11 @@
                 template="../templates/templateWorkspace.xhtml" >
 
     <ui:define name="head"> 
+        <script>
+            function toLowerCase(strInput) {
+                strInput.value = strInput.value.toLowerCase();
+            }
+        </script>
     </ui:define>
 
     <ui:define name="cabecera">
@@ -19,7 +24,7 @@
 
                 <p:card id="cardFormUsuario">
 
-                    <h3>#{msg['mant.users']}</h3>
+                    <h3>#{msg['mant.clients']}</h3>
 
                     <p:growl id="growlFormUduario" showDetail="false" life="4000" />
 
@@ -29,7 +34,7 @@
                             <div class="p-field p-grid">
                                 <div class="p-col">
                                     <p:outputLabel for="@next" value="#{msg['email']}" />
-                                    <p:inputText id="idMail" type="text" value="#{mantenimientoCuentaView.usIdMail}" required="true" maxlength="100" disabled="#{mantenimientoCuentaView.isEdit}" >
+                                    <p:inputText id="idMail" type="text" value="#{mantenimientoClienteView.usIdMail}" onchange="toLowerCase(this);" required="true" maxlength="100" disabled="#{mantenimientoClienteView.isEdit}" >
                                         <f:validator validatorId="validarCorreo" />
                                     </p:inputText>
                                     <p:message for="idMail" display="text" style="width: 100%; margin: 0 0 0 0;" />
@@ -41,7 +46,7 @@
                             <div class="p-field p-grid">
                                 <div class="p-col">
                                     <p:outputLabel for="@next" value="#{msg['name.user']}" />
-                                    <p:inputText id="strDescEmpresa" value="#{mantenimientoCuentaView.usTxDescripcionEmpresa}" required="true" maxlength="100" >
+                                    <p:inputText id="strDescEmpresa" value="#{mantenimientoClienteView.usTxDescripcionEmpresa}" required="true" maxlength="100" >
                                         <f:validator validatorId="validaTextoIngresado" />
                                     </p:inputText>
                                     <p:message for="strDescEmpresa" display="text" style="width: 100%; margin: 0 0 0 0;"/>
@@ -53,38 +58,22 @@
                             <div class="p-field p-grid">
                                 <div class="p-col">
                                     <p:outputLabel for="@next" value="#{msg['company.name']}" />
-                                    <p:inputText id="strRazonSocial" type="text" value="#{mantenimientoCuentaView.usTxNombreRazonsocial}" required="true" maxlength="100" >
+                                    <p:inputText id="strRazonSocial" type="text" value="#{mantenimientoClienteView.usTxNombreRazonsocial}" required="true" maxlength="100" >
                                         <f:validator validatorId="validaTextoIngresado" />
                                     </p:inputText>
                                     <p:message for="strRazonSocial" display="text" style="width: 100%; margin: 0 0 0 0;" />
                                 </div>
                             </div>
                         </div> 
-
-                        <div class="p-field p-col-12 p-md-4">
-                            <div class="p-field p-grid">
-                                <div class="p-col">
-                                    <p:outputLabel for="@next" value="#{msg['type.account']}" />
-                                    <p:selectOneMenu id="idTipoCuenta" value="#{mantenimientoCuentaView.usIdTipoCuenta}" required="true" 
-                                                        >
-                                        <f:selectItem itemLabel="#{msg['please.select']}" itemValue="" />
-                                        <f:selectItems value="#{mantenimientoCuentaView.lstTipoCuenta}" var="esta" itemLabel="#{esta.elIdElementoPk}" itemValue="#{esta.elTxDescripcion}" />
-                                    </p:selectOneMenu>
-                                    <p:message for="idTipoCuenta" display="text" style="width: 100%; margin: 0 0 0 0;" />
-                                </div>
-                            </div>
-                        </div>      
-
-
                         <div class="p-field p-col-12 p-md-4">
                             <div class="p-field p-grid">
                                 <div class="p-col">
                                     <p:outputLabel for="@next" value="#{msg['country']}"  />
-                                    <p:selectOneMenu id="idPais" value="#{mantenimientoCuentaView.pais}" required="true" 
-                                                       >
+                                    <p:selectOneMenu id="idPais" value="#{mantenimientoClienteView.pais}" required="true" 
+                                                     >
                                         <f:selectItem itemLabel="#{msg['please.select']}" itemValue="" />
-                                        <f:selectItems value="#{mantenimientoCuentaView.lstPaises}"  var="pais" itemLabel="#{pais.ubTxDescripcion}" itemValue="#{pais.ubIdUbigeoPk}" />
-                                        <p:ajax update="idCiudad" listener="#{mantenimientoCuentaView.poblarCiudades()}"/>
+                                        <f:selectItems value="#{mantenimientoClienteView.lstPaises}"  var="pais" itemLabel="#{pais.ubTxDescripcion}" itemValue="#{pais.ubIdUbigeoPk}" />
+                                        <p:ajax update="idCiudad" listener="#{mantenimientoClienteView.poblarCiudades()}"/>
                                     </p:selectOneMenu>
                                     <p:message for="idPais" display="text" style="width: 100%; margin: 0 0 0 0;" />
                                 </div>
@@ -95,9 +84,9 @@
                             <div class="p-field p-grid">
                                 <div class="p-col">
                                     <p:outputLabel for="@next" value="#{msg['city']}"/>
-                                    <p:selectOneMenu id="idCiudad" value="#{mantenimientoCuentaView.ciudad}" label="Ciudad" required="true" disabled="#{mantenimientoCuentaView.pais==null?true:false}" >
+                                    <p:selectOneMenu id="idCiudad" value="#{mantenimientoClienteView.ciudad}" label="Ciudad" required="true" disabled="#{mantenimientoClienteView.pais==null?true:false}" >
                                         <f:selectItem itemLabel="#{msg['please.select']}" itemValue="" />
-                                        <f:selectItems value="#{mantenimientoCuentaView.lstCiudades}"  var="ciudad" itemLabel="#{ciudad.ubTxDescripcion}" itemValue="#{ciudad.ubIdUbigeoPk}" />
+                                        <f:selectItems value="#{mantenimientoClienteView.lstCiudades}"  var="ciudad" itemLabel="#{ciudad.ubTxDescripcion}" itemValue="#{ciudad.ubIdUbigeoPk}" />
                                     </p:selectOneMenu>
                                     <p:message for="idCiudad" display="text" style="width: 100%; margin: 0 0 0 0;" /> 
                                 </div>
@@ -107,10 +96,10 @@
                         <div class="p-col-12 p-col-12 p-md-12">
                             <div class="p-field p-formgrid p-grid">
                                 <div class="p-field p-col">
-                                    <p:commandButton value="#{msg['save']}" update="formUsuario,formMntCuenta" process="formUsuario" icon="pi pi-check" actionListener="#{mantenimientoCuentaView.guardarUsuario}" />
+                                    <p:commandButton value="#{msg['save']}" update="formUsuario,formMntCuenta" process="formUsuario" icon="pi pi-check" actionListener="#{mantenimientoClienteView.guardarUsuario}" />
                                 </div>
                                 <div class="p-field p-col">
-                                    <p:commandButton value="#{msg['clean']}" update="formUsuario" immediate="true" process="@this" styleClass="ui-button-secondary" icon="pi pi-times" actionListener="#{mantenimientoCuentaView.resetFormUsuario()}" />
+                                    <p:commandButton value="#{msg['clean']}" update="formUsuario" immediate="true" process="@this" styleClass="ui-button-secondary" icon="pi pi-times" actionListener="#{mantenimientoClienteView.resetFormUsuario()}" />
                                 </div>
                             </div>
                         </div>
@@ -128,7 +117,7 @@
 
                 <p:card id="panel">
 
-                    <h3>#{msg['user.list']}</h3>
+                    <h3>#{msg['client.list']}</h3>
 
 
                     <p:growl id="growlMntCuenta" showDetail="false" life="4000" />
@@ -146,7 +135,7 @@
                         <p:dataTable 
                             id="idUsuarios"
                             var="usu"
-                            value="#{mantenimientoCuentaView.lstUsuario}" 
+                            value="#{mantenimientoClienteView.lstUsuario}" 
                             rows="5"
                             size="small"
                             paginator="true" 
@@ -155,13 +144,11 @@
                             rowsPerPageTemplate="5,10,15"                                 
                             widgetVar="usu"
                             emptyMessage="#{msg['no.items']}"
-                            filteredValue="#{mantenimientoCuentaView.filteredUsuarios}"
-                            globalFilterFunction="#{mantenimientoCuentaView.globalFilterFunction}"
+                            filteredValue="#{mantenimientoClienteView.filteredUsuarios}"
+                            globalFilterFunction="#{mantenimientoClienteView.globalFilterFunction}"
                             rowKey="#{usu.intUsuarioPk}"
                             rowIndexVar="index"
                             >    
-
-                            <!--<p:ajax event="rowSelect" listener="#{mantenimientoCuentaView.cargarContrato}" update=":formContratos:"/>-->
 
                             <f:facet name="header">
                                 <div class="p-d-flex p-ai-center p-jc-between">
@@ -197,12 +184,21 @@
                                 <h:outputText value="#{usu.strTipoUsuario}" />
                             </p:column>
 
+                            <p:column headerText="#{msg['state']}" style="text-align: center;">
+                                <h:outputText value="#{usu.strEstadoDesc}" />
+                            </p:column>
+                            <!--
                             <p:column style="width:50px;text-align: center;">
-                                <p:commandButton icon="pi pi-pencil" update="formUsuario" immediate="true" process="@this" actionListener="#{mantenimientoCuentaView.editarUsuario(usu)}" >
+                                <p:commandButton icon="pi pi-send" update="formUsuario" immediate="true" process="@this" actionListener="#{mantenimientoCuentaView.editarUsuario(usu)}" >
+                                </p:commandButton>
+                            </p:column>                            
+                            -->
+                            <p:column headerText="#{msg['actualizar.usuario']}" style="text-align: center;">
+                                <p:commandButton icon="pi pi-pencil" update="formUsuario" immediate="true" process="@this" actionListener="#{mantenimientoClienteView.editarUsuario(usu)}" >
                                 </p:commandButton>
                             </p:column>
-                            <p:column style="width:50px;text-align: center;">
-                                <p:commandButton icon="pi pi-lock" update="formUsuario" immediate="true" oncomplete="PF('dlgChangePassword').show()" actionListener="#{mantenimientoCuentaView.editarUsuario(usu)}"  >
+                            <p:column  headerText="#{msg['change.password']}" style="text-align: center;">
+                                <p:commandButton icon="pi pi-lock" update="formUsuario" immediate="true" oncomplete="PF('dlgChangePassword').show()" actionListener="#{mantenimientoClienteView.editarUsuario(usu)}"  >
                                 </p:commandButton>
                             </p:column>
                         </p:dataTable>
@@ -233,12 +229,12 @@
                                 <div class="ui-fluid p-formgrid p-grid">
                                     <div class="p-field p-col-12 p-md-12">
                                         <p:outputLabel for="@next" value="#{msg['new.password']}"/> 
-                                        <p:password id="strPassNuevo" value="#{mantenimientoCuentaView.strContraseniaNueva}" match="strPassReNuevo"  label="#{msg['new.password']}" feedback="true" maxlength="20" required="true" requiredMessage="#{msg['cant.be.empty']}" validatorMessage="#{msg['must.be.same.password']}" redisplay="true" />
+                                        <p:password id="strPassNuevo" value="#{mantenimientoClienteView.strContraseniaNueva}" match="strPassReNuevo"  label="#{msg['new.password']}" feedback="true" maxlength="20" required="true" requiredMessage="#{msg['cant.be.empty']}" validatorMessage="#{msg['must.be.same.password']}" redisplay="true" />
                                         <p:message for="strPassNuevo" />
                                     </div>
                                     <div class="p-field p-col-12 p-md-12">
                                         <p:outputLabel for="@next" value="#{msg['re.new.password']}"/>
-                                        <p:password id="strPassReNuevo" value="#{mantenimientoCuentaView.strContraseniaReNueva}"  label="#{msg['new.password']}" feedback="true" maxlength="20" required="true" requiredMessage="#{msg['cant.be.empty']}" redisplay="true" />
+                                        <p:password id="strPassReNuevo" value="#{mantenimientoClienteView.strContraseniaReNueva}"  label="#{msg['new.password']}" feedback="true" maxlength="20" required="true" requiredMessage="#{msg['cant.be.empty']}" redisplay="true" />
                                         <p:message for="strPassReNuevo" />
                                     </div>              
                                 </div>
@@ -253,7 +249,7 @@
                             </div>
                             <div class="p-field p-col">
                                 <p:commandButton value="#{msg['cancel']}" styleClass="ui-button-danger" 
-                                                 style="width: 100%;" actionListener="#{mantenimientoCuentaView.resetFormUsuario()}"
+                                                 style="width: 100%;" actionListener="#{mantenimientoClienteView.resetFormUsuario()}"
                                                  icon="pi pi-times"  oncomplete="PF('dlgChangePassword').hide()"  />
                             </div>
                         </div>

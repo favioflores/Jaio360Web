@@ -2,6 +2,7 @@ package com.jaio360.view;
 
 import com.jaio360.component.ExecutorBalanceMovement;
 import com.jaio360.dao.ContratoDAO;
+import com.jaio360.dao.ElementoDAO;
 import com.jaio360.dao.MovimientoDAO;
 import com.jaio360.dao.TarifaDAO;
 import com.jaio360.dao.UsuarioDAO;
@@ -9,6 +10,7 @@ import com.jaio360.dao.UsuarioSaldoDAO;
 import com.jaio360.domain.MovimientoBean;
 import com.jaio360.domain.UsuarioSaldoBean;
 import com.jaio360.orm.Contrato;
+import com.jaio360.orm.Elemento;
 import com.jaio360.orm.Movimiento;
 import com.jaio360.orm.Tarifa;
 import com.jaio360.orm.TipoMovimiento;
@@ -31,12 +33,13 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.HibernateException;
 
-@ManagedBean(name = "mantenimientoLicenciaView")
+@ManagedBean(name = "mantenimientoLicenciaClienteView")
 @ViewScoped
-public class MantenimientoLicenciaView extends BaseView implements Serializable {
+public class MantenimientoLicenciaClienteView extends BaseView implements Serializable {
 
-    private static Log log = LogFactory.getLog(MantenimientoLicenciaView.class);
+    private static Log log = LogFactory.getLog(MantenimientoLicenciaClienteView.class);
 
     private static final long serialVersionUID = -1L;
 
@@ -48,9 +51,18 @@ public class MantenimientoLicenciaView extends BaseView implements Serializable 
     private Integer intCantidadLicencias;
     private Integer idTarifa;
     private String strMontoBruto;
+    private Integer intMaxQuantity;
 
     List<MovimientoBean> lstMovimientos;
     List<UsuarioSaldoBean> lstUsuarioSaldo;
+
+    public Integer getIntMaxQuantity() {
+        return intMaxQuantity;
+    }
+
+    public void setIntMaxQuantity(Integer intMaxQuantity) {
+        this.intMaxQuantity = intMaxQuantity;
+    }
 
     public List<UsuarioSaldoBean> getLstUsuarioSaldo() {
         return lstUsuarioSaldo;
@@ -131,8 +143,27 @@ public class MantenimientoLicenciaView extends BaseView implements Serializable 
 
         poblarUsuarios();
         poblarTarifas();
+        maxQuantity();
         calcularMontoBruto();
         limpiarFormulario();
+
+    }
+
+    private void maxQuantity() {
+
+        try {
+
+            intMaxQuantity = 100;
+
+            ElementoDAO objElementoDAO = new ElementoDAO();
+
+            Elemento objElemento = objElementoDAO.obtenElemento(Constantes.INT_ET_MAX_QUANTITY);
+
+            intMaxQuantity = Integer.parseInt(objElemento.getElTxValor1());
+
+        } catch (NumberFormatException | HibernateException ex) {
+            mostrarError(log, ex);
+        }
 
     }
 
@@ -150,18 +181,17 @@ public class MantenimientoLicenciaView extends BaseView implements Serializable 
                 TarifaDAO objTarifaDAO = new TarifaDAO();
                 Tarifa objTarifa = objTarifaDAO.obtenTarifa(this.idTarifa);
 
+                if (this.intCantidadLicencias > this.intMaxQuantity) {
+                    this.intCantidadLicencias = this.intMaxQuantity;
+                }
                 BigDecimal bdCantidadLicencias = new BigDecimal(this.intCantidadLicencias.doubleValue());
                 this.strMontoBruto = objTarifa.getTaTxPrefijo() + objTarifa.getTaDePrecio().multiply(bdCantidadLicencias).setScale(2, BigDecimal.ROUND_HALF_UP).toString();
-
-                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Monto bruto calculado", null);
-                FacesContext.getCurrentInstance().addMessage(null, message);
-
             } else {
                 this.strMontoBruto = "0.00";
             }
 
-        } catch (Exception ex) {
-            log.error(ex);
+        } catch (HibernateException ex) {
+            mostrarError(log, ex);
         }
 
     }
@@ -240,9 +270,8 @@ public class MantenimientoLicenciaView extends BaseView implements Serializable 
                 UsuarioSaldoDAO objUsuarioSaldoDAO = new UsuarioSaldoDAO();
                 UsuarioSaldo objUsuarioSaldo = objUsuarioSaldoDAO.obtenUsuarioSaldo(idUsuario);
 
-                if (lstMovimiento.isEmpty() || objUsuarioSaldo==null ) {
-                    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "No se encontraron licencias asignadas", null);
-                    FacesContext.getCurrentInstance().addMessage(null, message);
+                if (lstMovimiento.isEmpty() || objUsuarioSaldo == null) {
+                    mostrarAlertaWarning("licencias.no.encontradas");
                 } else {
 
                     MovimientoBean objMovimientoBean;
@@ -258,7 +287,7 @@ public class MantenimientoLicenciaView extends BaseView implements Serializable 
 
                         lstMovimientos.add(objMovimientoBean);
                     }
-                    
+
                     UsuarioSaldoBean objUsuarioSaldoBean = new UsuarioSaldoBean();
                     objUsuarioSaldoBean.setIntTotalIndividual(objUsuarioSaldo.getUsNrTotalIndividual());
                     objUsuarioSaldoBean.setIntTotalMasivo(objUsuarioSaldo.getUsNrTotalMasivo());
@@ -268,11 +297,10 @@ public class MantenimientoLicenciaView extends BaseView implements Serializable 
                     objUsuarioSaldoBean.setIntReservadoMasivo(objUsuarioSaldo.getUsNrReservadoMasivo());
                     objUsuarioSaldoBean.setIntUtilizadoIndividual(objUsuarioSaldo.getUsNrUsadoIndividual());
                     objUsuarioSaldoBean.setIntUtilizadoMasivo(objUsuarioSaldo.getUsNrUsadoMasivo());
-                    
+
                     lstUsuarioSaldo.add(objUsuarioSaldoBean);
 
-                    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Se encontraron licencias asignadas", null);
-                    FacesContext.getCurrentInstance().addMessage(null, message);
+                    mostrarAlertaInfo("licencias.encontradas");
                 }
 
             }
@@ -293,7 +321,7 @@ public class MantenimientoLicenciaView extends BaseView implements Serializable 
 
             TarifaDAO tarifaDAO = new TarifaDAO();
 
-            List<Tarifa> lstTarifa = tarifaDAO.obtenListaTarifa();
+            List<Tarifa> lstTarifa = tarifaDAO.obtenListaTarifaParaClientes();
 
             for (Tarifa objTarifa : lstTarifa) {
 
@@ -316,7 +344,7 @@ public class MantenimientoLicenciaView extends BaseView implements Serializable 
 
             lstUsuarios = new ArrayList<>();
 
-            List<Usuario> lstUsers = usuarioDAO.obtenListaUsuarioPorPerfil(Constantes.INT_ET_TIPO_USUARIO_PROJECT_MANAGER, Constantes.INT_ET_TIPO_USUARIO_MANAGING_DIRECTOR, Constantes.INT_ET_TIPO_USUARIO_COUNTRY_MANAGER);
+            List<Usuario> lstUsers = usuarioDAO.obtenListaClientesPorPerfil(Constantes.INT_ET_TIPO_USUARIO_PROJECT_MANAGER, Utilitarios.obtenerUsuario().getIntUsuarioPk());
 
             for (Usuario objUsuario : lstUsers) {
 

@@ -42,27 +42,26 @@ public class NotificacionesDAO implements Serializable {
         throw new HibernateException("Ocurrió un error en la capa de acceso a datos", he);
     }
 
-    public List obtieneNotificaciones(Integer intProyecto) throws HibernateException {
+    public List<Notificaciones> obtieneNotificaciones(Integer intProyecto) throws HibernateException {
 
-        List lstMails = new ArrayList();
+        List<Notificaciones> lstNotificaciones = new ArrayList();
 
         try {
 
             iniciaOperacion();
 
-            Query query = sesion.createQuery("from Notificaciones where noIdEstado = ? and noIdRefProceso = ? ");
+            Query query = sesion.createQuery("select n from Notificaciones n join fetch n.destinatarioses d where n.noIdEstado = ? and n.noIdRefProceso = ? ");
 
             query.setInteger(0, Constantes.INT_ET_ESTADO_NOTIFICACION_PENDIENTE);
             query.setInteger(1, intProyecto);
 
-            List<Notificaciones> lstNotificaciones = query.list();
+            lstNotificaciones = query.list();
 
             if (!lstNotificaciones.isEmpty()) {
 
-                DestinatariosDAO objDestinatariosDAO = new DestinatariosDAO();
-
+                //DestinatariosDAO objDestinatariosDAO = new DestinatariosDAO();
                 for (Notificaciones objNotificaciones : lstNotificaciones) {
-
+                    /*
                     List<Destinatarios> lstDestinatarios = objDestinatariosDAO.obtieneDestinatarios(objNotificaciones.getNoIdNotificacionPk(), sesion);
 
                     if (!lstDestinatarios.isEmpty()) {
@@ -72,6 +71,7 @@ public class NotificacionesDAO implements Serializable {
                         lstMails.add(obj);
 
                     }
+                     */
                     objNotificaciones.setNoIdEstado(Constantes.INT_ET_ESTADO_NOTIFICACION_ENVIANDO);
 
                     sesion.update(objNotificaciones);
@@ -88,7 +88,7 @@ public class NotificacionesDAO implements Serializable {
             sesion.close();
         }
 
-        return lstMails;
+        return lstNotificaciones;
 
     }
 
@@ -128,7 +128,7 @@ public class NotificacionesDAO implements Serializable {
             }
 
             tx.commit();
-            
+
         } catch (HibernateException he) {
             manejaExcepcion(he);
         } finally {
@@ -138,27 +138,26 @@ public class NotificacionesDAO implements Serializable {
         return lstMails;
     }
 
-    public List obtieneNotificaciones(Notificaciones objNotificacion) throws HibernateException {
+    public List<Notificaciones> obtieneNotificaciones(Notificaciones objNotificacion) throws HibernateException {
 
-        List lstMails = new ArrayList();
+        List<Notificaciones> lstNotificaciones = new ArrayList();
 
         try {
 
             iniciaOperacion();
 
-            Query query = sesion.createQuery("from Notificaciones where noIdNotificacionPk = ? ");
+            Query query = sesion.createQuery("select n from Notificaciones n join fetch n.destinatarioses d where n.noIdNotificacionPk = ? ");
 
             query.setInteger(0, objNotificacion.getNoIdNotificacionPk());
 
-            List<Notificaciones> lstNotificaciones = query.list();
+            lstNotificaciones = query.list();
 
             if (!lstNotificaciones.isEmpty()) {
 
-                DestinatariosDAO objDestinatariosDAO = new DestinatariosDAO();
-
+                //DestinatariosDAO objDestinatariosDAO = new DestinatariosDAO();
                 for (Notificaciones objNotificaciones : lstNotificaciones) {
 
-                    List<Destinatarios> lstDestinatarios = objDestinatariosDAO.obtieneDestinatarios(objNotificaciones.getNoIdNotificacionPk(), sesion);
+                    /*  List<Destinatarios> lstDestinatarios = objDestinatariosDAO.obtieneDestinatarios(objNotificaciones.getNoIdNotificacionPk(), sesion);
 
                     if (!lstDestinatarios.isEmpty()) {
 
@@ -167,6 +166,7 @@ public class NotificacionesDAO implements Serializable {
                         lstMails.add(obj);
 
                     }
+                     */
                     objNotificaciones.setNoIdEstado(Constantes.INT_ET_ESTADO_NOTIFICACION_ENVIANDO);
 
                     sesion.update(objNotificaciones);
@@ -182,7 +182,7 @@ public class NotificacionesDAO implements Serializable {
         } finally {
             sesion.close();
         }
-        return lstMails;
+        return lstNotificaciones;
     }
 
     public boolean actualizaNotificacion(Notificaciones objNotificaciones) throws HibernateException {
@@ -407,7 +407,7 @@ public class NotificacionesDAO implements Serializable {
         return true;
     }
 
-    public boolean guardaNotificacionesEvaluadores(List<RelacionEvaluadoEvaluador> lstRelacionEvaluadoEvaluador) throws HibernateException, Exception {
+    public boolean guardaNotificacionesEvaluadores(List<RelacionEvaluadoEvaluador> lstRelacionEvaluadoEvaluador, boolean blCopyManager) throws HibernateException, Exception {
 
         UsuarioDAO objUsuarioDAO = new UsuarioDAO();
 
@@ -470,6 +470,11 @@ public class NotificacionesDAO implements Serializable {
 
                     Destinatarios objDestinatarios = new Destinatarios();
                     objDestinatarios.setDeTxMail(entry.getKey());
+
+                    if (blCopyManager) {
+                        objDestinatarios.setDeTxMailCc(Utilitarios.obtenerUsuario().getStrEmail());
+                    }
+
                     objDestinatarios.setNotificaciones(objNotificaciones);
 
                     sesion.save(objDestinatarios);

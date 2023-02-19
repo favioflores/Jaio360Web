@@ -20,9 +20,16 @@ import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
+import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -36,60 +43,84 @@ import org.apache.commons.logging.LogFactory;
 @ManagedBean(name = "usuarioSesion")
 @ViewScoped
 public class UsuarioSesion extends BaseView implements Serializable {
-    
+
     private static Log log = LogFactory.getLog(UsuarioSesion.class);
-    
+
     private static final long serialVersionUID = -1L;
-    
+
     private String usuario;
-    
     private String contraseña;
-    
+    private String timeClient;
+    private Date timeServer;
+
     private UsuarioInfo usuarioInfo;
     private ElementoDAO objElementoDAO = new ElementoDAO();
-    
+
     public String getUsuario() {
         return usuario;
     }
-    
+
     public UsuarioInfo getUsuarioInfo() {
         return usuarioInfo;
     }
-    
+
+    public String getTimeClient() {
+        return timeClient;
+    }
+
+    public Date getTimeServer() {
+        return timeServer;
+    }
+
+    public void setTimeServer(Date timeServer) {
+        this.timeServer = timeServer;
+    }
+
+    public void setTimeClient(String timeClient) {
+        this.timeClient = timeClient;
+    }
+
     public void setUsuarioInfo(UsuarioInfo usuarioInfo) {
         this.usuarioInfo = usuarioInfo;
     }
-    
+
     public void setUsuario(String usuario) {
         this.usuario = usuario;
     }
-    
+
     public String getContraseña() {
         return contraseña;
     }
-    
+
     public void setContraseña(String contraseña) {
         this.contraseña = contraseña;
     }
-    
+
     public void abandonarSistema(ActionEvent event) {
-        
+
         FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Saliendo", "Muchas gracias por su visita");
-        
+
         FacesContext.getCurrentInstance().addMessage(null, message);
-        
+
     }
     
-    public void iniciarSesion(ActionEvent event) throws Exception {
-        
+    @PostConstruct
+    public void init() {
+
+        timeServer = new Date();
+
+    }
+
+    public void iniciarSesion() throws Exception {
+
         FacesMessage message = null;
-        
+
         Map<String, String> params = FacesContext.getCurrentInstance()
                 .getExternalContext().getRequestParameterMap();
         String captha = params.get("g-recaptcha-response");
-        
+
         boolean blValido = false;
-        
+
         HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
         String ipAddress = request.getRemoteAddr();
         /*
@@ -107,146 +138,146 @@ public class UsuarioSesion extends BaseView implements Serializable {
         }else{
             blValido = true;
         }*/
-        
+
         if (true) {
             //if(blValido){
 
             try {
-                
+
                 if (usuario.isEmpty() || contraseña.isEmpty()) {
                     message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Usuario y contraseña requeridos", null);
                 } else {
                     UsuarioDAO objUsuarioDAO = new UsuarioDAO();
-                    
+
                     EncryptDecrypt objEncryptDecrypt = new EncryptDecrypt();
-                    
+
                     Usuario objUsuario = objUsuarioDAO.iniciaSesion(usuario.trim());
-                    
+
                     if (objUsuario == null) {
-                        
+
                         usuario = Constantes.strVacio;
                         contraseña = Constantes.strVacio;
                         message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Usuario o contraseña incorrectos", null);
-                        
+
                     } else if (!contraseña.trim().equals(objEncryptDecrypt.decrypt(objUsuario.getUsTxContrasenia()))) {
-                        
+
                         usuario = Constantes.strVacio;
                         contraseña = Constantes.strVacio;
-                        
-                        usuarioInfo = new UsuarioInfo(objUsuario);
-                        
+
+                        usuarioInfo = new UsuarioInfo(objUsuario, true);
+
                         registraHistorialAcceso(objUsuario.getUsIdCuentaPk(), true, new Date(), null, null);
                         message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Usuario o contraseña incorrectos", null);
-                        
+
                     } else {
-                        
-                        usuarioInfo = new UsuarioInfo(objUsuario);
-                        
+
+                        usuarioInfo = new UsuarioInfo(objUsuario, true);
+                        usuarioInfo.setTimeClient(this.timeClient);
+
                         registraHistorialAcceso(objUsuario.getUsIdCuentaPk(), true, new Date(), null, null);
-                        
+
                         HistorialAccesoDAO objHistorialAccesoDAO = new HistorialAccesoDAO();
                         usuarioInfo.setStrIntentosErrados(objHistorialAccesoDAO.obtenIntentosFallidos(usuarioInfo.getIntUsuarioPk(), usuarioInfo.getIntHistorialPk()).toString());
-                        
+
                         HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
 
-                        //session.setMaxInactiveInterval(Constantes.INTERVAL_SESSION);
                         session.setAttribute("usuarioInfo", usuarioInfo);
-                        
+
                         FacesContext.getCurrentInstance().getExternalContext().redirect("welcome.jsf");
-                        
+
                     }
                 }
-                
+
             } catch (Exception ex) {
                 log.error(ex);
             }
-            
+
             if (message != null) {
                 FacesContext.getCurrentInstance().addMessage(null, message);
             }
         }
     }
-    
+
     public void cerrarSesion() {
-        
+
         try {
-            
+
             HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
             usuarioInfo = (UsuarioInfo) session.getAttribute("usuarioInfo");
             session.invalidate();
             registraHistorialAcceso(usuarioInfo.getIntUsuarioPk(), true, null, new Date(), usuarioInfo.getIntHistorialPk());
-            FacesContext.getCurrentInstance().getExternalContext().redirect("iniciar.jsf");
-            
+            FacesContext.getCurrentInstance().getExternalContext().redirect("login.jsf");
+
         } catch (IOException ex) {
             log.error(ex);
         }
-        
+
     }
-    
+
     private void registraHistorialAcceso(Integer intUsuarioPk, boolean status, Date dtIngreso, Date dtSalida, Integer intHistorialPk) {
-        
+
         HistorialAccesoDAO objHistorialAccesoDAO = new HistorialAccesoDAO();
         HistorialAcceso objHistorialAcceso = new HistorialAcceso();
-        
+
         if (intHistorialPk == null) {
-            
+
             Usuario objUsuario = new Usuario();
             objUsuario.setUsIdCuentaPk(intUsuarioPk);
-            
+
             objHistorialAcceso.setHaFeIngreso(dtIngreso);
             objHistorialAcceso.setUsuario(objUsuario);
             objHistorialAcceso.setHaInEstado(status);
-            
+
             usuarioInfo.setIntHistorialPk(objHistorialAccesoDAO.guardaHistorialAcceso(objHistorialAcceso));
-            
+
         } else {
-            
+
             objHistorialAcceso = objHistorialAccesoDAO.obtenHistorialAcceso(intHistorialPk);
-            
+
             objHistorialAcceso.setHaFeSalida(dtSalida);
-            
+
             objHistorialAcceso.setHaInEstado(true);
-            
+
             objHistorialAccesoDAO.actualizaHistorialAcceso(objHistorialAcceso);
-            
+
         }
-        
+
     }
-    
+
     public UsuarioInfo obtenerUsuarioInfo() {
-        
+
         HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
-        
+
         return (UsuarioInfo) session.getAttribute("usuarioInfo");
-        
+
     }
-    
+
     public void enviarClaveCorreo() {
-        
+
         try {
-            
+
             UsuarioDAO objUsuarioDAO = new UsuarioDAO();
-            
+
             Usuario objUsuario = objUsuarioDAO.iniciaSesion(usuario.trim());
-            
+
             if (objUsuario != null) {
-                
+
                 if (objUsuario.getUsIdEstado().equals(Constantes.INT_ET_ESTADO_USUARIO_BLOQUEADO)) {
                     mostrarAlertaError("account.blocked");
                 } else {
-                    
+
                     EncryptDecrypt objEncryptDecrypt = new EncryptDecrypt();
-                    
+
                     String strNotificacion = Utilitarios.decodeUTF8(objElementoDAO.obtenElemento(Constantes.INT_ET_NOTIFICACION_CLAVE).getElCadena());
-                    
+
                     Utilitarios objUtilitarios = new Utilitarios();
-                    
+
                     strNotificacion = strNotificacion.replace("#%DATO.MENSAJE", objUtilitarios.formatearFecha(new Date(), Constantes.HH24_MI_DDMMYYYY));
                     strNotificacion = strNotificacion.replace("#%USUARIO.MENSAJE", usuario.trim());
                     strNotificacion = strNotificacion.replace("#%CLAVE.MENSAJE", objEncryptDecrypt.decrypt(objUsuario.getUsTxContrasenia()));
-                    
+
                     NotificacionesDAO objNotificacionesDAO = new NotificacionesDAO();
-                    
+
                     Notificaciones objNotificaciones = new Notificaciones();
                     objNotificaciones.setNoFeCreacion(new Date());
                     objNotificaciones.setNoIdEstado(Constantes.INT_ET_ESTADO_NOTIFICACION_PENDIENTE);
@@ -254,38 +285,38 @@ public class UsuarioSesion extends BaseView implements Serializable {
                     objNotificaciones.setNoIdTipoProceso(0);
                     objNotificaciones.setNoTxAsunto("Notificación de clave");
                     objNotificaciones.setNoTxMensaje(Utilitarios.encodeUTF8(strNotificacion));
-                    
+
                     objNotificaciones.setNoIdNotificacionPk(objNotificacionesDAO.guardaNotificacion(objNotificaciones));
-                    
+
                     DestinatariosDAO objDestinatariosDao = new DestinatariosDAO();
-                    
+
                     Destinatarios objDestinatarios = new Destinatarios();
                     objDestinatarios.setDeTxMail(usuario.trim());
                     objDestinatarios.setNotificaciones(objNotificaciones);
-                    
+
                     objDestinatariosDao.guardaDestinatarios(objDestinatarios);
-                    
+
                     MailSender objMailSender = new MailSender();
                     objMailSender.enviarNotificacion(objNotificaciones);
-                    
+
                     mostrarAlertaInfo("sended.mail");
-                    
+
                 }
-                
+
             } else {
-                
+
                 mostrarAlertaError("account.not.exist");
-                
+
             }
             this.usuario = Constantes.strVacio;
-            
+
         } catch (Exception ex) {
             mostrarError(log, ex);
             mostrarAlertaFatal("error.was.occurred");
         }
-        
+
     }
-    
+
     public void ingresaSistema() {
         try {
             FacesContext.getCurrentInstance().getExternalContext().redirect("admProyectos.jsf");
@@ -293,66 +324,96 @@ public class UsuarioSesion extends BaseView implements Serializable {
             mostrarError(log, ex);
         }
     }
-    
+
     private boolean captchaInvalido(String str) throws Exception {
-        
+
         String url = "https://www.google.com/recaptcha/api/siteverify?secret=6LeGgf4SAAAAAOfMo7YjjuDgNdRwsVG3HE5z2hp8&response=" + str;
-        
+
         URL obj = new URL(url);
         HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-        
+
         con.setRequestMethod("GET");
-        
+
         con.setRequestProperty("User-Agent", "Mozilla/5.0");
-        
+
         con.getResponseCode();
-        
+
         BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-        
+
         String inputLine;
-        
+
         String rpta = "";
-        
+
         while ((inputLine = in.readLine()) != null) {
             rpta += inputLine;
         }
-        
+
         in.close();
-        
+
         if (rpta.indexOf("true") > 0) {
             return false;
         }
-        
+
         return true;
-        
+
     }
-    
+
     private boolean validaConexionGoogle() throws Exception {
-        
+
         try {
-            
+
             String url = "https://www.google.com/";
-            
+
             URL obj = new URL(url);
             HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-            
+
             con.connect();
-            
+
         } catch (Exception e) {
             log.error(e);
             return false;
         }
         return true;
-        
+
     }
-    
+
     public void timeout() throws IOException {
-        
+
         HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
         usuarioInfo = (UsuarioInfo) session.getAttribute("usuarioInfo");
         session.invalidate();
         registraHistorialAcceso(usuarioInfo.getIntUsuarioPk(), true, null, new Date(), usuarioInfo.getIntHistorialPk());        //FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
 
     }
-    
+
+    public void test() {
+        try {
+            this.usuario = "favito.flores@gmail.com";
+            this.contraseña = "1234";
+
+            UsuarioDAO objUsuarioDAO = new UsuarioDAO();
+
+            Usuario objUsuario = objUsuarioDAO.iniciaSesion(usuario.trim());
+            usuarioInfo = new UsuarioInfo(objUsuario, true);
+            usuarioInfo.setTimeClient(this.timeClient);
+
+            System.out.println("GMT client: " + this.timeClient);
+
+            Date currentTime = new Date();
+
+            SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMM d, yyyy hh:mm:ss a zZ");
+
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+            
+            System.out.println("GMT server: " + sdf.format(currentTime));
+
+            HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
+            session.setAttribute("usuarioInfo", usuarioInfo);
+            FacesContext.getCurrentInstance().getExternalContext().redirect("admLicenceClient.jsf");
+
+        } catch (Exception ex) {
+            mostrarError(log, ex);
+        }
+    }
+
 }

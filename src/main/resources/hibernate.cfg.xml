@@ -41,5 +41,6 @@
         <mapping resource="com/jaio360/orm/Movimiento.hbm.xml"/>
         <mapping resource="com/jaio360/orm/ReferenciaMovimiento.hbm.xml"/>
         <mapping resource="com/jaio360/orm/LastUpdate.hbm.xml"/>
+        <mapping resource="com/jaio360/orm/ManageUserRelation.hbm.xml"/>
     </session-factory>
 </hibernate-configuration>

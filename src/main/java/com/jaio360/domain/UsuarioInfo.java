@@ -27,16 +27,14 @@ public class UsuarioInfo extends BaseView implements Serializable {
     private String strIntentosErrados;
     private String strEmpresaDesc;
     private String strDocumentoEmpresa;
+    private String strEstadoDesc;
     private Integer intIdDocumentoEmpresa;
     private Integer intIdCiudad;
     private Integer intHistorialPk;
-    private boolean boEsAdministrador = false;
-    private boolean boEsUsuarioMaestro = false;
-    private boolean boEsUsuarioEvaluador = false;
-    private boolean boEsUsuarioEvaluado = false;
-
+    private String timeClient;
+    
     private boolean ManagingDirector = false;
-    private boolean CountryDirector = false;
+    private boolean CountryManager = false;
     private boolean ProjectManager = false;
     private boolean EvaluatedEvaluator = false;
 
@@ -44,6 +42,55 @@ public class UsuarioInfo extends BaseView implements Serializable {
 
     public String getStrFechaRegistro() {
         return strFechaRegistro;
+    }
+
+    public String getTimeClient() {
+        return timeClient;
+    }
+
+    public void setTimeClient(String timeClient) {
+        this.timeClient = timeClient;
+    }
+
+    
+    public String getStrEstadoDesc() {
+        return strEstadoDesc;
+    }
+
+    public void setStrEstadoDesc(String strEstadoDesc) {
+        this.strEstadoDesc = strEstadoDesc;
+    }
+
+    public boolean isManagingDirector() {
+        return ManagingDirector;
+    }
+
+    public void setManagingDirector(boolean ManagingDirector) {
+        this.ManagingDirector = ManagingDirector;
+    }
+
+    public boolean isCountryManager() {
+        return CountryManager;
+    }
+
+    public void setCountryManager(boolean CountryManager) {
+        this.CountryManager = CountryManager;
+    }
+
+    public boolean isProjectManager() {
+        return ProjectManager;
+    }
+
+    public void setProjectManager(boolean ProjectManager) {
+        this.ProjectManager = ProjectManager;
+    }
+
+    public boolean isEvaluatedEvaluator() {
+        return EvaluatedEvaluator;
+    }
+
+    public void setEvaluatedEvaluator(boolean EvaluatedEvaluator) {
+        this.EvaluatedEvaluator = EvaluatedEvaluator;
     }
 
     public void setStrFechaRegistro(String strFechaRegistro) {
@@ -74,7 +121,7 @@ public class UsuarioInfo extends BaseView implements Serializable {
         this.intHistorialPk = intHistorialPk;
     }
 
-    public UsuarioInfo(Usuario objUsuario) {
+    public UsuarioInfo(Usuario objUsuario, boolean isForLogin) {
 
         this.intUsuarioPk = objUsuario.getUsIdCuentaPk();
         this.strEmail = objUsuario.getUsIdMail();
@@ -82,92 +129,48 @@ public class UsuarioInfo extends BaseView implements Serializable {
         this.strTipoUsuario = msg(objUsuario.getUsIdTipoCuenta().toString());
         this.strDescripcion = objUsuario.getUsTxNombreRazonsocial();
         this.strEmpresaDesc = objUsuario.getUsTxDescripcionEmpresa();
-        this.intIdDocumentoEmpresa = objUsuario.getUsIdTipoDocumento();
-        this.strDocumentoEmpresa = objUsuario.getUsTxDocumento();
-        this.intIdCiudad = objUsuario.getUbigeo().getUbIdUbigeoPk();
-        HistorialAccesoDAO objHistorialAccesoDAO = new HistorialAccesoDAO();
-        Date dtUltimoAcceso = objHistorialAccesoDAO.obtenUltimoAcceso(intUsuarioPk);
-
-        if (dtUltimoAcceso != null) {
-            this.strUltimaConexion = Utilitarios.formatearFecha(dtUltimoAcceso, Constantes.DDMMYYYY);
-        } else {
-            this.strUltimaConexion = "Sin accesos previos";
-        }
-        this.strIntentosErrados = "0";
-        this.intHistorialPk = -1;
-
-        if (objUsuario.getUsIdTipoCuenta().equals(Constantes.INT_ET_TIPO_USUARIO_MANAGING_DIRECTOR)) {
-            this.boEsAdministrador = true;
-            this.boEsUsuarioMaestro = false;
-            this.boEsUsuarioEvaluado = false;
-            this.boEsUsuarioEvaluador = false;
-            
-            this.ManagingDirector = true;
-            this.CountryDirector = false;
-            this.ProjectManager = false;
-            this.EvaluatedEvaluator = false;
-        } else if (objUsuario.getUsIdTipoCuenta().equals(Constantes.INT_ET_TIPO_USUARIO_PROJECT_MANAGER)) {
-            this.boEsAdministrador = false;
-            this.boEsUsuarioMaestro = true;
-            this.boEsUsuarioEvaluado = false;
-            this.boEsUsuarioEvaluador = false;
-            
-            this.ManagingDirector = false;
-            this.CountryDirector = true;
-            this.ProjectManager = false;
-            this.EvaluatedEvaluator = false;
-        } else if (objUsuario.getUsIdTipoCuenta().equals(Constantes.INT_ET_TIPO_USUARIO_PROJECT_MANAGER)) {
-            this.ManagingDirector = false;
-            this.CountryDirector = false;
-            this.ProjectManager = true;
-            this.EvaluatedEvaluator = false;
-        } else {
-            this.boEsAdministrador = false;
-            this.boEsUsuarioMaestro = false;
-            this.boEsUsuarioEvaluado = true;
-            this.boEsUsuarioEvaluador = true;
-            
-            this.ManagingDirector = false;
-            this.CountryDirector = false;
-            this.ProjectManager = true;
-            this.EvaluatedEvaluator = true;
-            
-        }
-
-    }
-
-    public UsuarioInfo(Usuario objUsuario, boolean flag) {
-
-        this.intUsuarioPk = objUsuario.getUsIdCuentaPk();
-        this.strEmail = objUsuario.getUsIdMail();
-
-        this.strTipoUsuario = msg(objUsuario.getUsIdTipoCuenta().toString());
-        this.strDescripcion = objUsuario.getUsTxNombreRazonsocial();
-        this.strEmpresaDesc = objUsuario.getUsTxDescripcionEmpresa();
+        this.strEstadoDesc = msg(objUsuario.getUsIdEstado().toString());
         this.intIdDocumentoEmpresa = objUsuario.getUsIdTipoDocumento();
         this.strDocumentoEmpresa = objUsuario.getUsTxDocumento();
         this.intIdCiudad = objUsuario.getUbigeo().getUbIdUbigeoPk();
         this.usuario = objUsuario;
         this.strFechaRegistro = Utilitarios.formatearFecha(objUsuario.getUsFeRegistro(), Constantes.DDMMYYYY);
 
-        if (objUsuario.getUsIdTipoCuenta().equals(Constantes.INT_ET_TIPO_USUARIO_MANAGING_DIRECTOR)) {
-            this.boEsAdministrador = true;
-            this.boEsUsuarioMaestro = false;
-            this.boEsUsuarioEvaluado = false;
-            this.boEsUsuarioEvaluador = false;
-        } else if (objUsuario.getUsIdTipoCuenta().equals(Constantes.INT_ET_TIPO_USUARIO_PROJECT_MANAGER)) {
-            this.boEsAdministrador = false;
-            this.boEsUsuarioMaestro = true;
-            this.boEsUsuarioEvaluado = false;
-            this.boEsUsuarioEvaluador = false;
-        } else {
-            this.boEsAdministrador = false;
-            this.boEsUsuarioMaestro = false;
-            this.boEsUsuarioEvaluado = true;
-            this.boEsUsuarioEvaluador = true;
+        if (isForLogin) {
+            HistorialAccesoDAO objHistorialAccesoDAO = new HistorialAccesoDAO();
+            Date dtUltimoAcceso = objHistorialAccesoDAO.obtenUltimoAcceso(intUsuarioPk);
+
+            if (dtUltimoAcceso != null) {
+                this.strUltimaConexion = Utilitarios.formatearFecha(dtUltimoAcceso, Constantes.DDMMYYYY);
+            } else {
+                this.strUltimaConexion = "Sin accesos previos";
+            }
+            this.strIntentosErrados = "0";
+            this.intHistorialPk = -1;
         }
 
-        this.usuario = objUsuario;
+        if (objUsuario.getUsIdTipoCuenta().equals(Constantes.INT_ET_TIPO_USUARIO_MANAGING_DIRECTOR)) {
+            this.ManagingDirector = true;
+            this.CountryManager = false;
+            this.ProjectManager = false;
+            this.EvaluatedEvaluator = false;
+        } else if (objUsuario.getUsIdTipoCuenta().equals(Constantes.INT_ET_TIPO_USUARIO_PROJECT_MANAGER)) {
+            this.ManagingDirector = false;
+            this.CountryManager = true;
+            this.ProjectManager = false;
+            this.EvaluatedEvaluator = false;
+        } else if (objUsuario.getUsIdTipoCuenta().equals(Constantes.INT_ET_TIPO_USUARIO_PROJECT_MANAGER)) {
+            this.ManagingDirector = false;
+            this.CountryManager = false;
+            this.ProjectManager = true;
+            this.EvaluatedEvaluator = false;
+        } else {
+            this.ManagingDirector = false;
+            this.CountryManager = false;
+            this.ProjectManager = true;
+            this.EvaluatedEvaluator = true;
+        }
+
     }
 
     public Integer getIntIdDocumentoEmpresa() {
@@ -232,38 +235,6 @@ public class UsuarioInfo extends BaseView implements Serializable {
 
     public void setStrIntentosErrados(String strIntentosErrados) {
         this.strIntentosErrados = strIntentosErrados;
-    }
-
-    public boolean isBoEsAdministrador() {
-        return boEsAdministrador;
-    }
-
-    public void setBoEsAdministrador(boolean boEsAdministrador) {
-        this.boEsAdministrador = boEsAdministrador;
-    }
-
-    public boolean isBoEsUsuarioMaestro() {
-        return boEsUsuarioMaestro;
-    }
-
-    public void setBoEsUsuarioMaestro(boolean boEsUsuarioMaestro) {
-        this.boEsUsuarioMaestro = boEsUsuarioMaestro;
-    }
-
-    public boolean isBoEsUsuarioEvaluador() {
-        return boEsUsuarioEvaluador;
-    }
-
-    public void setBoEsUsuarioEvaluador(boolean boEsUsuarioEvaluador) {
-        this.boEsUsuarioEvaluador = boEsUsuarioEvaluador;
-    }
-
-    public boolean isBoEsUsuarioEvaluado() {
-        return boEsUsuarioEvaluado;
-    }
-
-    public void setBoEsUsuarioEvaluado(boolean boEsUsuarioEvaluado) {
-        this.boEsUsuarioEvaluado = boEsUsuarioEvaluado;
     }
 
     public String getStrEmpresaDesc() {

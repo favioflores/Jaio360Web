@@ -12,17 +12,28 @@ public class Destinatarios  implements java.io.Serializable {
      private Integer deIdDestinatarioPk;
      private Notificaciones notificaciones;
      private String deTxMail;
+     private String deTxMailCc;
+     
 
     public Destinatarios() {
     }
 
-    public Destinatarios(Notificaciones notificaciones, String deTxMail) {
+    public Destinatarios(Notificaciones notificaciones, String deTxMail, String deTxMailCc) {
        this.notificaciones = notificaciones;
        this.deTxMail = deTxMail;
+       this.deTxMailCc = deTxMailCc;
     }
    
     public Integer getDeIdDestinatarioPk() {
         return this.deIdDestinatarioPk;
+    }
+
+    public String getDeTxMailCc() {
+        return deTxMailCc;
+    }
+
+    public void setDeTxMailCc(String deTxMailCc) {
+        this.deTxMailCc = deTxMailCc;
     }
     
     public void setDeIdDestinatarioPk(Integer deIdDestinatarioPk) {

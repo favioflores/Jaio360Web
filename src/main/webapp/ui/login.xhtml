@@ -47,7 +47,7 @@
                         </div>
                         <div class="p-field">
                             <div class="text-center">
-                                <!--p:captcha label="Captcha" language="#{msg['iniciar.captcha.lenguaje']}" /--> 
+                                <p:captcha label="Captcha" language="#{msg['iniciar.captcha.lenguaje']}" /> 
                             </div>
                         </div>
                         <div class="p-field">
@@ -59,7 +59,7 @@
                         <div class="p-field">
                             <div class="p-text-center">
                                 <p:outputLabel>
-                                    <p:link outcome="clave.jsf" value="#{msg['iniciar.texto.olvidar.contraseña.part2']}" />
+                                    <p:link outcome="recoveryPassword.jsf" value="#{msg['iniciar.texto.olvidar.contraseña.part2']}" />
                                 </p:outputLabel>
                             </div>
                         </div>
@@ -72,7 +72,13 @@
                         </div>
                     </div>
                 </p:panel>
-                
+                <p:inputText id="inputTime" type="hidden" value="#{usuarioSesion.timeClient}" />
+                <script>
+                    var MyDate = new Date();
+                    var MyString = MyDate.toTimeString();
+                    var MyOffset = MyString.slice(9, 17);
+                    document.getElementById("loginForm:inputTime").value = MyOffset;
+                </script>
             </h:form>                
         </p:dialog>
     </ui:define>

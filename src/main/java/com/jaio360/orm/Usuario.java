@@ -29,6 +29,7 @@ public class Usuario  implements java.io.Serializable {
      private Set historialAccesos = new HashSet(0);
      private Set proyectos = new HashSet(0);
      private Set movimientos = new HashSet(0);
+     private Set manageUserRelations = new HashSet(0);
 
     public Usuario() {
     }
@@ -96,6 +97,16 @@ public class Usuario  implements java.io.Serializable {
     public Integer getUsIdEstado() {
         return this.usIdEstado;
     }
+
+    public Set getManageUserRelations() {
+        return manageUserRelations;
+    }
+
+    public void setManageUserRelations(Set manageUserRelations) {
+        this.manageUserRelations = manageUserRelations;
+    }
+
+    
     
     public void setUsIdEstado(Integer usIdEstado) {
         this.usIdEstado = usIdEstado;

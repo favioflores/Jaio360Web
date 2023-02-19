@@ -2,6 +2,7 @@ package com.jaio360.dao;
 
 import com.jaio360.domain.UsuarioInfo;
 import com.jaio360.orm.HibernateUtil;
+import com.jaio360.orm.ManageUserRelation;
 import com.jaio360.orm.Usuario;
 import com.jaio360.utils.Constantes;
 import com.jaio360.utils.EncryptDecrypt;
@@ -26,12 +27,29 @@ public class UsuarioDAO implements Serializable {
 
     private static Log log = LogFactory.getLog(UsuarioDAO.class);
 
-    public long guardaUsuario(Usuario usuario) throws HibernateException {
+    public Integer guardaUsuario(Usuario usuario) throws HibernateException {
+        Integer id = 0;
+
+        try {
+            iniciaOperacion();
+            id = (Integer) sesion.save(usuario);
+            tx.commit();
+        } catch (HibernateException he) {
+            manejaExcepcion(he);
+            throw he;
+        } finally {
+            sesion.close();
+        }
+
+        return id;
+    }
+
+    public long guardaCliente(ManageUserRelation manageUserRelation) throws HibernateException {
         long id = 0;
 
         try {
             iniciaOperacion();
-            id = Long.valueOf((Integer) sesion.save(usuario));
+            id = Long.valueOf((Integer) sesion.save(manageUserRelation));
             tx.commit();
         } catch (HibernateException he) {
             manejaExcepcion(he);
@@ -138,36 +156,52 @@ public class UsuarioDAO implements Serializable {
         return listaUsuario;
     }
 
-    public List<Usuario> obtenListaUsuario(List lstCorreos) throws HibernateException {
+    public List obtenListaClientes(Integer idUserManager) throws HibernateException {
         List<Usuario> listaUsuario = null;
-        
         try {
             iniciaOperacion();
-            Query query = sesion.createQuery("from Usuario u where u.usIdMail in ( :lstCorreos ) ");
-            
-            query.setParameterList("lstCorreos", lstCorreos);
-            
+            Query query = sesion.createQuery("from Usuario u join u.manageUserRelations m where m.usIdCuentaManagerPk = ? ");
+            query.setInteger(0, idUserManager);
+
             listaUsuario = query.list();
-            
+
         } finally {
             sesion.close();
         }
 
         return listaUsuario;
     }
-    
+
+    public List<Usuario> obtenListaUsuario(List lstCorreos) throws HibernateException {
+        List<Usuario> listaUsuario = null;
+
+        try {
+            iniciaOperacion();
+            Query query = sesion.createQuery("from Usuario u where u.usIdMail in ( :lstCorreos ) ");
+
+            query.setParameterList("lstCorreos", lstCorreos);
+
+            listaUsuario = query.list();
+
+        } finally {
+            sesion.close();
+        }
+
+        return listaUsuario;
+    }
+
     public List<Usuario> obtenListaUsuario(List lstCorreos, Session objSession) throws HibernateException {
         List<Usuario> listaUsuario = null;
-        
+
         try {
 
             Query query = objSession.createQuery("from Usuario u where u.usIdMail in ( :lstCorreos ) ");
-            
+
             query.setParameterList("lstCorreos", lstCorreos);
-            
+
             listaUsuario = query.list();
-            
-        } catch(HibernateException e){
+
+        } catch (HibernateException e) {
             log.error(e);
         }
 
@@ -191,14 +225,35 @@ public class UsuarioDAO implements Serializable {
         return listaUsuario;
     }
 
-    public List<Usuario> obtenListaUsuarioPorPerfil(Integer intPerfil1, Integer intPerfil2) throws HibernateException {
+    public List<Usuario> obtenListaClientesPorPerfil(Integer intPerfil, Integer intManager) throws HibernateException {
         List<Usuario> listaUsuario = null;
         try {
             iniciaOperacion();
-            Query query = sesion.createQuery("from Usuario u where u.usIdTipoCuenta in (?,?) and u.usIdEstado != ? order by usTxNombreRazonsocial ");
+            Query query = sesion.createQuery("select u from Usuario u join u.manageUserRelations m where m.usIdCuentaManagerPk = ? and u.usIdTipoCuenta in (?) and u.usIdEstado = ? order by u.usTxNombreRazonsocial ");
+
+            query.setInteger(0, intManager);
+            query.setInteger(1, intPerfil);
+            query.setInteger(2, Constantes.INT_ET_ESTADO_USUARIO_CONFIRMADO);
+            
+            listaUsuario = query.list();
+        } catch (HibernateException ex) {
+            log.error(ex);
+        } finally {
+            sesion.close();
+        }
+
+        return listaUsuario;
+    }
+
+    public List<Usuario> obtenListaUsuarioPorPerfil(Integer intPerfil1, Integer intPerfil2, Integer intPerfil3) throws HibernateException {
+        List<Usuario> listaUsuario = null;
+        try {
+            iniciaOperacion();
+            Query query = sesion.createQuery("from Usuario u where u.usIdTipoCuenta in (?,?,?) and u.usIdEstado = ? order by usTxNombreRazonsocial ");
             query.setInteger(0, intPerfil1);
             query.setInteger(1, intPerfil2);
-            query.setInteger(2, Constantes.INT_ET_ESTADO_USUARIO_BLOQUEADO);
+            query.setInteger(2, intPerfil3);
+            query.setInteger(3, Constantes.INT_ET_ESTADO_USUARIO_CONFIRMADO);
             listaUsuario = query.list();
         } catch (HibernateException ex) {
             log.error(ex);

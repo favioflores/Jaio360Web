@@ -35,6 +35,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
+import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.RowEditEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
@@ -196,12 +197,14 @@ public class importarCuestionariosView extends BaseView implements Serializable 
         }
     }
 
-    public void cargaCuestionarios() {
+    public void cargaCuestionarios(FileUploadEvent event) {
 
         this.lstCuestionariosImportados = new ArrayList<>();
         this.lstElementosDelCuestionarios = new ArrayList<>();
         this.lstElementoCuestionario = new ArrayList();
         this.lstErrores = new ArrayList<>();
+        
+        inputFile = event.getFile();
 
         if (inputFile == null) {
             mostrarAlertaInfo("search.file.first");

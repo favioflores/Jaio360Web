@@ -169,8 +169,6 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
         this.end = end;
     }
 
-
-
     public Integer getIdParametroElegido() {
         return idParametroElegido;
     }
@@ -788,9 +786,10 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
 
             ProyectoDAO objProyectoDAO = new ProyectoDAO();
 
-            List lstNotificaciones = objProyectoDAO.iniciarProyecto(lstParticipante, lstRedEvaluacion, lstCuestionario, lstCuestionarioEvaluado, lstRelacion, lstRelacionParticipante);
+            //List lstNotificaciones = objProyectoDAO.iniciarProyecto(lstParticipante, lstRedEvaluacion, lstCuestionario, lstCuestionarioEvaluado, lstRelacion, lstRelacionParticipante);
+            boolean result = objProyectoDAO.iniciarProyecto(Utilitarios.obtenerProyecto().getIntIdProyecto());
 
-            if (!lstNotificaciones.isEmpty()) {
+            if (result) {
                 Proyecto objProyecto = objProyectoDAO.obtenProyecto(Utilitarios.obtenerProyecto().getIntIdProyecto());
 
                 if (!objProyecto.getPoIdEstado().equals(Constantes.INT_ET_ESTADO_PROYECTO_EN_EJECUCION)) {
@@ -1144,7 +1143,7 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
         if (validaAlMenosUno) {
             NotificacionesDAO objNotificacionesDAO = new NotificacionesDAO();
             try {
-                if (objNotificacionesDAO.guardaNotificacionesEvaluadores(lstRelacionEvaluadoEvaluador)) {
+                if (objNotificacionesDAO.guardaNotificacionesEvaluadores(lstRelacionEvaluadoEvaluador, false)) {
                     MailSender objMailSender = new MailSender();
                     objMailSender.enviarListaDeNotificacionesProyecto(Utilitarios.obtenerProyecto().getIntIdProyecto());
                     mostrarAlertaInfo("step5.sended.reminders.project");
@@ -1173,7 +1172,7 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
 
             lstEvaluadoEvaluadors.add(objRelacionEvaluadoEvaluador);
 
-            if (objNotificacionesDAO.guardaNotificacionesEvaluadores(lstEvaluadoEvaluadors)) {
+            if (objNotificacionesDAO.guardaNotificacionesEvaluadores(lstEvaluadoEvaluadors, true)) {
                 MailSender objMailSender = new MailSender();
                 objMailSender.enviarListaDeNotificacionesProyecto(Utilitarios.obtenerProyecto().getIntIdProyecto());
 
@@ -1399,12 +1398,12 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
 
     public void buscarEmails() {
         try {
-            
+
             this.lstNotificacion = new ArrayList<>();
 
             NotificacionesDAO objNotificacionesDAO = new NotificacionesDAO();
 
-            List lstNotificaciones = objNotificacionesDAO.obtieneNotificacionesForLog(Utilitarios.obtenerProyecto().getIntIdProyecto(), this.ini, this.end );
+            List lstNotificaciones = objNotificacionesDAO.obtieneNotificacionesForLog(Utilitarios.obtenerProyecto().getIntIdProyecto(), this.ini, this.end);
 
             Iterator itLstNotificaciones = lstNotificaciones.iterator();
 

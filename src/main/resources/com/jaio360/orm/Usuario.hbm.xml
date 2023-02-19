@@ -68,5 +68,12 @@
             </key>
             <one-to-many class="com.jaio360.orm.Movimiento" />
         </set>
+        
+        <set name="manageUserRelations" cascade="save-update" inverse="true">
+            <key>
+                <column name="US_ID_CUENTA_FK" not-null="true" />
+            </key>
+            <one-to-many class="com.jaio360.orm.ManageUserRelation" />
+        </set>
     </class>
 </hibernate-mapping>

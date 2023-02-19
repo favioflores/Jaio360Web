@@ -20,6 +20,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -377,6 +379,133 @@ public class ProyectoDAO implements Serializable {
         throw new HibernateException("Ocurrió un error en la capa de acceso a datos", he);
     }
 
+    public boolean iniciarProyecto(Integer intIdProyecto) {
+        boolean result = true;
+        try {
+            iniciaOperacion();
+
+            //ACTUALIZA ESTADO A EVALUADOS QUE TENGAN RELACIONADOS UNA EVALUACION
+            Query qryProyecto = sesion.createSQLQuery(
+                    "update participante p set p.PA_ID_ESTADO = 69 "
+                    + "where p.PO_ID_PROYECTO_FK = ? "
+                    + "and p.PA_IN_RED_CARGADA = 1 "
+                    + "and p.PA_IN_RED_VERIFICADA = 1 "
+                    + "and p.PA_ID_ESTADO = 72 ");
+            qryProyecto.setInteger(0, intIdProyecto);
+            qryProyecto.executeUpdate();
+
+            //ACTUALIZA ESTADO A CUESTIONARIO DE EVALUADO
+            Query qryCuestionarioEvaluado = sesion.createSQLQuery(
+                    "update cuestionario_evaluado ce set ce.CE_ID_ESTADO = 65 "
+                    + "where ce.PO_ID_PROYECTO_FK = ? "
+                    + "and ce.CE_ID_ESTADO in (64) ");
+            qryCuestionarioEvaluado.setInteger(0, intIdProyecto);
+            qryCuestionarioEvaluado.executeUpdate();
+
+            //ACTUALIZA ESTADO A CUESTIONARIO
+            Query qryCuestionario = sesion.createSQLQuery(
+                    "update jaio.cuestionario c set c.CU_ID_ESTADO = 77 "
+                    + "where c.PO_ID_PROYECTO_FK = ? "
+                    + "and c.CU_ID_ESTADO = 44 ");
+            qryCuestionario.setInteger(0, intIdProyecto);
+            qryCuestionario.executeUpdate();
+
+            //ACTUALIZA ESTADO A EVALUADORES QUE TENGAN RELACION A UN PARTICIPANTE CON EVALUACION
+            Query qryEvaluadores = sesion.createSQLQuery(
+                    "update jaio.red_evaluacion r set r.RE_ID_ESTADO = 71 "
+                    + "where r.PO_ID_PROYECTO_FK = ? ");
+            qryEvaluadores.setInteger(0, intIdProyecto);
+            qryEvaluadores.executeUpdate();
+
+            //ACTUALIZA ESTADO A LAS RELACIONES EVALUADO / EVALUADOR
+            Query qryRelaciones = sesion.createSQLQuery(
+                    "update jaio.relacion r set r.RE_ID_ESTADO = 67 "
+                    + "where r.PO_ID_PROYECTO_FK = ? "
+                    + "and r.RE_ID_ESTADO = 66 ");
+            qryRelaciones.setInteger(0, intIdProyecto);
+            qryRelaciones.executeUpdate();
+
+            //ACTIVAR CUENTAS EXISTENTES
+            Query qryActivarUsuarios = sesion.createSQLQuery(
+                    "update usuario u set u.US_ID_ESTADO = 13 "
+                    + "where u.US_ID_ESTADO not in (13) "
+                    + "and u.US_ID_MAIL in ( "
+                    + "select distinct * from ( "
+                    + "select p.PA_TX_CORREO from participante p "
+                    + "where p.PO_ID_PROYECTO_FK = ? "
+                    + "and p.PA_IN_AUTOEVALUAR = true "
+                    + "and p.PA_ID_ESTADO = 69 "
+                    + "union all "
+                    + "select re.RE_TX_CORREO from red_evaluacion re "
+                    + "where re.PO_ID_PROYECTO_FK = ? ) dat) ");
+            qryActivarUsuarios.setInteger(0, intIdProyecto);
+            qryActivarUsuarios.setInteger(1, intIdProyecto);
+            qryActivarUsuarios.executeUpdate();
+
+            //CREAR CUENTAS NUEVAS
+            Query qryCuentasNuevas = sesion.createSQLQuery(
+                    "select det.correo, det.descripcion from ( "
+                    + "select distinct * from ( "
+                    + "select p.PA_TX_CORREO as correo, p.PA_TX_DESCRIPCION as descripcion from participante p "
+                    + "where p.PO_ID_PROYECTO_FK = ? "
+                    + "and p.PA_IN_AUTOEVALUAR = true "
+                    + "and p.PA_ID_ESTADO = 69 "
+                    + "union all "
+                    + "select re.RE_TX_CORREO as correo,re.RE_TX_DESCRIPCION from red_evaluacion re "
+                    + "where re.PO_ID_PROYECTO_FK = ? ) dat) det "
+                    + "where not exists (select 1 from usuario u where u.US_ID_MAIL = det.correo ) ");
+            qryCuentasNuevas.setInteger(0, intIdProyecto);
+            qryCuentasNuevas.setInteger(1, intIdProyecto);
+
+            List lstNewUsers = qryCuentasNuevas.list();
+
+            Iterator itLstNewUsers = lstNewUsers.iterator();
+
+            UsuarioDAO objUsuarioDAO = new UsuarioDAO();
+            Usuario obtenUsuario = objUsuarioDAO.obtenUsuario(Utilitarios.obtenerUsuario().getIntUsuarioPk(), sesion);
+
+            EncryptDecrypt objEncryptDecrypt = new EncryptDecrypt();
+
+            Object[] obj;
+            Usuario objUsuarioNuevo;
+
+            while (itLstNewUsers.hasNext()) {
+
+                obj = (Object[]) itLstNewUsers.next();
+
+                objUsuarioNuevo = new Usuario();
+
+                objUsuarioNuevo.setUsTxDescripcionEmpresa(obj[1].toString());
+                objUsuarioNuevo.setUbigeo(obtenUsuario.getUbigeo());
+                objUsuarioNuevo.setUsIdMail(obj[0].toString());
+                objUsuarioNuevo.setUsTxNombreRazonsocial(obj[1].toString());
+                objUsuarioNuevo.setUsTxContrasenia(objEncryptDecrypt.encrypt(Utilitarios.generarClave()));
+                objUsuarioNuevo.setUsIdEstado(Constantes.INT_ET_ESTADO_USUARIO_CONFIRMADO);
+                objUsuarioNuevo.setUsIdTipoCuenta(Constantes.INT_ET_TIPO_USUARIO_EVALUATED_EVALUATOR);
+                objUsuarioNuevo.setUsFeNacimiento(null);
+                objUsuarioNuevo.setUsTxDocumento(null);
+                objUsuarioNuevo.setUsIdTipoDocumento(null);
+                objUsuarioNuevo.setUsFeRegistro(new Date());
+
+                sesion.save(objUsuarioNuevo);
+
+            }
+
+            tx.commit();
+
+        } catch (HibernateException e) {
+            manejaExcepcion(e);
+            result = false;
+        } catch (Exception ex) {
+            tx.rollback();
+            Logger.getLogger(ProyectoDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            sesion.close();
+        }
+
+        return result;
+    }
+
     public List iniciarProyecto(List<Participante> lstParticipante, List<RedEvaluacion> lstRedEvaluacion, List<Cuestionario> lstCuestionario, List<CuestionarioEvaluado> lstCuestionarioEvaluado, List<Relacion> lstRelacion, List<RelacionParticipante> lstRelacionParticipante) {
 
         List<String[]> lstNotificacion = new ArrayList();
@@ -512,7 +641,7 @@ public class ProyectoDAO implements Serializable {
                     if (!hUsuariosCreados.containsKey(str[0])) {
                         Usuario objUsuarioNuevo = new Usuario();
 
-                        objUsuarioNuevo.setUsBlImagenEmpresa(obtenUsuario.getUsBlImagenEmpresa());
+                        //objUsuarioNuevo.setUsBlImagenEmpresa(obtenUsuario.getUsBlImagenEmpresa());
                         objUsuarioNuevo.setUsTxDescripcionEmpresa(obtenUsuario.getUsTxDescripcionEmpresa());
                         objUsuarioNuevo.setUbigeo(obtenUsuario.getUbigeo());
                         objUsuarioNuevo.setUsIdMail(str[0]);

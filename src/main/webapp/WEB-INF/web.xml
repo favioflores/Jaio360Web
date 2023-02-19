@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         version="3.0"
-         xmlns="http://java.sun.com/xml/ns/javaee"
-         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" >
-
+<web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+    <welcome-file-list>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
     <context-param>
         <param-name>com.sun.faces.numberOfViewsInSession</param-name>
         <param-value>5</param-value>
@@ -92,8 +91,6 @@
         <param-name>primefaces.MULTI_VIEW_STATE_STORE</param-name>
         <param-value>client-window</param-value>
     </context-param>
-    
-    
     <listener>
         <listener-class>org.apache.webbeans.servlet.WebBeansConfigurationListener</listener-class>
     </listener>
@@ -133,7 +130,6 @@
         <filter-name>PrimeFaces FileUpload Filter</filter-name>
         <filter-class>org.primefaces.webapp.filter.FileUploadFilter</filter-class>
     </filter>
-    
     <filter-mapping>
         <filter-name>PrimeFaces FileUpload Filter</filter-name>
         <servlet-name>Faces Servlet</servlet-name>
@@ -163,10 +159,6 @@
         <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>DisplayImage</servlet-name>
-        <servlet-class>com.jaio360.servlet.DisplayImage</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>FileUpload Resume Servlet</servlet-name>
         <servlet-class>org.primefaces.webapp.FileUploadChunksServlet</servlet-class>
     </servlet>
@@ -185,10 +177,6 @@
     <servlet-mapping>
         <servlet-name>FileUpload Resume Servlet</servlet-name>
         <url-pattern>/file/resume/</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>DisplayImage</servlet-name>
-        <url-pattern>/DisplayImage</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>Faces Servlet</servlet-name>
@@ -213,35 +201,28 @@
         <servlet-name>Push Servlet</servlet-name>
         <url-pattern>/primepush/*</url-pattern>
     </servlet-mapping>
-    
     <mime-mapping>
         <extension>docx</extension>
         <mime-type>application/vnd.openxmlformats-officedocument.wordprocessingml.document</mime-type>
     </mime-mapping>
-
     <mime-mapping>
         <extension>doc</extension>
         <mime-type>application/msword</mime-type>
     </mime-mapping>
-
     <mime-mapping>
         <extension>xlsx</extension>
         <mime-type>application/vnd.openxmlformats-officedocument.spreadsheetml.sheet</mime-type>
     </mime-mapping>
-
     <mime-mapping>
         <extension>xls</extension>
         <mime-type>application/vnd.ms-excel</mime-type>
     </mime-mapping>
-    
     <mime-mapping>
         <extension>zip</extension>
         <mime-type>application/zip</mime-type>
     </mime-mapping>
-    
     <mime-mapping>
         <extension>pdf</extension>
         <mime-type>application/pdf</mime-type>
     </mime-mapping>
-    
 </web-app>

@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 21/10/2014 08:38:38 PM by Hibernate Tools 3.2.1.GA -->
+<hibernate-mapping>
+    <class name="com.jaio360.orm.ManageUserRelation" table="manage_user_relation" catalog="jaio">
+        <id name="usIdCuentaManagerPk" type="java.lang.Integer">
+            <column name="US_ID_CUENTA_MANAGER_PK" />
+        </id>
+        <many-to-one name="Usuario" lazy="false" class="com.jaio360.orm.Usuario" fetch="select">
+            <column name="US_ID_CUENTA_FK" not-null="true" />
+        </many-to-one>
+        <property name="maFeRegistro" type="date">
+            <column name="MA_FE_REGISTRO" length="10" not-null="true" />
+        </property>
+        <property name="maFeVerificacion" type="date">
+            <column name="MA_FE_VERIFICACION" length="10" not-null="true" />
+        </property>
+        <property name="maHashLinkVerificacion" type="string">
+            <column name="MA_HASH_LINK_VERIFICACION" length="1000" not-null="true" />
+        </property>
+        <property name="maIsVerified" type="java.lang.Boolean">
+            <column name="MA_IS_VERIFIED" not-null="true" />
+        </property>
+        
+    </class>
+</hibernate-mapping>

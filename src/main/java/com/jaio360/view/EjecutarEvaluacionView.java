@@ -673,17 +673,17 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
             this.strAgradecimiento = this.strAgradecimiento.replace("$NOMBRE", objProyectoInfo.getStrNombreEvaluador());
 
         } catch (Exception e) {
-            log.error(e);
+            mostrarError(log, e);
             if (Utilitarios.obtenerEvaluacion() == null) {
                 UsuarioInfo objUsuarioInfo = Utilitarios.obtenerUsuario();
                 try {
-                    if (objUsuarioInfo.isBoEsAdministrador() || objUsuarioInfo.isBoEsUsuarioMaestro()) {
+                    if (objUsuarioInfo.isManagingDirector() || objUsuarioInfo.isCountryManager() || objUsuarioInfo.isProjectManager()) {
                         FacesContext.getCurrentInstance().getExternalContext().redirect("stepFive.jsf");
                     } else {
                         FacesContext.getCurrentInstance().getExternalContext().redirect("welcome.jsf");
                     }
                 } catch (Exception ex) {
-                    log.error(ex);
+                    mostrarError(log, ex);
                 }
             }
         }
@@ -702,7 +702,7 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
             UsuarioInfo objUsuarioInfo = Utilitarios.obtenerUsuario();
 
             if (session.getAttribute("evalInfo") == null) {
-                if (objUsuarioInfo.isBoEsAdministrador() || objUsuarioInfo.isBoEsUsuarioMaestro()) {
+                if (objUsuarioInfo.isManagingDirector() || objUsuarioInfo.isCountryManager() || objUsuarioInfo.isProjectManager()) {
                     if (objProyectoInfo.isBoDefineArtificio()) {
                         FacesContext.getCurrentInstance().getExternalContext().redirect("stepFive.jsf");
                     } else {
@@ -766,7 +766,7 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
             UsuarioInfo objUsuarioInfo = Utilitarios.obtenerUsuario();
             ProyectoInfo objProyectoInfo = Utilitarios.obtenerEvaluacion();
 
-            if (objUsuarioInfo.isBoEsAdministrador() || objUsuarioInfo.isBoEsUsuarioMaestro()) {
+            if (objUsuarioInfo.isManagingDirector() || objUsuarioInfo.isCountryManager() || objUsuarioInfo.isProjectManager()) {
                 if (objProyectoInfo.isBoDefineArtificio()) {
                     FacesContext.getCurrentInstance().getExternalContext().redirect("stepFive.jsf");
                 } else {
@@ -777,7 +777,6 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
             }
 
             HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
-            session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
             session.removeAttribute("evalInfo");
 
         } catch (IOException ex) {
