@@ -13,9 +13,18 @@ public class ManageUserRelation implements java.io.Serializable {
     private Boolean maIsVerified;
     private Date maFeRegistro;
     private Date maFeVerificacion;
+    private Date maFeVerificationExpired;
     private String maHashLinkVerificacion;
 
     public ManageUserRelation() {
+    }
+
+    public Date getMaFeVerificationExpired() {
+        return maFeVerificationExpired;
+    }
+
+    public void setMaFeVerificationExpired(Date maFeVerificationExpired) {
+        this.maFeVerificationExpired = maFeVerificationExpired;
     }
 
     public Boolean getMaIsVerified() {

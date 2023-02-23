@@ -30,6 +30,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.faces.event.AjaxBehaviorEvent;
 import javax.faces.model.SelectItem;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -169,9 +170,10 @@ public class MantenimientoLicenciaClienteView extends BaseView implements Serial
 
     public void limpiarFormulario() {
         this.idTarifa = null;
-        this.intCantidadLicencias = 0;
+        this.intCantidadLicencias = 1;
         this.strMontoBruto = "0.00";
     }
+
 
     public void calcularMontoBruto() {
 

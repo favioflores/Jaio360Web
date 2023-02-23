@@ -1,17 +1,25 @@
 package com.jaio360.view;
 
+import com.jaio360.application.MailSender;
+import com.jaio360.dao.DestinatariosDAO;
 import com.jaio360.dao.ElementoDAO;
+import com.jaio360.dao.NotificacionesDAO;
 import com.jaio360.dao.UbigeoDAO;
 import com.jaio360.dao.UsuarioDAO;
 import com.jaio360.domain.UsuarioInfo;
+import com.jaio360.orm.Destinatarios;
 import com.jaio360.orm.Elemento;
 import com.jaio360.orm.ManageUserRelation;
+import com.jaio360.orm.Notificaciones;
 import com.jaio360.orm.Ubigeo;
 import com.jaio360.orm.Usuario;
 import com.jaio360.utils.Constantes;
 import com.jaio360.utils.EncryptDecrypt;
 import com.jaio360.utils.Utilitarios;
+import static com.jaio360.view.BaseView.mostrarError;
+import static com.jaio360.view.BaseView.msg;
 import java.io.Serializable;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -19,6 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Properties;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -26,8 +35,15 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
+import org.apache.commons.lang.CharEncoding;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.velocity.Template;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.VelocityEngine;
+import org.apache.velocity.exception.MethodInvocationException;
+import org.apache.velocity.exception.ParseErrorException;
+import org.apache.velocity.exception.ResourceNotFoundException;
 import org.primefaces.PrimeFaces;
 
 @ManagedBean(name = "mantenimientoClienteView")
@@ -303,14 +319,16 @@ public class MantenimientoClienteView extends BaseView implements Serializable {
         UsuarioInfo objUsuarioInfo;
 
         Iterator itLstUsers = lstUsers.iterator();
-        
-        while(itLstUsers.hasNext()){
-            
+
+        while (itLstUsers.hasNext()) {
+
             Object obj[] = (Object[]) itLstUsers.next();
 
-            objUsuarioInfo = new UsuarioInfo((Usuario) obj[0], false);
-            
+            Usuario objUsuario = (Usuario) obj[0];
+            ManageUserRelation objManageUserRelation = objUsuarioDAO.obtenerManageRelationClient(Utilitarios.obtenerUsuario().getIntUsuarioPk(), objUsuario.getUsIdCuentaPk());
+            objUsuarioInfo = new UsuarioInfo(objUsuario, objManageUserRelation, false);
             lstUsuario.add(objUsuarioInfo);
+
         }
 
     }
@@ -361,6 +379,23 @@ public class MantenimientoClienteView extends BaseView implements Serializable {
 
     }
 
+    public void eliminarCliente(UsuarioInfo objUsuario) {
+        try {
+
+            isEdit = true;
+
+            UsuarioDAO objUsuarioDAO = new UsuarioDAO();
+
+            objUsuarioDAO.eliminarRelacionCliente(Utilitarios.obtenerUsuario().getIntUsuarioPk(), objUsuario.getIntUsuarioPk());
+            objUsuarioDAO.eliminaUsuario(objUsuario.getUsuario());
+
+            mostrarAlertaInfo("deleted.client.success");
+        } catch (Exception ex) {
+            mostrarError(log, ex);
+        }
+
+    }
+
     public boolean globalFilterFunction(Object value, Object filter, Locale locale) {
         String filterText = (filter == null) ? null : filter.toString().trim().toLowerCase();
         if (Utilitarios.esNuloOVacio(filterText)) {
@@ -381,11 +416,11 @@ public class MantenimientoClienteView extends BaseView implements Serializable {
         try {
 
             usIdMail = usIdMail.toLowerCase();
-            
+
             Usuario objUsuario = objUsuarioDAO.obtenUsuarioByEmail(usIdMail);
 
             if (usIdCuentaPk == null && objUsuario == null) { // NUEVO
-                
+
                 objUsuario = new Usuario();
                 EncryptDecrypt objEncryptDecrypt = new EncryptDecrypt();
                 objUsuario.setUsTxContrasenia(objEncryptDecrypt.encrypt(Utilitarios.generarClave()));
@@ -394,24 +429,27 @@ public class MantenimientoClienteView extends BaseView implements Serializable {
                 objUsuario.setUbigeo(objUbigeo);
                 objUsuario.setUsTxDescripcionEmpresa(usTxDescripcionEmpresa);
                 objUsuario.setUsTxNombreRazonsocial(usTxNombreRazonsocial);
-                //objUsuario.setUsIdEstado(Constantes.INT_ET_ESTADO_USUARIO_BLOQUEADO);
-                objUsuario.setUsIdEstado(Constantes.INT_ET_ESTADO_USUARIO_CONFIRMADO);
+                objUsuario.setUsIdEstado(Constantes.INT_ET_ESTADO_USUARIO_BLOQUEADO);
                 objUsuario.setUsFeRegistro(new Date());
                 objUsuario.setUsIdTipoCuenta(Constantes.INT_ET_TIPO_USUARIO_PROJECT_MANAGER);
                 objUsuario.setUsIdMail(usIdMail);
 
                 objUsuario.setUsIdCuentaPk(objUsuarioDAO.guardaUsuario(objUsuario));
-                
+
                 ManageUserRelation objManageUserRelation = new ManageUserRelation();
                 objManageUserRelation.setMaFeRegistro(new Date());
-                objManageUserRelation.setMaIsVerified(false);
+                objManageUserRelation.setMaIsVerified(Boolean.FALSE);
+                renewToken(objManageUserRelation);
                 objManageUserRelation.setUsIdCuentaManagerPk(Utilitarios.obtenerUsuario().getIntUsuarioPk());
                 objManageUserRelation.setUsuario(objUsuario);
-                
+
                 objUsuarioDAO.guardaCliente(objManageUserRelation);
 
                 mostrarAlertaInfo("created.successfully");
-                //mostrarAlertaWarning("required.verification");
+
+                sendMailForVerification(objManageUserRelation, objUsuario);
+
+                mostrarAlertaWarning("required.verification");
                 resetFormUsuario();
                 obtenerListaUsuarios();
 
@@ -444,6 +482,154 @@ public class MantenimientoClienteView extends BaseView implements Serializable {
 
     }
 
+    public void renewToken(ManageUserRelation objManageUserRelation) {
+        try {
+            objManageUserRelation.setMaFeVerificationExpired(Utilitarios.sumarRestarHorasFecha(new Date(), Constantes.INT_MAX_HOURS_WAITING_FOR_VERIFICATION));
+            objManageUserRelation.setMaHashLinkVerificacion(Utilitarios.generateToken() + "");
+        } catch (Exception e) {
+            mostrarError(log, e);
+        }
+    }
+
+    public void resendMailForVerification(UsuarioInfo objUsuario) {
+        try {
+            ManageUserRelation objManageUserRelation = objUsuarioDAO.verifyClientForVerification(objUsuario.getStrEmail());
+            renewToken(objManageUserRelation);
+            sendMailForVerification(objManageUserRelation, objUsuario.getUsuario());
+        } catch (Exception e) {
+            mostrarError(log, e);
+        }
+
+    }
+
+    private void sendMailForVerification(ManageUserRelation objManageUserRelation, Usuario objUsuario) {
+
+        try {
+
+            Properties props = new Properties();
+            props.setProperty("resource.loader", "class");
+            props.setProperty("class.resource.loader.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
+            props.setProperty("input.encoding", CharEncoding.UTF_8);
+
+            VelocityEngine ve = new VelocityEngine();
+
+            ve.init(props);
+            //ve.init();
+
+            Template t = ve.getTemplate("/templatesVelocity/TemplateVerifyAccount.vm");
+
+            VelocityContext context = new VelocityContext();
+
+            context.put("NOMBRE", objUsuario.getUsTxNombreRazonsocial());
+            context.put("TOKEN", objManageUserRelation.getMaHashLinkVerificacion());
+            context.put("TEMPLATEVERIFICACIONTITULO", msg("TEMPLATEVERIFICACIONTITULO"));
+            context.put("TEMPLATEVERIFICACIONHELLO", msg("TEMPLATEVERIFICACIONHELLO"));
+            context.put("TEMPLATEVERIFICACIONPARRAFO1", msg("TEMPLATEVERIFICACIONPARRAFO1"));
+            context.put("TEMPLATEVERIFICACIONPARRAFO2", msg("TEMPLATEVERIFICACIONPARRAFO2"));
+            context.put("TEMPLATEVERIFICACIONPARRAFO3", msg("TEMPLATEVERIFICACIONPARRAFO3"));
+            context.put("TEMPLATEVERIFICACIONPARRAFO4", msg("TEMPLATEVERIFICACIONPARRAFO4"));
+            context.put("TEMPLATEVERIFICACIONPARRAFO5", msg("TEMPLATEVERIFICACIONPARRAFO5"));
+            context.put("TEMPLATEVERIFICACIONPARRAFO6", msg("TEMPLATEVERIFICACIONPARRAFO6"));
+            context.put("TEMPLATEVERIFICACIONLINK", msg("TEMPLATEVERIFICACIONLINK"));
+            context.put("EMAIL", objUsuario.getUsIdMail());
+            context.put("COUNTRYMANAGER", Utilitarios.obtenerUsuario().getStrDescripcion());
+
+            StringWriter out = new StringWriter();
+            t.merge(context, out);
+
+            NotificacionesDAO objNotificacionesDAO = new NotificacionesDAO();
+
+            Notificaciones objNotificaciones = new Notificaciones();
+            objNotificaciones.setNoFeCreacion(new Date());
+            objNotificaciones.setNoIdEstado(Constantes.INT_ET_ESTADO_NOTIFICACION_PENDIENTE);
+            objNotificaciones.setNoIdRefProceso(0);
+            objNotificaciones.setNoIdTipoProceso(0);
+            objNotificaciones.setNoTxAsunto(msg("verify.account.title"));
+            objNotificaciones.setNoTxMensaje(Utilitarios.encodeUTF8(out.toString()));
+            objNotificaciones.setNoIdNotificacionPk(objNotificacionesDAO.guardaNotificacion(objNotificaciones));
+
+            DestinatariosDAO objDestinatariosDao = new DestinatariosDAO();
+
+            Destinatarios objDestinatarios = new Destinatarios();
+            objDestinatarios.setDeTxMail(objUsuario.getUsIdMail());
+            objDestinatarios.setNotificaciones(objNotificaciones);
+
+            objDestinatariosDao.guardaDestinatarios(objDestinatarios);
+
+            MailSender objMailSender = new MailSender();
+            objMailSender.enviarNotificacion(objNotificaciones);
+
+        } catch (MethodInvocationException | ParseErrorException | ResourceNotFoundException e) {
+            mostrarError(log, e);
+        }
+
+    }
+
+    /*
+    public void enviarClaveCorreo() {
+
+        try {
+
+            UsuarioDAO objUsuarioDAO = new UsuarioDAO();
+
+            Usuario objUsuario = objUsuarioDAO.iniciaSesion(usuario.trim());
+
+            if (objUsuario != null) {
+
+                if (objUsuario.getUsIdEstado().equals(Constantes.INT_ET_ESTADO_USUARIO_BLOQUEADO)) {
+                    mostrarAlertaError("account.blocked");
+                } else {
+
+                    EncryptDecrypt objEncryptDecrypt = new EncryptDecrypt();
+
+                    String strNotificacion = Utilitarios.decodeUTF8(objElementoDAO.obtenElemento(Constantes.INT_ET_NOTIFICACION_CLAVE).getElCadena());
+
+                    Utilitarios objUtilitarios = new Utilitarios();
+
+                    strNotificacion = strNotificacion.replace("#%DATO.MENSAJE", objUtilitarios.formatearFecha(new Date(), Constantes.HH24_MI_DDMMYYYY));
+                    strNotificacion = strNotificacion.replace("#%USUARIO.MENSAJE", usuario.trim());
+                    strNotificacion = strNotificacion.replace("#%CLAVE.MENSAJE", objEncryptDecrypt.decrypt(objUsuario.getUsTxContrasenia()));
+
+                    NotificacionesDAO objNotificacionesDAO = new NotificacionesDAO();
+
+                    Notificaciones objNotificaciones = new Notificaciones();
+                    objNotificaciones.setNoFeCreacion(new Date());
+                    objNotificaciones.setNoIdEstado(Constantes.INT_ET_ESTADO_NOTIFICACION_PENDIENTE);
+                    objNotificaciones.setNoIdRefProceso(0);
+                    objNotificaciones.setNoIdTipoProceso(0);
+                    objNotificaciones.setNoTxAsunto("Notificación de clave");
+                    objNotificaciones.setNoTxMensaje(Utilitarios.encodeUTF8(strNotificacion));
+
+                    objNotificaciones.setNoIdNotificacionPk(objNotificacionesDAO.guardaNotificacion(objNotificaciones));
+
+                    DestinatariosDAO objDestinatariosDao = new DestinatariosDAO();
+
+                    Destinatarios objDestinatarios = new Destinatarios();
+                    objDestinatarios.setDeTxMail(usuario.trim());
+                    objDestinatarios.setNotificaciones(objNotificaciones);
+
+                    objDestinatariosDao.guardaDestinatarios(objDestinatarios);
+
+                    MailSender objMailSender = new MailSender();
+                    objMailSender.enviarNotificacion(objNotificaciones);
+
+                    mostrarAlertaInfo("sended.mail");
+
+                }
+
+            } else {
+
+                mostrarAlertaError("account.not.exist");
+
+            }
+            this.usuario = Constantes.strVacio;
+
+        } catch (Exception ex) {
+            mostrarError(log, ex);
+            mostrarAlertaFatal("error.was.occurred");
+        }
+
+    }*/
     public void resetFormUsuario() {
 
         usIdCuentaPk = null;

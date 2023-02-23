@@ -40,6 +40,7 @@ import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.sql.Blob;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -712,6 +713,11 @@ public class Utilitarios extends BaseView implements Serializable {
         return cadena.replaceAll(busqueda, reemplazo);
     }
 
+    public static int generateToken() {
+        int n = (int) Math.floor(Math.random() * (99999 - 10000 + 1)) + 10000;
+        return n;
+    }
+
     public static String generateRandom(String strNum) {
 
         StringBuffer strBufRandom = new StringBuffer(strNum);
@@ -957,6 +963,13 @@ public class Utilitarios extends BaseView implements Serializable {
         return calendar.getTime(); // Devuelve el objeto Date con los nuevos días añadidos	
     }
 
+    public static Date sumarRestarHorasFecha(Date fecha, int horas) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(fecha); // Configuramos la fecha que se recibe
+        calendar.add(Calendar.HOUR_OF_DAY, horas);  // numero de días a añadir, o restar en caso de días<0
+        return calendar.getTime(); // Devuelve el objeto Date con los nuevos días añadidos	
+    }
+
     public static Date setEndOfDate(Date fecha) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(fecha);
@@ -1066,6 +1079,13 @@ public class Utilitarios extends BaseView implements Serializable {
 
         return null;
 
+    }
+
+    public Date calculateExpiryDate(int expiryTimeInMinutes) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Timestamp(cal.getTime().getTime()));
+        cal.add(Calendar.MINUTE, expiryTimeInMinutes);
+        return new Date(cal.getTime().getTime());
     }
 
 }

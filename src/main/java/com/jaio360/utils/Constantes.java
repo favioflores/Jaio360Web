@@ -10,10 +10,10 @@ import javax.faces.bean.ManagedBean;
 @ApplicationScoped
 public class Constantes {
 
-    public static String STR_INBOX_PRELIMINAR = File.separator + "var" + File.separator + "tmp" + File.separator + "InboxPreliminar";
-    public static String STR_INBOX_DEFINITIVO = File.separator + "var" + File.separator + "tmp" + File.separator + "InboxDefinitivo";
-    //public static String STR_INBOX_PRELIMINAR = File.separator + "D://InboxPreliminar";
-    //public static String STR_INBOX_DEFINITIVO = File.separator + "D://InboxDefinitivo";
+    //public static String STR_INBOX_PRELIMINAR = File.separator + "var" + File.separator + "tmp" + File.separator + "InboxPreliminar";
+    //public static String STR_INBOX_DEFINITIVO = File.separator + "var" + File.separator + "tmp" + File.separator + "InboxDefinitivo";
+    public static String STR_INBOX_PRELIMINAR = File.separator + "D://InboxPreliminar";
+    public static String STR_INBOX_DEFINITIVO = File.separator + "D://InboxDefinitivo";
 
     public static char CH_RANDOM_Z = 'Z';
     public static char CH_RANDOM_A = 'A';
@@ -169,6 +169,8 @@ public class Constantes {
     public static String HH24_MI_DDMMYYYY = "HH:mm dd/MM/yyyy";
     public static String DDMMYYYY = "dd/MM/yyyy";
 
+    public static Integer INT_MAX_HOURS_WAITING_FOR_VERIFICATION = 24;
+    
     public static String STR_EXTENSION_PDF = ".pdf";
     public static String STR_EXTENSION_PNG = ".png";
     public static String STR_EXTENSION_ZIP = ".zip";

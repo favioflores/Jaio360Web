@@ -303,7 +303,7 @@ public class MantenimientoCuentaView extends BaseView implements Serializable {
 
         for (Usuario objUsuario : lstUsers) {
 
-            objUsuarioInfo = new UsuarioInfo(objUsuario, false);
+            objUsuarioInfo = new UsuarioInfo(objUsuario, null, false);
             lstUsuario.add(objUsuarioInfo);
         }
 

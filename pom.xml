@@ -540,7 +540,7 @@
         <dependency>
             <groupId>net.sourceforge.dynamicreports</groupId>
             <artifactId>dynamicreports-googlecharts</artifactId>
-            <version>3.2.1</version>
+            <version>3.2.1</version> 
         </dependency>
         <dependency>
             <groupId>com.itextpdf</groupId>

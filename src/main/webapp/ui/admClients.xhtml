@@ -37,7 +37,6 @@
                                     <p:inputText id="idMail" type="text" value="#{mantenimientoClienteView.usIdMail}" onchange="toLowerCase(this);" required="true" maxlength="100" disabled="#{mantenimientoClienteView.isEdit}" >
                                         <f:validator validatorId="validarCorreo" />
                                     </p:inputText>
-                                    <p:message for="idMail" display="text" style="width: 100%; margin: 0 0 0 0;" />
                                 </div>
                             </div>
                         </div>
@@ -46,10 +45,9 @@
                             <div class="p-field p-grid">
                                 <div class="p-col">
                                     <p:outputLabel for="@next" value="#{msg['name.user']}" />
-                                    <p:inputText id="strDescEmpresa" value="#{mantenimientoClienteView.usTxDescripcionEmpresa}" required="true" maxlength="100" >
+                                    <p:inputText id="strDescEmpresa" value="#{mantenimientoClienteView.usTxNombreRazonsocial}" required="true" maxlength="100" >
                                         <f:validator validatorId="validaTextoIngresado" />
                                     </p:inputText>
-                                    <p:message for="strDescEmpresa" display="text" style="width: 100%; margin: 0 0 0 0;"/>
                                 </div>
                             </div>
                         </div>
@@ -58,10 +56,9 @@
                             <div class="p-field p-grid">
                                 <div class="p-col">
                                     <p:outputLabel for="@next" value="#{msg['company.name']}" />
-                                    <p:inputText id="strRazonSocial" type="text" value="#{mantenimientoClienteView.usTxNombreRazonsocial}" required="true" maxlength="100" >
+                                    <p:inputText id="strRazonSocial" type="text" value="#{mantenimientoClienteView.usTxDescripcionEmpresa}" required="true" maxlength="100" >
                                         <f:validator validatorId="validaTextoIngresado" />
                                     </p:inputText>
-                                    <p:message for="strRazonSocial" display="text" style="width: 100%; margin: 0 0 0 0;" />
                                 </div>
                             </div>
                         </div> 
@@ -75,7 +72,6 @@
                                         <f:selectItems value="#{mantenimientoClienteView.lstPaises}"  var="pais" itemLabel="#{pais.ubTxDescripcion}" itemValue="#{pais.ubIdUbigeoPk}" />
                                         <p:ajax update="idCiudad" listener="#{mantenimientoClienteView.poblarCiudades()}"/>
                                     </p:selectOneMenu>
-                                    <p:message for="idPais" display="text" style="width: 100%; margin: 0 0 0 0;" />
                                 </div>
                             </div>
                         </div> 
@@ -88,7 +84,6 @@
                                         <f:selectItem itemLabel="#{msg['please.select']}" itemValue="" />
                                         <f:selectItems value="#{mantenimientoClienteView.lstCiudades}"  var="ciudad" itemLabel="#{ciudad.ubTxDescripcion}" itemValue="#{ciudad.ubIdUbigeoPk}" />
                                     </p:selectOneMenu>
-                                    <p:message for="idCiudad" display="text" style="width: 100%; margin: 0 0 0 0;" /> 
                                 </div>
                             </div>
                         </div> 
@@ -96,7 +91,9 @@
                         <div class="p-col-12 p-col-12 p-md-12">
                             <div class="p-field p-formgrid p-grid">
                                 <div class="p-field p-col">
-                                    <p:commandButton value="#{msg['save']}" update="formUsuario,formMntCuenta" process="formUsuario" icon="pi pi-check" actionListener="#{mantenimientoClienteView.guardarUsuario}" />
+                                    <p:commandButton value="#{msg['save']}" update="formUsuario,formMntCuenta" process="formUsuario" icon="pi pi-check" actionListener="#{mantenimientoClienteView.guardarUsuario}" >
+                                        <p:confirm header="#{msg['confirmation']}" message="#{msg['message.prev.save.client']}" icon="pi pi-info-circle" />
+                                    </p:commandButton>
                                 </div>
                                 <div class="p-field p-col">
                                     <p:commandButton value="#{msg['clean']}" update="formUsuario" immediate="true" process="@this" styleClass="ui-button-secondary" icon="pi pi-times" actionListener="#{mantenimientoClienteView.resetFormUsuario()}" />
@@ -136,9 +133,9 @@
                             id="idUsuarios"
                             var="usu"
                             value="#{mantenimientoClienteView.lstUsuario}" 
-                            rows="5"
+                            rows="10"
                             size="small"
-                            paginator="true" 
+                            paginator="true"  resizeMode="fit"
                             paginatorPosition="bottom"
                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                             rowsPerPageTemplate="5,10,15"                                 
@@ -166,44 +163,48 @@
                                     value="#{index + 1}" />
                             </p:column> 
 
-                            <p:column headerText="#{msg['email']}" >
+                            <p:column headerText="#{msg['email']}" style="text-align: center;">
                                 <h:outputText value="#{usu.strEmail}" />
                             </p:column>
 
-                            <p:column headerText="#{msg['name.user']}">
+                            <p:column headerText="#{msg['name.user']}" style="text-align: center;">
                                 <h:outputText value="#{usu.strDescripcion}" />
                             </p:column>
-                            <p:column  headerText="#{msg['company.name']}">
+                            <p:column  headerText="#{msg['company.name']}" style="text-align: center;"> 
                                 <h:outputText value="#{usu.strEmpresaDesc}" />
                             </p:column>
+                            <!--
                             <p:column headerText="#{msg['user.created']}" style="text-align: center;">                                   
                                 <h:outputText value="#{usu.strFechaRegistro}" />
                             </p:column>
-
+                            
                             <p:column headerText="#{msg['type.account']}" style="text-align: center;">
                                 <h:outputText value="#{usu.strTipoUsuario}" />
                             </p:column>
-
-                            <p:column headerText="#{msg['state']}" style="text-align: center;">
-                                <h:outputText value="#{usu.strEstadoDesc}" />
-                            </p:column>
-                            <!--
-                            <p:column style="width:50px;text-align: center;">
-                                <p:commandButton icon="pi pi-send" update="formUsuario" immediate="true" process="@this" actionListener="#{mantenimientoCuentaView.editarUsuario(usu)}" >
-                                </p:commandButton>
-                            </p:column>                            
                             -->
-                            <p:column headerText="#{msg['actualizar.usuario']}" style="text-align: center;">
-                                <p:commandButton icon="pi pi-pencil" update="formUsuario" immediate="true" process="@this" actionListener="#{mantenimientoClienteView.editarUsuario(usu)}" >
-                                </p:commandButton>
+                            <p:column headerText="#{msg['state']}" style="text-align: center; width: 50px; ">
+                                <p:tag  value="#{usu.strEstadoId==13?msg['complete.verification']:msg['pending.verification']}" 
+                                        severity="#{usu.strEstadoId==13?'success':'danger'}" />
                             </p:column>
-                            <p:column  headerText="#{msg['change.password']}" style="text-align: center;">
-                                <p:commandButton icon="pi pi-lock" update="formUsuario" immediate="true" oncomplete="PF('dlgChangePassword').show()" actionListener="#{mantenimientoClienteView.editarUsuario(usu)}"  >
-                                </p:commandButton>
+                            <p:column headerText="#{msg['manage.expired.hours']}" style="text-align: center;">                                   
+                                <h:outputText value="#{usu.strTimeRemaining}" />
+                            </p:column>
+
+                            <p:column headerText="#{msg['actions']}" style="text-align: center;">
+                                <p:commandLink value="#{msg['send.verification']}" update="formUsuario" immediate="true" process="@this" actionListener="#{mantenimientoClienteView.resendMailForVerification(usu)}" disabled="#{usu.strEstadoId==13}" >
+                                    <p:confirm header="#{msg['confirmation']}" message="#{msg['sure.send.mail.for.verification']}" icon="pi pi-info-circle" />
+                                </p:commandLink>
+                                /
+                                <p:commandLink  value="#{msg['delete']}" update="formUsuario" immediate="true" disabled="#{usu.strEstadoId==13}" actionListener="#{mantenimientoClienteView.eliminarCliente(usu)}"  />
+                                /
+                                <p:commandLink update="formUsuario" value="#{msg['actualizar.usuario']}" immediate="true" process="@this" actionListener="#{mantenimientoClienteView.editarUsuario(usu)}" />
+                                /
+                                <p:commandLink  value="#{msg['change.password']}" update="formUsuario" immediate="true" oncomplete="PF('dlgChangePassword').show()" actionListener="#{mantenimientoClienteView.editarUsuario(usu)}" />
+                                
+                                
                             </p:column>
                         </p:dataTable>
                     </div>
-
 
                 </p:card>
 

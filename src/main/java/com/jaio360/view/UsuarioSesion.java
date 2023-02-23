@@ -6,6 +6,7 @@ import com.jaio360.dao.ElementoDAO;
 import com.jaio360.dao.HistorialAccesoDAO;
 import com.jaio360.dao.NotificacionesDAO;
 import com.jaio360.dao.UsuarioDAO;
+import com.jaio360.domain.ProyectoInfo;
 import com.jaio360.domain.UsuarioInfo;
 import com.jaio360.orm.Destinatarios;
 import com.jaio360.orm.HistorialAcceso;
@@ -103,7 +104,7 @@ public class UsuarioSesion extends BaseView implements Serializable {
         FacesContext.getCurrentInstance().addMessage(null, message);
 
     }
-    
+
     @PostConstruct
     public void init() {
 
@@ -164,14 +165,14 @@ public class UsuarioSesion extends BaseView implements Serializable {
                         usuario = Constantes.strVacio;
                         contraseña = Constantes.strVacio;
 
-                        usuarioInfo = new UsuarioInfo(objUsuario, true);
+                        usuarioInfo = new UsuarioInfo(objUsuario, null, true);
 
                         registraHistorialAcceso(objUsuario.getUsIdCuentaPk(), true, new Date(), null, null);
                         message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Usuario o contraseña incorrectos", null);
 
                     } else {
 
-                        usuarioInfo = new UsuarioInfo(objUsuario, true);
+                        usuarioInfo = new UsuarioInfo(objUsuario, null, true);
                         usuarioInfo.setTimeClient(this.timeClient);
 
                         registraHistorialAcceso(objUsuario.getUsIdCuentaPk(), true, new Date(), null, null);
@@ -394,7 +395,7 @@ public class UsuarioSesion extends BaseView implements Serializable {
             UsuarioDAO objUsuarioDAO = new UsuarioDAO();
 
             Usuario objUsuario = objUsuarioDAO.iniciaSesion(usuario.trim());
-            usuarioInfo = new UsuarioInfo(objUsuario, true);
+            usuarioInfo = new UsuarioInfo(objUsuario, null, true);
             usuarioInfo.setTimeClient(this.timeClient);
 
             System.out.println("GMT client: " + this.timeClient);
@@ -404,12 +405,19 @@ public class UsuarioSesion extends BaseView implements Serializable {
             SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMM d, yyyy hh:mm:ss a zZ");
 
             sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
-            
+
             System.out.println("GMT server: " + sdf.format(currentTime));
 
             HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
+            session.removeAttribute("proyectoInfo");
+            ProyectoInfo objP = new ProyectoInfo();
+            objP.setIntIdProyecto(147);
+            objP.setStrDescNombre("Prueba");
+            objP.setIntIdEstado(37);
+            session.setAttribute("proyectoInfo", objP);
+
             session.setAttribute("usuarioInfo", usuarioInfo);
-            FacesContext.getCurrentInstance().getExternalContext().redirect("admLicenceClient.jsf");
+            FacesContext.getCurrentInstance().getExternalContext().redirect("stepSix.jsf");
 
         } catch (Exception ex) {
             mostrarError(log, ex);

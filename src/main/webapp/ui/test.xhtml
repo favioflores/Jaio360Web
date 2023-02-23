@@ -12,9 +12,8 @@
 
             <p:commandButton value="Press" actionListener="#{usuarioSesion.test()}" />
             <p:inputText id="inputTime" type="hidden" value="#{usuarioSesion.timeClient}" />
-            <p:outputLabel value="#{usuarioSesion.timeServer}"  />
-            showDateInClientSideFormat(#{usuarioSesion.timeServer});
-            
+
+            <label id="countdown"></label>
             <script>
                 var MyDate = new Date();
                 var MyString = MyDate.toTimeString();
@@ -29,8 +28,42 @@
                     var dateClientSide = new Date(dValue + n);
                     return dateClientSide;
                 }
-            </script>
 
+
+
+
+                let tiempo = 60000;
+                const elem = document.getElementById('countdown');
+
+                let cuentaAtras = minutos => {
+
+                    tiempo *= minutos;
+                    let tiempoActualizado = tiempo;
+                    let m = 0;
+                    let s = 0;
+
+                    let cronometro = setInterval(() => {
+
+                        tiempoActualizado -= 1000;
+                        m = Math.trunc(tiempoActualizado / 60000);
+                        s = Math.trunc(tiempoActualizado / 1000);
+                        elem.textContent = s + ' segundos';
+                        
+                        console.log(m + ' ' + s);
+
+                        if (tiempoActualizado === 0) {
+                            alert('¡Su tiempo ha terminado!');
+                            clearInterval(cronometro);
+                        }
+
+                    }, 1000);
+
+                };
+
+                cuentaAtras(0.35);
+
+            </script>
+            <label id="countdown"></label>
         </h:form>
 
     </body>

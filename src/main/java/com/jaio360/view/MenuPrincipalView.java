@@ -108,12 +108,15 @@ public class MenuPrincipalView extends BaseView implements Serializable {
             DefaultSubMenu proyectos = agregarMenu(msg("projects"), "pi pi-fw pi-briefcase", menuPrincipal);
             agregarItem(msg("administrar.proyectos"), "admProyectos.jsf", "", proyectos);
             //Datos de usuarios
-            DefaultSubMenu usuarios = agregarMenu(msg("users"), "pi pi-users", menuPrincipal);
+            DefaultSubMenu usuarios = agregarMenu(msg("my.account"), "pi pi-user", menuPrincipal);
             agregarItem(msg("actualizar.mis.datos"), "admProfile.jsf", "", usuarios);
             agregarItem(msg("actualizar.todos.usuarios"), "admAllUsers.jsf", "", usuarios);
-            agregarItem(msg("manage.my.clients"), "admClients.jsf", "", usuarios);
-            agregarItem(msg("gestionar.licencias"), "admLicencias.jsf", "", usuarios);
-            agregarItem(msg("manage.licences.clients"), "admLicenceClient.jsf", "", usuarios);
+            agregarItem(msg("balance.license"), "admBalanceClient.jsf", "", usuarios);
+            
+            DefaultSubMenu clients = agregarMenu(msg("clients"), "pi pi-users", menuPrincipal);
+            agregarItem(msg("manage.my.clients"), "admClients.jsf", "", clients);
+            agregarItem(msg("gestionar.licencias"), "admLicencias.jsf", "", clients);
+            agregarItem(msg("manage.licences.clients"), "admLicenceClient.jsf", "", clients);
             //User guide
             agregarItem(msg("user.guide"), "userGuide.jsf", "pi pi-file-pdf", menuPrincipal);
             agregarItem(msg("participant.guide"), "participantGuide.jsf", "pi pi-file-pdf", menuPrincipal);
@@ -130,12 +133,12 @@ public class MenuPrincipalView extends BaseView implements Serializable {
             //DefaultSubMenu proyectos = agregarMenu(msg("projects"), "pi pi-fw pi-briefcase", menuPrincipal);
             //agregarItem(msg("administrar.proyectos"), "admProyectos.jsf", "", proyectos);
             //Datos de usuarios
-            DefaultSubMenu usuarios = agregarMenu(msg("users"), "pi pi-users", menuPrincipal);
+            DefaultSubMenu usuarios = agregarMenu(msg("my.account"), "pi pi-user", menuPrincipal);
             agregarItem(msg("actualizar.mis.datos"), "admProfile.jsf", "", usuarios);
             //agregarItem(msg("actualizar.todos.usuarios"), "admAllUsers.jsf", "", usuarios);
-            agregarItem(msg("manage.my.clients"), "admClients.jsf", "", usuarios);
-            //agregarItem(msg("gestionar.licencias"), "admLicencias.jsf", "", usuarios);
-            agregarItem(msg("manage.licences.clients"), "admLicenceClient.jsf", "", usuarios);
+            DefaultSubMenu clients = agregarMenu(msg("clients"), "pi pi-users", menuPrincipal);
+            agregarItem(msg("manage.my.clients"), "admClients.jsf", "", clients);
+            agregarItem(msg("manage.licences.clients"), "admLicenceClient.jsf", "", clients);
             //User guide
             agregarItem(msg("user.guide"), "userGuide.jsf", "pi pi-file-pdf", menuPrincipal);
             agregarItem(msg("participant.guide"), "participantGuide.jsf", "pi pi-file-pdf", menuPrincipal);
@@ -150,8 +153,10 @@ public class MenuPrincipalView extends BaseView implements Serializable {
             DefaultSubMenu proyectos = agregarMenu(msg("projects"), "pi pi-fw pi-briefcase", menuPrincipal);
             agregarItem(msg("administrar.proyectos"), "admProyectos.jsf", "", proyectos);
             //Datos de usuarios
-            DefaultSubMenu usuarios = agregarMenu(msg("users"), "pi pi-users", menuPrincipal);
-            agregarItem(msg("actualizar.mis.datos"), "admProfile.jsf", "", usuarios);
+            DefaultSubMenu user = agregarMenu(msg("my.account"), "pi pi-users", menuPrincipal);
+            agregarItem(msg("actualizar.mis.datos"), "admProfile.jsf", "", user);
+            agregarItem(msg("balance.license"), "admBalanceClient.jsf", "", user);
+            
             //User guide
             agregarItem(msg("user.guide"), "userGuide.jsf", "pi pi-file-pdf", menuPrincipal);
             agregarItem(msg("participant.guide"), "participantGuide.jsf", "pi pi-file-pdf", menuPrincipal);
@@ -162,7 +167,7 @@ public class MenuPrincipalView extends BaseView implements Serializable {
             //DefaultSubMenu home = agregarMenu("", "pi pi-fw pi-home", menuPrincipal);
             //agregarItem(msg("ir.a.bienvenida"), "welcome.jsf", "", home);
             agregarItem("", "welcome.jsf", "pi pi-fw pi-home", menuPrincipal);
-            DefaultSubMenu usuarios = agregarMenu(msg("users"), "pi pi-users", menuPrincipal);
+            DefaultSubMenu usuarios = agregarMenu(msg("my.account"), "pi pi-user", menuPrincipal);
             agregarItem(msg("actualizar.mis.datos"), "admProfile.jsf", "", usuarios);
             //Participant guide
             agregarItem(msg("participant.guide"), "participantGuide.jsf", "pi pi-file-pdf", menuPrincipal);

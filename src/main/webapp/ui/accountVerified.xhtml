@@ -1,0 +1,113 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                template="../templates/templateLogin.xhtml">    
+
+    <ui:define name="head"> 
+        <style>
+            #grad {
+                height: 100%;
+                width: 100%;
+                position: fixed;
+                background-color: #005EA6;/* For browsers that do not support gradients */
+                background-image: linear-gradient(to right, #005EA6 , #006CBE);
+            }
+            #verifyForm\:captcha > div {
+                margin: 0 auto;
+            }
+            .text-center {
+                text-align: center;
+            }
+            img {
+                border-radius: 100%;
+            }
+            .g-recaptcha {
+                transform:scale(0.77);
+                -webkit-transform:scale(0.77);
+                transform-origin:0 0;
+                -webkit-transform-origin:0 0;
+            }
+        </style>
+    </ui:define>
+    <ui:define name="content" >
+
+        <div id="grad"></div>
+
+        <p:dialog id="dlgLogin" widgetVar="dlgLogin" header="#{msg['verify.account.title']}" visible="true" modal="false" closable="false" showEffect="drop" resizable="false" >
+            <h:form id="verifyForm" >
+
+                <p:panel id="panel">
+
+                    <div class="ui-fluid">
+                        <div class="p-field">
+                            <p:outputLabel value="#{msg['mensaje.verify.account.verified']}" style="width: 400px;" />
+                        </div>
+                        <div class="p-field" style="text-align: center;">
+                            <p:outputPanel style="height: 20px;" >
+                                <label id="countdown" style="width: 400px;"></label>
+                            </p:outputPanel>
+                            <script>
+                            let tiempo = 60000;
+                            const elem = document.getElementById('countdown');
+
+                            let cuentaAtras = minutos => {
+
+                            tiempo *= minutos;
+                            let tiempoActualizado = tiempo;
+                            let m = 0;
+                            let s = 0;
+
+                            let cronometro = setInterval(() => {
+
+                            tiempoActualizado -= 1000;
+                            m = Math.trunc(tiempoActualizado / 60000);
+                            s = Math.trunc(tiempoActualizado / 1000);
+                            elem.textContent = s + ' segundos';
+
+                            console.log(m + ' ' + s);
+
+                            if (tiempoActualizado === 0) {
+                            alert('¡Su tiempo ha terminado!');
+                            clearInterval(cronometro);
+                            }
+
+                            }, 1000);
+
+                            };
+
+                            cuentaAtras(0.35);
+
+                            </script>
+                            
+                        </div>
+                        <div class="p-field">
+                            <br/>
+                            <div class="text-center">
+                                <p:graphicImage value="../images/logoJaio360.jpg" width="130" height="50" />
+                            </div>
+                        </div>
+                    </div>
+                </p:panel>
+            </h:form>                
+        </p:dialog>
+
+        <script>
+
+            window.onload = function () {
+                redirect();
+            };
+
+            function redirect() {
+                var delay = 20000;//1 seconds
+                setTimeout(function () {
+                    parent.window.location.href = '#{request.contextPath}' + '/ui/login.jsf';
+                }, delay);
+            };
+            
+        </script>
+
+    </ui:define>
+</ui:composition>

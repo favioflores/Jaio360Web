@@ -5,12 +5,15 @@
 package com.jaio360.domain;
 
 import com.jaio360.dao.HistorialAccesoDAO;
+import com.jaio360.orm.ManageUserRelation;
 import com.jaio360.orm.Usuario;
 import com.jaio360.utils.Constantes;
 import com.jaio360.utils.Utilitarios;
 import com.jaio360.view.BaseView;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  *
@@ -28,11 +31,13 @@ public class UsuarioInfo extends BaseView implements Serializable {
     private String strEmpresaDesc;
     private String strDocumentoEmpresa;
     private String strEstadoDesc;
+    private Integer strEstadoId;
     private Integer intIdDocumentoEmpresa;
     private Integer intIdCiudad;
     private Integer intHistorialPk;
+    private String strTimeRemaining;
     private String timeClient;
-    
+
     private boolean ManagingDirector = false;
     private boolean CountryManager = false;
     private boolean ProjectManager = false;
@@ -52,7 +57,22 @@ public class UsuarioInfo extends BaseView implements Serializable {
         this.timeClient = timeClient;
     }
 
-    
+    public Integer getStrEstadoId() {
+        return strEstadoId;
+    }
+
+    public void setStrEstadoId(Integer strEstadoId) {
+        this.strEstadoId = strEstadoId;
+    }
+
+    public String getStrTimeRemaining() {
+        return strTimeRemaining;
+    }
+
+    public void setStrTimeRemaining(String strTimeRemaining) {
+        this.strTimeRemaining = strTimeRemaining;
+    }
+
     public String getStrEstadoDesc() {
         return strEstadoDesc;
     }
@@ -121,7 +141,7 @@ public class UsuarioInfo extends BaseView implements Serializable {
         this.intHistorialPk = intHistorialPk;
     }
 
-    public UsuarioInfo(Usuario objUsuario, boolean isForLogin) {
+    public UsuarioInfo(Usuario objUsuario, ManageUserRelation objManageUserRelation, boolean isForLogin) {
 
         this.intUsuarioPk = objUsuario.getUsIdCuentaPk();
         this.strEmail = objUsuario.getUsIdMail();
@@ -130,6 +150,7 @@ public class UsuarioInfo extends BaseView implements Serializable {
         this.strDescripcion = objUsuario.getUsTxNombreRazonsocial();
         this.strEmpresaDesc = objUsuario.getUsTxDescripcionEmpresa();
         this.strEstadoDesc = msg(objUsuario.getUsIdEstado().toString());
+        this.strEstadoId = (objUsuario.getUsIdEstado());
         this.intIdDocumentoEmpresa = objUsuario.getUsIdTipoDocumento();
         this.strDocumentoEmpresa = objUsuario.getUsTxDocumento();
         this.intIdCiudad = objUsuario.getUbigeo().getUbIdUbigeoPk();
@@ -137,6 +158,7 @@ public class UsuarioInfo extends BaseView implements Serializable {
         this.strFechaRegistro = Utilitarios.formatearFecha(objUsuario.getUsFeRegistro(), Constantes.DDMMYYYY);
 
         if (isForLogin) {
+
             HistorialAccesoDAO objHistorialAccesoDAO = new HistorialAccesoDAO();
             Date dtUltimoAcceso = objHistorialAccesoDAO.obtenUltimoAcceso(intUsuarioPk);
 
@@ -147,6 +169,20 @@ public class UsuarioInfo extends BaseView implements Serializable {
             }
             this.strIntentosErrados = "0";
             this.intHistorialPk = -1;
+        } else {
+            if (objManageUserRelation != null) {
+                if (!objManageUserRelation.getMaIsVerified()) {
+                    long diferencia = objManageUserRelation.getMaFeVerificationExpired().getTime() - (new Date()).getTime();
+                    long horas = TimeUnit.MILLISECONDS.toHours(diferencia);
+                    if (horas <= 0) {
+                        this.strTimeRemaining = 0 + msg("hours.acro");
+                    } else {
+                        this.strTimeRemaining = horas + msg("hours.acro");
+                    }
+                } else {
+                    this.strTimeRemaining = 0 + msg("hours.acro");
+                }
+            }
         }
 
         if (objUsuario.getUsIdTipoCuenta().equals(Constantes.INT_ET_TIPO_USUARIO_MANAGING_DIRECTOR)) {
@@ -154,7 +190,7 @@ public class UsuarioInfo extends BaseView implements Serializable {
             this.CountryManager = false;
             this.ProjectManager = false;
             this.EvaluatedEvaluator = false;
-        } else if (objUsuario.getUsIdTipoCuenta().equals(Constantes.INT_ET_TIPO_USUARIO_PROJECT_MANAGER)) {
+        } else if (objUsuario.getUsIdTipoCuenta().equals(Constantes.INT_ET_TIPO_USUARIO_COUNTRY_MANAGER)) {
             this.ManagingDirector = false;
             this.CountryManager = true;
             this.ProjectManager = false;

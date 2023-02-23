@@ -41,35 +41,35 @@
         <property name="usTxDocumento" type="string">
             <column name="US_TX_DOCUMENTO" length="45" not-null="false" />
         </property>
-        <property name="usFeRegistro" type="date">
-            <column name="US_FE_REGISTRO" length="10" not-null="true" />
+        <property name="usFeRegistro" type="timestamp">
+            <column name="US_FE_REGISTRO" length="19" not-null="true" />
         </property>
-        <set name="contratos" inverse="true">
+        <set name="contratos" inverse="true" lazy="true">
             <key>
                 <column name="US_ID_CUENTA_FK" not-null="true" />
             </key>
             <one-to-many class="com.jaio360.orm.Contrato" />
         </set>
-        <set name="historialAccesos" inverse="true">
+        <set name="historialAccesos" inverse="true" lazy="true">
             <key>
                 <column name="US_ID_CUENTA_FK" not-null="true" />
             </key>
             <one-to-many class="com.jaio360.orm.HistorialAcceso" />
         </set>
-        <set name="proyectos" inverse="true">
+        <set name="proyectos" inverse="true" lazy="true">
             <key>
                 <column name="US_ID_CUENTA_FK" not-null="true" />
             </key>
             <one-to-many class="com.jaio360.orm.Proyecto" />
         </set>
-        <set name="movimientos" inverse="true">
+        <set name="movimientos" inverse="true" lazy="true" >
             <key>
                 <column name="US_ID_CUENTA_FK" not-null="true" />
             </key>
             <one-to-many class="com.jaio360.orm.Movimiento" />
         </set>
         
-        <set name="manageUserRelations" cascade="save-update" inverse="true">
+        <set name="manageUserRelations" cascade="all" inverse="true" lazy="extra" >
             <key>
                 <column name="US_ID_CUENTA_FK" not-null="true" />
             </key>

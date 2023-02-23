@@ -15,10 +15,12 @@ import java.util.List;
 import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Restrictions;
 
 public class UsuarioDAO implements Serializable {
 
@@ -77,6 +79,68 @@ public class UsuarioDAO implements Serializable {
         return correcto;
     }
 
+    public boolean actualizaCliente(ManageUserRelation objManageUserRelation, Usuario objUsuario) throws HibernateException {
+
+        boolean correcto = false;
+
+        try {
+            iniciaOperacion();
+            String hqlUpdate = "update ManageUserRelation m set "
+                    + "m.maIsVerified = ?, "
+                    + "m.maFeVerificacion = ? "
+                    + "where m.usuario.usIdCuentaPk = ?"
+                    + "and m.usIdCuentaManagerPk = ?";
+
+            Query query = sesion.createQuery(hqlUpdate);
+            query.setBoolean(0, true);
+            query.setTimestamp(1, new Date());
+            query.setInteger(2, objUsuario.getUsIdCuentaPk());
+            query.setInteger(3, objManageUserRelation.getUsIdCuentaManagerPk());
+
+            query.executeUpdate();
+
+            correcto = true;
+
+            tx.commit();
+        } catch (HibernateException he) {
+            correcto = false;
+            manejaExcepcion(he);
+            throw he;
+        } finally {
+            sesion.close();
+        }
+        return correcto;
+    }
+
+    public boolean eliminarRelacionCliente(Integer manager, Integer client) throws HibernateException {
+
+        boolean correcto = false;
+
+        try {
+            iniciaOperacion();
+            String hqlUpdate = "delete from ManageUserRelation m "
+                    + "where m.usuario.usIdCuentaPk = ? "
+                    + "and m.usIdCuentaManagerPk = ? ";
+
+            Query query = sesion.createQuery(hqlUpdate);
+            query.setInteger(0, client);
+            query.setInteger(1, manager);
+
+            query.executeUpdate();
+
+            correcto = true;
+
+            tx.commit();
+        } catch (HibernateException he) {
+            correcto = false;
+            manejaExcepcion(he);
+            throw he;
+        } finally {
+            sesion.close();
+        }
+        return correcto;
+    }
+
     public void eliminaUsuario(Usuario usuario) throws HibernateException {
         try {
             iniciaOperacion();
@@ -94,7 +158,9 @@ public class UsuarioDAO implements Serializable {
         Usuario usuario = null;
         try {
             iniciaOperacion();
-            usuario = (Usuario) sesion.get(Usuario.class, (int) idUsuario);
+            usuario
+                    = (Usuario) sesion.get(Usuario.class,
+                            (int) idUsuario);
         } finally {
             sesion.close();
         }
@@ -104,8 +170,10 @@ public class UsuarioDAO implements Serializable {
 
     public Usuario obtenUsuario(long idUsuario, Session sesion) throws HibernateException {
         Usuario usuario = null;
+
         try {
-            usuario = (Usuario) sesion.get(Usuario.class, (int) idUsuario);
+            usuario = (Usuario) sesion.get(Usuario.class,
+                    (int) idUsuario);
         } catch (HibernateException ex) {
             log.error(ex);
         }
@@ -157,10 +225,11 @@ public class UsuarioDAO implements Serializable {
     }
 
     public List obtenListaClientes(Integer idUserManager) throws HibernateException {
-        List<Usuario> listaUsuario = null;
+
+        List listaUsuario = null;
         try {
             iniciaOperacion();
-            Query query = sesion.createQuery("from Usuario u join u.manageUserRelations m where m.usIdCuentaManagerPk = ? ");
+            Query query = sesion.createQuery("select u, m from Usuario u join u.manageUserRelations m where m.usIdCuentaManagerPk = ? order by u.usFeRegistro desc ");
             query.setInteger(0, idUserManager);
 
             listaUsuario = query.list();
@@ -170,6 +239,43 @@ public class UsuarioDAO implements Serializable {
         }
 
         return listaUsuario;
+    }
+
+    public ManageUserRelation verifyClientForVerification(String strEmail) throws HibernateException {
+
+        try {
+            iniciaOperacion();
+            Query query = sesion.createQuery("select m from Usuario u join u.manageUserRelations m where u.usIdMail = ? ");
+            query.setString(0, strEmail);
+
+            return (ManageUserRelation) query.uniqueResult();
+
+        } catch (HibernateException ex) {
+            log.error(ex);
+        } finally {
+            sesion.close();
+        }
+
+        return null;
+    }
+
+    public ManageUserRelation obtenerManageRelationClient(Integer manager, Integer client) throws HibernateException {
+
+        try {
+            iniciaOperacion();
+            Query query = sesion.createQuery("select m from ManageUserRelation m where m.usIdCuentaManagerPk = ? and m.usuario.usIdCuentaPk = ? ");
+            query.setInteger(0, manager);
+            query.setInteger(1, client);
+
+            return (ManageUserRelation) query.uniqueResult();
+
+        } catch (HibernateException ex) {
+            log.error(ex);
+        } finally {
+            sesion.close();
+        }
+
+        return null;
     }
 
     public List<Usuario> obtenListaUsuario(List lstCorreos) throws HibernateException {
@@ -234,7 +340,7 @@ public class UsuarioDAO implements Serializable {
             query.setInteger(0, intManager);
             query.setInteger(1, intPerfil);
             query.setInteger(2, Constantes.INT_ET_ESTADO_USUARIO_CONFIRMADO);
-            
+
             listaUsuario = query.list();
         } catch (HibernateException ex) {
             log.error(ex);

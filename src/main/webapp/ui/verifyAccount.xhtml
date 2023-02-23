@@ -1,0 +1,133 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                template="../templates/templateLogin.xhtml">    
+
+    <ui:define name="head"> 
+        <style>
+            #grad {
+                height: 100%;
+                width: 100%;
+                position: fixed;
+                background-color: #005EA6;/* For browsers that do not support gradients */
+                background-image: linear-gradient(to right, #005EA6 , #006CBE);
+            }
+            #verifyForm\:captcha > div {
+                margin: 0 auto;
+            }
+            .text-center {
+                text-align: center;
+            }
+            img {
+                border-radius: 100%;
+            }
+            .g-recaptcha {
+                transform:scale(0.77);
+                -webkit-transform:scale(0.77);
+                transform-origin:0 0;
+                -webkit-transform-origin:0 0;
+            }
+        </style>
+    </ui:define>
+    <ui:define name="content" >
+
+        <div id="grad"></div>
+
+        <p:dialog id="dlgLogin" widgetVar="dlgLogin" header="#{msg['verify.account.title']}" visible="true" modal="false" closable="false" showEffect="drop" resizable="false" >
+            <h:form id="verifyForm" >
+
+                <!-- <p:remoteCommand name="rc" actionListener="#{verifyAccountView.verifyAccountExists}" autoRun="false"/>  -->
+
+                <p:panel id="panel">
+                    <p:growl id="growl" sticky="false" life="4000" />
+
+                    <div class="ui-fluid">
+                        <div class="p-field">
+                            <p:outputLabel value="#{msg['verify.text.1']}" style="width: 400px;" />
+                        </div>
+                        <div class="p-field">
+                            <label for="inputEmail">#{msg['verify.account.input.email']}</label>
+                            <p:inputText id="inputEmail" type="text" value="#{verifyAccountView.strEmail}" readonly="true" maxlength="50" >                                    
+                                <f:validator validatorId="validarCorreo" /> 
+                            </p:inputText>
+                        </div>
+                        <div class="p-field">
+                            <label>#{msg['verify.account.input.token']}</label>
+                            <div class="p-field p-formgrid p-grid">
+                                <div class="p-col">
+                                    <p:inputText maxlength="1" size="1" value="#{verifyAccountView.intOne}" required="true" requiredMessage="#{msg['error.empty.token.1']}" style="text-align: center;" >
+                                        <f:validateLength minimum="1"/>
+                                    </p:inputText>
+                                </div>
+                                <div class="p-col">
+                                    <p:inputText maxlength="1" size="1" value="#{verifyAccountView.intTwo}" required="true" requiredMessage="#{msg['error.empty.token.2']}" style="text-align: center;" >
+                                        <f:validateLength minimum="1"/>
+                                    </p:inputText>
+                                </div>
+                                <div class="p-col">
+                                    <p:inputText maxlength="1" size="1" value="#{verifyAccountView.intThree}" required="true" requiredMessage="#{msg['error.empty.token.3']}" style="text-align: center;">
+                                        <f:validateLength minimum="1"/>
+                                    </p:inputText>
+                                </div>
+                                <div class="p-col">
+                                    <p:inputText maxlength="1" size="1" value="#{verifyAccountView.intFour}" required="true" requiredMessage="#{msg['error.empty.token.4']}" style="text-align: center;">
+                                        <f:validateLength minimum="1"/>
+                                    </p:inputText>
+                                </div>
+                                <div class="p-col">
+                                    <p:inputText maxlength="1" size="1" value="#{verifyAccountView.intFive}" required="true" requiredMessage="#{msg['error.empty.token.5']}" style="text-align: center;">
+                                        <f:validateLength minimum="1"/>
+                                    </p:inputText>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-field text-center">
+                            <!--p:captcha id="captcha" label="Captcha" language="#{msg['iniciar.captcha.lenguaje']}" class="g-recaptcha" --> 
+                        </div>
+                        <div class="p-field" >
+                            <p:outputPanel> 
+                                <p:commandButton id="btnVerify" update="datosLogin" value="#{msg['verify.account.button.verify']}" 
+                                                 ajax="false" actionListener="#{verifyAccountView.verifyAccount}" />
+                            </p:outputPanel>
+                        </div>
+                        <div class="p-field">
+                            <br/>
+                            <div class="text-center">
+                                <p:graphicImage value="../images/logoJaio360.jpg" width="130" height="50" />
+                            </div>
+                        </div>
+                    </div>
+                </p:panel>
+            </h:form>                
+        </p:dialog>
+
+        <script>
+
+            window.onload = function () {
+                getParam();
+            };
+
+            function getParam() {
+                var search = window.location.search;
+                var params = new URLSearchParams(search);
+                //console.log(params);
+                var valueEmail = params.get('email');
+                //console.log(valueEmail);
+                if (valueEmail !== null) {
+                    document.getElementById('verifyForm:inputEmail').value = valueEmail;
+                } else {
+                    //redirect();
+                    //rc();
+                }
+            }
+
+            function redirect() {
+                parent.window.location.href = '#{request.contextPath}' + '/ui/login.jsf';
+            }
+        </script>
+        
+    </ui:define>
+</ui:composition>

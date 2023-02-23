@@ -45,7 +45,12 @@ public class AuthFilter implements Filter {
             if (validaUri(req)) {
 
                 String reqURI = req.getRequestURI();
-                if (reqURI.contains("/ui/login.jsf") || reqURI.contains("/ui/test.jsf")) {
+                if (reqURI.contains("/ui/login.jsf")
+                        || reqURI.contains("/ui/accountVerified.jsf")
+                        || reqURI.contains("/ui/accountNotExist.jsf")
+                        || reqURI.contains("/ui/test.jsf")
+                        || reqURI.contains("/ui/accountVerifiedSuccess.jsf")
+                        || reqURI.contains("/ui/verifyAccount.jsf")) {
                     chain.doFilter(request, response);
                 } else if (ses == null
                         || ses.getAttribute("usuarioInfo") == null

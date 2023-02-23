@@ -27,6 +27,8 @@
 <characterType horizontalAlignment="LEFT"/>
 <stringType horizontalAlignment="LEFT"/>
 <!-- LOAD SYSTEM FONTS -->
+<font fontName="SansSerif" fontSize="10" pdfFontName="Helvetica" pdfEncoding="Cp1252" pdfEmbedded="false"/>
+
 <loadSystemFonts>true</loadSystemFonts>
 
 </DynamicReports>

@@ -5,7 +5,7 @@
         <title>Untitled Document</title>
         <style type="text/css">
             body {
-                background-color: #ffffff;
+                background-color: #ffffff !important;
                 margin: 0;
                 padding: 0;
                 margin-left: 0px;
@@ -85,7 +85,7 @@
                 border: 1px solid #1481d4;
                 display: inline-block;
                 cursor: pointer;
-                color: #ffffff;
+                color: white;
                 font-family: Arial;
                 font-size: 15px;
                 font-weight: bold;
@@ -93,36 +93,34 @@
                 text-decoration: none;
                 text-shadow: 0px -1px 0px #1481d4;
             }
-            
             .myButton:hover {
                 background: linear-gradient(to bottom, #1481d4 5%, #1481d4 100%);
                 background-color: #1481d4;
-		color: white;
+				color: white;
             }
             .myButton:active {
                 position: relative;
                 top: 1px;
-		color: white;
+				color: white;
 
             }
-            .myButton:link {
+			.myButton:link {
                 position: relative;
                 top: 1px;
-		color: white;
+				color: white;
             }
+			
+			
         </style>
     </head>
-    <body style="background: white;">
+    <body style="background: white; " >
         <table width="500" border="0" align="center">
             <tr>
                 <td height="15"></td>
             </tr>
             <tr>
-                <td height="40"><div class="divTittle">$TITULO</div></td>
+                <td height="40"><div class="divTittle">$TEMPLATEVERIFICACIONTITULO</div></td>
             </tr>
-            <!-- tr>
-                <td height="35"><div class="divDatoEnvio">$TEMPLATECONVOCATORIALABELSENDED: $TIEMPO</div></td>
-            </tr -->
             <tr>
                 <td>
                     <table width="400" align="center" class="border_tabla">
@@ -149,14 +147,29 @@
                                                 </tr>
                                                 <tr style="height: 60px;">
                                                     <td>&nbsp;</td>
-                                                    <td><div class="divCarita">$TEMPLATECONVOCATORIALABELHELLO $NOMBRE,</div></td>
+                                                    <td><div class="divCarita">$TEMPLATEVERIFICACIONHELLO $NOMBRE,</div></td>
                                                     <td>&nbsp;</td>
                                                 </tr>
                                                 <tr>
                                                     <td>&nbsp;</td>
                                                     <td>
                                                         <div class="divDatos">
-                                                            $PARRAFO
+                                                            $TEMPLATEVERIFICACIONPARRAFO1
+                                                        </div>
+                                                    </td>
+                                                    <td>&nbsp;</td>
+                                                </tr>
+												                                                <tr>
+                                                    <td>&nbsp;</td>
+                                                    <td>&nbsp;</td>
+                                                    <td>&nbsp;</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>&nbsp;</td>
+                                                    <td>
+                                                        <div class="divDatos">
+                                                            $TEMPLATEVERIFICACIONPARRAFO2 
+								<a href="https://www.jaio360-app.com/verifyAccount.jsf?email=$EMAIL">$TEMPLATEVERIFICACIONLINK</a>
                                                         </div>
                                                     </td>
                                                     <td>&nbsp;</td>
@@ -168,32 +181,41 @@
                                                 </tr>
                                                 <tr>
                                                     <td>&nbsp;</td>
-                                                    <td class="divDatosR">$TEMPLATECONVOCATORIALABELUSER</td>
-                                                    <td>&nbsp;</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>&nbsp;</td>
-                                                    <td><div class="divDatosResaltado">$CUENTA</div></td>
-                                                    <td>&nbsp;</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>&nbsp;</td>
-                                                    <td class="divDatosR">$TEMPLATECONVOCATORIALABELPASSWORD</td>
-                                                    <td>&nbsp;</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>&nbsp;</td>
-                                                    <td><div class="divDatosResaltado">$CLAVE</div></td>
+                                                    <td>
+                                                        <div class="divDatos">
+                                                            $TEMPLATEVERIFICACIONPARRAFO3
+                                                        </div>
+                                                    </td>
                                                     <td>&nbsp;</td>
                                                 </tr>
                                                 <tr>
                                                     <td>&nbsp;</td>
                                                     <td>&nbsp;</td>
                                                     <td>&nbsp;</td>
+                                                </tr>												
+                                                <tr>
+                                                    <td>&nbsp;</td>
+                                                    <td class="divDatosR">$TEMPLATEVERIFICACIONPARRAFO4</td>
+                                                    <td>&nbsp;</td>
                                                 </tr>
                                                 <tr>
                                                     <td>&nbsp;</td>
-                                                    <td><a href="$URL" class="myButton">$TEMPLATECONVOCATORIALABELSINGIN</a></td>
+                                                    <td><div class="divCarita">$TOKEN</div></td>
+                                                    <td>&nbsp;</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>&nbsp;</td>
+                                                    <td>&nbsp;</td>
+                                                    <td>&nbsp;</td>
+                                                </tr>											
+                                                <tr>
+                                                    <td>&nbsp;</td>
+                                                    <td class="divDatosR">$TEMPLATEVERIFICACIONPARRAFO5</td>
+                                                    <td>&nbsp;</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>&nbsp;</td>
+                                                    <td class="divDatos">$TEMPLATEVERIFICACIONPARRAFO6 $COUNTRYMANAGER.</td>
                                                     <td>&nbsp;</td>
                                                 </tr>
                                                 <tr>

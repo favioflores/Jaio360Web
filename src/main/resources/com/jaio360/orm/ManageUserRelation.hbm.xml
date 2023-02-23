@@ -7,17 +7,20 @@
         <id name="usIdCuentaManagerPk" type="java.lang.Integer">
             <column name="US_ID_CUENTA_MANAGER_PK" />
         </id>
-        <many-to-one name="Usuario" lazy="false" class="com.jaio360.orm.Usuario" fetch="select">
+        <many-to-one name="usuario" class="com.jaio360.orm.Usuario" fetch="join">
             <column name="US_ID_CUENTA_FK" not-null="true" />
         </many-to-one>
-        <property name="maFeRegistro" type="date">
-            <column name="MA_FE_REGISTRO" length="10" not-null="true" />
+        <property name="maFeRegistro" type="timestamp">
+            <column name="MA_FE_REGISTRO" length="19" not-null="true" />
         </property>
-        <property name="maFeVerificacion" type="date">
-            <column name="MA_FE_VERIFICACION" length="10" not-null="true" />
+        <property name="maFeVerificacion" type="timestamp">
+            <column name="MA_FE_VERIFICACION" length="19" not-null="true" />
+        </property>
+        <property name="maFeVerificationExpired" type="timestamp">
+            <column name="MA_FE_VERIFICATION_EXPIRED" length="19" not-null="true" />
         </property>
         <property name="maHashLinkVerificacion" type="string">
-            <column name="MA_HASH_LINK_VERIFICACION" length="1000" not-null="true" />
+            <column name="MA_HASH_LINK_VERIFICACION" length="10" not-null="true" />
         </property>
         <property name="maIsVerified" type="java.lang.Boolean">
             <column name="MA_IS_VERIFIED" not-null="true" />

@@ -7,7 +7,7 @@
         <property name="hibernate.connection.url">jdbc:mysql://localhost:3309/jaio</property>
         <property name="hibernate.connection.username">root</property>
         <property name="hibernate.connection.password">frozen4play</property>
-        <property name="hibernate.show_sql">true</property>
+        <property name="hibernate.show_sql">false</property>
         <property name="connection.autoReconnect">true</property>
         <property name="connection.autoReconnectForPools">true</property>
         <property name="connection.is-connection-validation-required">true</property>
