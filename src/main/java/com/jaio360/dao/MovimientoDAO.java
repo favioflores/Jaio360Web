@@ -90,7 +90,7 @@ public class MovimientoDAO implements Serializable {
         
         try {
             iniciaOperacion();
-            Query query = sesion.createQuery("select m from Movimiento m where m.usuario.usIdCuentaPk = ? order by m.moIdMovimientoPk ");
+            Query query = sesion.createQuery("select m from Movimiento m where m.usuario.usIdCuentaPk = ? order by m.moIdMovimientoPk desc ");
             
             query.setInteger(0, idUsuario);
             

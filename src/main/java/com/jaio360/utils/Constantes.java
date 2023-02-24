@@ -10,10 +10,10 @@ import javax.faces.bean.ManagedBean;
 @ApplicationScoped
 public class Constantes {
 
-    //public static String STR_INBOX_PRELIMINAR = File.separator + "var" + File.separator + "tmp" + File.separator + "InboxPreliminar";
-    //public static String STR_INBOX_DEFINITIVO = File.separator + "var" + File.separator + "tmp" + File.separator + "InboxDefinitivo";
-    public static String STR_INBOX_PRELIMINAR = File.separator + "D://InboxPreliminar";
-    public static String STR_INBOX_DEFINITIVO = File.separator + "D://InboxDefinitivo";
+    public static String STR_INBOX_PRELIMINAR = File.separator + "var" + File.separator + "tmp" + File.separator + "InboxPreliminar";
+    public static String STR_INBOX_DEFINITIVO = File.separator + "var" + File.separator + "tmp" + File.separator + "InboxDefinitivo";
+    //public static String STR_INBOX_PRELIMINAR = File.separator + "D://InboxPreliminar";
+    //public static String STR_INBOX_DEFINITIVO = File.separator + "D://InboxDefinitivo";
 
     public static char CH_RANDOM_Z = 'Z';
     public static char CH_RANDOM_A = 'A';

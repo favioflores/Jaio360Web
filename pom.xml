@@ -171,107 +171,6 @@
                 </filters>
             </build>
         </profile>
-        <profile>
-            <id>dev-myfaces</id>
-            <properties>
-                <jsfVersion>Apache MyFaces-${myfaces.version}</jsfVersion>
-                <primefacesVersion>PrimeFaces-10.0.0</primefacesVersion>
-            </properties>
-            <dependencies>
-                <dependency>
-                    <groupId>org.primefaces</groupId>
-                    <artifactId>primefaces</artifactId>
-                    <version>10.0.0</version>
-                </dependency>
-                <dependency>
-                    <groupId>org.apache.myfaces.core</groupId>
-                    <artifactId>myfaces-api</artifactId>
-                    <version>${myfaces.version}</version>
-                </dependency>
-                <dependency>
-                    <groupId>org.apache.myfaces.core</groupId>
-                    <artifactId>myfaces-impl</artifactId>
-                    <version>${myfaces.version}</version>
-                </dependency>
-            </dependencies>
-            <build>
-                <filters>
-                    <filter>${basedir}/src/main/resources/filters/myfaces.properties</filter>
-                </filters>
-            </build>
-        </profile>
-        <profile>
-            <id>community-stable</id>
-            <properties>
-                <jsfVersion>Mojarra-${mojarra.version}</jsfVersion>
-                <primefacesVersion>PrimeFaces-10.0.0</primefacesVersion>
-            </properties>
-            <dependencies>
-                <dependency>
-                    <groupId>org.primefaces</groupId>
-                    <artifactId>primefaces</artifactId>
-                    <version>10.0.0</version>
-                </dependency>
-                <dependency>
-                    <groupId>org.glassfish</groupId>
-                    <artifactId>jakarta.faces</artifactId>
-                    <version>${mojarra.version}</version>
-                </dependency>
-            </dependencies>
-            <build>
-                <filters>
-                    <filter>${basedir}/src/main/resources/filters/mojarra.properties</filter>
-                </filters>
-            </build>
-        </profile>
-        <profile>
-            <id>elite-dev</id>
-            <properties>
-                <jsfVersion>Mojarra-${mojarra.version}</jsfVersion>
-                <primefacesVersion>PrimeFaces-10.0.0</primefacesVersion>
-            </properties>
-            <dependencies>
-                <dependency>
-                    <groupId>org.primefaces</groupId>
-                    <artifactId>primefaces</artifactId>
-                    <version>10.0.0</version>
-                </dependency>
-                <dependency>
-                    <groupId>org.glassfish</groupId>
-                    <artifactId>jakarta.faces</artifactId>
-                    <version>${mojarra.version}</version>
-                </dependency>
-            </dependencies>
-            <build>
-                <filters>
-                    <filter>${basedir}/src/main/resources/filters/mojarra.properties</filter>
-                </filters>
-            </build>
-        </profile>
-        <profile>
-            <id>elite-dev-6.2.x</id>
-            <properties>
-                <jsfVersion>Mojarra-${mojarra.version}</jsfVersion>
-                <primefacesVersion>PrimeFaces-10.0.0</primefacesVersion>
-            </properties>
-            <dependencies>
-                <dependency>
-                    <groupId>org.primefaces</groupId>
-                    <artifactId>primefaces</artifactId>
-                    <version>11.0.0</version>
-                </dependency>
-                <dependency>
-                    <groupId>org.glassfish</groupId>
-                    <artifactId>jakarta.faces</artifactId>
-                    <version>${mojarra.version}</version>
-                </dependency>
-            </dependencies>
-            <build>
-                <filters>
-                    <filter>${basedir}/src/main/resources/filters/mojarra.properties</filter>
-                </filters>
-            </build>
-        </profile>
     </profiles>
     
     <dependencies>
@@ -563,7 +462,17 @@
             <artifactId>velocity-tools</artifactId>
             <version>2.0</version>
         </dependency>
-        
+        <dependency>
+            <groupId>org.apache.velocity</groupId>
+            <artifactId>velocity</artifactId>
+            <version>1.6.2</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.jasperreports</groupId>
+            <artifactId>jasperreports</artifactId>
+            <version>5.5.1</version>
+            <type>jar</type>
+        </dependency>
     </dependencies>
     <repositories>
         <repository>

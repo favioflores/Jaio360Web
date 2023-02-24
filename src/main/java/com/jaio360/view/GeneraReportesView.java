@@ -39,7 +39,6 @@ import com.jaio360.utils.ReportSort;
 import com.jaio360.utils.Utilitarios;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -59,9 +58,9 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.servlet.ServletContext;
-import org.apache.commons.lang.SerializationUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.HibernateException;
 import org.primefaces.PrimeFaces;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
@@ -134,26 +133,14 @@ public class GeneraReportesView extends BaseView implements Serializable {
 
     public StreamedContent getPlanAccion() {
 
-        try {
-            ServletContext servletContext = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
-
-            String fullPath = servletContext.getRealPath(File.separator + "WEB-INF" + File.separator + "resources" + File.separator + "PlanDeAccion.docx");
-
-            File objFile = new File(fullPath);
-            InputStream stream = new FileInputStream(objFile.getAbsolutePath());
-            //planAccion = new DefaultStreamedContent(stream, "application/doc", "PlanDeAccion.doc");
-
-            planAccion = DefaultStreamedContent.builder()
-                    .name("PlanDeAccion.docx")
-                    .contentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document")
-                    .stream(() -> FacesContext.getCurrentInstance().getExternalContext().getResourceAsStream(objFile.getAbsolutePath()))
-                    .build();
-
-        } catch (FileNotFoundException ex) {
-            log.error(ex);
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_FATAL, "Plan de accion", "No existe el documento. Por favor contactese con el administrador");
-            FacesContext.getCurrentInstance().addMessage(null, message);
-        }
+        ServletContext servletContext = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
+        String fullPath = servletContext.getRealPath(File.separator + "WEB-INF" + File.separator + "resources" + File.separator + "PlanDeAccion.docx");
+        File objFile = new File(fullPath);
+        planAccion = DefaultStreamedContent.builder()
+                .name("PlanDeAccion.docx")
+                .contentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+                .stream(() -> FacesContext.getCurrentInstance().getExternalContext().getResourceAsStream(objFile.getAbsolutePath()))
+                .build();
 
         return planAccion;
     }
@@ -392,22 +379,6 @@ public class GeneraReportesView extends BaseView implements Serializable {
 
         CuestionarioDAO objCuestionarioDAO = new CuestionarioDAO();
         lstCuestionarios = objCuestionarioDAO.obtenListaCuestionarioXEstado(objProyectoInfo.getIntIdProyecto(), Constantes.INT_ET_ESTADO_CUESTIONARIO_EN_EJECUCION);
-    }
-
-    private void agregarDescripciones() {
-
-        strDescripcionesIndividual[0] = "Individual 0";
-        strDescripcionesIndividual[1] = "Individual 1";
-        strDescripcionesIndividual[2] = "Individual 2";
-        strDescripcionesIndividual[3] = "Individual 3";
-        strDescripcionesIndividual[4] = "Individual 4";
-        strDescripcionesIndividual[5] = "Individual 5";
-        strDescripcionesIndividual[6] = "Individual 6";
-        strDescripcionesIndividual[7] = "Individual 7";
-        strDescripcionesIndividual[8] = "Individual 8";
-
-        strDescripcionesGrupal[0] = "Grupal 0";
-
     }
 
     public void generarReporteGrupal() {
@@ -1010,7 +981,7 @@ public class GeneraReportesView extends BaseView implements Serializable {
 
             confirmaGeneracionReporteIndividual();
 
-        } catch (Exception e) {
+        } catch (HibernateException e) {
             mostrarError(log, e);
         }
     }
@@ -1071,7 +1042,7 @@ public class GeneraReportesView extends BaseView implements Serializable {
                 mostrarAlertaFatal("error.was.occurred");
             }
 
-        } catch (Exception e) {
+        } catch (HibernateException e) {
             mostrarError(log, e);
             mostrarAlertaFatal("error.was.occurred");
         }

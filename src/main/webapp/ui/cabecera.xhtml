@@ -16,17 +16,6 @@
 
                         <h:panelGrid columns="3" cellspacing="0" styleClass="mb-3" >
 
-                            <!--
-                                                        <p:outputLabel  value="#{msg['cabecera.bienvenido']} #{menuPrincipal.usuarioInfo.strDescripcion}" />                            
-                                                        
-                                                        <p:outputLabel  value="#{msg['type.account']} #{menuPrincipal.usuarioInfo.strTipoUsuario}" />                            
-                            
-                            <p:selectOneMenu value="#{localeManager.language}" onchange="submit()" >
-                                <f:selectItem itemValue="en" itemLabel="English" />
-                                <f:selectItem itemValue="es" itemLabel="Español" />
-                            </p:selectOneMenu>
-                            -->   
-
                             <p:commandButton value="#{msg['cabecera.cerrar.sesion']}" id="btcerrarSesion" widgetVar="btcerrarSesion" styleClass="ui-button-secondary" icon="pi pi-fw pi-sign-out" actionListener="#{usuarioSesion.cerrarSesion}"  >
                                 <p:confirm header="#{msg['cabecera.logout.confirmacion.title']}" icon="pi pi-info-circle" message="#{msg['cabecera.logout.confirmacion.mensaje']}" /> 
                             </p:commandButton>

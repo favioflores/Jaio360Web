@@ -48,6 +48,7 @@ public class AuthFilter implements Filter {
                 if (reqURI.contains("/ui/login.jsf")
                         || reqURI.contains("/ui/accountVerified.jsf")
                         || reqURI.contains("/ui/accountNotExist.jsf")
+                        || reqURI.contains("/ui/recoveryPassword.jsf")
                         || reqURI.contains("/ui/test.jsf")
                         || reqURI.contains("/ui/accountVerifiedSuccess.jsf")
                         || reqURI.contains("/ui/verifyAccount.jsf")) {
@@ -86,9 +87,6 @@ public class AuthFilter implements Filter {
                 || strUri.endsWith(Constantes.STR_JPG)
                 || strUri.endsWith(Constantes.STR_HTM)
                 || strUri.endsWith(Constantes.STR_JS)
-                || strUri.endsWith(Constantes.STR_SWF)
-                || strUri.contains("/ui/iniciar")
-                || strUri.contains("/ui/clave")
-                || strUri.contains("/ui/sesionExpirada"));
+                || strUri.endsWith(Constantes.STR_SWF));
     }
 }

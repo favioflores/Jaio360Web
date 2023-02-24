@@ -153,7 +153,6 @@ public class VerifyAccountView extends BaseView implements Serializable {
             Map<String, String> params = FacesContext.getCurrentInstance().
                     getExternalContext().getRequestParameterMap();
 
-            log.error("Parametro enviado: " + params.get("email"));
             this.strEmail = params.get("email");
 
             if (Utilitarios.noEsNuloOVacio(this.strEmail)) {

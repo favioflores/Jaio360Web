@@ -28,7 +28,7 @@
 
         <div id="grad"></div>
 
-        <p:dialog id="dlgLogin" widgetVar="dlgLogin" header="#{msg['iniciar.titulo']}" visible="true" modal="false" closable="false" showEffect="drop" resizable="false" style="opacity: 1.0;">
+        <p:dialog id="dlgLogin" widgetVar="dlgLogin" header="#{msg['iniciar.titulo']}" visible="true" modal="false" closable="false" showEffect="drop" resizable="false" >
             <h:form id="loginForm">
                 <p:panel id="panel">
                     <p:growl id="growl" sticky="false" life="4000" />
@@ -48,7 +48,7 @@
                         </div>
                         <div class="p-field">
                             <div class="text-center">
-                                <!--p:captcha id="captcha" label="Captcha" language="#{msg['iniciar.captcha.lenguaje']}" --> 
+                                <p:captcha id="captcha" label="Captcha" language="#{msg['iniciar.captcha.lenguaje']}" /> 
                             </div>
                         </div>
                         <div class="p-field">

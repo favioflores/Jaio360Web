@@ -16,6 +16,23 @@ public class UsuarioSaldoDAO implements Serializable {
 
     private static Log log = LogFactory.getLog(UsuarioSaldoDAO.class);
 
+    public Integer guardar(UsuarioSaldo usuario) throws HibernateException {
+        Integer id = null;
+
+        try {
+            iniciaOperacion();
+            id = (Integer) sesion.save(usuario);
+            tx.commit();
+        } catch (HibernateException he) {
+            manejaExcepcion(he);
+            throw he;
+        } finally {
+            sesion.close();
+        }
+
+        return id;
+    }
+
     public long guarda(UsuarioSaldo usuario, Session objSession) throws HibernateException {
         Integer id = null;
 
@@ -23,7 +40,7 @@ public class UsuarioSaldoDAO implements Serializable {
             id = (Integer) objSession.save(usuario);
         } catch (HibernateException he) {
             log.error(he);
-        } 
+        }
 
         return id;
     }
@@ -35,7 +52,7 @@ public class UsuarioSaldoDAO implements Serializable {
         } catch (HibernateException he) {
             log.error(he);
             return false;
-        } 
+        }
         return correcto;
     }
 

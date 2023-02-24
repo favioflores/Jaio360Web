@@ -186,6 +186,18 @@
                                     </p:commandButton>
 
                                 </div>
+                                <div class="p-field">
+                                    <p:commandButton id="btnUnlcokUnusedLicenses" 
+                                                     value="#{msg['unlock.unused.licenses']}" 
+                                                     type="submit"
+                                                     disabled="#{seguimientoProyectoView.intIdEstadoProyecto!=37}"
+                                                     update="@form"
+                                                     icon="pi pi-lock-open" 
+                                                     styleClass="ui-button-warning">
+                                        <p:confirm header="#{msg['confirmation']}" message="#{msg['prev.finished']}" icon="pi pi-info-circle" />
+                                    </p:commandButton>
+
+                                </div>
                                 <!--
                                                                 <div class="p-field">
                                                                     <p:commandButton id="btnGuardarAsignacion" 
