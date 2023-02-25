@@ -141,7 +141,7 @@ public class CrearProyecto extends BaseView implements Serializable {
 
         try {
             UsuarioSesion objUsuarioSesion = new UsuarioSesion();
-            UsuarioInfo objUsuarioInfo = objUsuarioSesion.obtenerUsuarioInfo();
+            UsuarioInfo objUsuarioInfo = Utilitarios.obtenerUsuario();
 
             ProyectoDAO objProyectoDAO = new ProyectoDAO();
 

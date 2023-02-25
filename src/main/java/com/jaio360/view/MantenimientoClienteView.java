@@ -4,13 +4,16 @@ import com.jaio360.application.MailSender;
 import com.jaio360.dao.DestinatariosDAO;
 import com.jaio360.dao.ElementoDAO;
 import com.jaio360.dao.NotificacionesDAO;
+import com.jaio360.dao.ProyectoDAO;
 import com.jaio360.dao.UbigeoDAO;
 import com.jaio360.dao.UsuarioDAO;
+import com.jaio360.domain.ProyectoInfo;
 import com.jaio360.domain.UsuarioInfo;
 import com.jaio360.orm.Destinatarios;
 import com.jaio360.orm.Elemento;
 import com.jaio360.orm.ManageUserRelation;
 import com.jaio360.orm.Notificaciones;
+import com.jaio360.orm.Proyecto;
 import com.jaio360.orm.Ubigeo;
 import com.jaio360.orm.Usuario;
 import com.jaio360.utils.Constantes;
@@ -18,6 +21,7 @@ import com.jaio360.utils.EncryptDecrypt;
 import com.jaio360.utils.Utilitarios;
 import static com.jaio360.view.BaseView.mostrarError;
 import static com.jaio360.view.BaseView.msg;
+import java.io.IOException;
 import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -35,6 +39,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
+import javax.servlet.http.HttpSession;
 import org.apache.commons.lang.CharEncoding;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -81,9 +86,36 @@ public class MantenimientoClienteView extends BaseView implements Serializable {
     private Integer ciudad;
     private String strContraseniaNueva;
     private String strContraseniaReNueva;
+    private Integer usIdCuentaPkCP;
+    private String strContraseniaNuevaCP;
+    private String strContraseniaReNuevaCP;
 
     private ElementoDAO objElementoDAO = new ElementoDAO();
     private UsuarioDAO objUsuarioDAO = new UsuarioDAO();
+
+    public Integer getUsIdCuentaPkCP() {
+        return usIdCuentaPkCP;
+    }
+
+    public void setUsIdCuentaPkCP(Integer usIdCuentaPkCP) {
+        this.usIdCuentaPkCP = usIdCuentaPkCP;
+    }
+
+    public String getStrContraseniaNuevaCP() {
+        return strContraseniaNuevaCP;
+    }
+
+    public void setStrContraseniaNuevaCP(String strContraseniaNuevaCP) {
+        this.strContraseniaNuevaCP = strContraseniaNuevaCP;
+    }
+
+    public String getStrContraseniaReNuevaCP() {
+        return strContraseniaReNuevaCP;
+    }
+
+    public void setStrContraseniaReNuevaCP(String strContraseniaReNuevaCP) {
+        this.strContraseniaReNuevaCP = strContraseniaReNuevaCP;
+    }
 
     public String getStrContraseniaNueva() {
         return strContraseniaNueva;
@@ -363,7 +395,20 @@ public class MantenimientoClienteView extends BaseView implements Serializable {
 
             poblarCiudades();
 
-        } catch (Exception ex) {
+        } catch (HibernateException ex) {
+            mostrarError(log, ex);
+        }
+
+    }
+
+    public void changePassword(UsuarioInfo objUsuario) {
+        try {
+
+            usIdCuentaPkCP = objUsuario.getIntUsuarioPk();
+            strContraseniaNuevaCP = null;
+            strContraseniaReNuevaCP = null;
+
+        } catch (HibernateException ex) {
             mostrarError(log, ex);
         }
 
@@ -374,13 +419,13 @@ public class MantenimientoClienteView extends BaseView implements Serializable {
 
             isEdit = true;
 
-            UsuarioDAO objUsuarioDAO = new UsuarioDAO();
-
             objUsuarioDAO.eliminarRelacionCliente(Utilitarios.obtenerUsuario().getIntUsuarioPk(), objUsuario.getIntUsuarioPk());
             objUsuarioDAO.eliminaUsuario(objUsuario.getUsuario());
 
+            obtenerListaUsuarios();
+
             mostrarAlertaInfo("deleted.client.success");
-        } catch (Exception ex) {
+        } catch (HibernateException ex) {
             mostrarError(log, ex);
         }
 
@@ -467,7 +512,6 @@ public class MantenimientoClienteView extends BaseView implements Serializable {
 
         } catch (Exception e) {
             mostrarError(log, e);
-            mostrarAlertaFatal("error.was.occurred");
         }
 
     }
@@ -640,6 +684,14 @@ public class MantenimientoClienteView extends BaseView implements Serializable {
 
     }
 
+    public void resetFormChangePassword() {
+
+        usIdCuentaPkCP = null;
+        strContraseniaNuevaCP = null;
+        strContraseniaReNuevaCP = null;
+
+    }
+
     private void poblarPaises() {
         lstCiudades = new ArrayList<>();
 
@@ -740,25 +792,69 @@ public class MantenimientoClienteView extends BaseView implements Serializable {
 
         try {
 
-            if (!strContraseniaNueva.equals(strContraseniaReNueva)) {
+            if (!strContraseniaNuevaCP.equals(strContraseniaReNuevaCP)) {
                 mostrarAlertaError("must.be.same.password=");
             } else {
 
-                Usuario objUsuario = objUsuarioDAO.obtenUsuario(usIdCuentaPk);
+                Usuario objUsuario = objUsuarioDAO.obtenUsuario(usIdCuentaPkCP);
 
                 EncryptDecrypt objEncryptDecrypt = new EncryptDecrypt();
 
-                objUsuario.setUsTxContrasenia(objEncryptDecrypt.encrypt(strContraseniaNueva));
+                objUsuario.setUsTxContrasenia(objEncryptDecrypt.encrypt(strContraseniaNuevaCP));
                 objUsuarioDAO.actualizaUsuario(objUsuario);
 
                 mostrarAlertaInfo("password.changed.success");
 
-                resetFormUsuario();
+                this.usIdCuentaPkCP = null;
+                this.strContraseniaNuevaCP = null;
+                this.strContraseniaReNuevaCP = null;
 
             }
         } catch (Exception e) {
             mostrarError(log, e);
-            mostrarAlertaFatal("error.was.occurred");
+        }
+    }
+
+    public void goToProject(UsuarioInfo objUsuarioInfo) {
+
+        try {
+
+            HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
+
+            ProyectoDAO objProyectoDAO = new ProyectoDAO();
+            Proyecto objProyecto = objProyectoDAO.obtenProyecto(753);
+
+            ProyectoInfo objProyectoInfo = new ProyectoInfo();
+
+            objProyectoInfo.setIntIdProyecto(objProyecto.getPoIdProyectoPk());
+            objProyectoInfo.setStrDescNombre(objProyecto.getPoTxDescripcion());
+            objProyectoInfo.setIntIdMetodologia(objProyecto.getPoIdMetodologia());
+            objProyectoInfo.setIntIdEstado(objProyecto.getPoIdEstado());
+            objProyectoInfo.setStrDescEstado(msg(objProyecto.getPoIdEstado().toString()));
+            objProyectoInfo.setDtFechaCreacion(Utilitarios.convertDateToLocalDate(objProyecto.getPoFeRegistro()));
+            objProyectoInfo.setDtFechaEjecucion(objProyecto.getPoFeEjecucion());
+            objProyectoInfo.setStrMotivo(objProyecto.getPoTxMotivo());
+            objProyectoInfo.setBoOculto(objProyecto.getPoInOculto());
+
+            session.removeAttribute("usuarioInfoProxy");
+            session.setAttribute("usuarioInfoProxy", Utilitarios.obtenerUsuario());
+
+            session.removeAttribute("usuarioInfo");
+            session.setAttribute("usuarioInfo", objUsuarioInfo);
+
+            session.removeAttribute("proyectoInfo");
+            session.setAttribute("proyectoInfo", objProyectoInfo);
+
+            if (objProyectoInfo.getIntIdEstado().equals(Constantes.INT_ET_ESTADO_PROYECTO_EN_EJECUCION)) {
+                FacesContext.getCurrentInstance().getExternalContext().redirect("stepFive.jsf");
+            } else if (objProyectoInfo.getIntIdEstado().equals(Constantes.INT_ET_ESTADO_PROYECTO_TERMINADO)) {
+                FacesContext.getCurrentInstance().getExternalContext().redirect("stepSix.jsf");
+            } else {
+                FacesContext.getCurrentInstance().getExternalContext().redirect("stepOne.jsf");
+            }
+
+        } catch (IOException ex) {
+            mostrarError(log, ex);
         }
     }
 }

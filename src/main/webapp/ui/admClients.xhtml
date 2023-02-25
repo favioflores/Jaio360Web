@@ -182,7 +182,7 @@
                                 <h:outputText value="#{usu.strTipoUsuario}" />
                             </p:column>
                             -->
-                            <p:column headerText="#{msg['state']}" style="text-align: center; width: 50px; ">
+                            <p:column headerText="#{msg['state']}" style="text-align: center; width: 80px; ">
                                 <p:tag  value="#{usu.strEstadoId==13?msg['complete.verification']:msg['pending.verification']}" 
                                         severity="#{usu.strEstadoId==13?'success':'danger'}" />
                             </p:column>
@@ -199,9 +199,11 @@
                                 /
                                 <p:commandLink update="formUsuario" value="#{msg['actualizar.usuario']}" immediate="true" process="@this" actionListener="#{mantenimientoClienteView.editarUsuario(usu)}" />
                                 /
-                                <p:commandLink  value="#{msg['change.password']}" update="formUsuario" immediate="true" oncomplete="PF('dlgChangePassword').show()" actionListener="#{mantenimientoClienteView.editarUsuario(usu)}" />
-                                
-                                
+                                <p:commandLink  value="#{msg['change.password']}" update="formUsuario, formChangePassword" immediate="true" oncomplete="PF('dlgChangePassword').show()" actionListener="#{mantenimientoClienteView.changePassword(usu)}" />
+                                /
+                                <p:commandLink  value="#{msg['mode.proxy']}" update="formUsuario" immediate="true" actionListener="#{mantenimientoClienteView.goToProject(usu)}" />
+
+
                             </p:column>
                         </p:dataTable>
                     </div>
@@ -216,7 +218,7 @@
                   draggable="false" closable="true" hideEffect="drop" closeOnEscape="true" showEffect="drop" 
                   modal="true"
                   resizable="false" >
-            <h:form>
+            <h:form id="formChangePassword">
                 <p:growl id="dlgGrowl" showDetail="false" life="4000" />
                 <p:panel>
 
@@ -227,36 +229,28 @@
                                 <p:outputLabel value="#{msg['password.not.more.20.character']}"></p:outputLabel>
                             </div>
                             <div class="p-field">
-                                <div class="ui-fluid p-formgrid p-grid">
-                                    <div class="p-field p-col-12 p-md-12">
-                                        <p:outputLabel for="@next" value="#{msg['new.password']}"/> 
-                                        <p:password id="strPassNuevo" value="#{mantenimientoClienteView.strContraseniaNueva}" match="strPassReNuevo"  label="#{msg['new.password']}" feedback="true" maxlength="20" required="true" requiredMessage="#{msg['cant.be.empty']}" validatorMessage="#{msg['must.be.same.password']}" redisplay="true" />
-                                        <p:message for="strPassNuevo" />
-                                    </div>
-                                    <div class="p-field p-col-12 p-md-12">
-                                        <p:outputLabel for="@next" value="#{msg['re.new.password']}"/>
-                                        <p:password id="strPassReNuevo" value="#{mantenimientoClienteView.strContraseniaReNueva}"  label="#{msg['new.password']}" feedback="true" maxlength="20" required="true" requiredMessage="#{msg['cant.be.empty']}" redisplay="true" />
-                                        <p:message for="strPassReNuevo" />
-                                    </div>              
+                                <div class="p-field p-col-12 p-md-12">
+                                    <p:outputLabel for="@next" value="#{msg['new.password']}"/> 
+                                    <p:password id="strPassNuevo" value="#{mantenimientoClienteView.strContraseniaNuevaCP}" match="strPassReNuevo"  label="#{msg['new.password']}" feedback="true" maxlength="20" required="true" requiredMessage="#{msg['cant.be.empty']}" validatorMessage="#{msg['must.be.same.password']}" redisplay="true" />
+                                    <p:message for="strPassNuevo" />
                                 </div>
-                            </div>
-                        </div>      
-                    </div>
-                    <div class="p-col-12 p-col-12 p-md-12">
-                        <div class="p-field p-formgrid p-grid">
-                            <div class="p-field p-col">
-                                <p:commandButton value="#{msg['change']}" style="width: 100%;"  icon="pi pi-lock" update="@form" actionListener="#{mantenimientoCuentaView.actualizaContraseña()}"
-                                                 oncomplete="PF('dlgChangePassword').hide()" />
-                            </div>
-                            <div class="p-field p-col">
-                                <p:commandButton value="#{msg['cancel']}" styleClass="ui-button-danger" 
-                                                 style="width: 100%;" actionListener="#{mantenimientoClienteView.resetFormUsuario()}"
-                                                 icon="pi pi-times"  oncomplete="PF('dlgChangePassword').hide()"  />
+                                <div class="p-field p-col-12 p-md-12">
+                                    <p:outputLabel for="@next" value="#{msg['re.new.password']}"/>
+                                    <p:password id="strPassReNuevo" value="#{mantenimientoClienteView.strContraseniaReNuevaCP}"  label="#{msg['new.password']}" feedback="true" maxlength="20" required="true" requiredMessage="#{msg['cant.be.empty']}" redisplay="true" />
+                                    <p:message for="strPassReNuevo" />
+                                </div>              
+
+                                <div class="p-field p-col-12 p-md-12">
+                                    <p:commandButton value="#{msg['change']}" style="width: 100%;"  icon="pi pi-lock" update="@form" actionListener="#{mantenimientoClienteView.actualizaContraseña()}" />
+                                </div>
+                                <div class="p-field p-col-12 p-md-12">
+                                    <p:commandButton value="#{msg['close']}" styleClass="ui-button-danger" 
+                                                     style="width: 100%;" actionListener="#{mantenimientoClienteView.resetFormChangePassword()}"
+                                                     icon="pi pi-times"  oncomplete="PF('dlgChangePassword').hide()"  />
+                                </div>
                             </div>
                         </div>
                     </div>
-
-                    <br/>
                     <center>
                         <p:graphicImage value="../images/logoJaio360.jpg" width="130" height="50" />
                     </center>

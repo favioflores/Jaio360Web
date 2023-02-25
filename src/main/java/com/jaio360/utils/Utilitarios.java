@@ -51,7 +51,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.NoSuchElementException;
 import java.util.ResourceBundle;
 import java.util.zip.ZipEntry;
@@ -142,6 +141,13 @@ public class Utilitarios extends BaseView implements Serializable {
 
         HttpSession ses = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
         return (UsuarioInfo) ses.getAttribute("usuarioInfo");
+
+    }
+    
+    public static UsuarioInfo obtenerUsuarioProxy() {
+
+        HttpSession ses = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
+        return (UsuarioInfo) ses.getAttribute("usuarioInfoProxy");
 
     }
 

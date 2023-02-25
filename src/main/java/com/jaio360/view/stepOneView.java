@@ -1,6 +1,7 @@
 package com.jaio360.view;
 
 import com.jaio360.domain.ProyectoInfo;
+import com.jaio360.domain.UsuarioInfo;
 import com.jaio360.utils.Utilitarios;
 import java.io.IOException;
 import java.io.Serializable;
@@ -21,7 +22,17 @@ public class stepOneView extends BaseView implements Serializable {
 
     private ProyectoInfo objProyectoInfo;
 
+    private UsuarioInfo objUsuarioInfoProxy;
+
     private Integer activeIndex;
+
+    public UsuarioInfo getObjUsuarioInfoProxy() {
+        return objUsuarioInfoProxy;
+    }
+
+    public void setObjUsuarioInfoProxy(UsuarioInfo objUsuarioInfoProxy) {
+        this.objUsuarioInfoProxy = objUsuarioInfoProxy;
+    }
 
     public ProyectoInfo getObjProyectoInfo() {
         return objProyectoInfo;
@@ -43,19 +54,23 @@ public class stepOneView extends BaseView implements Serializable {
     public void init() {
         objProyectoInfo = Utilitarios.obtenerProyecto();
 
+        if (Utilitarios.obtenerUsuarioProxy() != null) {
+            objUsuarioInfoProxy = Utilitarios.obtenerUsuario();
+        }
+
         if (Utilitarios.obtenerProyecto() != null) {
             try {
                 activeIndex = 0;
             } catch (Exception ex) {
-                log.error(ex);
+                mostrarError(log, ex);
             }
         } else {
             try {
                 FacesContext.getCurrentInstance().getExternalContext().redirect("admProyectos.jsf");
-            } catch (Exception ex) {
-                log.error(ex);
+            } catch (IOException ex) {
+                mostrarError(log, ex);
             }
-            
+
         }
     }
 
@@ -74,7 +89,7 @@ public class stepOneView extends BaseView implements Serializable {
             log.error(ex);
         }
     }
-    
+
     public void goToStep(Integer intStep) {
 
         try {
@@ -105,5 +120,5 @@ public class stepOneView extends BaseView implements Serializable {
         }
 
     }
-  
+
 }

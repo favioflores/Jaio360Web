@@ -36,35 +36,39 @@ public class AuthFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         try {
 
-            // check whether session variable is set
             HttpServletRequest req = (HttpServletRequest) request;
-            HttpServletResponse res = (HttpServletResponse) response;
+
             HttpSession ses = req.getSession(false);
 
-            /* EVADIR OBJETOS INNECESARIOS */
-            if (validaUri(req)) {
+            if (permissionToAccessFreely(req)) {
+                chain.doFilter(request, response);
+            } else {
 
-                String reqURI = req.getRequestURI();
-                if (reqURI.contains("/ui/login.jsf")
-                        || reqURI.contains("/ui/accountVerified.jsf")
-                        || reqURI.contains("/ui/accountNotExist.jsf")
-                        || reqURI.contains("/ui/recoveryPassword.jsf")
-                        || reqURI.contains("/ui/test.jsf")
-                        || reqURI.contains("/ui/accountVerifiedSuccess.jsf")
-                        || reqURI.contains("/ui/verifyAccount.jsf")) {
-                    chain.doFilter(request, response);
-                } else if (ses == null
-                        || ses.getAttribute("usuarioInfo") == null
-                        && !reqURI.contains("/public/")
-                        && !reqURI.contains("javax.faces.resource")) {   // user didn't log in but asking for a page that is not allowed so take user to login page
-                    log.debug("Session invalida");
-                    res.sendRedirect(req.getContextPath() + "/ui/sesionExpirada.jsf");  // Anonymous user. Redirect to login page
+                if (ses == null) {
+
+                    redirect(request, response);
+
                 } else {
-                    chain.doFilter(request, response);
+
+                    if (ses.getAttribute("usuarioInfoProxy") == null) {
+
+                        if (ses.getAttribute("usuarioInfo") == null) {
+                            redirect(request, response);
+                        } else {
+                            chain.doFilter(request, response);
+                        }
+
+                    } else {
+
+                        if (permissionOnlyToUserProxy(req)) {
+                            chain.doFilter(request, response);
+                        } else {
+                            redirect(request, response);
+                        }
+
+                    }
                 }
 
-            } else {
-                chain.doFilter(request, response);
             }
 
         } catch (IOException | ServletException t) {
@@ -77,16 +81,56 @@ public class AuthFilter implements Filter {
 
     }
 
-    public boolean validaUri(HttpServletRequest req) {
+    private void redirect(ServletRequest request, ServletResponse response) {
+        try {
+
+            HttpServletResponse res = (HttpServletResponse) response;
+            HttpServletRequest req = (HttpServletRequest) request;
+
+            HttpSession session = req.getSession(false);
+
+            session.removeAttribute("usuarioInfoProxy");
+            session.removeAttribute("usuarioInfo");
+            session.removeAttribute("proyectoInfo");
+
+            res.sendRedirect(req.getContextPath() + "/ui/sesionExpirada.jsf");  // Anonymous user. Redirect to login page
+        } catch (IOException e) {
+            log.error(e);
+        }
+    }
+
+    private boolean permissionToAccessFreely(HttpServletRequest req) {
 
         String strUri = req.getServletPath();
 
-        return !(strUri.endsWith(Constantes.STR_CSS)
+        return strUri.endsWith(Constantes.STR_CSS)
                 || strUri.endsWith(Constantes.STR_GIF)
                 || strUri.endsWith(Constantes.STR_PNG)
                 || strUri.endsWith(Constantes.STR_JPG)
                 || strUri.endsWith(Constantes.STR_HTM)
                 || strUri.endsWith(Constantes.STR_JS)
-                || strUri.endsWith(Constantes.STR_SWF));
+                || strUri.endsWith(Constantes.STR_SWF)
+                || strUri.contains("/ui/login.jsf")
+                || strUri.contains("/ui/accountVerified.jsf")
+                || strUri.contains("/ui/accountNotExist.jsf")
+                || strUri.contains("/ui/recoveryPassword.jsf")
+                || strUri.contains("/ui/sesionExpirada.jsf")
+                || strUri.contains("/ui/test.jsf")
+                || strUri.contains("/ui/accountVerifiedSuccess.jsf")
+                || strUri.contains("/ui/verifyAccount.jsf")
+                || strUri.contains("/public/")
+                || strUri.contains("javax.faces.resource");
+    }
+
+    private boolean permissionOnlyToUserProxy(HttpServletRequest req) {
+
+        String strUri = req.getServletPath();
+
+        return strUri.contains("/ui/stepOne.jsf")
+                || strUri.contains("/ui/stepTwo.jsf")
+                || strUri.contains("/ui/stepThree.jsf")
+                || strUri.contains("/ui/stepFour.jsf")
+                || strUri.contains("/ui/stepFive.jsf")
+                || strUri.contains("/ui/stepSix.jsf");
     }
 }

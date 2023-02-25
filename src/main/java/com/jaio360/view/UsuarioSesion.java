@@ -245,14 +245,6 @@ public class UsuarioSesion extends BaseView implements Serializable {
 
     }
 
-    public UsuarioInfo obtenerUsuarioInfo() {
-
-        HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
-
-        return (UsuarioInfo) session.getAttribute("usuarioInfo");
-
-    }
-
     public void enviarClaveCorreo() {
 
         try {
@@ -324,58 +316,6 @@ public class UsuarioSesion extends BaseView implements Serializable {
         } catch (IOException ex) {
             mostrarError(log, ex);
         }
-    }
-
-    private boolean captchaInvalido(String str) throws Exception {
-
-        String url = "https://www.google.com/recaptcha/api/siteverify?secret=6LeGgf4SAAAAAOfMo7YjjuDgNdRwsVG3HE5z2hp8&response=" + str;
-
-        URL obj = new URL(url);
-        HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-
-        con.setRequestMethod("GET");
-
-        con.setRequestProperty("User-Agent", "Mozilla/5.0");
-
-        con.getResponseCode();
-
-        BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-
-        String inputLine;
-
-        String rpta = "";
-
-        while ((inputLine = in.readLine()) != null) {
-            rpta += inputLine;
-        }
-
-        in.close();
-
-        if (rpta.indexOf("true") > 0) {
-            return false;
-        }
-
-        return true;
-
-    }
-
-    private boolean validaConexionGoogle() throws Exception {
-
-        try {
-
-            String url = "https://www.google.com/";
-
-            URL obj = new URL(url);
-            HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-
-            con.connect();
-
-        } catch (Exception e) {
-            log.error(e);
-            return false;
-        }
-        return true;
-
     }
 
     public void timeout() throws IOException {

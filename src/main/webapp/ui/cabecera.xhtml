@@ -10,7 +10,7 @@
         <ui:composition>
             <h:form>
 
-                <p:menubar id="menu" model="#{menuPrincipal.menuPrincipal}" >
+                <p:menubar id="menu" model="#{menuPrincipal.menuPrincipal}"  >
 
                     <f:facet name="options">
 
@@ -23,10 +23,6 @@
 
                     </f:facet>
                 </p:menubar>
-
-
-
-
 
                 <p:confirmDialog global="true" showEffect="drop" hideEffect="drop" responsive="true" width="400"  >
                     <p:commandButton type="button" value="#{msg['cabecera.logout.confirmacion.si']}" styleClass="ui-confirmdialog-yes" />

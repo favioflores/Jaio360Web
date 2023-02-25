@@ -318,7 +318,7 @@ public class ListasPrincipalView extends BaseView implements Serializable {
 
         UsuarioSesion objUsuarioSesion = new UsuarioSesion();
 
-        UsuarioInfo objUsuarioInfo = objUsuarioSesion.obtenerUsuarioInfo();
+        UsuarioInfo objUsuarioInfo = Utilitarios.obtenerUsuario();
 
         buscarProyectos();
         //poblarListaRedes(objUsuarioInfo);

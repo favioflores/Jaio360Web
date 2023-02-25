@@ -11,6 +11,7 @@
 
     <ui:define name="cabecera">
         <ui:include src="cabecera.xhtml" />
+        <p:staticMessage severity="warn" summary="#{msg['label.proxy.mode.client']}" detail="#{stepOneView.objUsuarioInfoProxy.strEmail}" style="width: 100%; margin-top: 5px; margin-left: 2px; margin-right: 2px;"/>
         <p:staticMessage severity="info" summary="#{msg['info']}" detail="#{msg['project.info']} #{stepOneView.objProyectoInfo.strDescNombre}" style="width: 100%; margin-top: 5px; margin-left: 2px; margin-right: 2px;"/>
     </ui:define>
 
