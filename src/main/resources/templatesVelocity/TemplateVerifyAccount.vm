@@ -169,7 +169,7 @@
                                                     <td>
                                                         <div class="divDatos">
                                                             $TEMPLATEVERIFICACIONPARRAFO2 
-								<a href="https://www.jaio360-app.com/verifyAccount.jsf?email=$EMAIL">$TEMPLATEVERIFICACIONLINK</a>
+								<a href="$URL/ui/verifyAccount.jsf?email=$EMAIL">$TEMPLATEVERIFICACIONLINK</a>
                                                         </div>
                                                     </td>
                                                     <td>&nbsp;</td>

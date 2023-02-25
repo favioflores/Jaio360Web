@@ -40,6 +40,7 @@ public class Constantes {
     public static Integer INT_LONGITUD_ARCHIVOS = 20;
 
     public static Integer INT_ESTADO_ELEMENTO_ACTIVO = 1;
+    public static Integer INT_ET_URL_AMBIENTE = 213;
     public static Integer INT_ET_ESTADO_NOTIFICACION_ENVIADO = 55;
     public static Integer INT_ET_ESTADO_NOTIFICACION_CON_ERROR = 211;
     public static Integer INT_ET_ESTADO_NOTIFICACION_PENDIENTE = 56;

@@ -44,6 +44,7 @@ import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.exception.MethodInvocationException;
 import org.apache.velocity.exception.ParseErrorException;
 import org.apache.velocity.exception.ResourceNotFoundException;
+import org.hibernate.HibernateException;
 import org.primefaces.PrimeFaces;
 
 @ManagedBean(name = "mantenimientoClienteView")
@@ -333,17 +334,6 @@ public class MantenimientoClienteView extends BaseView implements Serializable {
 
     }
 
-    public void abrirPanel() {
-
-        Map<String, Object> options = new HashMap<String, Object>();
-        options.put("modal", true);
-        options.put("resizable", false);
-        //options.put("contentHeight", 500);
-        //options.put("style", "width: auto !important");
-
-        PrimeFaces.current().dialog().openDynamic("crearUsuario", options, null);
-    }
-
     public void usuarioCreado() {
         init();
         FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Correcto", "El usuario fue creado exitosamente");
@@ -496,7 +486,7 @@ public class MantenimientoClienteView extends BaseView implements Serializable {
             ManageUserRelation objManageUserRelation = objUsuarioDAO.verifyClientForVerification(objUsuario.getStrEmail());
             renewToken(objManageUserRelation);
             sendMailForVerification(objManageUserRelation, objUsuario.getUsuario());
-        } catch (Exception e) {
+        } catch (HibernateException e) {
             mostrarError(log, e);
         }
 
@@ -531,6 +521,7 @@ public class MantenimientoClienteView extends BaseView implements Serializable {
             context.put("TEMPLATEVERIFICACIONPARRAFO5", msg("TEMPLATEVERIFICACIONPARRAFO5"));
             context.put("TEMPLATEVERIFICACIONPARRAFO6", msg("TEMPLATEVERIFICACIONPARRAFO6"));
             context.put("TEMPLATEVERIFICACIONLINK", msg("TEMPLATEVERIFICACIONLINK"));
+            context.put("URL", objElementoDAO.obtenElemento(Constantes.INT_ET_URL_AMBIENTE));
             context.put("EMAIL", objUsuario.getUsIdMail());
             context.put("COUNTRYMANAGER", Utilitarios.obtenerUsuario().getStrDescripcion());
 
