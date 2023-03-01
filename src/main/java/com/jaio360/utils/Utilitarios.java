@@ -143,7 +143,7 @@ public class Utilitarios extends BaseView implements Serializable {
         return (UsuarioInfo) ses.getAttribute("usuarioInfo");
 
     }
-    
+
     public static UsuarioInfo obtenerUsuarioProxy() {
 
         HttpSession ses = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
@@ -175,7 +175,7 @@ public class Utilitarios extends BaseView implements Serializable {
 
             Proyecto objProyecto = (Proyecto) itLstProyectos.next();
 
-            objProyectoInfo = ListasPrincipalView.setearProyecto(objProyecto, objProyectoInfo);
+            objProyectoInfo = setearProyecto(objProyecto, objProyectoInfo);
 
         } else {
             return false;
@@ -256,6 +256,70 @@ public class Utilitarios extends BaseView implements Serializable {
             }
 
             return strCadena.toUpperCase().trim();
+
+        } else {
+            return Constantes.strVacio;
+        }
+
+    }
+
+    public static ProyectoInfo setearProyecto(Proyecto objProyecto, ProyectoInfo objProyectoInfo) {
+
+        objProyectoInfo = new ProyectoInfo();
+
+        objProyectoInfo.setIntIdProyecto(objProyecto.getPoIdProyectoPk());
+        objProyectoInfo.setStrDescNombre(objProyecto.getPoTxDescripcion());
+        objProyectoInfo.setIntIdMetodologia(objProyecto.getPoIdMetodologia());
+        objProyectoInfo.setIntIdEstado(objProyecto.getPoIdEstado());
+        objProyectoInfo.setStrDescEstado(msg(objProyecto.getPoIdEstado().toString()));
+        objProyectoInfo.setDtFechaCreacion(Utilitarios.convertDateToLocalDate(objProyecto.getPoFeRegistro()));
+        objProyectoInfo.setDtFechaEjecucion(objProyecto.getPoFeEjecucion());
+        objProyectoInfo.setStrMotivo(objProyecto.getPoTxMotivo());
+        objProyectoInfo.setBoOculto(objProyecto.getPoInOculto());
+
+        return objProyectoInfo;
+
+    }
+
+    public static void goToProject(ProyectoInfo objProyectoInfo, UsuarioInfo objUsuarioInfo, UsuarioInfo objUsuarioInfoProxy, HttpSession session) {
+
+        try {
+
+            if (objUsuarioInfoProxy != null) {
+                session.removeAttribute("usuarioInfoProxy");
+                session.setAttribute("usuarioInfoProxy", objUsuarioInfoProxy);
+            }
+
+            if (objUsuarioInfo != null) {
+                session.removeAttribute("usuarioInfo");
+                session.setAttribute("usuarioInfo", objUsuarioInfo);
+            }
+            
+            session.removeAttribute("proyectoInfo");
+            session.setAttribute("proyectoInfo", objProyectoInfo);
+
+            if (objProyectoInfo.getIntIdEstado().equals(Constantes.INT_ET_ESTADO_PROYECTO_EN_EJECUCION)) {
+                FacesContext.getCurrentInstance().getExternalContext().redirect("stepFive.jsf");
+            } else if (objProyectoInfo.getIntIdEstado().equals(Constantes.INT_ET_ESTADO_PROYECTO_TERMINADO)) {
+                FacesContext.getCurrentInstance().getExternalContext().redirect("stepSix.jsf");
+            } else {
+                FacesContext.getCurrentInstance().getExternalContext().redirect("stepOne.jsf");
+            }
+
+        } catch (IOException ex) {
+            mostrarError(log, ex);
+        }
+    }
+
+    public static String limpiarTextoEmail(String strCadena) {
+
+        if (noEsNuloOVacio(strCadena)) {
+
+            while (strCadena.contains(Constantes.strEspacio)) {
+                strCadena = strCadena.replaceAll(Constantes.strEspacio, Constantes.strVacio);
+            }
+
+            return strCadena.toLowerCase().trim();
 
         } else {
             return Constantes.strVacio;

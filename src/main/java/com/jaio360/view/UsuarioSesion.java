@@ -15,19 +15,10 @@ import com.jaio360.orm.Usuario;
 import com.jaio360.utils.Constantes;
 import com.jaio360.utils.EncryptDecrypt;
 import com.jaio360.utils.Utilitarios;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.Serializable;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
 import javax.annotation.PostConstruct;
@@ -114,89 +105,59 @@ public class UsuarioSesion extends BaseView implements Serializable {
 
     public void iniciarSesion() throws Exception {
 
-        FacesMessage message = null;
-
-        Map<String, String> params = FacesContext.getCurrentInstance()
-                .getExternalContext().getRequestParameterMap();
-        String captha = params.get("g-recaptcha-response");
-
-        boolean blValido = false;
-
         HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
         String ipAddress = request.getRemoteAddr();
-        /*
-        if (!ipAddress.equals("127.0.0.1")) {
-            if(validaConexionGoogle()){
-                if(captchaInvalido(captha)){
-                    message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error de inicio de sesion", "Captcha invalido");
-                    FacesContext.getCurrentInstance().addMessage(null, message);
-                }else{
-                    blValido = true;
-                }
-            }else{
-                blValido = true;
-            }
-        }else{
-            blValido = true;
-        }*/
 
-        if (true) {
-            //if(blValido){
+        try {
 
-            try {
+            if (usuario.isEmpty() || contraseña.isEmpty()) {
+                mostrarAlertaError("login.error");
+            } else {
+                UsuarioDAO objUsuarioDAO = new UsuarioDAO();
 
-                if (usuario.isEmpty() || contraseña.isEmpty()) {
-                    message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Usuario y contraseña requeridos", null);
+                EncryptDecrypt objEncryptDecrypt = new EncryptDecrypt();
+
+                Usuario objUsuario = objUsuarioDAO.iniciaSesion(usuario.trim());
+
+                if (objUsuario == null) {
+
+                    usuario = Constantes.strVacio;
+                    contraseña = Constantes.strVacio;
+
+                    mostrarAlertaError("login.error");
+
+                } else if (!contraseña.trim().equals(objEncryptDecrypt.decrypt(objUsuario.getUsTxContrasenia()))) {
+
+                    usuario = Constantes.strVacio;
+                    contraseña = Constantes.strVacio;
+
+                    usuarioInfo = new UsuarioInfo(objUsuario, null, true);
+
+                    mostrarAlertaError("login.error");
+
                 } else {
-                    UsuarioDAO objUsuarioDAO = new UsuarioDAO();
 
-                    EncryptDecrypt objEncryptDecrypt = new EncryptDecrypt();
+                    usuarioInfo = new UsuarioInfo(objUsuario, null, true);
+                    usuarioInfo.setTimeClient(this.timeClient);
 
-                    Usuario objUsuario = objUsuarioDAO.iniciaSesion(usuario.trim());
+                    registraHistorialAcceso(objUsuario.getUsIdCuentaPk(), true, new Date(), null, null);
 
-                    if (objUsuario == null) {
+                    HistorialAccesoDAO objHistorialAccesoDAO = new HistorialAccesoDAO();
+                    usuarioInfo.setStrIntentosErrados(objHistorialAccesoDAO.obtenIntentosFallidos(usuarioInfo.getIntUsuarioPk(), usuarioInfo.getIntHistorialPk()).toString());
 
-                        usuario = Constantes.strVacio;
-                        contraseña = Constantes.strVacio;
-                        message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Usuario o contraseña incorrectos", null);
+                    HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
 
-                    } else if (!contraseña.trim().equals(objEncryptDecrypt.decrypt(objUsuario.getUsTxContrasenia()))) {
+                    session.setAttribute("usuarioInfo", usuarioInfo);
 
-                        usuario = Constantes.strVacio;
-                        contraseña = Constantes.strVacio;
+                    FacesContext.getCurrentInstance().getExternalContext().redirect("welcome.jsf");
 
-                        usuarioInfo = new UsuarioInfo(objUsuario, null, true);
-
-                        registraHistorialAcceso(objUsuario.getUsIdCuentaPk(), true, new Date(), null, null);
-                        message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Usuario o contraseña incorrectos", null);
-
-                    } else {
-
-                        usuarioInfo = new UsuarioInfo(objUsuario, null, true);
-                        usuarioInfo.setTimeClient(this.timeClient);
-
-                        registraHistorialAcceso(objUsuario.getUsIdCuentaPk(), true, new Date(), null, null);
-
-                        HistorialAccesoDAO objHistorialAccesoDAO = new HistorialAccesoDAO();
-                        usuarioInfo.setStrIntentosErrados(objHistorialAccesoDAO.obtenIntentosFallidos(usuarioInfo.getIntUsuarioPk(), usuarioInfo.getIntHistorialPk()).toString());
-
-                        HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
-
-                        session.setAttribute("usuarioInfo", usuarioInfo);
-
-                        FacesContext.getCurrentInstance().getExternalContext().redirect("welcome.jsf");
-
-                    }
                 }
-
-            } catch (Exception ex) {
-                log.error(ex);
             }
 
-            if (message != null) {
-                FacesContext.getCurrentInstance().addMessage(null, message);
-            }
+        } catch (Exception ex) {
+            mostrarError(log, ex);
         }
+
     }
 
     public void cerrarSesion() {
@@ -204,13 +165,32 @@ public class UsuarioSesion extends BaseView implements Serializable {
         try {
 
             HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
-            usuarioInfo = (UsuarioInfo) session.getAttribute("usuarioInfo");
+
+            UsuarioInfo objUsuarioProxy = Utilitarios.obtenerUsuarioProxy();
+
+            if (objUsuarioProxy != null) {
+                objUsuarioProxy = (UsuarioInfo) session.getAttribute("usuarioInfoProxy");
+                registraHistorialAcceso(objUsuarioProxy.getIntUsuarioPk(), true, null, new Date(), objUsuarioProxy.getIntHistorialPk());
+            } else {
+                usuarioInfo = (UsuarioInfo) session.getAttribute("usuarioInfo");
+                registraHistorialAcceso(usuarioInfo.getIntUsuarioPk(), true, null, new Date(), usuarioInfo.getIntHistorialPk());
+            }
+
             session.invalidate();
-            registraHistorialAcceso(usuarioInfo.getIntUsuarioPk(), true, null, new Date(), usuarioInfo.getIntHistorialPk());
+
             FacesContext.getCurrentInstance().getExternalContext().redirect("login.jsf");
 
         } catch (IOException ex) {
-            log.error(ex);
+            if (usuarioInfo == null) {
+                try {
+                    FacesContext.getCurrentInstance().getExternalContext().redirect("login.jsf");
+                } catch (IOException exx) {
+                    mostrarError(log, exx);
+                }
+            } else {
+                mostrarError(log, ex);
+            }
+
         }
 
     }

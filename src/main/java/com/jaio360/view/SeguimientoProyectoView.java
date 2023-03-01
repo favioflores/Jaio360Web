@@ -786,8 +786,7 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
 
             ProyectoDAO objProyectoDAO = new ProyectoDAO();
 
-            //List lstNotificaciones = objProyectoDAO.iniciarProyecto(lstParticipante, lstRedEvaluacion, lstCuestionario, lstCuestionarioEvaluado, lstRelacion, lstRelacionParticipante);
-            boolean result = objProyectoDAO.iniciarProyecto(Utilitarios.obtenerProyecto().getIntIdProyecto());
+            boolean result = objProyectoDAO.iniciarProyecto(Utilitarios.obtenerProyecto().getIntIdProyecto(), Utilitarios.obtenerUsuario().getIntUsuarioPk());
 
             if (result) {
                 Proyecto objProyecto = objProyectoDAO.obtenProyecto(Utilitarios.obtenerProyecto().getIntIdProyecto());
@@ -1341,6 +1340,8 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
 
             if (this.intLicenciasIndividualesRequerido <= objUsuarioSaldo.getUsNrDisponibleIndividual()
                     && this.intLicenciasMasivasRequerido <= objUsuarioSaldo.getUsNrDisponibleMasivo()) {
+                
+                iniciarProceso();
 
                 List<Movimiento> lstMovements = new ArrayList<>();
 
@@ -1370,9 +1371,6 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
                 objUsuario.setUsIdCuentaPk(Utilitarios.obtenerUsuario().getIntUsuarioPk());
                 String strResult = ExecutorBalanceMovement.getInstance().execute(lstMovements, objUsuario);
 
-                if (strResult == null) {
-                    iniciarProceso();
-                }
 
             } else {
                 mostrarAlertaError("step5.insufficient.licenses");

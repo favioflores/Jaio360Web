@@ -34,18 +34,22 @@
                             <div class="p-field p-grid">
                                 <div class="p-col">
                                     <p:outputLabel for="@next" value="#{msg['email']}" />
-                                    <p:inputText id="idMail" type="text" value="#{mantenimientoClienteView.usIdMail}" onchange="toLowerCase(this);" required="true" maxlength="100" disabled="#{mantenimientoClienteView.isEdit}" >
+                                    <p:inputText id="idMail" type="text" value="#{mantenimientoClienteView.usIdMail}" onchange="toLowerCase(this);" 
+                                                 required="true" maxlength="100" disabled="#{mantenimientoClienteView.isEdit}" 
+                                                 onblur="rcVerifyAccount()"
+                                                 >
                                         <f:validator validatorId="validarCorreo" />
                                     </p:inputText>
                                 </div>
                             </div>
                         </div>
-
+                        <p:remoteCommand name="rcVerifyAccount" update="formUsuario" autoRun="false"
+                                         actionListener="#{mantenimientoClienteView.verificarUsuario()}" process="@this,idMail,growlFormUduario"  />
                         <div class="p-field p-col-12 p-md-4">
                             <div class="p-field p-grid">
                                 <div class="p-col">
                                     <p:outputLabel for="@next" value="#{msg['name.user']}" />
-                                    <p:inputText id="strDescEmpresa" value="#{mantenimientoClienteView.usTxNombreRazonsocial}" required="true" maxlength="100" >
+                                    <p:inputText id="strDescEmpresa" value="#{mantenimientoClienteView.usTxNombreRazonsocial}" disabled="#{!mantenimientoClienteView.isValidAccount}" required="true" maxlength="100" >
                                         <f:validator validatorId="validaTextoIngresado" />
                                     </p:inputText>
                                 </div>
@@ -56,7 +60,7 @@
                             <div class="p-field p-grid">
                                 <div class="p-col">
                                     <p:outputLabel for="@next" value="#{msg['company.name']}" />
-                                    <p:inputText id="strRazonSocial" type="text" value="#{mantenimientoClienteView.usTxDescripcionEmpresa}" required="true" maxlength="100" >
+                                    <p:inputText id="strRazonSocial" type="text" value="#{mantenimientoClienteView.usTxDescripcionEmpresa}" disabled="#{!mantenimientoClienteView.isValidAccount}" required="true" maxlength="100" >
                                         <f:validator validatorId="validaTextoIngresado" />
                                     </p:inputText>
                                 </div>
@@ -66,7 +70,7 @@
                             <div class="p-field p-grid">
                                 <div class="p-col">
                                     <p:outputLabel for="@next" value="#{msg['country']}"  />
-                                    <p:selectOneMenu id="idPais" value="#{mantenimientoClienteView.pais}" required="true" 
+                                    <p:selectOneMenu id="idPais" value="#{mantenimientoClienteView.pais}" required="true" disabled="#{!mantenimientoClienteView.isValidAccount}"
                                                      >
                                         <f:selectItem itemLabel="#{msg['please.select']}" itemValue="" />
                                         <f:selectItems value="#{mantenimientoClienteView.lstPaises}"  var="pais" itemLabel="#{pais.ubTxDescripcion}" itemValue="#{pais.ubIdUbigeoPk}" />
@@ -80,7 +84,7 @@
                             <div class="p-field p-grid">
                                 <div class="p-col">
                                     <p:outputLabel for="@next" value="#{msg['city']}"/>
-                                    <p:selectOneMenu id="idCiudad" value="#{mantenimientoClienteView.ciudad}" label="Ciudad" required="true" disabled="#{mantenimientoClienteView.pais==null?true:false}" >
+                                    <p:selectOneMenu id="idCiudad" value="#{mantenimientoClienteView.ciudad}" label="Ciudad" required="true" disabled="#{mantenimientoClienteView.pais==null?true:false}"  >
                                         <f:selectItem itemLabel="#{msg['please.select']}" itemValue="" />
                                         <f:selectItems value="#{mantenimientoClienteView.lstCiudades}"  var="ciudad" itemLabel="#{ciudad.ubTxDescripcion}" itemValue="#{ciudad.ubIdUbigeoPk}" />
                                     </p:selectOneMenu>
@@ -91,7 +95,7 @@
                         <div class="p-col-12 p-col-12 p-md-12">
                             <div class="p-field p-formgrid p-grid">
                                 <div class="p-field p-col">
-                                    <p:commandButton value="#{msg['save']}" update="formUsuario,formMntCuenta" process="formUsuario" icon="pi pi-check" actionListener="#{mantenimientoClienteView.guardarUsuario}" >
+                                    <p:commandButton value="#{msg['save']}" update="formUsuario,formMntCuenta" process="formUsuario" icon="pi pi-check" actionListener="#{mantenimientoClienteView.guardarUsuario}" disabled="#{!mantenimientoClienteView.isValidAccount}" >
                                         <p:confirm header="#{msg['confirmation']}" message="#{msg['message.prev.save.client']}" icon="pi pi-info-circle" />
                                     </p:commandButton>
                                 </div>
@@ -191,17 +195,17 @@
                             </p:column>
 
                             <p:column headerText="#{msg['actions']}" style="text-align: center;">
-                                <p:commandLink value="#{msg['send.verification']}" update="formUsuario" immediate="true" process="@this" actionListener="#{mantenimientoClienteView.resendMailForVerification(usu)}" disabled="#{usu.strEstadoId==13}" >
+                                <p:commandLink value="#{msg['send.verification']}" update="formMntCuenta" immediate="true" process="@this" actionListener="#{mantenimientoClienteView.resendMailForVerification(usu)}" disabled="#{usu.strEstadoId==13}" >
                                     <p:confirm header="#{msg['confirmation']}" message="#{msg['sure.send.mail.for.verification']}" icon="pi pi-info-circle" />
                                 </p:commandLink>
                                 /
-                                <p:commandLink  value="#{msg['delete']}" update="formUsuario" immediate="true" disabled="#{usu.strEstadoId==13}" actionListener="#{mantenimientoClienteView.eliminarCliente(usu)}"  />
+                                <p:commandLink  value="#{msg['delete']}" update="formMntCuenta" immediate="true" disabled="#{usu.strEstadoId==13}" actionListener="#{mantenimientoClienteView.eliminarCliente(usu)}"  />
                                 /
                                 <p:commandLink update="formUsuario" value="#{msg['actualizar.usuario']}" immediate="true" process="@this" actionListener="#{mantenimientoClienteView.editarUsuario(usu)}" />
                                 /
                                 <p:commandLink  value="#{msg['change.password']}" update="formUsuario, formChangePassword" immediate="true" oncomplete="PF('dlgChangePassword').show()" actionListener="#{mantenimientoClienteView.changePassword(usu)}" />
                                 /
-                                <p:commandLink  value="#{msg['mode.proxy']}" update="formUsuario" immediate="true" actionListener="#{mantenimientoClienteView.goToProject(usu)}" />
+                                <p:commandLink  value="#{msg['mode.proxy']}" update="formUsuario, formProjectsClient" immediate="true" oncomplete="PF('dlgProjectsClient').show()" actionListener="#{mantenimientoClienteView.getListProjectClient(usu)}" />
 
 
                             </p:column>
@@ -257,6 +261,103 @@
                 </p:panel>
             </h:form>
         </p:dialog>      
+
+        <p:dialog widgetVar="dlgProjectsClient" header="#{msg['projects.client']}" width="80%"
+                  draggable="false" closable="true" hideEffect="drop" closeOnEscape="true" showEffect="drop" 
+                  modal="true"
+                  resizable="false" >
+            <h:form id="formProjectsClient">
+                <p:growl id="dlgGrowl" showDetail="false" life="4000" />
+                <p:panel>
+
+                    <div class="ui-fluid p-formgrid p-grid">
+
+                        <div class="p-field p-col-12 p-md-12">
+                            <div class="p-field">
+                                <p:outputLabel value="#{msg['projects.client.for.proxy']}"></p:outputLabel>
+                            </div>
+                            <div class="p-field">
+                                <div class="p-field p-col-12 p-md-12">
+                                    <p:dataTable 
+                                        id="idLstProjectsClient"
+                                        var="project"
+                                        value="#{mantenimientoClienteView.lstProjectsClient}" 
+                                        rows="5"
+                                        size="small"
+                                        paginator="true"  
+                                        resizeMode="fit"
+                                        paginatorPosition="bottom"
+                                        paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                        rowsPerPageTemplate="5,10,15"                                 
+                                        widgetVar="usu"
+                                        emptyMessage="#{msg['no.items']}"
+                                        rowKey="#{project.IdProject}"
+                                        rowIndexVar="index"
+                                        >    
+
+                                        <p:column style="width: 40px;">
+                                            <f:facet name="header">
+                                                <h:outputText value="#" />
+                                            </f:facet>
+                                            <h:outputText 
+                                                value="#{index + 1}" />
+                                        </p:column> 
+
+
+                                        <p:column headerText="#{msg['id']}" style="text-align: center;">
+                                            <h:outputText value="#{project.intIdProyecto}" />
+                                        </p:column>
+                                        <p:column headerText="#{msg['adm.nombre']}" style="text-align: center;">
+                                            <h:outputText value="#{project.strDescNombre}" />
+                                        </p:column>
+                                        <p:column headerText="#{msg['adm.descripcion']}" style="text-align: center;">
+                                            <h:outputText value="#{project.strMotivo}" />
+                                        </p:column>
+                                        <p:column headerText="#{msg['archivar']}" style="text-align: center;">
+                                            <h:outputText value="#{project.boOculto==true?msg['yes']:msg['no']}" />
+                                        </p:column>
+                                        <p:column headerText="#{msg['proxy']}" style="text-align: center;">
+                                            <p:commandButton value="#{msg['proxy.join.project']}" style="width: 100%;"  icon="pi pi-lock" update="@form" actionListener="#{mantenimientoClienteView.goToProject(project)}" >
+                                                <p:confirm header="#{msg['confirmation']}" message="#{msg['conditions.proxy.mode']}" icon="pi pi-info-circle" />
+                                            </p:commandButton>
+                                        </p:column>
+                                        <!--
+                                                                                <p:column headerText="#{msg['name.user']}" style="text-align: center;">
+                                                                                    <h:outputText value="#{usu.strDescripcion}" />
+                                                                                </p:column>
+                                                                                <p:column  headerText="#{msg['company.name']}" style="text-align: center;"> 
+                                                                                    <h:outputText value="#{usu.strEmpresaDesc}" />
+                                                                                </p:column>
+                                        
+                                                                                <p:column headerText="#{msg['state']}" style="text-align: center; width: 80px; ">
+                                                                                    <p:tag  value="#{usu.strEstadoId==13?msg['complete.verification']:msg['pending.verification']}" 
+                                                                                            severity="#{usu.strEstadoId==13?'success':'danger'}" />
+                                                                                </p:column>
+                                                                                <p:column headerText="#{msg['manage.expired.hours']}" style="text-align: center;">                                   
+                                                                                    <h:outputText value="#{usu.strTimeRemaining}" />
+                                                                                </p:column>
+                                        
+
+                                        -->
+                                    </p:dataTable>
+                                </div>              
+
+                                <!--
+                                <div class="p-field p-col-12 p-md-12">
+                                    <p:commandButton value="#{msg['change']}" style="width: 100%;"  icon="pi pi-lock" update="@form" actionListener="#{mantenimientoClienteView.goToProject(usu)}" />
+                                </div>
+                                <div class="p-field p-col-12 p-md-12">
+                                    <p:commandButton value="#{msg['close']}" styleClass="ui-button-danger" 
+                                                     style="width: 100%;" actionListener="#{mantenimientoClienteView.resetFormChangePassword()}"
+                                                     icon="pi pi-times"  oncomplete="PF('dlgChangePassword').hide()"  />
+                                </div>
+                                -->
+                            </div>
+                        </div>
+                    </div>
+                </p:panel>
+            </h:form>
+        </p:dialog>   
 
     </ui:define>
 

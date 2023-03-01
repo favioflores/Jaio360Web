@@ -53,7 +53,7 @@ public class ActualizaDatosView extends BaseView implements Serializable {
     private String strCorreo;
     private Integer pais;
     private Integer ciudad;
-    
+
     private ElementoDAO objElementoDAO = new ElementoDAO();
     /*
     private String cmbTema;
@@ -135,7 +135,6 @@ public class ActualizaDatosView extends BaseView implements Serializable {
     public void setpCorreo(String pCorreo) {
         this.pCorreo = pCorreo;
     }
-
 
     public String getStrNombre() {
         return strNombre;
@@ -306,23 +305,28 @@ public class ActualizaDatosView extends BaseView implements Serializable {
 
     public void actualizaPersonales() {
 
-        UsuarioDAO objUsuarioDAO = new UsuarioDAO();
+        try {
 
-        Usuario objUsuario = objUsuarioDAO.obtenUsuario(Utilitarios.obtenerUsuario().getIntUsuarioPk());
+            UsuarioDAO objUsuarioDAO = new UsuarioDAO();
 
-        Ubigeo objUbigeo = new Ubigeo();
-        objUbigeo.setUbIdUbigeoPk(ciudad);
+            Usuario objUsuario = objUsuarioDAO.obtenUsuario(Utilitarios.obtenerUsuario().getIntUsuarioPk());
 
-        objUsuario.setUsTxNombreRazonsocial(strNombre);
-        objUsuario.setUbigeo(objUbigeo);
-        objUsuario.setUsTxDocumento(strDocumento);
+            Ubigeo objUbigeo = new Ubigeo();
+            objUbigeo.setUbIdUbigeoPk(ciudad);
 
-        objUsuarioDAO.actualizaUsuario(objUsuario);
+            objUsuario.setUsTxNombreRazonsocial(strNombre);
+            objUsuario.setUbigeo(objUbigeo);
+            objUsuario.setUsTxDocumento(strDocumento);
 
-        refrescarUsuarioSession(objUsuario);
+            objUsuarioDAO.actualizaUsuario(objUsuario);
 
-        FacesContext context = FacesContext.getCurrentInstance();
-        context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Actualización de datos", "Se realizó la actualización correctamente"));
+            refrescarUsuarioSession(objUsuario);
+
+            mostrarAlertaInfo("profile.updated.success");
+        } catch (Exception e) {
+            mostrarError(log, e);
+        }
+
     }
 
     public void actualizaContraseña() {
@@ -342,86 +346,38 @@ public class ActualizaDatosView extends BaseView implements Serializable {
                 objUsuario.setUsTxContrasenia(objEncryptDecrypt.encrypt(strContraseniaNueva));
                 objUsuarioDAO.actualizaUsuario(objUsuario);
 
-                mostrarAlertaInfo("success");
+                mostrarAlertaInfo("profile.updated.success");
 
             }
         } catch (Exception e) {
             mostrarError(log, e);
-            mostrarAlertaFatal("error.was.occurred");
         }
     }
 
     public void actualizaEmpresa() {
 
-        UsuarioDAO objUsuarioDAO = new UsuarioDAO();
+        try {
 
-        Usuario objUsuario = objUsuarioDAO.obtenUsuario(Utilitarios.obtenerUsuario().getIntUsuarioPk());
+            UsuarioDAO objUsuarioDAO = new UsuarioDAO();
 
-        objUsuario.setUsTxDescripcionEmpresa(strRazonSocial);
-        objUsuario.setUsIdTipoDocumento(intIdTipoDocumento);
-        objUsuario.setUsTxDocumento(strDocumento);
+            Usuario objUsuario = objUsuarioDAO.obtenUsuario(Utilitarios.obtenerUsuario().getIntUsuarioPk());
 
-        objUsuarioDAO.actualizaUsuario(objUsuario);
+            objUsuario.setUsTxDescripcionEmpresa(strRazonSocial);
+            objUsuario.setUsIdTipoDocumento(intIdTipoDocumento);
+            objUsuario.setUsTxDocumento(strDocumento);
 
-        refrescarUsuarioSession(objUsuario);
+            objUsuarioDAO.actualizaUsuario(objUsuario);
 
-    }
+            refrescarUsuarioSession(objUsuario);
 
-    private void cargarTemas() {
+            mostrarAlertaInfo("profile.updated.success");
 
-        lstTemas = new ArrayList<>();
-        lstTemas.add(new Tema(0, "Afterdark", "afterdark"));
-        lstTemas.add(new Tema(1, "Afternoon", "afternoon"));
-        lstTemas.add(new Tema(2, "Afterwork", "afterwork"));
-        lstTemas.add(new Tema(3, "Aristo", "aristo"));
-        lstTemas.add(new Tema(4, "Black-Tie", "black-tie"));
-        lstTemas.add(new Tema(5, "Blitzer", "blitzer"));
-        lstTemas.add(new Tema(6, "Bluesky", "bluesky"));
-        lstTemas.add(new Tema(7, "Bootstrap", "bootstrap"));
-        lstTemas.add(new Tema(8, "Casablanca", "casablanca"));
-        lstTemas.add(new Tema(9, "Cupertino", "cupertino"));
-        lstTemas.add(new Tema(10, "Cruze", "cruze"));
-        lstTemas.add(new Tema(11, "Dark-Hive", "dark-hive"));
-        lstTemas.add(new Tema(12, "Delta", "delta"));
-        lstTemas.add(new Tema(13, "Dot-Luv", "dot-luv"));
-        lstTemas.add(new Tema(14, "Eggplant", "eggplant"));
-        lstTemas.add(new Tema(15, "Excite-Bike", "excite-bike"));
-        lstTemas.add(new Tema(16, "Flick", "flick"));
-        lstTemas.add(new Tema(17, "Glass-X", "glass-x"));
-        lstTemas.add(new Tema(18, "Home", "home"));
-        lstTemas.add(new Tema(19, "Hot-Sneaks", "hot-sneaks"));
-        lstTemas.add(new Tema(20, "Humanity", "humanity"));
-        lstTemas.add(new Tema(21, "Le-Frog", "le-frog"));
-        lstTemas.add(new Tema(22, "MetroUI", "metroui"));
-        lstTemas.add(new Tema(23, "Midnight", "midnight"));
-        lstTemas.add(new Tema(24, "Mint-Choc", "mint-choc"));
-        lstTemas.add(new Tema(25, "Overcast", "overcast"));
-        lstTemas.add(new Tema(26, "Pepper-Grinder", "pepper-grinder"));
-        lstTemas.add(new Tema(27, "Redmond", "redmond"));
-        lstTemas.add(new Tema(28, "Rocket", "rocket"));
-        lstTemas.add(new Tema(29, "Sam", "sam"));
-        lstTemas.add(new Tema(30, "Smoothness", "smoothness"));
-        lstTemas.add(new Tema(31, "South-Street", "south-street"));
-        lstTemas.add(new Tema(32, "Start", "start"));
-        lstTemas.add(new Tema(32, "Sunny", "sunny"));
-        lstTemas.add(new Tema(33, "Swanky-Purse", "swanky-purse"));
-        lstTemas.add(new Tema(34, "Trontastic", "trontastic"));
-        lstTemas.add(new Tema(35, "UI-Darkness", "ui-darkness"));
-        lstTemas.add(new Tema(36, "UI-Lightness", "ui-lightness"));
-        lstTemas.add(new Tema(37, "Vader", "vader"));
-    }
-
-    /*
-    public void actualizaTema(){
-
-        if(Utilitarios.noEsNuloOVacio(cmbTema)){
-            PreferenciasView objPreferenciasView = new PreferenciasView();
-            objPreferenciasView.getTheme();
-            objPreferenciasView.setTheme(cmbTema);
-            objPreferenciasView.changeTheme();
+        } catch (Exception e) {
+            mostrarError(log, e);
         }
+
     }
-     */
+
     private void refrescarUsuarioSession(Usuario objUsuario) {
 
         UsuarioInfo usuarioInfo = new UsuarioInfo(objUsuario, null, true);

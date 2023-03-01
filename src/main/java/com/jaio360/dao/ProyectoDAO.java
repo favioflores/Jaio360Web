@@ -379,7 +379,7 @@ public class ProyectoDAO implements Serializable {
         throw new HibernateException("Ocurrió un error en la capa de acceso a datos", he);
     }
 
-    public boolean iniciarProyecto(Integer intIdProyecto) {
+    public boolean iniciarProyecto(Integer intIdProyecto, Integer intIdUsuario) {
         boolean result = true;
         try {
             iniciaOperacion();
@@ -490,6 +490,28 @@ public class ProyectoDAO implements Serializable {
                 sesion.save(objUsuarioNuevo);
 
             }
+
+            /* Relacionar Manager */
+            Query qryRelacionManager = sesion.createSQLQuery(
+                    "insert into jaio.manage_user_relation "
+                    + "select :idManager , fk_user, current_timestamp(), current_timestamp(), '00000', true, current_timestamp() "
+                    + "from ( "
+                    + "select distinct u.US_ID_CUENTA_PK as fk_user from ( "
+                    + "select p.PA_TX_CORREO as correo "
+                    + "from participante p "
+                    + "where p.PO_ID_PROYECTO_FK = :idProject "
+                    + "and p.PA_IN_AUTOEVALUAR = true "
+                    + "and p.PA_ID_ESTADO = 69 "
+                    + "union all "
+                    + "select re.RE_TX_CORREO as correo "
+                    + "from red_evaluacion re "
+                    + "where re.PO_ID_PROYECTO_FK = :idProject ) dat, "
+                    + "usuario u "
+                    + "where u.US_ID_MAIL = dat.correo "
+                    + ") det ");
+            qryRelacionManager.setInteger("idManager", intIdUsuario);
+            qryRelacionManager.setInteger("idProject", intIdProyecto);
+            qryRelacionManager.executeUpdate();
 
             tx.commit();
 

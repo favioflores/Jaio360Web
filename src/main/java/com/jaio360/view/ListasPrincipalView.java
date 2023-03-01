@@ -5,19 +5,16 @@
 package com.jaio360.view;
 
 import com.jaio360.dao.ProyectoDAO;
-import com.jaio360.dao.RelacionDAO;
 import com.jaio360.domain.EvaluacionesXEjecutar;
 import com.jaio360.domain.ProyectoInfo;
 import com.jaio360.domain.UsuarioInfo;
 import com.jaio360.orm.Proyecto;
-import com.jaio360.orm.Relacion;
 import com.jaio360.utils.Constantes;
 import com.jaio360.utils.Utilitarios;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -347,28 +344,15 @@ public class ListasPrincipalView extends BaseView implements Serializable {
 
     }
 
-    public void cargarProyecto(ProyectoInfo obj) {
+    public void cargarProyecto(ProyectoInfo objProyectoInfo) {
 
         try {
 
             HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
-            session.removeAttribute("proyectoInfo");
 
-            if (proyectoSeleccionado == null) {
-                session.setAttribute("proyectoInfo", obj);
-            } else {
-                session.setAttribute("proyectoInfo", proyectoSeleccionado);
-            }
+            Utilitarios.goToProject(objProyectoInfo, Utilitarios.obtenerUsuario(), null, session);
 
-            if (obj.getIntIdEstado().equals(Constantes.INT_ET_ESTADO_PROYECTO_EN_EJECUCION)) {
-                FacesContext.getCurrentInstance().getExternalContext().redirect("stepFive.jsf");
-            } else if (obj.getIntIdEstado().equals(Constantes.INT_ET_ESTADO_PROYECTO_TERMINADO)) {
-                FacesContext.getCurrentInstance().getExternalContext().redirect("stepSix.jsf");
-            } else {
-                FacesContext.getCurrentInstance().getExternalContext().redirect("stepOne.jsf");
-            }
-
-        } catch (IOException ex) {
+        } catch (Exception ex) {
             log.error(ex);
         }
 
@@ -400,7 +384,7 @@ public class ListasPrincipalView extends BaseView implements Serializable {
 
                 Proyecto objProyecto = (Proyecto) itLstProyectos.next();
 
-                lstProyectos.add(setearProyecto(objProyecto, objProyectoInfo));
+                lstProyectos.add(Utilitarios.setearProyecto(objProyecto, objProyectoInfo));
             }
 
             this.lstProyectos = lstProyectos;
@@ -536,24 +520,6 @@ public class ListasPrincipalView extends BaseView implements Serializable {
 
     }
 
-    public static ProyectoInfo setearProyecto(Proyecto objProyecto, ProyectoInfo objProyectoInfo) {
-
-        objProyectoInfo = new ProyectoInfo();
-
-        objProyectoInfo.setIntIdProyecto(objProyecto.getPoIdProyectoPk());
-        objProyectoInfo.setStrDescNombre(objProyecto.getPoTxDescripcion());
-        objProyectoInfo.setIntIdMetodologia(objProyecto.getPoIdMetodologia());
-        objProyectoInfo.setIntIdEstado(objProyecto.getPoIdEstado());
-        objProyectoInfo.setStrDescEstado(msg(objProyecto.getPoIdEstado().toString()));
-        objProyectoInfo.setDtFechaCreacion(Utilitarios.convertDateToLocalDate(objProyecto.getPoFeRegistro()));
-        objProyectoInfo.setDtFechaEjecucion(objProyecto.getPoFeEjecucion());
-        objProyectoInfo.setStrMotivo(objProyecto.getPoTxMotivo());
-        objProyectoInfo.setBoOculto(objProyecto.getPoInOculto());
-
-        return objProyectoInfo;
-
-    }
-
     public void irEvaluacion(ProyectoInfo objProyectoInfo) {
 
         try {
@@ -660,7 +626,7 @@ public class ListasPrincipalView extends BaseView implements Serializable {
 
                 Proyecto objProyecto = (Proyecto) itLstProyectos.next();
 
-                lstProyectos.add(setearProyecto(objProyecto, objProyectoInfo));
+                lstProyectos.add(Utilitarios.setearProyecto(objProyecto, objProyectoInfo));
             }
 
             this.lstProyectos = lstProyectos;

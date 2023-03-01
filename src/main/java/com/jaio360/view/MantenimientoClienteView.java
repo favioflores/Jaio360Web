@@ -26,11 +26,9 @@ import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Properties;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -50,7 +48,7 @@ import org.apache.velocity.exception.MethodInvocationException;
 import org.apache.velocity.exception.ParseErrorException;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.hibernate.HibernateException;
-import org.primefaces.PrimeFaces;
+import org.jfree.ui.about.ProjectInfo;
 
 @ManagedBean(name = "mantenimientoClienteView")
 @ViewScoped
@@ -82,6 +80,7 @@ public class MantenimientoClienteView extends BaseView implements Serializable {
     private Integer usIdTipoDocumento;
     private String usTxDocumento;
     private boolean isEdit;
+    private boolean isValidAccount;
     private Integer pais;
     private Integer ciudad;
     private String strContraseniaNueva;
@@ -89,9 +88,26 @@ public class MantenimientoClienteView extends BaseView implements Serializable {
     private Integer usIdCuentaPkCP;
     private String strContraseniaNuevaCP;
     private String strContraseniaReNuevaCP;
+    private List<ProyectoInfo> lstProjectsClient;
 
     private ElementoDAO objElementoDAO = new ElementoDAO();
     private UsuarioDAO objUsuarioDAO = new UsuarioDAO();
+
+    public List<ProyectoInfo> getLstProjectsClient() {
+        return lstProjectsClient;
+    }
+
+    public void setLstProjectsClient(List<ProyectoInfo> lstProjectsClient) {
+        this.lstProjectsClient = lstProjectsClient;
+    }
+
+    public boolean isIsValidAccount() {
+        return isValidAccount;
+    }
+
+    public void setIsValidAccount(boolean isValidAccount) {
+        this.isValidAccount = isValidAccount;
+    }
 
     public Integer getUsIdCuentaPkCP() {
         return usIdCuentaPkCP;
@@ -334,6 +350,8 @@ public class MantenimientoClienteView extends BaseView implements Serializable {
         poblarTipoDocumento();
         obtenerListaUsuarios();
 
+        this.isValidAccount = false;
+
         tipoUsuario = new String[3];
         tipoUsuario[0] = msg(Constantes.INT_ET_TIPO_USUARIO_MANAGING_DIRECTOR.toString());
         tipoUsuario[1] = msg(Constantes.INT_ET_TIPO_USUARIO_EVALUATED_EVALUATOR.toString());
@@ -387,8 +405,8 @@ public class MantenimientoClienteView extends BaseView implements Serializable {
 
             usIdCuentaPk = objUsuario.getIntUsuarioPk();
             usIdMail = objUsuario.getStrEmail();
-            usTxDescripcionEmpresa = objUsuario.getStrDescripcion();
-            usTxNombreRazonsocial = objUsuario.getStrEmpresaDesc();
+            usTxNombreRazonsocial = objUsuario.getStrDescripcion();
+            usTxDescripcionEmpresa = objUsuario.getStrEmpresaDesc();
             usIdTipoCuenta = objUsuario.getUsuario().getUsIdTipoCuenta();
             ciudad = objUsuario.getIntIdCiudad();
             pais = objUbigeoDAO.obtenPais(objUsuario.getIntIdCiudad());
@@ -420,7 +438,8 @@ public class MantenimientoClienteView extends BaseView implements Serializable {
             isEdit = true;
 
             objUsuarioDAO.eliminarRelacionCliente(Utilitarios.obtenerUsuario().getIntUsuarioPk(), objUsuario.getIntUsuarioPk());
-            objUsuarioDAO.eliminaUsuario(objUsuario.getUsuario());
+            objUsuario.getUsuario().setUsIdEstado(Constantes.INT_ET_ESTADO_USUARIO_ELIMINADO);
+            objUsuarioDAO.actualizaUsuario(objUsuario.getUsuario());
 
             obtenerListaUsuarios();
 
@@ -511,6 +530,70 @@ public class MantenimientoClienteView extends BaseView implements Serializable {
             }
 
         } catch (Exception e) {
+            mostrarError(log, e);
+        }
+
+    }
+
+    public void verificarUsuario() {
+
+        try {
+
+            if (this.usIdMail != null) {
+
+                this.usIdMail = Utilitarios.limpiarTextoEmail(this.usIdMail);
+
+                if (Utilitarios.obtenerUsuario().getStrEmail().equals(this.usIdMail)) {
+
+                    mostrarAlertaError("cannot.use.email.for.client");
+                    this.isEdit = false;
+                    this.isValidAccount = false;
+
+                } else {
+
+                    Usuario objUsuario = objUsuarioDAO.obtenUsuarioByEmail(this.usIdMail);
+
+                    if (objUsuario == null) { // NUEVO
+
+                        mostrarAlertaInfo("can.register.client");
+
+                        this.isEdit = false;
+                        this.isValidAccount = true;
+
+                    } else if (objUsuario.getUsIdTipoCuenta().equals(Constantes.INT_ET_TIPO_USUARIO_COUNTRY_MANAGER)
+                            || objUsuario.getUsIdTipoCuenta().equals(Constantes.INT_ET_TIPO_USUARIO_MANAGING_DIRECTOR)) {
+
+                        mostrarAlertaWarning("cannot.use.email.for.client");
+
+                        this.isValidAccount = false;
+
+                    } else { // YA EXISTE Y QUIERO ASIGNARLO COMO CLIENTE
+
+                        ManageUserRelation objManageUserRelation = objUsuarioDAO.verifyClientForVerification(this.usIdMail);
+
+                        if (objManageUserRelation == null) { // NO TIENE COUNTRY MANAGER
+
+                            mostrarAlertaWarning("can.use.email.for.client");
+
+                            UsuarioInfo objUsuarioInfo = new UsuarioInfo(objUsuario, null, false);
+
+                            editarUsuario(objUsuarioInfo);
+
+                            this.isValidAccount = true;
+
+                        } else {
+
+                            mostrarAlertaError("cannot.use.email.for.client");
+
+                            this.isValidAccount = false;
+                        }
+
+                    }
+                }
+
+            }
+
+        } catch (HibernateException e) {
             mostrarError(log, e);
         }
 
@@ -667,20 +750,53 @@ public class MantenimientoClienteView extends BaseView implements Serializable {
     }*/
     public void resetFormUsuario() {
 
-        usIdCuentaPk = null;
-        usIdMail = null;
-        usTxContrasenia = null;
-        usIdEstado = null;
-        usIdTipoCuenta = null;
-        usTxNombreRazonsocial = "";
-        usTxDescripcionEmpresa = null;
-        usIdTipoDocumento = null;
-        usTxDocumento = null;
-        pais = null;
-        ciudad = null;
-        strContraseniaNueva = null;
-        strContraseniaReNueva = null;
-        isEdit = false;
+        this.usIdCuentaPk = null;
+        this.usIdMail = null;
+        this.usTxContrasenia = null;
+        this.usIdEstado = null;
+        this.usIdTipoCuenta = null;
+        this.usTxNombreRazonsocial = "";
+        this.usTxDescripcionEmpresa = null;
+        this.usIdTipoDocumento = null;
+        this.usTxDocumento = null;
+        this.pais = null;
+        this.ciudad = null;
+        this.strContraseniaNueva = null;
+        this.strContraseniaReNueva = null;
+        this.isEdit = false;
+        this.isValidAccount = false;
+
+    }
+
+    public void getListProjectClient(UsuarioInfo objUsuario) {
+
+        try {
+            this.lstProjectsClient = new ArrayList<>();
+            this.usuarioSeleccionado = objUsuario;
+
+            ProyectoDAO objProyectoDAO = new ProyectoDAO();
+
+            List<Proyecto> lstProyectos = objProyectoDAO.obtenListaProyectosPorUsuario(
+                    objUsuario.getIntUsuarioPk(),
+                    null, 
+                    null, null, null,
+                    null,
+                    null, null, null, null);
+
+            ProyectoInfo objProyectoInfo;
+
+            for (Proyecto objProyecto : lstProyectos) {
+
+                objProyectoInfo = new ProyectoInfo();
+
+                objProyectoInfo = Utilitarios.setearProyecto(objProyecto, objProyectoInfo);
+
+                this.lstProjectsClient.add(objProyectoInfo);
+            }
+
+        } catch (HibernateException e) {
+            mostrarError(log, e);
+        }
 
     }
 
@@ -815,45 +931,15 @@ public class MantenimientoClienteView extends BaseView implements Serializable {
         }
     }
 
-    public void goToProject(UsuarioInfo objUsuarioInfo) {
+    public void goToProject(ProyectoInfo objProjectInfo) {
 
         try {
 
             HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
 
-            ProyectoDAO objProyectoDAO = new ProyectoDAO();
-            Proyecto objProyecto = objProyectoDAO.obtenProyecto(753);
+            Utilitarios.goToProject(objProjectInfo, usuarioSeleccionado, Utilitarios.obtenerUsuario(), session);
 
-            ProyectoInfo objProyectoInfo = new ProyectoInfo();
-
-            objProyectoInfo.setIntIdProyecto(objProyecto.getPoIdProyectoPk());
-            objProyectoInfo.setStrDescNombre(objProyecto.getPoTxDescripcion());
-            objProyectoInfo.setIntIdMetodologia(objProyecto.getPoIdMetodologia());
-            objProyectoInfo.setIntIdEstado(objProyecto.getPoIdEstado());
-            objProyectoInfo.setStrDescEstado(msg(objProyecto.getPoIdEstado().toString()));
-            objProyectoInfo.setDtFechaCreacion(Utilitarios.convertDateToLocalDate(objProyecto.getPoFeRegistro()));
-            objProyectoInfo.setDtFechaEjecucion(objProyecto.getPoFeEjecucion());
-            objProyectoInfo.setStrMotivo(objProyecto.getPoTxMotivo());
-            objProyectoInfo.setBoOculto(objProyecto.getPoInOculto());
-
-            session.removeAttribute("usuarioInfoProxy");
-            session.setAttribute("usuarioInfoProxy", Utilitarios.obtenerUsuario());
-
-            session.removeAttribute("usuarioInfo");
-            session.setAttribute("usuarioInfo", objUsuarioInfo);
-
-            session.removeAttribute("proyectoInfo");
-            session.setAttribute("proyectoInfo", objProyectoInfo);
-
-            if (objProyectoInfo.getIntIdEstado().equals(Constantes.INT_ET_ESTADO_PROYECTO_EN_EJECUCION)) {
-                FacesContext.getCurrentInstance().getExternalContext().redirect("stepFive.jsf");
-            } else if (objProyectoInfo.getIntIdEstado().equals(Constantes.INT_ET_ESTADO_PROYECTO_TERMINADO)) {
-                FacesContext.getCurrentInstance().getExternalContext().redirect("stepSix.jsf");
-            } else {
-                FacesContext.getCurrentInstance().getExternalContext().redirect("stepOne.jsf");
-            }
-
-        } catch (IOException ex) {
+        } catch (Exception ex) {
             mostrarError(log, ex);
         }
     }

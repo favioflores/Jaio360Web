@@ -89,11 +89,21 @@ public class AuthFilter implements Filter {
 
             HttpSession session = req.getSession(false);
 
-            session.removeAttribute("usuarioInfoProxy");
-            session.removeAttribute("usuarioInfo");
-            session.removeAttribute("proyectoInfo");
-
+            try {
+                session.removeAttribute("usuarioInfoProxy");
+            } catch (Exception e) {
+            }
+            try {
+                session.removeAttribute("usuarioInfo");
+            } catch (Exception e) {
+            }
+            try {
+                session.removeAttribute("proyectoInfo");
+            } catch (Exception e) {
+            }
+            
             res.sendRedirect(req.getContextPath() + "/ui/sesionExpirada.jsf");  // Anonymous user. Redirect to login page
+
         } catch (IOException e) {
             log.error(e);
         }
@@ -118,6 +128,7 @@ public class AuthFilter implements Filter {
                 || strUri.contains("/ui/test.jsf")
                 || strUri.contains("/ui/accountVerifiedSuccess.jsf")
                 || strUri.contains("/ui/verifyAccount.jsf")
+                || strUri.contains("/ui/resourceNotFound.jsf")
                 || strUri.contains("/public/")
                 || strUri.contains("javax.faces.resource");
     }

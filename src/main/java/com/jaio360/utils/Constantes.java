@@ -66,6 +66,7 @@ public class Constantes {
     public static Integer INT_ET_ESTADO_USUARIO_REGISTRADO = 12;
     public static Integer INT_ET_ESTADO_USUARIO_CONFIRMADO = 13;
     public static Integer INT_ET_ESTADO_USUARIO_BLOQUEADO = 14;
+    public static Integer INT_ET_ESTADO_USUARIO_ELIMINADO = 214;
 
     public static Integer INT_ET_ESTADO_CONTRATO_REGISTRADO = 19;
     public static Integer INT_ET_ESTADO_CONTRATO_CONFIRMADO = 20;
