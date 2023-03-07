@@ -35,8 +35,7 @@
                     <p style="text-align: justify">#{msg['bienvenida.text1']}</p>
 
                     <c:if test="#{(menuPrincipal.usuarioInfo.managingDirector == true ||
-                                  menuPrincipal.usuarioInfo.countryManager == true ||
-                                  menuPrincipal.usuarioInfo.evaluatedEvaluator == true) and
+                                  menuPrincipal.usuarioInfo.projectManager == true) and
                                   listasPrincipalView.cantidadLstProyectos>=0}">
                         <p style="text-align: justify">#{msg['bienvenida.text2']}</p>
                         <h:form>
