@@ -1,22 +1,37 @@
 package com.jaio360.view;
 
+import com.jaio360.application.MailSender;
+import com.jaio360.dao.DestinatariosDAO;
+import com.jaio360.dao.NotificacionesDAO;
 import com.jaio360.dao.UsuarioDAO;
 import com.jaio360.domain.UsuarioInfo;
+import com.jaio360.orm.Destinatarios;
 import com.jaio360.orm.ManageUserRelation;
+import com.jaio360.orm.Notificaciones;
 import com.jaio360.orm.Usuario;
 import com.jaio360.utils.Constantes;
+import com.jaio360.utils.EncryptDecrypt;
 import com.jaio360.utils.Utilitarios;
 import java.io.IOException;
 import java.io.Serializable;
+import java.io.StringWriter;
 import java.util.Date;
 import java.util.Map;
+import java.util.Properties;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
+import org.apache.commons.lang.CharEncoding;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.velocity.Template;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.VelocityEngine;
+import org.apache.velocity.exception.MethodInvocationException;
+import org.apache.velocity.exception.ParseErrorException;
+import org.apache.velocity.exception.ResourceNotFoundException;
 import org.hibernate.HibernateException;
 
 @ManagedBean(name = "verifyAccountView")
@@ -125,6 +140,8 @@ public class VerifyAccountView extends BaseView implements Serializable {
 
                             objUsuarioDAO.actualizaCliente(objManageUserRelation, objUsuario);
                             objUsuarioDAO.actualizaUsuario(objUsuario);
+                            
+                            sendMailWithPassword(objUsuario);
 
                             //Redirige a la pantalla con mensaje que cuenta no existe
                             FacesContext.getCurrentInstance().getExternalContext().redirect("accountVerifiedSuccess.jsf");
@@ -188,69 +205,69 @@ public class VerifyAccountView extends BaseView implements Serializable {
 
     }
 
-    /*
-    public void enviarClaveCorreo() {
+    private void sendMailWithPassword(Usuario objUsuario) {
 
         try {
 
-            UsuarioDAO objUsuarioDAO = new UsuarioDAO();
+            Properties props = new Properties();
+            props.setProperty("resource.loader", "class");
+            props.setProperty("class.resource.loader.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
+            props.setProperty("input.encoding", CharEncoding.UTF_8);
 
-            Usuario objUsuario = objUsuarioDAO.iniciaSesion(usuario.trim());
+            VelocityEngine ve = new VelocityEngine();
 
-            if (objUsuario != null) {
+            ve.init(props);
+            //ve.init();
 
-                if (objUsuario.getUsIdEstado().equals(Constantes.INT_ET_ESTADO_USUARIO_BLOQUEADO)) {
-                    mostrarAlertaError("account.blocked");
-                } else {
+            Template t = ve.getTemplate("/templatesVelocity/TemplatePasswordRecovery.vm");
 
-                    EncryptDecrypt objEncryptDecrypt = new EncryptDecrypt();
+            VelocityContext context = new VelocityContext();
 
-                    String strNotificacion = Utilitarios.decodeUTF8(objElementoDAO.obtenElemento(Constantes.INT_ET_NOTIFICACION_CLAVE).getElCadena());
+            context.put("NOMBRE", objUsuario.getUsTxNombreRazonsocial());
 
-                    Utilitarios objUtilitarios = new Utilitarios();
+            EncryptDecrypt objEncryptDecrypt = new EncryptDecrypt();
 
-                    strNotificacion = strNotificacion.replace("#%DATO.MENSAJE", objUtilitarios.formatearFecha(new Date(), Constantes.HH24_MI_DDMMYYYY));
-                    strNotificacion = strNotificacion.replace("#%USUARIO.MENSAJE", usuario.trim());
-                    strNotificacion = strNotificacion.replace("#%CLAVE.MENSAJE", objEncryptDecrypt.decrypt(objUsuario.getUsTxContrasenia()));
+            context.put("PASSWORD", objEncryptDecrypt.decrypt(objUsuario.getUsTxContrasenia()));
+            context.put("TEMPLATEPASSWORDTITULO", msg("send.TEMPLATEPASSWORDTITULO"));
+            context.put("TEMPLATEPASSWORDHELLO", msg("TEMPLATEPASSWORDHELLO"));
+            context.put("TEMPLATEPASSWORDPARRAFO1", msg("send.TEMPLATEPASSWORDPARRAFO1"));
+            context.put("TEMPLATEPASSWORDPARRAFO2", msg("send.TEMPLATEPASSWORDPARRAFO2"));
+            context.put("TEMPLATEPASSWORDPARRAFO3", msg("TEMPLATEPASSWORDPARRAFO3"));
+            context.put("TEMPLATEPASSWORDPARRAFO4", msg("TEMPLATEPASSWORDPARRAFO4"));
+            context.put("TEMPLATEPASSWORDPARRAFO5", msg("TEMPLATEPASSWORDPARRAFO5"));
+            context.put("TEMPLATEPASSWORDPARRAFO6", msg("TEMPLATEPASSWORDPARRAFO6"));
+ 
+            StringWriter out = new StringWriter();
+            t.merge(context, out);
 
-                    NotificacionesDAO objNotificacionesDAO = new NotificacionesDAO();
+            NotificacionesDAO objNotificacionesDAO = new NotificacionesDAO();
 
-                    Notificaciones objNotificaciones = new Notificaciones();
-                    objNotificaciones.setNoFeCreacion(new Date());
-                    objNotificaciones.setNoIdEstado(Constantes.INT_ET_ESTADO_NOTIFICACION_PENDIENTE);
-                    objNotificaciones.setNoIdRefProceso(0);
-                    objNotificaciones.setNoIdTipoProceso(0);
-                    objNotificaciones.setNoTxAsunto("Notificación de clave");
-                    objNotificaciones.setNoTxMensaje(Utilitarios.encodeUTF8(strNotificacion));
+            
+            Notificaciones objNotificaciones = new Notificaciones();
+            objNotificaciones.setNoFeCreacion(new Date());
+            objNotificaciones.setNoIdEstado(Constantes.INT_ET_ESTADO_NOTIFICACION_PENDIENTE);
+            objNotificaciones.setNoIdRefProceso(0);
+            objNotificaciones.setNoIdTipoProceso(0);
+            objNotificaciones.setNoTxAsunto(msg("send.password.title"));
+            objNotificaciones.setNoTxMensaje(Utilitarios.encodeUTF8(out.toString()));
+            objNotificaciones.setNoIdNotificacionPk(objNotificacionesDAO.guardaNotificacion(objNotificaciones));
 
-                    objNotificaciones.setNoIdNotificacionPk(objNotificacionesDAO.guardaNotificacion(objNotificaciones));
+            DestinatariosDAO objDestinatariosDao = new DestinatariosDAO();
 
-                    DestinatariosDAO objDestinatariosDao = new DestinatariosDAO();
+            Destinatarios objDestinatarios = new Destinatarios();
+            objDestinatarios.setDeTxMail(objUsuario.getUsIdMail());
+            objDestinatarios.setNotificaciones(objNotificaciones);
 
-                    Destinatarios objDestinatarios = new Destinatarios();
-                    objDestinatarios.setDeTxMail(usuario.trim());
-                    objDestinatarios.setNotificaciones(objNotificaciones);
+            objDestinatariosDao.guardaDestinatarios(objDestinatarios);
 
-                    objDestinatariosDao.guardaDestinatarios(objDestinatarios);
+            MailSender objMailSender = new MailSender();
+            objMailSender.enviarNotificacion(objNotificaciones);
 
-                    MailSender objMailSender = new MailSender();
-                    objMailSender.enviarNotificacion(objNotificaciones);
-
-                    mostrarAlertaInfo("sended.mail");
-
-                }
-
-            } else {
-
-                mostrarAlertaError("account.not.exist");
-
-            }
-            this.usuario = Constantes.strVacio;
-
+        } catch (MethodInvocationException | ParseErrorException | ResourceNotFoundException e) {
+            mostrarError(log, e);
         } catch (Exception ex) {
             mostrarError(log, ex);
-            mostrarAlertaFatal("error.was.occurred");
         }
 
-    }*/
+    }
 }

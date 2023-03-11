@@ -253,7 +253,7 @@ public class UsuarioSesion extends BaseView implements Serializable {
                     mostrarAlertaError("account.blocked");
                 } else {
 
-                    sendMailForVerification(objUsuario);
+                    sendMailForRecovery(objUsuario);
                     mostrarAlertaInfo("sended.mail");
 
                 }
@@ -272,7 +272,7 @@ public class UsuarioSesion extends BaseView implements Serializable {
 
     }
 
-    private void sendMailForVerification(Usuario objUsuario) {
+    private void sendMailForRecovery(Usuario objUsuario) {
 
         try {
 
@@ -333,7 +333,7 @@ public class UsuarioSesion extends BaseView implements Serializable {
         } catch (MethodInvocationException | ParseErrorException | ResourceNotFoundException e) {
             mostrarError(log, e);
         } catch (Exception ex) {
-            Logger.getLogger(UsuarioSesion.class.getName()).log(Level.SEVERE, null, ex);
+            mostrarError(log, ex);
         }
 
     }

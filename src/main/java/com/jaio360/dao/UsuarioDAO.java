@@ -404,23 +404,14 @@ public class UsuarioDAO implements Serializable {
 
         try {
 
-            List<Usuario> lstUsuarios;
-
-            Query query = sesion.createQuery("from Usuario where us_id_mail = ?");
+            Query query = sesion.createQuery("from Usuario u where u.usIdMail = ? and u.usIdEstado = ?  ");
 
             query.setString(0, strEmail);
+            query.setInteger(1, Constantes.INT_ET_ESTADO_USUARIO_CONFIRMADO);
 
-            lstUsuarios = query.list();
+            return (Usuario) query.uniqueResult();
 
-            if (lstUsuarios.isEmpty()) {
-                log.debug("Usuario no encontrado");
-            } else if (lstUsuarios.size() > 1) {
-                log.debug("Se encontraron 2 o mas usuarios con el mismo email");
-            } else {
-                log.debug("Inicio de sesion exitoso");
-                objUsuario = lstUsuarios.get(0);
-            }
-
+         
         } catch (HibernateException ex) {
             log.error(ex);
         } finally {

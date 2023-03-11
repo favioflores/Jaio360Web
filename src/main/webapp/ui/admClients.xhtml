@@ -9,7 +9,7 @@
     <ui:define name="head"> 
         <script>
             function toLowerCase(strInput) {
-                strInput.value = strInput.value.toLowerCase();
+                strInput.value = strInput.value.toLowerCase().trim();
             }
         </script>
     </ui:define>
@@ -36,7 +36,6 @@
                                     <p:outputLabel for="@next" value="#{msg['email']}" />
                                     <p:inputText id="idMail" type="text" value="#{mantenimientoClienteView.usIdMail}" onchange="toLowerCase(this);" 
                                                  required="true" maxlength="100" disabled="#{mantenimientoClienteView.isEdit}" 
-                                                 onblur="rcVerifyAccount()"
                                                  >
                                         <f:validator validatorId="validarCorreo" />
                                     </p:inputText>
@@ -49,7 +48,7 @@
                             <div class="p-field p-grid">
                                 <div class="p-col">
                                     <p:outputLabel for="@next" value="#{msg['name.user']}" />
-                                    <p:inputText id="strDescEmpresa" value="#{mantenimientoClienteView.usTxNombreRazonsocial}" disabled="#{!mantenimientoClienteView.isValidAccount}" required="true" maxlength="100" >
+                                    <p:inputText id="strDescEmpresa" value="#{mantenimientoClienteView.usTxNombreRazonsocial}" required="true" maxlength="100" >
                                         <f:validator validatorId="validaTextoIngresado" />
                                     </p:inputText>
                                 </div>
@@ -60,7 +59,7 @@
                             <div class="p-field p-grid">
                                 <div class="p-col">
                                     <p:outputLabel for="@next" value="#{msg['company.name']}" />
-                                    <p:inputText id="strRazonSocial" type="text" value="#{mantenimientoClienteView.usTxDescripcionEmpresa}" disabled="#{!mantenimientoClienteView.isValidAccount}" required="true" maxlength="100" >
+                                    <p:inputText id="strRazonSocial" type="text" value="#{mantenimientoClienteView.usTxDescripcionEmpresa}" required="true" maxlength="100" >
                                         <f:validator validatorId="validaTextoIngresado" />
                                     </p:inputText>
                                 </div>
@@ -70,7 +69,7 @@
                             <div class="p-field p-grid">
                                 <div class="p-col">
                                     <p:outputLabel for="@next" value="#{msg['country']}"  />
-                                    <p:selectOneMenu id="idPais" value="#{mantenimientoClienteView.pais}" required="true" disabled="#{!mantenimientoClienteView.isValidAccount}"
+                                    <p:selectOneMenu id="idPais" value="#{mantenimientoClienteView.pais}" required="true" 
                                                      >
                                         <f:selectItem itemLabel="#{msg['please.select']}" itemValue="" />
                                         <f:selectItems value="#{mantenimientoClienteView.lstPaises}"  var="pais" itemLabel="#{pais.ubTxDescripcion}" itemValue="#{pais.ubIdUbigeoPk}" />
@@ -95,7 +94,7 @@
                         <div class="p-col-12 p-col-12 p-md-12">
                             <div class="p-field p-formgrid p-grid">
                                 <div class="p-field p-col">
-                                    <p:commandButton value="#{msg['save']}" update="formUsuario,formMntCuenta" process="formUsuario" icon="pi pi-check" actionListener="#{mantenimientoClienteView.guardarUsuario}" disabled="#{!mantenimientoClienteView.isValidAccount}" >
+                                    <p:commandButton value="#{msg['save']}" update="formUsuario,formMntCuenta" process="formUsuario" icon="pi pi-check" actionListener="#{mantenimientoClienteView.guardarUsuario}"  >
                                         <p:confirm header="#{msg['confirmation']}" message="#{msg['message.prev.save.client']}" icon="pi pi-info-circle" />
                                     </p:commandButton>
                                 </div>

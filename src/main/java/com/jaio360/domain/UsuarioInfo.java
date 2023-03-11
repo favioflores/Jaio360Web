@@ -150,7 +150,7 @@ public class UsuarioInfo extends BaseView implements Serializable {
         this.strDescripcion = objUsuario.getUsTxNombreRazonsocial();
         this.strEmpresaDesc = objUsuario.getUsTxDescripcionEmpresa();
         this.strEstadoDesc = msg(objUsuario.getUsIdEstado().toString());
-        this.strEstadoId = (objUsuario.getUsIdEstado());
+        this.strEstadoId = objUsuario.getUsIdEstado();
         this.intIdDocumentoEmpresa = objUsuario.getUsIdTipoDocumento();
         this.strDocumentoEmpresa = objUsuario.getUsTxDocumento();
         this.intIdCiudad = objUsuario.getUbigeo().getUbIdUbigeoPk();

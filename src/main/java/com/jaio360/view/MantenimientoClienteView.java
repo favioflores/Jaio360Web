@@ -80,7 +80,6 @@ public class MantenimientoClienteView extends BaseView implements Serializable {
     private Integer usIdTipoDocumento;
     private String usTxDocumento;
     private boolean isEdit;
-    private boolean isValidAccount;
     private Integer pais;
     private Integer ciudad;
     private String strContraseniaNueva;
@@ -99,14 +98,6 @@ public class MantenimientoClienteView extends BaseView implements Serializable {
 
     public void setLstProjectsClient(List<ProyectoInfo> lstProjectsClient) {
         this.lstProjectsClient = lstProjectsClient;
-    }
-
-    public boolean isIsValidAccount() {
-        return isValidAccount;
-    }
-
-    public void setIsValidAccount(boolean isValidAccount) {
-        this.isValidAccount = isValidAccount;
     }
 
     public Integer getUsIdCuentaPkCP() {
@@ -350,8 +341,6 @@ public class MantenimientoClienteView extends BaseView implements Serializable {
         poblarTipoDocumento();
         obtenerListaUsuarios();
 
-        this.isValidAccount = false;
-
         tipoUsuario = new String[3];
         tipoUsuario[0] = msg(Constantes.INT_ET_TIPO_USUARIO_MANAGING_DIRECTOR.toString());
         tipoUsuario[1] = msg(Constantes.INT_ET_TIPO_USUARIO_EVALUATED_EVALUATOR.toString());
@@ -471,50 +460,51 @@ public class MantenimientoClienteView extends BaseView implements Serializable {
 
             usIdMail = usIdMail.toLowerCase();
 
-            Usuario objUsuario = objUsuarioDAO.obtenUsuarioByEmail(usIdMail);
+            if (!isEdit) {
 
-            if (usIdCuentaPk == null && objUsuario == null) { // NUEVO
+                boolean blValidAccount = verificarUsuario();
 
-                objUsuario = new Usuario();
-                EncryptDecrypt objEncryptDecrypt = new EncryptDecrypt();
-                objUsuario.setUsTxContrasenia(objEncryptDecrypt.encrypt(Utilitarios.generarClave()));
-                Ubigeo objUbigeo = new Ubigeo();
-                objUbigeo.setUbIdUbigeoPk(ciudad);
-                objUsuario.setUbigeo(objUbigeo);
-                objUsuario.setUsTxDescripcionEmpresa(usTxDescripcionEmpresa);
+                if (blValidAccount) {
+
+                    Usuario objUsuario = new Usuario();
+                    EncryptDecrypt objEncryptDecrypt = new EncryptDecrypt();
+                    objUsuario.setUsTxContrasenia(objEncryptDecrypt.encrypt(Utilitarios.generarClave()));
+                    Ubigeo objUbigeo = new Ubigeo();
+                    objUbigeo.setUbIdUbigeoPk(ciudad);
+                    objUsuario.setUbigeo(objUbigeo);
+                    objUsuario.setUsTxDescripcionEmpresa(usTxDescripcionEmpresa);
+                    objUsuario.setUsTxNombreRazonsocial(usTxNombreRazonsocial);
+                    objUsuario.setUsIdEstado(Constantes.INT_ET_ESTADO_USUARIO_BLOQUEADO);
+                    objUsuario.setUsFeRegistro(new Date());
+                    objUsuario.setUsIdTipoCuenta(Constantes.INT_ET_TIPO_USUARIO_PROJECT_MANAGER);
+                    objUsuario.setUsIdMail(usIdMail);
+
+                    objUsuario.setUsIdCuentaPk(objUsuarioDAO.guardaUsuario(objUsuario));
+
+                    ManageUserRelation objManageUserRelation = new ManageUserRelation();
+                    objManageUserRelation.setMaFeRegistro(new Date());
+                    objManageUserRelation.setMaIsVerified(Boolean.FALSE);
+                    renewToken(objManageUserRelation);
+                    objManageUserRelation.setUsIdCuentaManagerPk(Utilitarios.obtenerUsuario().getIntUsuarioPk());
+                    objManageUserRelation.setUsuario(objUsuario);
+
+                    objUsuarioDAO.guardaCliente(objManageUserRelation);
+
+                    mostrarAlertaInfo("created.successfully");
+
+                    sendMailForVerification(objManageUserRelation, objUsuario);
+
+                    mostrarAlertaWarning("required.verification");
+                    resetFormUsuario();
+                    obtenerListaUsuarios();
+
+                }
+
+            } else {
+                
+                Usuario objUsuario = objUsuarioDAO.obtenUsuarioByEmail(usIdMail);
                 objUsuario.setUsTxNombreRazonsocial(usTxNombreRazonsocial);
-                objUsuario.setUsIdEstado(Constantes.INT_ET_ESTADO_USUARIO_BLOQUEADO);
-                objUsuario.setUsFeRegistro(new Date());
-                objUsuario.setUsIdTipoCuenta(Constantes.INT_ET_TIPO_USUARIO_PROJECT_MANAGER);
-                objUsuario.setUsIdMail(usIdMail);
-
-                objUsuario.setUsIdCuentaPk(objUsuarioDAO.guardaUsuario(objUsuario));
-
-                ManageUserRelation objManageUserRelation = new ManageUserRelation();
-                objManageUserRelation.setMaFeRegistro(new Date());
-                objManageUserRelation.setMaIsVerified(Boolean.FALSE);
-                renewToken(objManageUserRelation);
-                objManageUserRelation.setUsIdCuentaManagerPk(Utilitarios.obtenerUsuario().getIntUsuarioPk());
-                objManageUserRelation.setUsuario(objUsuario);
-
-                objUsuarioDAO.guardaCliente(objManageUserRelation);
-
-                mostrarAlertaInfo("created.successfully");
-
-                sendMailForVerification(objManageUserRelation, objUsuario);
-
-                mostrarAlertaWarning("required.verification");
-                resetFormUsuario();
-                obtenerListaUsuarios();
-
-            } else if (usIdCuentaPk == null && objUsuario != null) { // YA EXISTE Y QUIERO CREARLO
-
-                mostrarAlertaError(msg("mail.used.by.other"));
-
-            } else if (usIdCuentaPk != null && objUsuario != null) { // QUIERO ACTUALIZARLO
-
-                objUsuario.setUsTxNombreRazonsocial(usTxDescripcionEmpresa);
-                objUsuario.setUsTxDescripcionEmpresa(usTxNombreRazonsocial);
+                objUsuario.setUsTxDescripcionEmpresa(usTxDescripcionEmpresa);
                 objUsuario.setUsIdTipoCuenta(usIdTipoCuenta);
                 Ubigeo objUbigeoCiudad = new Ubigeo();
                 objUbigeoCiudad.setUbIdUbigeoPk(ciudad);
@@ -526,7 +516,6 @@ public class MantenimientoClienteView extends BaseView implements Serializable {
 
                 resetFormUsuario();
                 obtenerListaUsuarios();
-
             }
 
         } catch (Exception e) {
@@ -535,7 +524,9 @@ public class MantenimientoClienteView extends BaseView implements Serializable {
 
     }
 
-    public void verificarUsuario() {
+    public boolean verificarUsuario() {
+
+        boolean isValidAccount = false;
 
         try {
 
@@ -547,7 +538,7 @@ public class MantenimientoClienteView extends BaseView implements Serializable {
 
                     mostrarAlertaError("cannot.use.email.for.client");
                     this.isEdit = false;
-                    this.isValidAccount = false;
+                    isValidAccount = false;
 
                 } else {
 
@@ -558,14 +549,14 @@ public class MantenimientoClienteView extends BaseView implements Serializable {
                         mostrarAlertaInfo("can.register.client");
 
                         this.isEdit = false;
-                        this.isValidAccount = true;
+                        isValidAccount = true;
 
                     } else if (objUsuario.getUsIdTipoCuenta().equals(Constantes.INT_ET_TIPO_USUARIO_COUNTRY_MANAGER)
                             || objUsuario.getUsIdTipoCuenta().equals(Constantes.INT_ET_TIPO_USUARIO_MANAGING_DIRECTOR)) {
 
                         mostrarAlertaWarning("cannot.use.email.for.client");
 
-                        this.isValidAccount = false;
+                        isValidAccount = false;
 
                     } else { // YA EXISTE Y QUIERO ASIGNARLO COMO CLIENTE
 
@@ -579,13 +570,13 @@ public class MantenimientoClienteView extends BaseView implements Serializable {
 
                             editarUsuario(objUsuarioInfo);
 
-                            this.isValidAccount = true;
+                            isValidAccount = true;
 
                         } else {
 
                             mostrarAlertaError("cannot.use.email.for.client");
 
-                            this.isValidAccount = false;
+                            isValidAccount = false;
                         }
 
                     }
@@ -596,6 +587,8 @@ public class MantenimientoClienteView extends BaseView implements Serializable {
         } catch (HibernateException e) {
             mostrarError(log, e);
         }
+
+        return isValidAccount;
 
     }
 
@@ -648,7 +641,7 @@ public class MantenimientoClienteView extends BaseView implements Serializable {
             context.put("TEMPLATEVERIFICACIONPARRAFO5", msg("TEMPLATEVERIFICACIONPARRAFO5"));
             context.put("TEMPLATEVERIFICACIONPARRAFO6", msg("TEMPLATEVERIFICACIONPARRAFO6"));
             context.put("TEMPLATEVERIFICACIONLINK", msg("TEMPLATEVERIFICACIONLINK"));
-            context.put("URL", objElementoDAO.obtenElemento(Constantes.INT_ET_URL_AMBIENTE));
+            context.put("URL", objElementoDAO.obtenElemento(Constantes.INT_ET_URL_AMBIENTE).getElTxValor1());
             context.put("EMAIL", objUsuario.getUsIdMail());
             context.put("COUNTRYMANAGER", Utilitarios.obtenerUsuario().getStrDescripcion());
 
@@ -764,7 +757,6 @@ public class MantenimientoClienteView extends BaseView implements Serializable {
         this.strContraseniaNueva = null;
         this.strContraseniaReNueva = null;
         this.isEdit = false;
-        this.isValidAccount = false;
 
     }
 
@@ -778,7 +770,7 @@ public class MantenimientoClienteView extends BaseView implements Serializable {
 
             List<Proyecto> lstProyectos = objProyectoDAO.obtenListaProyectosPorUsuario(
                     objUsuario.getIntUsuarioPk(),
-                    null, 
+                    null,
                     null, null, null,
                     null,
                     null, null, null, null);
