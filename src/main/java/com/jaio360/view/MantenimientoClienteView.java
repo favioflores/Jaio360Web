@@ -501,7 +501,7 @@ public class MantenimientoClienteView extends BaseView implements Serializable {
                 }
 
             } else {
-                
+
                 Usuario objUsuario = objUsuarioDAO.obtenUsuarioByEmail(usIdMail);
                 objUsuario.setUsTxNombreRazonsocial(usTxNombreRazonsocial);
                 objUsuario.setUsTxDescripcionEmpresa(usTxDescripcionEmpresa);
@@ -564,6 +564,10 @@ public class MantenimientoClienteView extends BaseView implements Serializable {
 
                         if (objManageUserRelation == null) { // NO TIENE COUNTRY MANAGER
 
+                            mostrarAlertaError("cannot.use.email.for.client");
+
+                            isValidAccount = false;
+/*
                             mostrarAlertaWarning("can.use.email.for.client");
 
                             UsuarioInfo objUsuarioInfo = new UsuarioInfo(objUsuario, null, false);
@@ -571,7 +575,7 @@ public class MantenimientoClienteView extends BaseView implements Serializable {
                             editarUsuario(objUsuarioInfo);
 
                             isValidAccount = true;
-
+*/
                         } else {
 
                             mostrarAlertaError("cannot.use.email.for.client");
@@ -676,71 +680,7 @@ public class MantenimientoClienteView extends BaseView implements Serializable {
 
     }
 
-    /*
-    public void enviarClaveCorreo() {
-
-        try {
-
-            UsuarioDAO objUsuarioDAO = new UsuarioDAO();
-
-            Usuario objUsuario = objUsuarioDAO.iniciaSesion(usuario.trim());
-
-            if (objUsuario != null) {
-
-                if (objUsuario.getUsIdEstado().equals(Constantes.INT_ET_ESTADO_USUARIO_BLOQUEADO)) {
-                    mostrarAlertaError("account.blocked");
-                } else {
-
-                    EncryptDecrypt objEncryptDecrypt = new EncryptDecrypt();
-
-                    String strNotificacion = Utilitarios.decodeUTF8(objElementoDAO.obtenElemento(Constantes.INT_ET_NOTIFICACION_CLAVE).getElCadena());
-
-                    Utilitarios objUtilitarios = new Utilitarios();
-
-                    strNotificacion = strNotificacion.replace("#%DATO.MENSAJE", objUtilitarios.formatearFecha(new Date(), Constantes.HH24_MI_DDMMYYYY));
-                    strNotificacion = strNotificacion.replace("#%USUARIO.MENSAJE", usuario.trim());
-                    strNotificacion = strNotificacion.replace("#%CLAVE.MENSAJE", objEncryptDecrypt.decrypt(objUsuario.getUsTxContrasenia()));
-
-                    NotificacionesDAO objNotificacionesDAO = new NotificacionesDAO();
-
-                    Notificaciones objNotificaciones = new Notificaciones();
-                    objNotificaciones.setNoFeCreacion(new Date());
-                    objNotificaciones.setNoIdEstado(Constantes.INT_ET_ESTADO_NOTIFICACION_PENDIENTE);
-                    objNotificaciones.setNoIdRefProceso(0);
-                    objNotificaciones.setNoIdTipoProceso(0);
-                    objNotificaciones.setNoTxAsunto("Notificación de clave");
-                    objNotificaciones.setNoTxMensaje(Utilitarios.encodeUTF8(strNotificacion));
-
-                    objNotificaciones.setNoIdNotificacionPk(objNotificacionesDAO.guardaNotificacion(objNotificaciones));
-
-                    DestinatariosDAO objDestinatariosDao = new DestinatariosDAO();
-
-                    Destinatarios objDestinatarios = new Destinatarios();
-                    objDestinatarios.setDeTxMail(usuario.trim());
-                    objDestinatarios.setNotificaciones(objNotificaciones);
-
-                    objDestinatariosDao.guardaDestinatarios(objDestinatarios);
-
-                    MailSender objMailSender = new MailSender();
-                    objMailSender.enviarNotificacion(objNotificaciones);
-
-                    mostrarAlertaInfo("sended.mail");
-
-                }
-
-            } else {
-
-                mostrarAlertaError("account.not.exist");
-
-            }
-            this.usuario = Constantes.strVacio;
-
-        } catch (Exception ex) {
-            mostrarError(log, ex);
-            mostrarAlertaFatal("error.was.occurred");
-        }
-
-    }*/
+   
     public void resetFormUsuario() {
 
         this.usIdCuentaPk = null;

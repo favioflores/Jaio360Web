@@ -123,6 +123,8 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
 
     private Date ini;
     private Date end;
+    
+    private Integer inTypeMethodSend;
 
     /**
      * ************
@@ -161,6 +163,15 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
         this.ini = ini;
     }
 
+    public Integer getInTypeMethodSend() {
+        return inTypeMethodSend;
+    }
+
+    public void setInTypeMethodSend(Integer inTypeMethodSend) {
+        this.inTypeMethodSend = inTypeMethodSend;
+    }
+
+    
     public Date getEnd() {
         return end;
     }
@@ -427,7 +438,8 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
 
     @PostConstruct
     public void init() {
-
+        
+        inTypeMethodSend = 0;
         intCantPartTodos = 0;
         intCantPartVeri = 0;
         intCantPartSel = 0;
@@ -1389,6 +1401,26 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
             this.ini = null;
             this.end = null;
             buscarEmails();
+        } catch (Exception e) {
+            mostrarError(log, e);
+        }
+    }
+    
+    public void programarEnvioComunicado(){
+        try {
+            
+            inTypeMethodSend = 0;
+            
+        } catch (Exception e) {
+            mostrarError(log, e);
+        }
+    }
+    
+    public void changeTypeSend(){
+        try {
+            
+            
+            
         } catch (Exception e) {
             mostrarError(log, e);
         }

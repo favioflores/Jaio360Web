@@ -154,7 +154,7 @@ public class UsuarioSesion extends BaseView implements Serializable {
                     usuarioInfo = new UsuarioInfo(objUsuario, null, true);
                     usuarioInfo.setTimeClient(this.timeClient);
 
-                    registraHistorialAcceso(objUsuario.getUsIdCuentaPk(), true, new Date(), null, null);
+                    Utilitarios.registraHistorialAcceso(usuarioInfo, objUsuario.getUsIdCuentaPk(), true, new Date(), null, null);
 
                     HistorialAccesoDAO objHistorialAccesoDAO = new HistorialAccesoDAO();
                     usuarioInfo.setStrIntentosErrados(objHistorialAccesoDAO.obtenIntentosFallidos(usuarioInfo.getIntUsuarioPk(), usuarioInfo.getIntHistorialPk()).toString());
@@ -170,71 +170,6 @@ public class UsuarioSesion extends BaseView implements Serializable {
 
         } catch (Exception ex) {
             mostrarError(log, ex);
-        }
-
-    }
-
-    public void cerrarSesion() {
-
-        try {
-
-            HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
-
-            UsuarioInfo objUsuarioProxy = Utilitarios.obtenerUsuarioProxy();
-
-            if (objUsuarioProxy != null) {
-                objUsuarioProxy = (UsuarioInfo) session.getAttribute("usuarioInfoProxy");
-                registraHistorialAcceso(objUsuarioProxy.getIntUsuarioPk(), true, null, new Date(), objUsuarioProxy.getIntHistorialPk());
-            } else {
-                usuarioInfo = (UsuarioInfo) session.getAttribute("usuarioInfo");
-                registraHistorialAcceso(usuarioInfo.getIntUsuarioPk(), true, null, new Date(), usuarioInfo.getIntHistorialPk());
-            }
-
-            session.invalidate();
-
-            FacesContext.getCurrentInstance().getExternalContext().redirect("login.jsf");
-
-        } catch (IOException ex) {
-            if (usuarioInfo == null) {
-                try {
-                    FacesContext.getCurrentInstance().getExternalContext().redirect("login.jsf");
-                } catch (IOException exx) {
-                    mostrarError(log, exx);
-                }
-            } else {
-                mostrarError(log, ex);
-            }
-
-        }
-
-    }
-
-    private void registraHistorialAcceso(Integer intUsuarioPk, boolean status, Date dtIngreso, Date dtSalida, Integer intHistorialPk) {
-
-        HistorialAccesoDAO objHistorialAccesoDAO = new HistorialAccesoDAO();
-        HistorialAcceso objHistorialAcceso = new HistorialAcceso();
-
-        if (intHistorialPk == null) {
-
-            Usuario objUsuario = new Usuario();
-            objUsuario.setUsIdCuentaPk(intUsuarioPk);
-
-            objHistorialAcceso.setHaFeIngreso(dtIngreso);
-            objHistorialAcceso.setUsuario(objUsuario);
-            objHistorialAcceso.setHaInEstado(status);
-
-            usuarioInfo.setIntHistorialPk(objHistorialAccesoDAO.guardaHistorialAcceso(objHistorialAcceso));
-
-        } else {
-
-            objHistorialAcceso = objHistorialAccesoDAO.obtenHistorialAcceso(intHistorialPk);
-
-            objHistorialAcceso.setHaFeSalida(dtSalida);
-
-            objHistorialAcceso.setHaInEstado(true);
-
-            objHistorialAccesoDAO.actualizaHistorialAcceso(objHistorialAcceso);
-
         }
 
     }
@@ -303,13 +238,12 @@ public class UsuarioSesion extends BaseView implements Serializable {
             context.put("TEMPLATEPASSWORDPARRAFO4", msg("TEMPLATEPASSWORDPARRAFO4"));
             context.put("TEMPLATEPASSWORDPARRAFO5", msg("TEMPLATEPASSWORDPARRAFO5"));
             context.put("TEMPLATEPASSWORDPARRAFO6", msg("TEMPLATEPASSWORDPARRAFO6"));
- 
+
             StringWriter out = new StringWriter();
             t.merge(context, out);
 
             NotificacionesDAO objNotificacionesDAO = new NotificacionesDAO();
 
-            
             Notificaciones objNotificaciones = new Notificaciones();
             objNotificaciones.setNoFeCreacion(new Date());
             objNotificaciones.setNoIdEstado(Constantes.INT_ET_ESTADO_NOTIFICACION_PENDIENTE);
@@ -338,20 +272,11 @@ public class UsuarioSesion extends BaseView implements Serializable {
 
     }
 
-    public void ingresaSistema() {
-        try {
-            FacesContext.getCurrentInstance().getExternalContext().redirect("admProyectos.jsf");
-        } catch (IOException ex) {
-            mostrarError(log, ex);
-        }
-    }
-
     public void timeout() throws IOException {
 
         HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
-        usuarioInfo = (UsuarioInfo) session.getAttribute("usuarioInfo");
+        Utilitarios.registraHistorialAcceso(Utilitarios.obtenerUsuario(), Utilitarios.obtenerUsuario().getIntUsuarioPk(), true, null, new Date(), usuarioInfo.getIntHistorialPk());
         session.invalidate();
-        registraHistorialAcceso(usuarioInfo.getIntUsuarioPk(), true, null, new Date(), usuarioInfo.getIntHistorialPk());        //FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
 
     }
 
@@ -390,6 +315,16 @@ public class UsuarioSesion extends BaseView implements Serializable {
         } catch (Exception ex) {
             mostrarError(log, ex);
         }
+    }
+
+    public void cerrarSistema() {
+
+        try {
+            Utilitarios.cerrarSesion(Utilitarios.obtenerUsuario());
+        } catch (Exception ex) {
+            mostrarError(log, ex);
+        }
+
     }
 
 }

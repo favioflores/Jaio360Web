@@ -35,22 +35,19 @@
                     <p style="text-align: justify">#{msg['bienvenida.text1']}</p>
 
                     <c:if test="#{(menuPrincipal.usuarioInfo.managingDirector == true ||
-                                  menuPrincipal.usuarioInfo.projectManager == true) and
-                                  listasPrincipalView.cantidadLstProyectos>=0}">
+                                  menuPrincipal.usuarioInfo.projectManager == true)}">
                         <p style="text-align: justify">#{msg['bienvenida.text2']}</p>
                         <h:form>
-                            <p:commandButton type="submit" value="#{msg['adm.proyecto']}" actionListener="#{usuarioSesion.ingresaSistema}" immediate="true" process="@this" ajax="false" icon="pi pi-arrow-right" />
-                            <!--<p:commandButton value="Flujo del proceso" disabled="true" icon="ui-icon-arrowthickstop-1-s" />-->
-                            <!--<p:commandButton value="Descargar manual de Jaio360" disabled="true" icon="ui-icon-arrowthickstop-1-s" />-->
+                            <p:commandButton type="submit" value="#{msg['adm.proyecto']}" actionListener="#{welcomeView.ingresaSistema()}" immediate="true" process="@this" ajax="false" icon="pi pi-arrow-right" />
                         </h:form>
                     </c:if>
 
-                    <c:if test="#{listasPrincipalView.cantidadLstEvaluaciones>0}">
-                        <c:if test="#{listasPrincipalView.cantidadLstEvaluaciones==1}">
-                            <p style="text-align: justify">#{msg['actualmente.tienes']} #{listasPrincipalView.lstEvaluaciones.size()} #{msg['bienvenida.eva.resuelta']}</p>
+                    <c:if test="#{welcomeView.cantidadLstEvaluaciones>0}">
+                        <c:if test="#{welcomeView.cantidadLstEvaluaciones==1}">
+                            <p style="text-align: justify">#{msg['actualmente.tienes']} #{welcomeView.lstEvaluaciones.size()} #{msg['bienvenida.eva.resuelta']}</p>
                         </c:if>
-                        <c:if test="#{listasPrincipalView.cantidadLstEvaluaciones>1}">
-                            <p style="text-align: justify">#{msg['actualmente.tienes']} #{listasPrincipalView.lstEvaluaciones.size()} #{msg['bienvenida.eva.resueltas']}</p>
+                        <c:if test="#{welcomeView.cantidadLstEvaluaciones>1}">
+                            <p style="text-align: justify">#{msg['actualmente.tienes']} #{welcomeView.lstEvaluaciones.size()} #{msg['bienvenida.eva.resueltas']}</p>
                         </c:if>
 
                         <p:commandButton type="submit" value="#{msg['bienvenida.realizar.evaluaciones']}" 
@@ -61,9 +58,9 @@
                     <c:if test="#{(menuPrincipal.usuarioInfo.managingDirector == false and
                                   menuPrincipal.usuarioInfo.countryManager == false and
                                   menuPrincipal.usuarioInfo.projectManager == false) and
-                                  listasPrincipalView.cantidadLstEvaluaciones==0 }">
+                                  welcomeView.cantidadLstEvaluaciones==0 }">
                         <p>#{msg['bienvenida.agradecimiento']}</p>
-                        <p:commandButton id="btcerrarSesion" widgetVar="btcerrarSesion" actionListener="#{usuarioSesion.cerrarSesion}" value="#{msg['cabecera.cerrar.sesion']}" >
+                        <p:commandButton id="btcerrarSesion" widgetVar="btcerrarSesion" actionListener="#{welcomeView.cerrarSistema}" value="#{msg['cabecera.cerrar.sesion']}" >
                             <p:confirm header="#{msg['cabecera.logout.confirmacion.title']}" message="#{msg['cabecera.logout.confirmacion.mensaje']}" icon="pi pi-info-circle" /> 
                         </p:commandButton>
                         <p:confirmDialog global="true" >
@@ -72,7 +69,7 @@
                         </p:confirmDialog>
                     </c:if>
 
-                    <p style="text-align: justify" >#{msg['bienvenida.contacto']} <a href="jaio.mailsender@gmail.com?Subject=Help" target="_top">jaio.mailsender@gmail.com</a></p>
+                    <p style="text-align: justify" >#{msg['bienvenida.contacto']}</p>
 
                     <div class="text-center">
                         <p:graphicImage value="../images/logoJaio360.jpg" width="130" height="50" />
@@ -85,58 +82,68 @@
         <p:dialog widgetVar="dlgEvaluaciones" header="#{msg['lista.evaluaciones.pendientes']}" style="max-width: 80%; "  draggable="false" closable="false" hideEffect="drop" showEffect="drop"  resizable="false" >
             <h:form>
                 <p:panel>
-                    <p:dataTable var="eva" value="#{listasPrincipalView.lstEvaluaciones}"
-                                 style="width: 100%;" 
-                                 rows="3"
-                                 paginatorPosition="bottom"
-                                 stripedRows="true"
-                                 paginator="true"  
-                                 size="small"
-                                 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                 emptyMessage="#{msg['no.items']}"
-                                 rowIndexVar="index"
-                                 >
-                        <p:column style="width: 40px;">
-                            <f:facet name="header">
-                                <h:outputText value="#" />
-                            </f:facet>
-                            <h:outputText 
-                                value="#{index + 1}" />
-                        </p:column> 
-                        <!--
-                        <p:column headerText="#{msg['type']}" style="width: 100px;">
-                            <p:outputLabel value="#{eva.blGrupal==false?msg['type.individual']:msg['type.grupal']}"/>
-                        </p:column>
-                        -->
+                    <div class="ui-fluid p-formgrid p-grid">
 
-                        <p:column headerText="#{msg['step2.evaluation.name']}"> 
-                            <h:outputText value="#{eva.strDescNombre}" /> 
-                        </p:column>
+                        <div class="p-field p-col-12 p-md-12">
 
-                        <p:column headerText="#{msg['persona.evaluar']}">
-                            <p:outputPanel style="max-width: 200px"   >
-                                <ul>
-                                    <ui:repeat var="v" value="#{eva.lstEvaluacionesXEjecutar}" >
-                                        <li>#{v.strNombreEvaluado}</li>
-                                    </ui:repeat>
-                                </ul>
-                            </p:outputPanel>
-                        </p:column>
+                            <div class="p-field">
 
-                        <p:column style="text-align: center;">
-                            <p:commandButton type="submit" 
-                                             actionListener="#{listasPrincipalView.irEvaluacion(eva)}" 
-                                             value="#{msg['click.evaluar']}" />
-                        </p:column>
+                                <p:selectOneRadio id="indTypeSend" value="#{welcomeView.intEvaluationPreferenceView}"  layout="grid" columns="2" required="true"  >
+                                    <f:selectItem itemLabel="#{msg['grupal.view']}" itemValue="0" />
+                                    <f:selectItem itemLabel="#{msg['indidivual.view']}" itemValue="1" />
+                                    <p:ajax update="@form" event="valueChange" listener="#{welcomeView.changeEvaluationPreferenceView()}" />
+                                </p:selectOneRadio>
+                            </div>
+                            <div class="p-field">
+                                <p:dataTable var="eva" value="#{welcomeView.lstEvaluaciones}"
+                                             style="width: 100%;" 
+                                             rows="3"
+                                             paginatorPosition="bottom"
+                                             stripedRows="true"
+                                             paginator="true"  
+                                             size="small"
+                                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                             emptyMessage="#{msg['no.items']}"
+                                             rowIndexVar="index"
+                                             >
+                                    <p:column style="width: 40px;">
+                                        <f:facet name="header">
+                                            <h:outputText value="#" />
+                                        </f:facet>
+                                        <h:outputText 
+                                            value="#{index + 1}" />
+                                    </p:column> 
 
-                        <f:facet name="footer">
-                            <p:commandButton type="submit" value="#{msg['back.to.welcome']}"
-                                             oncomplete="PF('dlgBienvenida').show()" 
-                                             onclick="PF('dlgEvaluaciones').hide()" 
-                                             ajax="true" icon="pi pi-arrow-left" /> 
-                        </f:facet>
-                    </p:dataTable>
+                                    <p:column headerText="#{msg['step2.evaluation.name']}"> 
+                                        <h:outputText value="#{eva.strDescNombre}" /> 
+                                    </p:column>
 
+                                    <p:column headerText="#{msg['persona.evaluar']}">
+                                        <p:outputPanel style="max-width: 200px"   >
+                                            <ul>
+                                                <ui:repeat var="v" value="#{eva.lstEvaluacionesXEjecutar}" >
+                                                    <li>#{v.strNombreEvaluado}</li>
+                                                </ui:repeat>
+                                            </ul>
+                                        </p:outputPanel>
+                                    </p:column>
+
+                                    <p:column style="text-align: center;">
+                                        <p:commandButton type="submit" 
+                                                         actionListener="#{welcomeView.irEvaluacion(eva)}" 
+                                                         value="#{msg['click.evaluar']}" />
+                                    </p:column>
+
+                                    <f:facet name="footer">
+                                        <p:commandButton type="submit" value="#{msg['back.to.welcome']}"
+                                                         oncomplete="PF('dlgBienvenida').show()" 
+                                                         onclick="PF('dlgEvaluaciones').hide()" 
+                                                         ajax="true" icon="pi pi-arrow-left" /> 
+                                    </f:facet>
+                                </p:dataTable>
+                            </div>
+                        </div>
+                    </div>
                 </p:panel>
             </h:form>
         </p:dialog>

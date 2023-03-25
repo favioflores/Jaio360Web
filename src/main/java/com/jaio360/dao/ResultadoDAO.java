@@ -658,6 +658,90 @@ public class ResultadoDAO implements Serializable {
         return listaResultado;
     }
 
+    public List listaReporteSumarioMismoRelacion(Componente objComponente, Integer intEvaluadoPk) throws HibernateException {
+
+        List listaResultado = null;
+
+        try {
+
+            iniciaOperacion();
+            Query query = sesion.createSQLQuery(
+                    " SELECT TABLA.RELACION,                                                          "
+                    + "        AVG(TABLA.MEDIDA),                                                       "
+                    + "        COUNT(DISTINCT TABLA.EVALUADOR)                                          "
+                    + "        FROM                                                                     "
+                    + "       (select 'PROM' AS RELACION,                                               "
+                    + "               res.RE_ID_PARTICIPANTE_FK AS EVALUADOR,                           "
+                    + "               dm.DE_NU_ORDEN + 1 AS MEDIDA,                                     "
+                    + "               RE_ID_PARTICIPANTE_FK AS CANTIDAD                                 "
+                    + "          from proyecto po,                                                      "
+                    + "               relacion rel,                                                     "
+                    + "               resultado res,                                                    "
+                    + "               detalle_metrica dm,                                               "
+                    + "               componente cop                                                    "
+                    + "         where po.PO_ID_PROYECTO_pK = ?                                          "
+                    + "           and po.PO_ID_PROYECTO_PK = rel.PO_ID_PROYECTO_FK                      "
+                    + "           and rel.RE_ID_RELACION_PK = res.RE_ID_RELACION_FK                     "
+                    + "           and dm.DE_ID_DETALLE_ESCALA_PK = res.DE_ID_DETALLE_ESCALA_FK          "
+                    + "           and cop.CO_ID_COMPONENTE_PK = res.CO_ID_COMPONENTE_FK                 "
+                    + "           and cop.CO_ID_COMPONENTE_REF_FK = ?                                   "
+                    + "           and res.PA_ID_PARTICIPANTE_FK = ?                                     "
+                    + "           and res.RE_ID_RELACION_FK is not null                                 "
+                    + "         UNION ALL                                                               "
+                    + "       select rel.RE_TX_ABREVIATURA AS RELACION,                                               "
+                    + "               res.RE_ID_PARTICIPANTE_FK AS EVALUADOR,                           "
+                    + "               dm.DE_NU_ORDEN + 1 AS MEDIDA,                                     "
+                    + "               RE_ID_PARTICIPANTE_FK AS CANTIDAD                                 "
+                    + "          from proyecto po,                                                      "
+                    + "               relacion rel,                                                     "
+                    + "               resultado res,                                                    "
+                    + "               detalle_metrica dm,                                               "
+                    + "               componente cop                                                    "
+                    + "         where po.PO_ID_PROYECTO_pK = ?                                          "
+                    + "           and po.PO_ID_PROYECTO_PK = rel.PO_ID_PROYECTO_FK                      "
+                    + "           and rel.RE_ID_RELACION_PK = res.RE_ID_RELACION_FK                     "
+                    + "           and dm.DE_ID_DETALLE_ESCALA_PK = res.DE_ID_DETALLE_ESCALA_FK          "
+                    + "           and cop.CO_ID_COMPONENTE_PK = res.CO_ID_COMPONENTE_FK                 "
+                    + "           and cop.CO_ID_COMPONENTE_REF_FK = ?                                   "
+                    + "           and res.PA_ID_PARTICIPANTE_FK = ?                                     "
+                    + "           and res.RE_ID_RELACION_FK is not null                                 "
+                    + "         UNION ALL                                                               "
+                    + "        select 'AUTO' AS RELACION,                                               "
+                    + "               res.PA_ID_PARTICIPANTE_FK AS EVALUADOR,                           "
+                    + "               dm.DE_NU_ORDEN + 1 AS MEDIDA,                                     "
+                    + "               PA_ID_PARTICIPANTE_FK AS CANTIDAD                                 "
+                    + "          from proyecto po,                                                      "
+                    + "               resultado res,                                                    "
+                    + "               detalle_metrica dm,                                               "
+                    + "               componente cop                                                    "
+                    + "         where po.PO_ID_PROYECTO_pK = ?                                          "
+                    + "           and po.PO_ID_PROYECTO_PK = res.PO_ID_PROYECTO_FK                      "
+                    + "           and cop.CO_ID_COMPONENTE_PK = res.CO_ID_COMPONENTE_FK                 "
+                    + "           and cop.CO_ID_COMPONENTE_REF_FK = ?                                   "
+                    + "           and res.RE_ID_RELACION_FK is null                                     "
+                    + "           and res.PA_ID_PARTICIPANTE_FK = ?                                     "
+                    + "           and dm.DE_ID_DETALLE_ESCALA_PK = res.DE_ID_DETALLE_ESCALA_FK          "
+                    + "           and res.RE_ID_PARTICIPANTE_FK is null) TABLA GROUP BY TABLA.RELACION  ");
+
+            query.setInteger(0, Utilitarios.obtenerProyecto().getIntIdProyecto());
+            query.setInteger(1, objComponente.getCoIdComponentePk());
+            query.setInteger(2, intEvaluadoPk);
+            query.setInteger(3, Utilitarios.obtenerProyecto().getIntIdProyecto());
+            query.setInteger(4, objComponente.getCoIdComponentePk());
+            query.setInteger(5, intEvaluadoPk);
+            query.setInteger(6, Utilitarios.obtenerProyecto().getIntIdProyecto());
+            query.setInteger(7, objComponente.getCoIdComponentePk());
+            query.setInteger(8, intEvaluadoPk);
+
+            listaResultado = query.list();
+
+        } finally {
+            sesion.close();
+        }
+
+        return listaResultado;
+    }
+
     public List listaReporteDos(Componente objComponente) throws HibernateException {
 
         List listaResultado = null;

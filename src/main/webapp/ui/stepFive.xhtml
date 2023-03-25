@@ -22,6 +22,20 @@
                 background: #cbeccc !important;
             }
         </style>
+        <script>
+            //<![CDATA[
+            function dateTemplateFunc(date) {
+                return '<span style="background-color:' + ((date.day < 21 && date.day > 10) ? '#81C784' : 'inherit') + ';border-radius:50%;width: 2.5rem;height: 2.5rem;line-height: 2.5rem;display: flex;align-items: center;justify-content: center;">' + date.day + '</span>';
+            }
+
+            //]]>
+        </script>
+
+        <style>
+            .value {
+                font-weight: bold;
+            }
+        </style>
 
     </ui:define>
 
@@ -191,7 +205,7 @@
                                     <p:commandButton id="btnUnlcokUnusedLicenses" 
                                                      value="#{msg['unlock.unused.licenses']}" 
                                                      type="submit"
-                                                     disabled="#{seguimientoProyectoView.intIdEstadoProyecto!=37}"
+                                                     disabled="#{true or seguimientoProyectoView.intIdEstadoProyecto!=37}"
                                                      update="@form"
                                                      icon="pi pi-lock-open" 
                                                      styleClass="ui-button-warning">
@@ -221,9 +235,9 @@
                                                      update="@form"
                                                      disabled="#{seguimientoProyectoView.intIdEstadoProyecto==37?true:seguimientoProyectoView.boProyectoEjecutado==true?false:true}"
                                                      icon="pi pi-send"
-                                                     actionListener="#{seguimientoProyectoView.enviarRecordatorio()}"
+                                                     actionListener="#{seguimientoProyectoView.programarEnvioComunicado()}"
+                                                     oncomplete="PF('dlgProgramarEnvio').show()"
                                                      styleClass="ui-button-warning">
-                                        <p:confirm header="#{msg['confirmation']}" message="#{msg['step5.confirmation.pending.reminders']}" icon="pi pi-info-circle" />                 
                                     </p:commandButton>
                                 </div>
 
@@ -535,10 +549,11 @@
                             <p:commandButton value="#{msg['refresh']}" icon="pi pi-refresh" update="frmLogmail"
                                              actionListener="#{seguimientoProyectoView.buscarEmails}"/>
 
-                            <p:clock value="dt" pattern="dd/MM/yyyy HH:mm"   />
-                            <p:inputText type="hidden" value="" />
+                            <!--<p:clock value="dt" pattern="dd/MM/yyyy HH:mm"   />
+                            <p:inputText type="hidden" value="" />-->
                         </div>
                     </div>
+                    
                     <div class="p-field p-formgrid p-grid">
                         <div class="p-col">
                             <p:dataTable 
@@ -562,11 +577,6 @@
                                     <h:outputText 
                                         value="#{index + 1}" />
                                 </p:column> 
-                                <!--
-                                <p:column headerText="#{msg['step5.asunto']}" sortable="true">
-                                    <p:outputLabel value="#{reg.noTxAsunto}" />
-                                </p:column>
-                                -->
                                 <p:column headerText="#{msg['step5.to']}" sortable="true" >
                                     <p:outputLabel value="#{reg.lstDestinatarios}" />
                                 </p:column>
@@ -587,6 +597,82 @@
                 </p:panel>
             </h:form>
         </p:dialog>     
+
+        <p:dialog widgetVar="dlgProgramarEnvio" header="Programar envío de comunicado" width="500" visible="false"
+                  closable="true" hideEffect="drop" closeOnEscape="true" showEffect="drop" 
+                  modal="true" responsive="true" resizable="true" >
+            <h:form>
+                <p:panel>
+
+                    <p:growl id="growlFormEmails" showDetail="false" life="4000" />
+
+                    <div class="ui-fluid p-formgrid p-grid">
+
+                        <div class="p-field p-col-12 p-md-12">
+
+                            <div class="p-field">
+                                <p:outputLabel value="Seleccione el método de envío que desea realizar" for="@next" />
+                                <p:selectOneRadio id="indTypeSend" value="#{seguimientoProyectoView.inTypeMethodSend}"  layout="grid" columns="2" required="true"  >
+                                    <f:selectItem itemLabel="Inmediato" itemValue="0" />
+                                    <f:selectItem itemLabel="Programado" itemValue="1" itemDisabled="true" />
+                                    <p:ajax update="@form" event="valueChange" listener="#{seguimientoProyectoView.changeTypeSend()}" />
+                                </p:selectOneRadio>
+                            </div>
+                            <!--
+                            <div class="p-field">
+                                <p:outputLabel value="Hora actual local, de acuerdo a su zona horaria" for="@next" />
+                                <p:clock rendered="#{seguimientoProyectoView.inTypeMethodSend==1}"  />
+                            </div>
+                            -->
+
+                            <div class="p-field">
+                                <p:outputLabel value="No entregar antes de:" for="@next" />
+                                <div class="p-field p-formgrid p-grid">
+
+                                    <div class="p-col" style="text-align: center;">
+                                        <p:outputLabel for="@next" value="Días" rendered="#{seguimientoProyectoView.inTypeMethodSend==1}" />
+                                        <p:spinner id="rotdia"  min="0" max="3" rotate="true" suffix="d" disabled="#{seguimientoProyectoView.inTypeMethodSend==0}" />
+                                    </div>
+
+                                    <div class="p-col" style="text-align: center;">
+                                        <p:outputLabel for="@next" value="Horas" rendered="#{seguimientoProyectoView.inTypeMethodSend==1}" />
+                                        <p:spinner id="rothora"  min="0" max="23" rotate="true" suffix="h" disabled="#{seguimientoProyectoView.inTypeMethodSend==0}" />
+                                    </div>
+
+                                    <div class="p-col" style="text-align: center;">
+                                        <p:outputLabel for="@next" value="Minutos" rendered="#{seguimientoProyectoView.inTypeMethodSend==1}" />
+                                        <p:spinner id="rotminuto"  min="0" max="59" rotate="true" suffix="m" disabled="#{seguimientoProyectoView.inTypeMethodSend==0}" />
+                                    </div>
+                                </div>
+
+
+
+                            </div>
+                        </div>      
+                    </div>
+                    <div class="p-col-12 p-col-12 p-md-12">
+                        <div class="p-field p-formgrid p-grid">
+                            <div class="p-field p-col">
+                                <p:commandButton value="#{msg['yes']}" style="width: 100%;"  icon="pi pi-lock" update="form"
+                                                 actionListener="#{seguimientoProyectoView.enviarRecordatorio()}" oncomplete="PF('dlgProgramarEnvio').hide()" >
+                                    <p:confirm header="#{msg['confirmation']}" message="#{msg['step5.confirmation.pending.reminders']}" icon="pi pi-info-circle" />                 
+                                </p:commandButton>
+                            </div>
+                            <div class="p-field p-col">
+                                <p:commandButton value="#{msg['no']}" styleClass="ui-button-danger" 
+                                                 style="width: 100%;"
+                                                 icon="pi pi-times"  onclick="PF('dlgProgramarEnvio').hide()" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <br/>
+                    <center>
+                        <p:graphicImage value="../images/logoJaio360.jpg" width="130" height="50" />
+                    </center>
+                </p:panel>
+            </h:form>
+        </p:dialog>   
 
     </ui:define>
 </ui:composition>

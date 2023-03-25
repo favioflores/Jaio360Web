@@ -12,7 +12,6 @@ import com.jaio360.utils.Utilitarios;
 import com.jaio360.view.BaseView;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -37,6 +36,7 @@ public class UsuarioInfo extends BaseView implements Serializable {
     private Integer intHistorialPk;
     private String strTimeRemaining;
     private String timeClient;
+    private Integer intEvaluationPreferenceView;
 
     private boolean ManagingDirector = false;
     private boolean CountryManager = false;
@@ -84,6 +84,16 @@ public class UsuarioInfo extends BaseView implements Serializable {
     public boolean isManagingDirector() {
         return ManagingDirector;
     }
+
+    public Integer getIntEvaluationPreferenceView() {
+        return intEvaluationPreferenceView;
+    }
+
+    public void setIntEvaluationPreferenceView(Integer intEvaluationPreferenceView) {
+        this.intEvaluationPreferenceView = intEvaluationPreferenceView;
+    }
+
+   
 
     public void setManagingDirector(boolean ManagingDirector) {
         this.ManagingDirector = ManagingDirector;
@@ -156,6 +166,7 @@ public class UsuarioInfo extends BaseView implements Serializable {
         this.intIdCiudad = objUsuario.getUbigeo().getUbIdUbigeoPk();
         this.usuario = objUsuario;
         this.strFechaRegistro = Utilitarios.formatearFecha(objUsuario.getUsFeRegistro(), Constantes.DDMMYYYY);
+        this.intEvaluationPreferenceView = 0;
 
         if (isForLogin) {
 
@@ -203,7 +214,7 @@ public class UsuarioInfo extends BaseView implements Serializable {
         } else {
             this.ManagingDirector = false;
             this.CountryManager = false;
-            this.ProjectManager = true;
+            this.ProjectManager = false;
             this.EvaluatedEvaluator = true;
         }
 

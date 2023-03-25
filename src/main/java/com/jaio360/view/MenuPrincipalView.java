@@ -1,12 +1,11 @@
 package com.jaio360.view;
 
+import com.jaio360.dao.ElementoDAO;
 import com.jaio360.domain.ProyectoInfo;
 import com.jaio360.domain.UsuarioInfo;
 import com.jaio360.utils.Utilitarios;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -29,6 +28,8 @@ public class MenuPrincipalView extends BaseView implements Serializable {
     private UsuarioInfo usuarioInfo;
     private ProyectoInfo proyectoInfo;
     private boolean existProyecto;
+    private ElementoDAO objElementoDAO;
+    private String strMailHelp;
 
     public MenuModel getMenuPrincipal() {
         return menuPrincipal;
@@ -149,8 +150,7 @@ public class MenuPrincipalView extends BaseView implements Serializable {
                 agregarItem(msg("gestionar.licencias"), "admLicencias.jsf", "", clients);
                 agregarItem(msg("manage.licences.clients"), "admLicenceClient.jsf", "", clients);
                 //User guide
-                agregarItem(msg("user.guide"), "userGuide.jsf", "pi pi-file-pdf", menuPrincipal, null);
-                agregarItem(msg("participant.guide"), "participantGuide.jsf", "pi pi-file-pdf", menuPrincipal, null);
+                agregarItem(msg("user.guide"), "guidesForUsers.jsf", "pi pi-file-pdf", menuPrincipal, null);
                 //Upgrades
                 agregarItem("", "upgrades.jsf", "pi pi-info-circle", menuPrincipal, null);
 
@@ -171,8 +171,7 @@ public class MenuPrincipalView extends BaseView implements Serializable {
                 agregarItem(msg("manage.my.clients"), "admClients.jsf", "", clients);
                 agregarItem(msg("manage.licences.clients"), "admLicenceClient.jsf", "", clients);
                 //User guide
-                agregarItem(msg("user.guide"), "userGuide.jsf", "pi pi-file-pdf", menuPrincipal, null);
-                agregarItem(msg("participant.guide"), "participantGuide.jsf", "pi pi-file-pdf", menuPrincipal, null);
+                agregarItem(msg("user.guide"), "guidesForUsers.jsf", "pi pi-file-pdf", menuPrincipal, null);
                 //Upgrades
                 agregarItem("", "upgrades.jsf", "pi pi-info-circle", menuPrincipal, null);
 
@@ -189,8 +188,7 @@ public class MenuPrincipalView extends BaseView implements Serializable {
                 agregarItem(msg("balance.license"), "admBalanceClient.jsf", "", user);
 
                 //User guide
-                agregarItem(msg("user.guide"), "userGuide.jsf", "pi pi-file-pdf", menuPrincipal, null);
-                agregarItem(msg("participant.guide"), "participantGuide.jsf", "pi pi-file-pdf", menuPrincipal, null);
+                agregarItem(msg("user.guide"), "guidesForUsers.jsf", "pi pi-file-pdf", menuPrincipal, null);
                 //Upgrades
                 agregarItem("", "upgrades.jsf", "pi pi-cloud-upload", menuPrincipal, null);
             } else {//USER EVALUATOR / EVALUATED
@@ -201,7 +199,7 @@ public class MenuPrincipalView extends BaseView implements Serializable {
                 DefaultSubMenu usuarios = agregarMenu(msg("my.account"), "pi pi-user", menuPrincipal);
                 agregarItem(msg("actualizar.mis.datos"), "admProfile.jsf", "", usuarios);
                 //Participant guide
-                agregarItem(msg("participant.guide"), "participantGuide.jsf", "pi pi-file-pdf", menuPrincipal, null);
+                agregarItem(msg("user.guide"), "guidesForUsers.jsf", "pi pi-file-pdf", menuPrincipal, null);
                 //Upgrades
                 //agregarItem("", "upgrades.jsf", "pi pi-cloud-upload", menuPrincipal);
             }
@@ -211,10 +209,10 @@ public class MenuPrincipalView extends BaseView implements Serializable {
     @PostConstruct
     public void init() {
 
-        usuarioInfo = Utilitarios.obtenerUsuario();
-        proyectoInfo = Utilitarios.obtenerProyecto();
-
-        existProyecto = proyectoInfo != null;
+        this.usuarioInfo = Utilitarios.obtenerUsuario();
+        this.proyectoInfo = Utilitarios.obtenerProyecto();
+        this.existProyecto = this.proyectoInfo != null;
+        this.strMailHelp = null;//objElementoDAO.obtenElemento(0).getElTxValor1();
 
     }
 

@@ -317,18 +317,21 @@ public class ComponenteDAO implements Serializable
 "               ifnull(RE_ID_PARTICIPANTE_FK,res.PA_ID_PARTICIPANTE_FK||'EVA') AS CANTIDAD       " +                     
 "          from proyecto po,                                                                     " +
 "               resultado res,                                                                   " +
+"               metrica me, " +
 "               detalle_metrica dm,                                                              " +
 "               componente cop,                                                                  " +
 "			   componente cat                                                        " +
 "         where po.PO_ID_PROYECTO_pK = :idProyecto                                                       " +
 "           and res.PO_ID_PROYECTO_FK = po.PO_ID_PROYECTO_PK					 " +
+"           and me.PO_ID_PROYECTO_FK = po.PO_ID_PROYECTO_PK " +
+"           and dm.ME_ID_METRICA_FK = me.ME_ID_METRICA_PK " +
 "           and dm.DE_ID_DETALLE_ESCALA_PK = res.DE_ID_DETALLE_ESCALA_FK                         " +
 "           and cop.CO_ID_COMPONENTE_PK = res.CO_ID_COMPONENTE_FK                                " +
 "	    and cat.CO_ID_COMPONENTE_PK = cop.CO_ID_COMPONENTE_REF_FK                     " +
                     //" and res.RE_ID_PARTICIPANTE_FK is not null " +
 "	    and cat.CO_ID_TIPO_COMPONENTE = :idTipo                                            " +
-"           and cat.CU_ID_CUESTIONARIO_FK = :idCuestionario                                                  "
-                    + " and res.PA_ID_PARTICIPANTE_FK = :idParticipant ";
+"           and cat.CU_ID_CUESTIONARIO_FK = :idCuestionario                                      "+ 
+"           and res.PA_ID_PARTICIPANTE_FK = :idParticipant ";
 
         if(objCategoria!=null){
             strQuery += " and cat.CO_ID_COMPONENTE_PK = :idCategoria " ;

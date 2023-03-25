@@ -16,11 +16,14 @@ import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStamper;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.jaio360.dao.ElementoDAO;
+import com.jaio360.dao.HistorialAccesoDAO;
 import com.jaio360.dao.ProyectoDAO;
 import com.jaio360.domain.DatosReporte;
+import com.jaio360.domain.EvaluacionesXEjecutar;
 import com.jaio360.domain.ProyectoInfo;
 import com.jaio360.domain.UsuarioInfo;
 import com.jaio360.orm.Elemento;
+import com.jaio360.orm.HistorialAcceso;
 import com.jaio360.orm.Proyecto;
 import com.jaio360.orm.Usuario;
 import com.jaio360.view.BaseView;
@@ -50,6 +53,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.ResourceBundle;
@@ -294,7 +298,7 @@ public class Utilitarios extends BaseView implements Serializable {
                 session.removeAttribute("usuarioInfo");
                 session.setAttribute("usuarioInfo", objUsuarioInfo);
             }
-            
+
             session.removeAttribute("proyectoInfo");
             session.setAttribute("proyectoInfo", objProyectoInfo);
 
@@ -1156,6 +1160,204 @@ public class Utilitarios extends BaseView implements Serializable {
         cal.setTime(new Timestamp(cal.getTime().getTime()));
         cal.add(Calendar.MINUTE, expiryTimeInMinutes);
         return new Date(cal.getTime().getTime());
+    }
+
+    public static List<ProyectoInfo> poblarListaEvaluaciones(UsuarioInfo objUsuarioInfo, List lstEvaluaciones, Integer intEvaluationPreferenceView) {
+
+        ProyectoDAO objProyectoDAO = new ProyectoDAO();
+
+        List lstEvaluacion = objProyectoDAO.obtenListaEvaluacionesPorUsuario(objUsuarioInfo.getStrEmail());
+
+        if (!lstEvaluacion.isEmpty()) {
+            
+            lstEvaluaciones = new ArrayList();
+
+            LinkedHashMap<String, ProyectoInfo> mapEvaluaciones = new LinkedHashMap<>();
+
+            Iterator itLstEvaluaciones = lstEvaluacion.iterator();
+
+            ProyectoInfo objProyectoInfo;
+            
+            EvaluacionesXEjecutar objEvaluacionesXEjecutar;
+
+            if (intEvaluationPreferenceView == 1) {//INDIVIDUAL
+
+                while (itLstEvaluaciones.hasNext()) {
+                    
+                    Object[] objProyecto = (Object[]) itLstEvaluaciones.next();
+                    
+                    objProyectoInfo = new ProyectoInfo();
+                    objProyectoInfo.setIntIdProyecto((Integer) objProyecto[0]);
+                    objProyectoInfo.setIntCantidadEvaluaciones(1);
+                    objProyectoInfo.setStrDescNombre((String) objProyecto[9]);
+                    objProyectoInfo.setBlGrupal(Boolean.FALSE);
+                    objProyectoInfo.setIntIdCuestionario((Integer) objProyecto[10]);
+                    objProyectoInfo.setStrNombreEvaluador(Utilitarios.obtenerUsuario().getStrDescripcion());
+
+                    objEvaluacionesXEjecutar = new EvaluacionesXEjecutar();
+
+                    objEvaluacionesXEjecutar.setIdProyecto((Integer) objProyecto[0]);
+                    objEvaluacionesXEjecutar.setIdParticipante((Integer) objProyecto[11]);
+                    objEvaluacionesXEjecutar.setStrCorreoEvaluado((String) objProyecto[12]);
+                    objEvaluacionesXEjecutar.setStrCorreoEvaluador(Utilitarios.obtenerUsuario().getStrEmail());
+                    objEvaluacionesXEjecutar.setStrNombreEvaluado((String) objProyecto[8]);
+                    objEvaluacionesXEjecutar.setStrURLImagen((String) objProyecto[15]);
+                    if (objProyecto[12].toString().equals(Utilitarios.obtenerUsuario().getStrEmail())) {
+                        objEvaluacionesXEjecutar.setBlAutoevaluation(true);
+                    } else {
+                        objEvaluacionesXEjecutar.setBlAutoevaluation(false);
+                    }
+
+                    List<EvaluacionesXEjecutar> lstEvaluacionesXEjecutar = new ArrayList<>();
+                    lstEvaluacionesXEjecutar.add(objEvaluacionesXEjecutar);
+                    objProyectoInfo.setLstEvaluacionesXEjecutar(lstEvaluacionesXEjecutar);
+                    
+                    lstEvaluaciones.add(objProyectoInfo);
+                    
+                }
+
+            } else {//GRUPAL
+
+                while (itLstEvaluaciones.hasNext()) {
+
+                    Object[] objProyecto = (Object[]) itLstEvaluaciones.next();
+
+                    if (!mapEvaluaciones.containsKey((objProyecto[0] + "-" + objProyecto[10]))) {
+
+                        objProyectoInfo = new ProyectoInfo();
+                        objProyectoInfo.setIntIdProyecto((Integer) objProyecto[0]);
+                        objProyectoInfo.setIntCantidadEvaluaciones(1);
+                        objProyectoInfo.setStrDescNombre((String) objProyecto[9]);
+                        objProyectoInfo.setBlGrupal(Boolean.FALSE);
+                        objProyectoInfo.setIntIdCuestionario((Integer) objProyecto[10]);
+                        objProyectoInfo.setStrNombreEvaluador(Utilitarios.obtenerUsuario().getStrDescripcion());
+
+                        objEvaluacionesXEjecutar = new EvaluacionesXEjecutar();
+
+                        objEvaluacionesXEjecutar.setIdProyecto((Integer) objProyecto[0]);
+                        objEvaluacionesXEjecutar.setIdParticipante((Integer) objProyecto[11]);
+                        objEvaluacionesXEjecutar.setStrCorreoEvaluado((String) objProyecto[12]);
+                        objEvaluacionesXEjecutar.setStrCorreoEvaluador(Utilitarios.obtenerUsuario().getStrEmail());
+                        objEvaluacionesXEjecutar.setStrNombreEvaluado((String) objProyecto[8]);
+                        objEvaluacionesXEjecutar.setStrURLImagen((String) objProyecto[15]);
+                        if (objProyecto[12].toString().equals(Utilitarios.obtenerUsuario().getStrEmail())) {
+                            objEvaluacionesXEjecutar.setBlAutoevaluation(true);
+                        } else {
+                            objEvaluacionesXEjecutar.setBlAutoevaluation(false);
+                        }
+
+                        List<EvaluacionesXEjecutar> lstEvaluacionesXEjecutar = new ArrayList<>();
+                        lstEvaluacionesXEjecutar.add(objEvaluacionesXEjecutar);
+                        objProyectoInfo.setLstEvaluacionesXEjecutar(lstEvaluacionesXEjecutar);
+
+                        mapEvaluaciones.put((objProyecto[0] + "-" + objProyecto[10]), objProyectoInfo);
+
+                    } else {
+
+                        objProyectoInfo = mapEvaluaciones.get((objProyecto[0] + "-" + objProyecto[10]));
+                        objProyectoInfo.setIntCantidadEvaluaciones(objProyectoInfo.getIntCantidadEvaluaciones() + 1);
+
+                        if (objProyectoInfo.getIntCantidadEvaluaciones() > 1) {
+                            objProyectoInfo.setBlGrupal(Boolean.TRUE);
+                        } else {
+                            objProyectoInfo.setBlGrupal(Boolean.FALSE);
+                        }
+
+                        objEvaluacionesXEjecutar = new EvaluacionesXEjecutar();
+
+                        objEvaluacionesXEjecutar.setIdProyecto((Integer) objProyecto[0]);
+                        objEvaluacionesXEjecutar.setIdParticipante((Integer) objProyecto[11]);
+                        objEvaluacionesXEjecutar.setStrCorreoEvaluado((String) objProyecto[12]);
+                        objEvaluacionesXEjecutar.setStrCorreoEvaluador(Utilitarios.obtenerUsuario().getStrEmail());
+                        objEvaluacionesXEjecutar.setStrNombreEvaluado((String) objProyecto[8]);
+                        objEvaluacionesXEjecutar.setStrURLImagen((String) objProyecto[15]);
+                        if (objProyecto[12].toString().equals(Utilitarios.obtenerUsuario().getStrEmail())) {
+                            objEvaluacionesXEjecutar.setBlAutoevaluation(true);
+                        } else {
+                            objEvaluacionesXEjecutar.setBlAutoevaluation(false);
+                        }
+
+                        objProyectoInfo.getLstEvaluacionesXEjecutar().add(objEvaluacionesXEjecutar);
+                        mapEvaluaciones.replace((objProyecto[0] + "-" + objProyecto[10]), objProyectoInfo);
+
+                    }
+
+                }
+
+                if (!mapEvaluaciones.isEmpty()) {
+                    lstEvaluaciones = new ArrayList<>(mapEvaluaciones.values());
+                }
+
+            }
+
+        }
+
+        return lstEvaluaciones;
+    }
+
+    public static void cerrarSesion(UsuarioInfo usuarioInfo) {
+
+        try {
+
+            HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
+
+            UsuarioInfo objUsuarioProxy = Utilitarios.obtenerUsuarioProxy();
+
+            if (objUsuarioProxy != null) {
+                objUsuarioProxy = (UsuarioInfo) session.getAttribute("usuarioInfoProxy");
+                registraHistorialAcceso(objUsuarioProxy, objUsuarioProxy.getIntUsuarioPk(), true, null, new Date(), objUsuarioProxy.getIntHistorialPk());
+            } else {
+                usuarioInfo = (UsuarioInfo) session.getAttribute("usuarioInfo");
+                registraHistorialAcceso(usuarioInfo, usuarioInfo.getIntUsuarioPk(), true, null, new Date(), usuarioInfo.getIntHistorialPk());
+            }
+
+            session.invalidate();
+
+            FacesContext.getCurrentInstance().getExternalContext().redirect("login.jsf");
+
+        } catch (IOException ex) {
+            if (usuarioInfo == null) {
+                try {
+                    FacesContext.getCurrentInstance().getExternalContext().redirect("login.jsf");
+                } catch (IOException exx) {
+                    mostrarError(log, exx);
+                }
+            } else {
+                mostrarError(log, ex);
+            }
+
+        }
+
+    }
+
+    public static void registraHistorialAcceso(UsuarioInfo usuarioInfo, Integer intUsuarioPk, boolean status, Date dtIngreso, Date dtSalida, Integer intHistorialPk) {
+
+        HistorialAccesoDAO objHistorialAccesoDAO = new HistorialAccesoDAO();
+        HistorialAcceso objHistorialAcceso = new HistorialAcceso();
+
+        if (intHistorialPk == null) {
+
+            Usuario objUsuario = new Usuario();
+            objUsuario.setUsIdCuentaPk(intUsuarioPk);
+
+            objHistorialAcceso.setHaFeIngreso(dtIngreso);
+            objHistorialAcceso.setUsuario(objUsuario);
+            objHistorialAcceso.setHaInEstado(status);
+
+            usuarioInfo.setIntHistorialPk(objHistorialAccesoDAO.guardaHistorialAcceso(objHistorialAcceso));
+
+        } else {
+
+            objHistorialAcceso = objHistorialAccesoDAO.obtenHistorialAcceso(intHistorialPk);
+
+            objHistorialAcceso.setHaFeSalida(dtSalida);
+
+            objHistorialAcceso.setHaInEstado(true);
+
+            objHistorialAccesoDAO.actualizaHistorialAcceso(objHistorialAcceso);
+
+        }
+
     }
 
 }

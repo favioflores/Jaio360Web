@@ -9,14 +9,13 @@
     <body>
         <ui:composition>
             <h:form>
-
                 <p:menubar id="menu" model="#{menuPrincipal.menuPrincipal}"  >
 
                     <f:facet name="options">
 
                         <h:panelGrid columns="3" cellspacing="0" styleClass="mb-3" >
-
-                            <p:commandButton value="#{msg['cabecera.cerrar.sesion']}" id="btcerrarSesion" widgetVar="btcerrarSesion" styleClass="ui-button-secondary" icon="pi pi-fw pi-sign-out" actionListener="#{usuarioSesion.cerrarSesion}"  >
+                            
+                            <p:commandButton value="#{msg['cabecera.cerrar.sesion']}" id="btcerrarSesion" widgetVar="btcerrarSesion" styleClass="ui-button-secondary" icon="pi pi-fw pi-sign-out" actionListener="#{usuarioSesion.cerrarSistema}"  >
                                 <p:confirm header="#{msg['cabecera.logout.confirmacion.title']}" icon="pi pi-info-circle" message="#{msg['cabecera.logout.confirmacion.mensaje']}" /> 
                             </p:commandButton>
                         </h:panelGrid>

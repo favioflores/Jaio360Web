@@ -10,10 +10,10 @@ import javax.faces.bean.ManagedBean;
 @ApplicationScoped
 public class Constantes {
 
-    public static String STR_INBOX_PRELIMINAR = File.separator + "var" + File.separator + "tmp" + File.separator + "InboxPreliminar";
-    public static String STR_INBOX_DEFINITIVO = File.separator + "var" + File.separator + "tmp" + File.separator + "InboxDefinitivo";
-    //public static String STR_INBOX_PRELIMINAR = File.separator + "D://InboxPreliminar";
-    //public static String STR_INBOX_DEFINITIVO = File.separator + "D://InboxDefinitivo";
+    //public static String STR_INBOX_PRELIMINAR = File.separator + "var" + File.separator + "tmp" + File.separator + "InboxPreliminar";
+    //public static String STR_INBOX_DEFINITIVO = File.separator + "var" + File.separator + "tmp" + File.separator + "InboxDefinitivo";
+    public static String STR_INBOX_PRELIMINAR = File.separator + "D://InboxPreliminar";
+    public static String STR_INBOX_DEFINITIVO = File.separator + "D://InboxDefinitivo";
 
     public static char CH_RANDOM_Z = 'Z';
     public static char CH_RANDOM_A = 'A';
@@ -211,25 +211,26 @@ public class Constantes {
     public static Integer INT_REPORTE_GRUPAL_NIVEL_DE_PARTICIPACION = 101;
     public static Integer INT_REPORTE_GRUPAL_RESPUESTAS = 102;
 
-    public static Integer INT_REPORTE_GRUPAL_PROMEDIO_GENERAL_POR_COMPETENCIA = 11;
-    public static Integer INT_REPORTE_GRUPAL_PROMEDIO_GENERAL_POR_PREGUNTA = 12;
-    public static Integer INT_REPORTE_GRUPAL_PROMEDIO_POR_PREGUNTAS_ORDENADO_DESCENDENTE = 13;
-    public static Integer INT_REPORTE_GRUPAL_PERSONAS_CON_MEJOR_PUNTJE_GENERAL = 14;
-    public static Integer INT_REPORTE_GRUPAL_PERSONAS_CON_MENOR_PUNTAJE_GENERAL = 15;
-    public static Integer INT_REPORTE_GRUPAL_RESUMEN_DE_PROMEDIO = 16;
-
-    public static Integer INT_REPORTE_GRUPAL_RESUMEN_DE_EVALUADOS_POR_RELACIONES = 22;
+    //public static Integer INT_REPORTE_GRUPAL_PROMEDIO_GENERAL_POR_COMPETENCIA = 11;
+    //public static Integer INT_REPORTE_GRUPAL_PROMEDIO_GENERAL_POR_PREGUNTA = 12;
+    //public static Integer INT_REPORTE_GRUPAL_PROMEDIO_POR_PREGUNTAS_ORDENADO_DESCENDENTE = 13;
+    //public static Integer INT_REPORTE_GRUPAL_PERSONAS_CON_MEJOR_PUNTJE_GENERAL = 14;
+    //public static Integer INT_REPORTE_GRUPAL_PERSONAS_CON_MENOR_PUNTAJE_GENERAL = 15;
+    //public static Integer INT_REPORTE_GRUPAL_RESUMEN_DE_PROMEDIO = 16;
+    //public static Integer INT_REPORTE_GRUPAL_RESUMEN_DE_EVALUADOS_POR_RELACIONES = 22;
 
     public static Integer INT_REPORTE_INDIVIDUAL_CARATULA = 0;
     public static Integer INT_REPORTE_INDIVIDUAL_SUMARIO_X_CATEGORIA = 1;
     public static Integer INT_REPORTE_INDIVIDUAL_SUMARIO_X_CATEGORIA_MISMO = 2;
-    public static Integer INT_REPORTE_INDIVIDUAL_CALIFICACION_X_ITEM_CATEGORIA = 3;
-    public static Integer INT_REPORTE_INDIVIDUAL_CALIFICACION_X_ITEM_PROMEDIO = 4;
-    public static Integer INT_REPORTE_INDIVIDUAL_ITEM_ALTA_CALIFICACION_OTROS = 5;
-    public static Integer INT_REPORTE_INDIVIDUAL_ITEM_BAJA_CALIFICACION_OTROS = 6;
-    public static Integer INT_REPORTE_INDIVIDUAL_ITEM_ALTA_CALIFICACION_MISMO = 7;
-    public static Integer INT_REPORTE_INDIVIDUAL_ITEM_BAJA_CALIFICACION_MISMO = 8;
-    public static Integer INT_REPORTE_INDIVIDUAL_PREGUNTAS_ABIERTAS = 9;
+    public static Integer INT_REPORTE_INDIVIDUAL_SUMARIO_X_CATEGORIA_MISMO_RELACION = 3;
+    public static Integer INT_REPORTE_INDIVIDUAL_CALIFICACION_X_ITEM_CATEGORIA = 4;
+    public static Integer INT_REPORTE_INDIVIDUAL_CALIFICACION_X_ITEM_PROMEDIO = 5;
+    public static Integer INT_REPORTE_INDIVIDUAL_ITEM_ALTA_CALIFICACION_OTROS = 6;
+    public static Integer INT_REPORTE_INDIVIDUAL_ITEM_BAJA_CALIFICACION_OTROS = 7;
+    public static Integer INT_REPORTE_INDIVIDUAL_ITEM_ALTA_CALIFICACION_MISMO = 8;
+    public static Integer INT_REPORTE_INDIVIDUAL_ITEM_BAJA_CALIFICACION_MISMO = 9;
+    public static Integer INT_REPORTE_INDIVIDUAL_PREGUNTAS_ABIERTAS = 10;
+    
 
     public static int FORMAT_DATE_SHORT = DateFormat.SHORT;
     public static int FORMAT_DATE_MEDIUM = DateFormat.MEDIUM;

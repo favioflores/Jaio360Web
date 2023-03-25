@@ -113,7 +113,7 @@ public class TarifaDAO implements Serializable
         try 
         { 
             iniciaOperacion(); 
-            listaTarifa = sesion.createQuery("from Tarifa t where t.taDePrecio > 0 ").list(); 
+            listaTarifa = sesion.createQuery("from Tarifa t where t.taIdEstado = 26 ").list(); 
             
         } finally 
         { 

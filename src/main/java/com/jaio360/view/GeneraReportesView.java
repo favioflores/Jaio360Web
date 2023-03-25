@@ -31,10 +31,12 @@ import com.jaio360.report.ReporteIndividualItemsAltaCalificacionMismo;
 import com.jaio360.report.ReporteIndividualItemsBajaCalificacion;
 import com.jaio360.report.ReporteIndividualItemsBajaCalificacionMismo;
 import com.jaio360.report.ReporteIndividualSumarioCategoria;
-import com.jaio360.report.ReporteIndividualSumarioCategoriaMismo;
+import com.jaio360.report.ReporteIndividualSumarioCategoriaMismoRelacion;
+import com.jaio360.report.ReporteIndividualSumarioCategoriaMismoVsOtrosProm;
 import com.jaio360.report.ReporteTodasRespuestas;
 import com.jaio360.utils.Constantes;
 import com.jaio360.utils.Movimientos;
+import com.jaio360.utils.ReportOptionsSort;
 import com.jaio360.utils.ReportSort;
 import com.jaio360.utils.Utilitarios;
 import java.io.File;
@@ -49,6 +51,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
@@ -263,32 +266,19 @@ public class GeneraReportesView extends BaseView implements Serializable {
         lstContenidoIndividual = new ArrayList<>();
         lstContenidoGrupal = new ArrayList<>();
 
-        for (int i = 1; i <= 12; i++) {
+        for (int i = 1; i <= 10; i++) {
             lstContenidoIndividual.add(new SelectItem(i, msg("report." + i)));
         }
 
+        //Collections.sort(lstContenidoIndividual, new ReportOptionsSort());
+        
         for (int i = 100; i <= 102; i++) {
             lstContenidoGrupal.add(new SelectItem(i, msg("report." + i)));
         }
+        
+        //Collections.sort(lstContenidoGrupal, new ReportOptionsSort());
 
-        //Resultados Generales - Competencias y preguntas
-        /*
-        lstContenidoGrupal.add(new ModeloContenido(11,"Promedio general por competencia","",strDescripcionesGrupal[0],"PDF"));
-        lstContenidoGrupal.add(new ModeloContenido(12,"Promedio general por pregunta","",strDescripcionesGrupal[0],"PDF"));
-        lstContenidoGrupal.add(new ModeloContenido(13,"Promedio por preguntas ordenado de forma descendente","",strDescripcionesGrupal[0],"PDF"));
-        //Resultados Generales - Por personas
-        lstContenidoGrupal.add(new ModeloContenido(14,"Personas con mejor puntaje general","",strDescripcionesGrupal[0],"PDF"));
-        lstContenidoGrupal.add(new ModeloContenido(15,"Personas con menor puntaje general","",strDescripcionesGrupal[0],"PDF"));
-        lstContenidoGrupal.add(new ModeloContenido(16,"Resumen de promedio","",strDescripcionesGrupal[0],"PDF"));
-        //RESULTADOS POR VARIABLE
-        lstContenidoGrupal.add(new ModeloContenido(17,"Promedio de competencias por sexo","",strDescripcionesGrupal[0],"PDF"));
-        lstContenidoGrupal.add(new ModeloContenido(18,"Promedio de competencias por edad","",strDescripcionesGrupal[0],"PDF"));
-        lstContenidoGrupal.add(new ModeloContenido(19,"Promedio de competencias por relaciones","",strDescripcionesGrupal[0],"PDF"));
-        lstContenidoGrupal.add(new ModeloContenido(20,"Promedio de competencias por tiempo en la empresa","",strDescripcionesGrupal[0],"PDF"));
-        lstContenidoGrupal.add(new ModeloContenido(21,"Promedio de competencias por área","",strDescripcionesGrupal[0],"PDF"));
-        //RESUMEN DE EVALUADOS POR RELACIONES
-        lstContenidoGrupal.add(new ModeloContenido(22,"Resumen de evaluados por relaciones","",strDescripcionesGrupal[0],"EXCEL"));
-         */
+        
         ProyectoInfo objProyectoInfo = Utilitarios.obtenerProyecto();
         ParticipanteDAO objParticipanteDAO = new ParticipanteDAO();
         ResultadoDAO objResultadoDAO = new ResultadoDAO();
@@ -594,7 +584,7 @@ public class GeneraReportesView extends BaseView implements Serializable {
 
                     lstTemporalesPDFxCombinar = new ArrayList<>();
 
-                    Map mapRelaciones = obtieneRelaciones(objParticipante.getPaIdParticipantePk());
+                    LinkedHashMap mapRelaciones = new LinkedHashMap();
 
                     Cuestionario objCuestionario = objCuestionarioDAO.obtenCuestionarioXEvaluado(objParticipante.getPaIdParticipantePk());
 
@@ -613,6 +603,8 @@ public class GeneraReportesView extends BaseView implements Serializable {
                     objRelacion.setReTxAbreviatura("PROM");
                     objRelacion.setReColor("585858");
                     mapRelaciones.put(objRelacion.getReTxAbreviatura(), objRelacion);
+                    
+                    mapRelaciones.putAll(obtieneRelaciones(objParticipante.getPaIdParticipantePk()));
 
                     boolean flag = true;
 
@@ -671,7 +663,7 @@ public class GeneraReportesView extends BaseView implements Serializable {
                             objDatosReporte.setIntMaxRango(objDatosReportePrincipal.getIntMaxRango());
                             objDatosReporte.setStrDescripcion(objDatosReportePrincipal.getStrDescripcion());
 
-                            ReporteIndividualSumarioCategoriaMismo objReporteR = new ReporteIndividualSumarioCategoriaMismo();
+                            ReporteIndividualSumarioCategoriaMismoVsOtrosProm objReporteR = new ReporteIndividualSumarioCategoriaMismoVsOtrosProm();
                             objDatosReporte.setStrID(objReporteR.build(objDatosReporte, map, objParticipante.getPaIdParticipantePk(), strNameFile));
 
                             lstTemporalesPDFxCombinar.add(objDatosReporte);
@@ -784,6 +776,22 @@ public class GeneraReportesView extends BaseView implements Serializable {
                             objDatosReporte.setStrDescripcion(objDatosReportePrincipal.getStrDescripcion());
 
                             ReporteIndividualPreguntasAbiertas objReporteR = new ReporteIndividualPreguntasAbiertas();
+                            objDatosReporte.setStrID(objReporteR.build(objDatosReporte, map, objParticipante.getPaIdParticipantePk(), strNameFile));
+
+                            lstTemporalesPDFxCombinar.add(objDatosReporte);
+
+                        } else if (objModeloContenido.equals(Constantes.INT_REPORTE_INDIVIDUAL_SUMARIO_X_CATEGORIA_MISMO_RELACION)) {
+
+                            String strNameFile = Utilitarios.generaIDReporte() + "_" + Utilitarios.formatearFecha(Utilitarios.getCurrentDate(), Constantes.DDMMYYYYHH24MISS);
+
+                            DatosReporte objDatosReporte = new DatosReporte();
+                            objDatosReporte.setStrNombreEvaluado(objDatosReportePrincipal.getStrNombreEvaluado());
+                            objDatosReporte.setMapRelaciones(objDatosReportePrincipal.getMapRelaciones());
+                            objDatosReporte.setIntIdCuestionario(objDatosReportePrincipal.getIntIdCuestionario());
+                            objDatosReporte.setIntMaxRango(objDatosReportePrincipal.getIntMaxRango());
+                            objDatosReporte.setStrDescripcion(objDatosReportePrincipal.getStrDescripcion());
+
+                            ReporteIndividualSumarioCategoriaMismoRelacion objReporteR = new ReporteIndividualSumarioCategoriaMismoRelacion();
                             objDatosReporte.setStrID(objReporteR.build(objDatosReporte, map, objParticipante.getPaIdParticipantePk(), strNameFile));
 
                             lstTemporalesPDFxCombinar.add(objDatosReporte);

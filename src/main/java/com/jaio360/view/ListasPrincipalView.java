@@ -313,13 +313,13 @@ public class ListasPrincipalView extends BaseView implements Serializable {
         HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
         session.removeAttribute("proyectoInfo");
 
-        UsuarioSesion objUsuarioSesion = new UsuarioSesion();
+        //UsuarioSesion objUsuarioSesion = new UsuarioSesion();
 
-        UsuarioInfo objUsuarioInfo = Utilitarios.obtenerUsuario();
+        //UsuarioInfo objUsuarioInfo = Utilitarios.obtenerUsuario();
 
         buscarProyectos();
-        //poblarListaRedes(objUsuarioInfo);
-        poblarListaEvaluaciones(objUsuarioInfo);
+        
+        //Utilitarios.poblarListaEvaluaciones(objUsuarioInfo, this.lstEvaluaciones);
 
         if (!lstProyectos.isEmpty()) {
             this.cantidadLstProyectos = this.lstProyectos.size();
@@ -421,90 +421,6 @@ public class ListasPrincipalView extends BaseView implements Serializable {
         }
     }
 
-    private void poblarListaEvaluaciones(UsuarioInfo objUsuarioInfo) {
-        ProyectoDAO objProyectoDAO = new ProyectoDAO();
-        List lstEvaluacion = objProyectoDAO.obtenListaEvaluacionesPorUsuario(objUsuarioInfo.getStrEmail());
-
-        if (!lstEvaluacion.isEmpty()) {
-
-            LinkedHashMap<String, ProyectoInfo> mapEvaluaciones = new LinkedHashMap<>();
-
-            Iterator itLstEvaluaciones = lstEvaluacion.iterator();
-
-            ProyectoInfo objProyectoInfo;
-            EvaluacionesXEjecutar objEvaluacionesXEjecutar;
-
-            while (itLstEvaluaciones.hasNext()) {
-
-                Object[] objProyecto = (Object[]) itLstEvaluaciones.next();
-
-                if (!mapEvaluaciones.containsKey((objProyecto[0] + "-" + objProyecto[10]))) {
-
-                    objProyectoInfo = new ProyectoInfo();
-                    objProyectoInfo.setIntIdProyecto((Integer) objProyecto[0]);
-                    objProyectoInfo.setIntCantidadEvaluaciones(1);
-                    objProyectoInfo.setStrDescNombre((String) objProyecto[9]);
-                    objProyectoInfo.setBlGrupal(Boolean.FALSE);
-                    objProyectoInfo.setIntIdCuestionario((Integer) objProyecto[10]);
-                    objProyectoInfo.setStrNombreEvaluador(Utilitarios.obtenerUsuario().getStrDescripcion());
-
-                    objEvaluacionesXEjecutar = new EvaluacionesXEjecutar();
-
-                    objEvaluacionesXEjecutar.setIdProyecto((Integer) objProyecto[0]);
-                    objEvaluacionesXEjecutar.setIdParticipante((Integer) objProyecto[11]);
-                    objEvaluacionesXEjecutar.setStrCorreoEvaluado((String) objProyecto[12]);
-                    objEvaluacionesXEjecutar.setStrCorreoEvaluador(Utilitarios.obtenerUsuario().getStrEmail());
-                    objEvaluacionesXEjecutar.setStrNombreEvaluado((String) objProyecto[8]);
-                    objEvaluacionesXEjecutar.setStrURLImagen((String) objProyecto[15]);
-                    if (objProyecto[12].toString().equals(Utilitarios.obtenerUsuario().getStrEmail())) {
-                        objEvaluacionesXEjecutar.setBlAutoevaluation(true);
-                    } else {
-                        objEvaluacionesXEjecutar.setBlAutoevaluation(false);
-                    }
-
-                    List<EvaluacionesXEjecutar> lstEvaluacionesXEjecutar = new ArrayList<>();
-                    lstEvaluacionesXEjecutar.add(objEvaluacionesXEjecutar);
-                    objProyectoInfo.setLstEvaluacionesXEjecutar(lstEvaluacionesXEjecutar);
-
-                    mapEvaluaciones.put((objProyecto[0] + "-" + objProyecto[10]), objProyectoInfo);
-
-                } else {
-
-                    objProyectoInfo = mapEvaluaciones.get((objProyecto[0] + "-" + objProyecto[10]));
-                    objProyectoInfo.setIntCantidadEvaluaciones(objProyectoInfo.getIntCantidadEvaluaciones() + 1);
-
-                    if (objProyectoInfo.getIntCantidadEvaluaciones() > 1) {
-                        objProyectoInfo.setBlGrupal(Boolean.TRUE);
-                    } else {
-                        objProyectoInfo.setBlGrupal(Boolean.FALSE);
-                    }
-
-                    objEvaluacionesXEjecutar = new EvaluacionesXEjecutar();
-
-                    objEvaluacionesXEjecutar.setIdProyecto((Integer) objProyecto[0]);
-                    objEvaluacionesXEjecutar.setIdParticipante((Integer) objProyecto[11]);
-                    objEvaluacionesXEjecutar.setStrCorreoEvaluado((String) objProyecto[12]);
-                    objEvaluacionesXEjecutar.setStrCorreoEvaluador(Utilitarios.obtenerUsuario().getStrEmail());
-                    objEvaluacionesXEjecutar.setStrNombreEvaluado((String) objProyecto[8]);
-                    objEvaluacionesXEjecutar.setStrURLImagen((String) objProyecto[15]);
-                    if (objProyecto[12].toString().equals(Utilitarios.obtenerUsuario().getStrEmail())) {
-                        objEvaluacionesXEjecutar.setBlAutoevaluation(true);
-                    } else {
-                        objEvaluacionesXEjecutar.setBlAutoevaluation(false);
-                    }
-
-                    objProyectoInfo.getLstEvaluacionesXEjecutar().add(objEvaluacionesXEjecutar);
-                    mapEvaluaciones.replace((objProyecto[0] + "-" + objProyecto[10]), objProyectoInfo);
-
-                }
-
-            }
-
-            this.lstEvaluaciones = new ArrayList<>(mapEvaluaciones.values());
-
-        }
-    }
-
     public void irRed(ProyectoInfo objProyectoInfo) {
 
         try {
@@ -520,20 +436,7 @@ public class ListasPrincipalView extends BaseView implements Serializable {
 
     }
 
-    public void irEvaluacion(ProyectoInfo objProyectoInfo) {
-
-        try {
-
-            HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
-            session.removeAttribute("evalInfo");
-            session.setAttribute("evalInfo", objProyectoInfo);
-            FacesContext.getCurrentInstance().getExternalContext().redirect("ejecutarEvaluacion.jsf");
-
-        } catch (IOException ex) {
-            log.error(ex);
-        }
-
-    }
+    
 
     public void borrarProyecto(Integer intIdProyecto) {
 
