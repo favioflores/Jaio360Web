@@ -1353,8 +1353,6 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
             if (this.intLicenciasIndividualesRequerido <= objUsuarioSaldo.getUsNrDisponibleIndividual()
                     && this.intLicenciasMasivasRequerido <= objUsuarioSaldo.getUsNrDisponibleMasivo()) {
                 
-                iniciarProceso();
-
                 List<Movimiento> lstMovements = new ArrayList<>();
 
                 ReferenciaMovimiento objReferenciaMovimiento = new ReferenciaMovimiento();
@@ -1382,6 +1380,10 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
                 Usuario objUsuario = new Usuario();
                 objUsuario.setUsIdCuentaPk(Utilitarios.obtenerUsuario().getIntUsuarioPk());
                 String strResult = ExecutorBalanceMovement.getInstance().execute(lstMovements, objUsuario);
+                
+                if(Utilitarios.esNuloOVacio(strResult)){
+                    iniciarProceso();
+                }
 
 
             } else {
