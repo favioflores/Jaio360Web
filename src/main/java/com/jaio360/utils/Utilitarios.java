@@ -1180,7 +1180,7 @@ public class Utilitarios extends BaseView implements Serializable {
             
             EvaluacionesXEjecutar objEvaluacionesXEjecutar;
 
-            if (intEvaluationPreferenceView == 1) {//INDIVIDUAL
+            if (intEvaluationPreferenceView == 0) {//INDIVIDUAL
 
                 while (itLstEvaluaciones.hasNext()) {
                     

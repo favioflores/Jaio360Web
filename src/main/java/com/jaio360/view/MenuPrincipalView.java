@@ -131,7 +131,7 @@ public class MenuPrincipalView extends BaseView implements Serializable {
             agregarItem(msg("menu.close.proxy.mode"), null, "pi pi-fw pi-step-backward-alt", menuPrincipal, "#{menuPrincipal.leftModeProxy}");
         } else {
 
-            if (objUsuarioInfo.isManagingDirector()) {//MANAGING DIRECTOR
+            if (objUsuarioInfo.getManagingDirector()) {//MANAGING DIRECTOR
                 //Home
                 //DefaultSubMenu home = agregarMenu("", "pi pi-fw pi-home", menuPrincipal);
                 //agregarItem(msg("ir.a.bienvenida"), "welcome.jsf", "", home);
@@ -154,7 +154,7 @@ public class MenuPrincipalView extends BaseView implements Serializable {
                 //Upgrades
                 agregarItem("", "upgrades.jsf", "pi pi-info-circle", menuPrincipal, null);
 
-            } else if (objUsuarioInfo.isCountryManager()) {//COUNTRY MANAGER
+            } else if (objUsuarioInfo.getCountryManager()) {//COUNTRY MANAGER
 
                 //Home
                 //DefaultSubMenu home = agregarMenu("", "pi pi-fw pi-home", menuPrincipal);
@@ -175,7 +175,7 @@ public class MenuPrincipalView extends BaseView implements Serializable {
                 //Upgrades
                 agregarItem("", "upgrades.jsf", "pi pi-info-circle", menuPrincipal, null);
 
-            } else if (objUsuarioInfo.isProjectManager()) {//PROJECT MANAGER
+            } else if (objUsuarioInfo.getProjectManager()) {//PROJECT MANAGER
                 //Home
                 //DefaultSubMenu home = agregarItem("", "pi pi-fw pi-home", menuPrincipal);
                 agregarItem("", "welcome.jsf", "pi pi-fw pi-home", menuPrincipal, null);

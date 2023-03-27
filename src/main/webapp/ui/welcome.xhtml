@@ -89,8 +89,8 @@
                             <div class="p-field">
 
                                 <p:selectOneRadio id="indTypeSend" value="#{welcomeView.intEvaluationPreferenceView}"  layout="grid" columns="2" required="true"  >
-                                    <f:selectItem itemLabel="#{msg['grupal.view']}" itemValue="0" />
-                                    <f:selectItem itemLabel="#{msg['indidivual.view']}" itemValue="1" />
+                                    <f:selectItem itemLabel="#{msg['individual.view']}" itemValue="0" />
+                                    <f:selectItem itemLabel="#{msg['grupal.view']}" itemValue="1" />
                                     <p:ajax update="@form" event="valueChange" listener="#{welcomeView.changeEvaluationPreferenceView()}" />
                                 </p:selectOneRadio>
                             </div>

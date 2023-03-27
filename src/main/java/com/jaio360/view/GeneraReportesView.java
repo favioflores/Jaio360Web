@@ -289,14 +289,14 @@ public class GeneraReportesView extends BaseView implements Serializable {
         List lstParticipanteRedEvaluacion = objParticipanteDAO.obtenerNroParticipantesEnEjecucion(objProyectoInfo.getIntIdProyecto());
         Iterator itLstParticipanteRedEvaluacion = lstParticipanteRedEvaluacion.iterator();
 
-        Map mapEvaluados = new HashMap();
+        Map mapConteoEvaluados = new HashMap();
 
         while (itLstParticipanteRedEvaluacion.hasNext()) {
 
             Object[] obj = (Object[]) itLstParticipanteRedEvaluacion.next();
 
-            if (!mapEvaluados.containsKey(obj[0])) {
-                mapEvaluados.put(obj[0], obj[1]);
+            if (!mapConteoEvaluados.containsKey(obj[0])) {
+                mapConteoEvaluados.put(obj[0], obj[1]);
             }
 
         }
@@ -351,12 +351,13 @@ public class GeneraReportesView extends BaseView implements Serializable {
                 objEvaluado.setInAnalizado(0);
             }
 
-            if (mapEvaluados.containsKey(objParticipante.getPaIdParticipantePk())) {
-                BigDecimal bdTemp = (BigDecimal) mapEvaluados.get(objParticipante.getPaIdParticipantePk());
+            if (mapConteoEvaluados.containsKey(objParticipante.getPaIdParticipantePk())) {
+                BigDecimal bdTemp = (BigDecimal) mapConteoEvaluados.get(objParticipante.getPaIdParticipantePk());
                 objEvaluado.setIntNumberEvaluators(bdTemp.intValue());
             } else {
                 objEvaluado.setIntNumberEvaluators(0);
             }
+            
             if (!mapEvaluacionesTerminadas.isEmpty() && mapEvaluacionesTerminadas.containsKey(objParticipante.getPaIdParticipantePk())) {
                 BigInteger bdTemp = (BigInteger) mapEvaluacionesTerminadas.get(objParticipante.getPaIdParticipantePk());
                 objEvaluado.setIntNumberEvaluationFinished(bdTemp.intValue());
@@ -398,7 +399,7 @@ public class GeneraReportesView extends BaseView implements Serializable {
 
             verificaDirectorios();
 
-            List<DatosReporte> lstTemporalesPDFxCombinar = new ArrayList<>();
+            List<DatosReporte> lstTemporalesPDFxCombinar;
             List<DatosReporte> lstTemporalesOtros = new ArrayList<>();
             List<DatosReporte> lstDefinitivos = new ArrayList<>();
 
@@ -421,6 +422,8 @@ public class GeneraReportesView extends BaseView implements Serializable {
 
                 /* INVOCA CLASES QUE GENEREN LOS TEMPORALES */
                 for (Cuestionario objCuestionario : lstCuestionariosSeleccionados) {
+                    
+                    lstTemporalesPDFxCombinar = new ArrayList<>();
 
                     for (Integer objModeloContenido : lstSeleccionadosGrupal) {
 

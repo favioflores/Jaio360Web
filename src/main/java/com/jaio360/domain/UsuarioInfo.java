@@ -38,10 +38,10 @@ public class UsuarioInfo extends BaseView implements Serializable {
     private String timeClient;
     private Integer intEvaluationPreferenceView;
 
-    private boolean ManagingDirector = false;
-    private boolean CountryManager = false;
-    private boolean ProjectManager = false;
-    private boolean EvaluatedEvaluator = false;
+    private Boolean ManagingDirector = false;
+    private Boolean CountryManager = false;
+    private Boolean ProjectManager = false;
+    private Boolean EvaluatedEvaluator = false;
 
     private Usuario usuario;
 
@@ -81,9 +81,7 @@ public class UsuarioInfo extends BaseView implements Serializable {
         this.strEstadoDesc = strEstadoDesc;
     }
 
-    public boolean isManagingDirector() {
-        return ManagingDirector;
-    }
+
 
     public Integer getIntEvaluationPreferenceView() {
         return intEvaluationPreferenceView;
@@ -93,35 +91,41 @@ public class UsuarioInfo extends BaseView implements Serializable {
         this.intEvaluationPreferenceView = intEvaluationPreferenceView;
     }
 
-   
+    public Boolean getManagingDirector() {
+        return ManagingDirector;
+    }
 
-    public void setManagingDirector(boolean ManagingDirector) {
+    public void setManagingDirector(Boolean ManagingDirector) {
         this.ManagingDirector = ManagingDirector;
     }
 
-    public boolean isCountryManager() {
+    public Boolean getCountryManager() {
         return CountryManager;
     }
 
-    public void setCountryManager(boolean CountryManager) {
+    public void setCountryManager(Boolean CountryManager) {
         this.CountryManager = CountryManager;
     }
 
-    public boolean isProjectManager() {
+    public Boolean getProjectManager() {
         return ProjectManager;
     }
 
-    public void setProjectManager(boolean ProjectManager) {
+    public void setProjectManager(Boolean ProjectManager) {
         this.ProjectManager = ProjectManager;
     }
 
-    public boolean isEvaluatedEvaluator() {
+    public Boolean getEvaluatedEvaluator() {
         return EvaluatedEvaluator;
     }
 
-    public void setEvaluatedEvaluator(boolean EvaluatedEvaluator) {
+    public void setEvaluatedEvaluator(Boolean EvaluatedEvaluator) {
         this.EvaluatedEvaluator = EvaluatedEvaluator;
     }
+
+   
+
+
 
     public void setStrFechaRegistro(String strFechaRegistro) {
         this.strFechaRegistro = strFechaRegistro;

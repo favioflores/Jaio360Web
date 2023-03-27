@@ -386,7 +386,7 @@ public class ParticipanteDAO implements Serializable {
                     + "where p.PA_ID_ESTADO in (69,73) "
                     + "and p.PO_ID_PROYECTO_FK = :intProyectoPk "
                     + "and p.PA_ID_PARTICIPANTE_PK = rp.PA_ID_PARTICIPANTE_FK "
-                    + "and rp.RP_ID_ESTADO = 79 group by p.PA_ID_PARTICIPANTE_PK ) datos group by idParticipante ";
+                    + "group by p.PA_ID_PARTICIPANTE_PK ) datos group by idParticipante ";
 
             Query query = sesion.createSQLQuery(sql);
 
