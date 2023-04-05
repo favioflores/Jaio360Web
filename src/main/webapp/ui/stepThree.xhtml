@@ -155,15 +155,17 @@
 
                                 <div class="p-field">
                                     <p:panel header="#{msg['resume']}">
-                                        <p:panelGrid columns="2"  layout="flex" >
+                                        <p:panelGrid columns="2"  layout="grid" >
 
-                                            <h:outputText value="#{msg['step3.evaluated.without.assignment']}"/>
+                                            <p:column>
+                                                <h:outputText value="#{msg['step3.evaluated.without.assignment']}"/>
+                                            </p:column>
                                             <p:column style="text-align: center">
                                                 <h:outputText value="#{defineCuesEvaView.intCantidadPendientesAsignar}"/>
                                             </p:column>
-                                            <p:divider/>
-                                            <p:divider/>
-                                            <h:outputText value="#{msg['step3.evaluated.temporally.assigned']}"/>
+                                            <p:column>
+                                                <h:outputText value="#{msg['step3.evaluated.temporally.assigned']}"/>
+                                            </p:column>
                                             <p:column style="text-align: center">
                                                 <h:outputText value="#{defineCuesEvaView.intCantidadAsignados}" />
                                             </p:column>

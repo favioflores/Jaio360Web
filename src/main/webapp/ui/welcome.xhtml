@@ -114,12 +114,12 @@
                                             value="#{index + 1}" />
                                     </p:column> 
 
-                                    <p:column headerText="#{msg['step2.evaluation.name']}"> 
+                                    <p:column headerText="#{msg['step2.evaluation.name']}" style="width: 25%;" > 
                                         <h:outputText value="#{eva.strDescNombre}" /> 
                                     </p:column>
 
-                                    <p:column headerText="#{msg['persona.evaluar']}">
-                                        <p:outputPanel style="max-width: 200px"   >
+                                    <p:column headerText="#{msg['persona.evaluar']}" style="width: 50%;">
+                                        <p:outputPanel style="max-width: 350px"   >
                                             <ul>
                                                 <ui:repeat var="v" value="#{eva.lstEvaluacionesXEjecutar}" >
                                                     <li>#{v.strNombreEvaluado}</li>
@@ -128,7 +128,7 @@
                                         </p:outputPanel>
                                     </p:column>
 
-                                    <p:column style="text-align: center;">
+                                    <p:column style="text-align: center; width: 25%;">
                                         <p:commandButton type="submit" 
                                                          actionListener="#{welcomeView.irEvaluacion(eva)}" 
                                                          value="#{msg['click.evaluar']}" />

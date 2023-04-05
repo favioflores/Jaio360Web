@@ -49,12 +49,16 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -75,11 +79,7 @@ import org.primefaces.event.SelectEvent;
 import org.primefaces.event.UnselectEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
-import org.primefaces.model.charts.ChartData;
-import org.primefaces.model.charts.optionconfig.elements.*;
-import org.primefaces.model.charts.radar.RadarChartDataSet;
 import org.primefaces.model.charts.radar.RadarChartModel;
-import org.primefaces.model.charts.radar.RadarChartOptions;
 
 @ManagedBean(name = "seguimientoProyectoView")
 @ViewScoped
@@ -106,9 +106,11 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
     private Integer intLicenciasMasivas;
     private Integer intLicenciasIndividualesRequerido;
     private Integer intLicenciasMasivasRequerido;
+    private String strHorario;
     private boolean blLicenciasOK;
 
     private RadarChartModel radarGrupo;
+    private LinkedHashMap<String, String> mapItemsHorarios;
 
     private Boolean boProyectoEjecutado;
     private Integer intIdEstadoProyecto;
@@ -123,7 +125,7 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
 
     private Date ini;
     private Date end;
-    
+
     private Integer inTypeMethodSend;
 
     /**
@@ -137,6 +139,14 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
     private List<Evaluado> lstParticipantesIniciados;
     private List<RelacionEvaluadoEvaluador> lstRelacionEvaluadoEvaluador;
 
+    public String getStrHorario() {
+        return strHorario;
+    }
+
+    public void setStrHorario(String strHorario) {
+        this.strHorario = strHorario;
+    }
+
     private StreamedContent fileIndividual;
     private StreamedContent fileIndividualFisico;
 
@@ -149,6 +159,14 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
 
     public StreamedContent getFileIndividualFisico() {
         return fileIndividualFisico;
+    }
+
+    public LinkedHashMap<String, String> getMapItemsHorarios() {
+        return mapItemsHorarios;
+    }
+
+    public void setMapItemsHorarios(LinkedHashMap<String, String> mapItemsHorarios) {
+        this.mapItemsHorarios = mapItemsHorarios;
     }
 
     public void setFileIndividualFisico(StreamedContent fileIndividualFisico) {
@@ -171,7 +189,6 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
         this.inTypeMethodSend = inTypeMethodSend;
     }
 
-    
     public Date getEnd() {
         return end;
     }
@@ -438,7 +455,7 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
 
     @PostConstruct
     public void init() {
-        
+
         inTypeMethodSend = 0;
         intCantPartTodos = 0;
         intCantPartVeri = 0;
@@ -498,6 +515,8 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
 
         calcularLicencias();
 
+        cargarHorarios();
+
         /* SEGUIMIENTO */
         lstParticipantesIniciados = new ArrayList();
 
@@ -544,6 +563,62 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
             calcularPorcentajes(map);
         }
 
+    }
+
+    private void cargarHorarios() {
+        try {
+            mapItemsHorarios = new LinkedHashMap<>();
+            mapItemsHorarios.put("00:30 " + msg("horas"), "00:30");
+            mapItemsHorarios.put("01:00 " + msg("horas"), "01:00");
+            mapItemsHorarios.put("01:30 " + msg("horas"), "01:30");
+            mapItemsHorarios.put("02:00 " + msg("horas"), "02:00");
+            mapItemsHorarios.put("02:30 " + msg("horas"), "02:30");
+            mapItemsHorarios.put("03:00 " + msg("horas"), "03:00");
+            mapItemsHorarios.put("03:30 " + msg("horas"), "03:30");
+            mapItemsHorarios.put("04:00 " + msg("horas"), "04:00");
+            mapItemsHorarios.put("04:30 " + msg("horas"), "04:30");
+            mapItemsHorarios.put("05:00 " + msg("horas"), "05:00");
+            mapItemsHorarios.put("05:30 " + msg("horas"), "05:30");
+            mapItemsHorarios.put("06:00 " + msg("horas"), "06:00");
+            mapItemsHorarios.put("06:30 " + msg("horas"), "06:30");
+            mapItemsHorarios.put("07:00 " + msg("horas"), "07:00");
+            mapItemsHorarios.put("07:30 " + msg("horas"), "07:30");
+            mapItemsHorarios.put("08:00 " + msg("horas"), "08:00");
+            mapItemsHorarios.put("08:30 " + msg("horas"), "08:30");
+            mapItemsHorarios.put("09:00 " + msg("horas"), "09:00");
+            mapItemsHorarios.put("09:30 " + msg("horas"), "09:30");
+            mapItemsHorarios.put("10:00 " + msg("horas"), "10:00");
+            mapItemsHorarios.put("10:30 " + msg("horas"), "10:30");
+            mapItemsHorarios.put("11:00 " + msg("horas"), "11:00");
+            mapItemsHorarios.put("11:30 " + msg("horas"), "11:30");
+            mapItemsHorarios.put("12:00 " + msg("horas"), "12:00");
+            mapItemsHorarios.put("12:30 " + msg("horas"), "12:30");
+            mapItemsHorarios.put("13:00 " + msg("horas"), "13:00");
+            mapItemsHorarios.put("13:30 " + msg("horas"), "13:30");
+            mapItemsHorarios.put("14:00 " + msg("horas"), "14:00");
+            mapItemsHorarios.put("14:30 " + msg("horas"), "14:30");
+            mapItemsHorarios.put("15:00 " + msg("horas"), "15:00");
+            mapItemsHorarios.put("15:30 " + msg("horas"), "15:30");
+            mapItemsHorarios.put("16:00 " + msg("horas"), "16:00");
+            mapItemsHorarios.put("16:30 " + msg("horas"), "16:30");
+            mapItemsHorarios.put("17:00 " + msg("horas"), "17:00");
+            mapItemsHorarios.put("17:30 " + msg("horas"), "17:30");
+            mapItemsHorarios.put("18:00 " + msg("horas"), "18:00");
+            mapItemsHorarios.put("18:30 " + msg("horas"), "18:30");
+            mapItemsHorarios.put("19:00 " + msg("horas"), "19:00");
+            mapItemsHorarios.put("19:30 " + msg("horas"), "19:30");
+            mapItemsHorarios.put("20:00 " + msg("horas"), "20:00");
+            mapItemsHorarios.put("20:30 " + msg("horas"), "20:30");
+            mapItemsHorarios.put("21:00 " + msg("horas"), "21:00");
+            mapItemsHorarios.put("21:30 " + msg("horas"), "21:30");
+            mapItemsHorarios.put("22:00 " + msg("horas"), "22:00");
+            mapItemsHorarios.put("22:30 " + msg("horas"), "22:30");
+            mapItemsHorarios.put("23:00 " + msg("horas"), "23:00");
+            mapItemsHorarios.put("23:30 " + msg("horas"), "23:30");
+
+        } catch (Exception e) {
+            mostrarError(log, e);
+        }
     }
 
     private void poblarParametros() {
@@ -1155,9 +1230,36 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
             NotificacionesDAO objNotificacionesDAO = new NotificacionesDAO();
             try {
                 if (objNotificacionesDAO.guardaNotificacionesEvaluadores(lstRelacionEvaluadoEvaluador, false)) {
-                    MailSender objMailSender = new MailSender();
-                    objMailSender.enviarListaDeNotificacionesProyecto(Utilitarios.obtenerProyecto().getIntIdProyecto());
-                    mostrarAlertaInfo("step5.sended.reminders.project");
+
+                    if (this.inTypeMethodSend.equals(0)) {
+
+                        MailSender objMailSender = new MailSender();
+                        objMailSender.enviarListaDeNotificacionesProyecto(Utilitarios.obtenerProyecto().getIntIdProyecto());
+                        mostrarAlertaInfo("step5.sended.reminders.project");
+
+                    } else {
+
+                        String strHourMinute[] = this.strHorario.split(":");
+
+                        Integer hour = Integer.parseInt(strHourMinute[0]);
+                        Integer minute = Integer.parseInt(strHourMinute[1]);
+
+                        long millHour = TimeUnit.HOURS.toMillis(hour);
+                        long millMin = TimeUnit.MINUTES.toMillis(minute);
+
+                        Timer timer = new Timer();
+                        timer.schedule(new TimerTask() {
+                            @Override
+                            public void run() {
+                                MailSender objMailSender = new MailSender();
+                                objMailSender.enviarListaDeNotificacionesProyecto(Utilitarios.obtenerProyecto().getIntIdProyecto());
+
+                            }
+                        }, millHour + millMin);//24hours
+
+                        mostrarAlertaWarning("step5.planner.reminders.project");
+                    }
+
                 } else {
                     mostrarAlertaFatal("error.was.occurred");
                 }
@@ -1352,15 +1454,14 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
 
             if (this.intLicenciasIndividualesRequerido <= objUsuarioSaldo.getUsNrDisponibleIndividual()
                     && this.intLicenciasMasivasRequerido <= objUsuarioSaldo.getUsNrDisponibleMasivo()) {
-                
+
                 List<Movimiento> lstMovements = new ArrayList<>();
-
-                ReferenciaMovimiento objReferenciaMovimiento = new ReferenciaMovimiento();
-
-                objReferenciaMovimiento.setPoIdProyectoFk(Utilitarios.obtenerProyecto().getIntIdProyecto());
 
                 if (intLicenciasIndividualesRequerido > 0) {
                     Movimiento objMovimiento = new Movimiento();
+                    ReferenciaMovimiento objReferenciaMovimiento = new ReferenciaMovimiento();
+
+                    objReferenciaMovimiento.setPoIdProyectoFk(Utilitarios.obtenerProyecto().getIntIdProyecto());
                     objMovimiento.setMoInCantidad(intLicenciasIndividualesRequerido);
                     objMovimiento.setTipoMovimiento(new TipoMovimiento(Movimientos.MOV_RESERVA_LICENCIA_INDIVIDUAL));
                     objReferenciaMovimiento.setMovimiento(objMovimiento);
@@ -1370,6 +1471,9 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
 
                 if (intLicenciasMasivasRequerido > 0) {
                     Movimiento objMovimiento = new Movimiento();
+                    ReferenciaMovimiento objReferenciaMovimiento = new ReferenciaMovimiento();
+
+                    objReferenciaMovimiento.setPoIdProyectoFk(Utilitarios.obtenerProyecto().getIntIdProyecto());
                     objMovimiento.setMoInCantidad(intLicenciasMasivasRequerido);
                     objMovimiento.setTipoMovimiento(new TipoMovimiento(Movimientos.MOV_RESERVA_LICENCIA_MASIVA));
                     objReferenciaMovimiento.setMovimiento(objMovimiento);
@@ -1380,11 +1484,10 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
                 Usuario objUsuario = new Usuario();
                 objUsuario.setUsIdCuentaPk(Utilitarios.obtenerUsuario().getIntUsuarioPk());
                 String strResult = ExecutorBalanceMovement.getInstance().execute(lstMovements, objUsuario);
-                
-                if(Utilitarios.esNuloOVacio(strResult)){
+
+                if (Utilitarios.esNuloOVacio(strResult)) {
                     iniciarProceso();
                 }
-
 
             } else {
                 mostrarAlertaError("step5.insufficient.licenses");
@@ -1407,22 +1510,21 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
             mostrarError(log, e);
         }
     }
-    
-    public void programarEnvioComunicado(){
+
+    public void programarEnvioComunicado() {
         try {
-            
-            inTypeMethodSend = 0;
-            
+
+            this.inTypeMethodSend = 0;
+            this.strHorario = null;
+
         } catch (Exception e) {
             mostrarError(log, e);
         }
     }
-    
-    public void changeTypeSend(){
+
+    public void changeTypeSend() {
         try {
-            
-            
-            
+
         } catch (Exception e) {
             mostrarError(log, e);
         }

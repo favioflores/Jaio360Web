@@ -8,11 +8,13 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -71,9 +73,9 @@ public class WelcomeView extends BaseView implements Serializable {
         UsuarioInfo objUsuarioInfo = Utilitarios.obtenerUsuario();
         objUsuarioInfo.setIntEvaluationPreferenceView(this.intEvaluationPreferenceView);
         ses.setAttribute("usuarioInfo", objUsuarioInfo);
-        
+
         this.lstEvaluaciones = Utilitarios.poblarListaEvaluaciones(Utilitarios.obtenerUsuario(), this.lstEvaluaciones, this.intEvaluationPreferenceView);
-        
+
     }
 
     public void ingresaSistema() {
@@ -93,7 +95,7 @@ public class WelcomeView extends BaseView implements Serializable {
         }
 
     }
-    
+
     public void irEvaluacion(ProyectoInfo objProyectoInfo) {
 
         try {
@@ -108,5 +110,5 @@ public class WelcomeView extends BaseView implements Serializable {
         }
 
     }
-    
+
 }

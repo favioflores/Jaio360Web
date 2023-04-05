@@ -2,6 +2,7 @@
 <!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
     <session-factory>
+        
         <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
         <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
         <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/jaio</property>
@@ -12,11 +13,11 @@
         <property name="connection.autoReconnectForPools">true</property>
         <property name="connection.is-connection-validation-required">true</property>
         <property name="hibernate.connection.autocommit">false</property>
-        <property name="current_session_context_class">thread</property>
-        
+        <property name="hibernate.current_session_context_class">thread</property>      
+               
         <mapping resource="com/jaio360/orm/Usuario.hbm.xml"/>
-        <mapping resource="com/jaio360/orm/Elemento.hbm.xml"/>
         <mapping resource="com/jaio360/orm/DefinicionTabla.hbm.xml"/>
+        <mapping resource="com/jaio360/orm/Elemento.hbm.xml"/>
         <mapping resource="com/jaio360/orm/Contrato.hbm.xml"/>
         <mapping resource="com/jaio360/orm/Metrica.hbm.xml"/>
         <mapping resource="com/jaio360/orm/Componente.hbm.xml"/>
@@ -42,5 +43,6 @@
         <mapping resource="com/jaio360/orm/ReferenciaMovimiento.hbm.xml"/>
         <mapping resource="com/jaio360/orm/LastUpdate.hbm.xml"/>
         <mapping resource="com/jaio360/orm/ManageUserRelation.hbm.xml"/>
+                
     </session-factory>
 </hibernate-configuration>

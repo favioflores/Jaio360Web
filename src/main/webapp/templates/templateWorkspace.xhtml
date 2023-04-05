@@ -44,13 +44,6 @@
                 <p:commandButton type="button" value="#{msg['cabecera.logout.confirmacion.no']}" styleClass="ui-confirmdialog-no" />
             </p:confirmDialog>
 
-            <p:ajaxStatus onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" />
-
-            <p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false">
-                <h5>#{msg['processing']}</h5>
-                <p:progressBar id="progressBarIndeterminate" style="height:10px;" mode="indeterminate"/>
-            </p:dialog>
-
         </h:body>
 
     </f:view>
