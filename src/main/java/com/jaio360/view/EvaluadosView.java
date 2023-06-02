@@ -42,7 +42,6 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
-import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -2705,7 +2704,7 @@ public class EvaluadosView extends BaseView implements Serializable {
         mapRelacionesPersonasAvanzado = new HashMap();
         mapPerEvaluados = new HashMap();
         mapPerEvaluadores = new HashMap();
-        
+
         fileAvanzado = event.getFile();
 
         if (fileAvanzado == null) {
@@ -3648,7 +3647,7 @@ public class EvaluadosView extends BaseView implements Serializable {
 
         UsuarioDAO objUsuarioDAO = new UsuarioDAO();
 
-        List lstGrupos = ListUtils.partition(lstCorreos, 50);
+        List lstGrupos = Utilitarios.distribute(lstCorreos, 50);
 
         Iterator itLstGrupos = lstGrupos.iterator();
 
@@ -3810,7 +3809,7 @@ public class EvaluadosView extends BaseView implements Serializable {
     }
 
     public void generaModeloAzanvado() {
-        
+
         habilitarParametros();
 
         HSSFWorkbook xlsEvaluados = new HSSFWorkbook();

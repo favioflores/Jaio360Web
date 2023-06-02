@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<fontFamilies>
+
+  <fontFamily name="Arial">
+    <normal><![CDATA[fonts/arial.ttf]]></normal>
+    <bold><![CDATA[fonts/arialbd.ttf]]></bold>
+    <italic><![CDATA[fonts/ariali.ttf]]></italic>
+    <boldItalic><![CDATA[fonts/arialbi.ttf]]></boldItalic>
+    <pdfEncoding>Cp1252</pdfEncoding>
+    <pdfEmbedded>true</pdfEmbedded>
+  </fontFamily>
+
+</fontFamilies>

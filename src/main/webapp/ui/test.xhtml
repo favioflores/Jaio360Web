@@ -10,8 +10,8 @@
 
         <h:form prependId="false">
 
-            <p:commandButton value="Press" actionListener="#{usuarioSesion.test()}" />
-            <p:inputText id="inputTime" type="hidden" value="#{usuarioSesion.timeClient}" />
+            <p:outputLabel value="#{testView.texto}" />
+            <p:commandButton value="Press" actionListener="#{testView.generarReporte()}" />
 
             <label id="countdown"></label>
             <script>

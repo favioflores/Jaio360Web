@@ -161,6 +161,8 @@ public class UsuarioSesion extends BaseView implements Serializable {
 
                     HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
 
+                    FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("usuarioInfo", usuarioInfo);
+                    
                     session.setAttribute("usuarioInfo", usuarioInfo);
 
                     FacesContext.getCurrentInstance().getExternalContext().redirect("welcome.jsf");
@@ -274,9 +276,7 @@ public class UsuarioSesion extends BaseView implements Serializable {
 
     public void timeout() throws IOException {
 
-        HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
-        Utilitarios.registraHistorialAcceso(Utilitarios.obtenerUsuario(), Utilitarios.obtenerUsuario().getIntUsuarioPk(), true, null, new Date(), usuarioInfo.getIntHistorialPk());
-        session.invalidate();
+        cerrarSistema();
 
     }
 

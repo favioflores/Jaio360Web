@@ -1360,4 +1360,16 @@ public class Utilitarios extends BaseView implements Serializable {
 
     }
 
+    public static <T> List<List<T>> distribute(List<T> elements, int nrOfGroups) {
+        int elementsPerGroup = elements.size() / nrOfGroups;
+        int leftoverElements = elements.size() % nrOfGroups;
+
+        List<List<T>> groups = new ArrayList<>();
+        for (int i = 0; i < nrOfGroups; i++) {
+            groups.add(elements.subList(i * elementsPerGroup + Math.min(i, leftoverElements),
+                    (i + 1) * elementsPerGroup + Math.min(i + 1, leftoverElements)));
+        }
+        return groups;
+    }
+    
 }

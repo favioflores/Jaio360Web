@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.HibernateException;
@@ -618,7 +617,7 @@ public class ProyectoDAO implements Serializable {
             UsuarioInfo objUsuarioInfo = Utilitarios.obtenerUsuario();
             Usuario obtenUsuario = objUsuarioDAO.obtenUsuario(objUsuarioInfo.getIntUsuarioPk(), sesion);
 
-            List lstGrupoCorreos = ListUtils.partition(lstCorreos, 50);
+            List lstGrupoCorreos = Utilitarios.distribute(lstCorreos, 50);
 
             Iterator itLstGrupoCorreos = lstGrupoCorreos.iterator();
 
