@@ -4,7 +4,6 @@ import com.jaio360.dao.ComponenteDAO;
 import com.jaio360.dao.ResultadoDAO;
 import com.jaio360.domain.DatosReporte;
 import com.jaio360.model.ModeloGeneral;
-import com.jaio360.model.ModeloNormal;
 import com.jaio360.orm.Componente;
 import com.jaio360.orm.Relacion;
 import com.jaio360.orm.ResultadoInfo;
@@ -13,7 +12,6 @@ import com.jaio360.utils.Utilitarios;
 import java.awt.Color;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -30,11 +28,8 @@ import net.sf.dynamicreports.report.builder.column.TextColumnBuilder;
 import net.sf.dynamicreports.report.builder.component.ComponentBuilder;
 import net.sf.dynamicreports.report.builder.component.MultiPageListBuilder;
 import net.sf.dynamicreports.report.builder.component.VerticalListBuilder;
-import net.sf.dynamicreports.report.constant.HorizontalAlignment;
-import net.sf.dynamicreports.report.constant.LineStyle;
 import net.sf.dynamicreports.report.constant.Orientation;
 import net.sf.dynamicreports.report.constant.Position;
-import net.sf.dynamicreports.report.constant.VerticalAlignment;
 import net.sf.dynamicreports.report.datasource.DRDataSource;
 import net.sf.dynamicreports.report.definition.ReportParameters;
 import net.sf.dynamicreports.report.definition.chart.DRIChartCustomizer;
@@ -64,7 +59,7 @@ public class ReporteIndividualSumarioCategoriaMismoRelacion implements Serializa
         this.objDatosReporte = objDatosReporte;
 
         String strNombreReporte = strNameFile + Constantes.STR_EXTENSION_PDF;
-        JasperPdfExporterBuilder pdfExporter = export.pdfExporter(Constantes.STR_INBOX_PRELIMINAR + File.separator + strNombreReporte)
+        JasperPdfExporterBuilder pdfExporter = export.pdfExporter(Utilitarios.getPathTempPreliminar() + File.separator + strNombreReporte)
                 .setEncrypted(Boolean.FALSE);
 
         InputStream medida = new FileInputStream(map.get(Constantes.INT_PARAM_GRAF_MEDIDA) + Constantes.STR_EXTENSION_PNG);
@@ -73,9 +68,9 @@ public class ReporteIndividualSumarioCategoriaMismoRelacion implements Serializa
 
             report().setTemplate(ModeloGeneral.reportTemplate)
                     .setSummaryWithPageHeaderAndFooter(Boolean.TRUE)
-                    .pageHeader(generaCabecera(map, medida))
+                    .pageHeader(ModeloGeneral.generaCabeceraConMetricas(map, medida, this.objDatosReporte))
                     .summary(generaContenido(intEvaluadoPk))
-                    .pageFooter(generaPie(map))
+                    .pageFooter(ModeloGeneral.generaPie(map))
                     .toPdf(pdfExporter);
 
         } catch (DRException ex) {
@@ -113,7 +108,7 @@ public class ReporteIndividualSumarioCategoriaMismoRelacion implements Serializa
         for (Componente objComponente : lstComponente) {
 
             multiPageList.add(cmp.horizontalList(cmp.verticalList(//cmp.text(i+". " +objComponente.getCoTxDescripcion()),
-                    cmp.text(objComponente.getCoTxDescripcion()),
+                    cmp.text(objComponente.getCoTxDescripcion().toUpperCase()).setStyle(ModeloGeneral.styleTextoRegular),
                     cmp.horizontalList(cht.barChart().setCategory(evaluacion)
                             .seriesColorsByName(seriesColors)
                             .series(cht.serie(cantidad).setSeries(relacion))
@@ -125,12 +120,12 @@ public class ReporteIndividualSumarioCategoriaMismoRelacion implements Serializa
                             .setShowValues(Boolean.FALSE)
                             .setShowTickLabels(Boolean.FALSE)
                             .setHeight(10)/* es util, en relacion de 10 por 1 categoria*/
+                            .setWidth(350)
                             .setShowTickMarks(Boolean.FALSE)
-                            .setCustomizer(new ReporteIndividualSumarioCategoriaMismoRelacion.ChartCustomizerBar()),
+                            .addCustomizer(new ReporteIndividualSumarioCategoriaMismoRelacion.ChartCustomizerBar()),
                             crearDatosDelGrafico(objComponente, intEvaluadoPk)
                     ))), cmp.verticalGap(15));
-
-            //multiPageList.add(vComentarios);
+            
             i++;
 
         }
@@ -168,22 +163,22 @@ public class ReporteIndividualSumarioCategoriaMismoRelacion implements Serializa
                 if (objRelacion.getReTxAbreviatura().equals(obj[0].toString())) {
                     blExiste = true;
                     bdFrec = new BigDecimal(obj[1].toString());
-                    datos.add(cmp.horizontalList(cmp.text("").setWidth(25),
-                            cmp.text("").setStyle(ModeloGeneral.styleContenidoDatos.setHorizontalAlignment(HorizontalAlignment.LEFT)).setWidth(25),
-                            cmp.text(obj[0].toString()).setStyle(ModeloGeneral.styleContenidoDatos.setHorizontalAlignment(HorizontalAlignment.RIGHT).setVerticalAlignment(VerticalAlignment.MIDDLE)).setWidth(60),
-                            cmp.text(Utilitarios.truncateTheDecimal(bdFrec, 2)).setStyle(ModeloGeneral.styleContenidoDatos.setHorizontalAlignment(HorizontalAlignment.RIGHT).setVerticalAlignment(VerticalAlignment.MIDDLE)).setWidth(60),
-                            cmp.text(obj[2].toString()).setStyle(ModeloGeneral.styleContenidoDatos.setHorizontalAlignment(HorizontalAlignment.RIGHT).setVerticalAlignment(VerticalAlignment.MIDDLE)).setWidth(35),
-                            cmp.text("").setWidth(25)));
+                    datos.add(cmp.horizontalList(
+                            cmp.horizontalGap(30),
+                            cmp.text(obj[0].toString()).setStyle(ModeloGeneral.styleContenidoDatos).setWidth(140),
+                            cmp.text(Utilitarios.truncateTheDecimal(bdFrec, 2)).setStyle(ModeloGeneral.styleContenidoDatos).setWidth(120),
+                            cmp.text(obj[2].toString()).setStyle(ModeloGeneral.styleContenidoDatos).setWidth(65))
+                    );
                 }
             }
 
             if (!blExiste) {
-                datos.add(cmp.horizontalList(cmp.text("").setWidth(25),
-                        cmp.text("").setStyle(ModeloGeneral.styleContenidoDatos.setHorizontalAlignment(HorizontalAlignment.LEFT)).setWidth(25),
-                        cmp.text(objRelacion.getReTxAbreviatura()).setStyle(ModeloGeneral.styleContenidoDatos.setHorizontalAlignment(HorizontalAlignment.RIGHT).setVerticalAlignment(VerticalAlignment.MIDDLE)).setWidth(60),
-                        cmp.text(Utilitarios.truncateTheDecimal(bdFrec, 2)).setStyle(ModeloGeneral.styleContenidoDatos.setHorizontalAlignment(HorizontalAlignment.RIGHT).setVerticalAlignment(VerticalAlignment.MIDDLE)).setWidth(60),
-                        cmp.text("0").setStyle(ModeloGeneral.styleContenidoDatos.setHorizontalAlignment(HorizontalAlignment.RIGHT).setVerticalAlignment(VerticalAlignment.MIDDLE)).setWidth(35),
-                        cmp.text("").setWidth(25)));
+                datos.add(cmp.horizontalList(
+                        cmp.horizontalGap(30),
+                        cmp.text(objRelacion.getReTxAbreviatura()).setStyle(ModeloGeneral.styleContenidoDatos).setWidth(140),
+                        cmp.text(Utilitarios.truncateTheDecimal(bdFrec, 2)).setStyle(ModeloGeneral.styleContenidoDatos).setWidth(120),
+                        cmp.text("0").setStyle(ModeloGeneral.styleContenidoDatos).setWidth(65))
+                );
             }
 
         }
@@ -216,9 +211,10 @@ public class ReporteIndividualSumarioCategoriaMismoRelacion implements Serializa
 
             CategoryPlot categoryPlot = chart.getCategoryPlot();
             categoryPlot.setAxisOffset(new RectangleInsets(0, 0, 0, 0));
-            //FAFO6categoryPlot.setRangeGridlinePaint(Color.WHITE);
             categoryPlot.setDomainGridlinesVisible(false);
-            //FAFO5categoryPlot.setRangeGridlinesVisible(false);
+            categoryPlot.setRangeGridlinesVisible(true);// Muestra las lineas punteadas entre las barras
+            categoryPlot.setRangeGridlinePaint(ModeloGeneral.colorJAIOYellow);
+
             //categoryPlot.setBackgroundPaint(Color.white);
             categoryPlot.setOutlineVisible(false);
 
@@ -280,45 +276,6 @@ public class ReporteIndividualSumarioCategoriaMismoRelacion implements Serializa
 
         return dataSource;
 
-    }
-
-    private ComponentBuilder<?, ?> generaCabecera(Map map, InputStream medida) throws FileNotFoundException {
-
-        return cmp.verticalList(
-                cmp.verticalGap(5),//SALTO DE LINEA
-
-                cmp.horizontalList(
-                        cmp.text(objDatosReporte.getStrDescripcion()).setStyle(ModeloGeneral.styleTituloPrincipal)
-                ) //,//SALTO DE LINEA
-                //cmp.line().setPen(stl.pen(new Float("0.1"), LineStyle.SOLID))
-                ,//SALTO DE LINEA
-                 cmp.verticalGap(20),//SALTO DE LINEA
-                cmp.horizontalList(
-                        //cmp.text("Medida").setStyle(styleColumnaSubtitulo).setWidth(350), 
-                        cmp.image(medida).setFixedDimension(250, 20),
-                        cmp.horizontalGap(100),
-                        cmp.text("Rel").setStyle(ModeloGeneral.styleColumnaSubtitulo).setWidth(140),
-                        cmp.text("Frec").setStyle(ModeloGeneral.styleColumnaSubtitulo).setWidth(120),
-                        cmp.text("N").setStyle(ModeloGeneral.styleColumnaSubtitulo).setWidth(65)
-                )
-        );
-    }
-
-    private ComponentBuilder<?, ?> generaPie(Map map) throws FileNotFoundException {
-
-        return cmp.horizontalList().add(cmp.line().setPen(stl.pen(new Float("0.25"), LineStyle.SOLID)))
-                .newRow()
-                .add(cmp.verticalGap(5))
-                .newRow()
-                .add(cmp.horizontalList(
-                        cmp.verticalList(
-                                cmp.text(objDatosReporte.getStrNombreEvaluado()).setStyle(ModeloNormal.styleFooterLeftBottomParam),
-                                cmp.text(objDatosReporte.getStrCuestionario()).setStyle(ModeloNormal.styleFooterLeftTopParam)
-                        ).setWidth(400),
-                        cmp.verticalList( //cmp.pageNumber().setStyle(ModeloNormal.styleFooterRightBottomParam)
-                                )
-                )
-                );
     }
 
 }

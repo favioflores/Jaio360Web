@@ -42,5 +42,4 @@ public class MovimientoBean implements Serializable {
         this.intCantidad = intCantidad;
     }
 
-    
 }

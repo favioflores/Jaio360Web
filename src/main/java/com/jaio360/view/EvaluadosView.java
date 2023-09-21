@@ -37,22 +37,24 @@ import java.util.NoSuchElementException;
 import java.util.regex.Pattern;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
+import javax.faces.bean.ViewScoped;
+import javax.faces.bean.ManagedBean;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFFont;
-import org.apache.poi.hssf.usermodel.HSSFRichTextString;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.xssf.usermodel.XSSFRichTextString;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.hibernate.HibernateException;
 import org.primefaces.event.CellEditEvent;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.TabChangeEvent;
@@ -67,23 +69,24 @@ public class EvaluadosView extends BaseView implements Serializable {
 
     private ParametroDAO objParametroDAO = new ParametroDAO();
     private ProyectoDAO objProyectoDAO = new ProyectoDAO();
+    private RelacionDAO objRelacionDAO = new RelacionDAO();
     private CargaAvanzadaDAO objCargaAvanzadaDAO = new CargaAvanzadaDAO();
 
     private Integer modoConfiguracion = 0;
 
-    private boolean btnUploadDisabled = true;
+    private Boolean btnUploadDisabled = true;
 
     private Map hSexo;
     private Map hNO;
     private Map hAN;
 
-    private List<ErrorBean> lstErrorAvan;
+    private List<ErrorBean> lstErrorAvan = new ArrayList<>();
 
-    private boolean blHabilitarSexo = false;
-    private boolean blHabilitarEdad = false;
-    private boolean blHabilitarTiempoEmpresa = false;
-    private boolean blHabilitarNivelOcupacional = false;
-    private boolean blHabilitarAreaNegocio = false;
+    private Boolean blHabilitarSexo = false;
+    private Boolean blHabilitarEdad = false;
+    private Boolean blHabilitarTiempoEmpresa = false;
+    private Boolean blHabilitarNivelOcupacional = false;
+    private Boolean blHabilitarAreaNegocio = false;
     private List<SelectItem> lstNivelOcupacional;
     private List<SelectItem> lstAreaNegocio;
 
@@ -134,161 +137,55 @@ public class EvaluadosView extends BaseView implements Serializable {
     private List<EvaluadoAvan> lstAvanPersonas;
     private StreamedContent xlsContentAvanzado;
     private UploadedFile fileAvanzado;
-    private boolean blCargarCorrectoAvan = false;
+    private Boolean blCargarCorrectoAvan = false;
     private List<RelacionAvanzada> lstRelacionAvanzadas;
     private Map mapRelacionesAvanzado = new HashMap();
     private Map mapRelacionesAbrev = new HashMap();
     private Map mapPersonasAvanzado = new HashMap();
     private Map mapRelacionesPersonasAvanzado = new HashMap();
-
     private Map mapPerEvaluados = new HashMap();
     private Map mapPerEvaluadores = new HashMap();
-
     private String strNombre;
     private String strAbreviatura;
     private String strDescripcionRelacion;
     private String strColor;
     private Integer idRelacionPk;
-
     private Integer intIdEstadoProyecto;
-
     private List<RelacionBean> lstRelacionBean;
     private List<RelacionAvanzada> lstRelacionesEvaluadoEvaluador;
 
-    public List<RelacionAvanzada> getLstRelacionesEvaluadoEvaluador() {
-        return lstRelacionesEvaluadoEvaluador;
+    private BigDecimal blTotalPonderado;
+
+    public BigDecimal getBlTotalPonderado() {
+        return blTotalPonderado;
     }
 
-    public void setLstRelacionesEvaluadoEvaluador(List<RelacionAvanzada> lstRelacionesEvaluadoEvaluador) {
-        this.lstRelacionesEvaluadoEvaluador = lstRelacionesEvaluadoEvaluador;
+    public void setBlTotalPonderado(BigDecimal blTotalPonderado) {
+        this.blTotalPonderado = blTotalPonderado;
     }
 
-    public Integer getIntIdEstadoProyecto() {
-        return intIdEstadoProyecto;
+    public ParametroDAO getObjParametroDAO() {
+        return objParametroDAO;
     }
 
-    public void setIntIdEstadoProyecto(Integer intIdEstadoProyecto) {
-        this.intIdEstadoProyecto = intIdEstadoProyecto;
+    public void setObjParametroDAO(ParametroDAO objParametroDAO) {
+        this.objParametroDAO = objParametroDAO;
     }
 
-    public String getStrNombre() {
-        return strNombre;
+    public ProyectoDAO getObjProyectoDAO() {
+        return objProyectoDAO;
     }
 
-    public void setStrNombre(String strNombre) {
-        this.strNombre = strNombre;
+    public void setObjProyectoDAO(ProyectoDAO objProyectoDAO) {
+        this.objProyectoDAO = objProyectoDAO;
     }
 
-    public String getStrAbreviatura() {
-        return strAbreviatura;
+    public CargaAvanzadaDAO getObjCargaAvanzadaDAO() {
+        return objCargaAvanzadaDAO;
     }
 
-    public void setStrAbreviatura(String strAbreviatura) {
-        this.strAbreviatura = strAbreviatura;
-    }
-
-    public String getStrDescripcionRelacion() {
-        return strDescripcionRelacion;
-    }
-
-    public void setStrDescripcionRelacion(String strDescripcionRelacion) {
-        this.strDescripcionRelacion = strDescripcionRelacion;
-    }
-
-    public String getStrColor() {
-        return strColor;
-    }
-
-    public void setStrColor(String strColor) {
-        this.strColor = strColor;
-    }
-
-    public Integer getIdRelacionPk() {
-        return idRelacionPk;
-    }
-
-    public void setIdRelacionPk(Integer idRelacionPk) {
-        this.idRelacionPk = idRelacionPk;
-    }
-
-    public List<RelacionBean> getLstRelacionBean() {
-        return lstRelacionBean;
-    }
-
-    public void setLstRelacionBean(List<RelacionBean> lstRelacionBean) {
-        this.lstRelacionBean = lstRelacionBean;
-    }
-
-    public boolean isBtnUploadDisabled() {
-        return btnUploadDisabled;
-    }
-
-    public void setBtnUploadDisabled(boolean btnUploadDisabled) {
-        this.btnUploadDisabled = btnUploadDisabled;
-    }
-
-    public Map getMapRelacionesPersonasAvanzado() {
-        return mapRelacionesPersonasAvanzado;
-    }
-
-    public void setMapRelacionesPersonasAvanzado(Map mapRelacionesPersonasAvanzado) {
-        this.mapRelacionesPersonasAvanzado = mapRelacionesPersonasAvanzado;
-    }
-
-    public List<RelacionAvanzada> getLstRelacionAvanzadas() {
-        return lstRelacionAvanzadas;
-    }
-
-    public void setLstRelacionAvanzadas(List<RelacionAvanzada> lstRelacionAvanzadas) {
-        this.lstRelacionAvanzadas = lstRelacionAvanzadas;
-    }
-
-    public List<ErrorBean> getLstErrorAvan() {
-        return lstErrorAvan;
-    }
-
-    public boolean isBlCargarCorrectoAvan() {
-        return blCargarCorrectoAvan;
-    }
-
-    public void setBlCargarCorrectoAvan(boolean blCargarCorrectoAvan) {
-        this.blCargarCorrectoAvan = blCargarCorrectoAvan;
-    }
-
-    public void setLstErrorAvan(List<ErrorBean> lstErrorAvan) {
-        this.lstErrorAvan = lstErrorAvan;
-    }
-
-    public List<EvaluadoAvan> getLstAvanPersonas() {
-        return lstAvanPersonas;
-    }
-
-    public void setLstAvanPersonas(List<EvaluadoAvan> lstAvanPersonas) {
-        this.lstAvanPersonas = lstAvanPersonas;
-    }
-
-    public StreamedContent getXlsContentAvanzado() {
-        return xlsContentAvanzado;
-    }
-
-    public void setXlsContentAvanzado(StreamedContent xlsContentAvanzado) {
-        this.xlsContentAvanzado = xlsContentAvanzado;
-    }
-
-    public UploadedFile getFileAvanzado() {
-        return fileAvanzado;
-    }
-
-    public void setFileAvanzado(UploadedFile fileAvanzado) {
-        this.fileAvanzado = fileAvanzado;
-    }
-
-    public List<RelacionBean> getLstAvanRelacion() {
-        return lstAvanRelacion;
-    }
-
-    public void setLstAvanRelacion(List<RelacionBean> lstAvanRelacion) {
-        this.lstAvanRelacion = lstAvanRelacion;
+    public void setObjCargaAvanzadaDAO(CargaAvanzadaDAO objCargaAvanzadaDAO) {
+        this.objCargaAvanzadaDAO = objCargaAvanzadaDAO;
     }
 
     public Integer getModoConfiguracion() {
@@ -297,6 +194,134 @@ public class EvaluadosView extends BaseView implements Serializable {
 
     public void setModoConfiguracion(Integer modoConfiguracion) {
         this.modoConfiguracion = modoConfiguracion;
+    }
+
+    public Boolean getBtnUploadDisabled() {
+        return btnUploadDisabled;
+    }
+
+    public void setBtnUploadDisabled(Boolean btnUploadDisabled) {
+        this.btnUploadDisabled = btnUploadDisabled;
+    }
+
+    public Map gethSexo() {
+        return hSexo;
+    }
+
+    public void sethSexo(Map hSexo) {
+        this.hSexo = hSexo;
+    }
+
+    public Map gethNO() {
+        return hNO;
+    }
+
+    public void sethNO(Map hNO) {
+        this.hNO = hNO;
+    }
+
+    public Map gethAN() {
+        return hAN;
+    }
+
+    public void sethAN(Map hAN) {
+        this.hAN = hAN;
+    }
+
+    public List<ErrorBean> getLstErrorAvan() {
+        return lstErrorAvan;
+    }
+
+    public void setLstErrorAvan(List<ErrorBean> lstErrorAvan) {
+        this.lstErrorAvan = lstErrorAvan;
+    }
+
+    public Boolean getBlHabilitarSexo() {
+        return blHabilitarSexo;
+    }
+
+    public void setBlHabilitarSexo(Boolean blHabilitarSexo) {
+        this.blHabilitarSexo = blHabilitarSexo;
+    }
+
+    public Boolean getBlHabilitarEdad() {
+        return blHabilitarEdad;
+    }
+
+    public void setBlHabilitarEdad(Boolean blHabilitarEdad) {
+        this.blHabilitarEdad = blHabilitarEdad;
+    }
+
+    public Boolean getBlHabilitarTiempoEmpresa() {
+        return blHabilitarTiempoEmpresa;
+    }
+
+    public void setBlHabilitarTiempoEmpresa(Boolean blHabilitarTiempoEmpresa) {
+        this.blHabilitarTiempoEmpresa = blHabilitarTiempoEmpresa;
+    }
+
+    public Boolean getBlHabilitarNivelOcupacional() {
+        return blHabilitarNivelOcupacional;
+    }
+
+    public void setBlHabilitarNivelOcupacional(Boolean blHabilitarNivelOcupacional) {
+        this.blHabilitarNivelOcupacional = blHabilitarNivelOcupacional;
+    }
+
+    public Boolean getBlHabilitarAreaNegocio() {
+        return blHabilitarAreaNegocio;
+    }
+
+    public void setBlHabilitarAreaNegocio(Boolean blHabilitarAreaNegocio) {
+        this.blHabilitarAreaNegocio = blHabilitarAreaNegocio;
+    }
+
+    public List<SelectItem> getLstNivelOcupacional() {
+        return lstNivelOcupacional;
+    }
+
+    public void setLstNivelOcupacional(List<SelectItem> lstNivelOcupacional) {
+        this.lstNivelOcupacional = lstNivelOcupacional;
+    }
+
+    public List<SelectItem> getLstAreaNegocio() {
+        return lstAreaNegocio;
+    }
+
+    public void setLstAreaNegocio(List<SelectItem> lstAreaNegocio) {
+        this.lstAreaNegocio = lstAreaNegocio;
+    }
+
+    public Integer getModo() {
+        return modo;
+    }
+
+    public void setModo(Integer modo) {
+        this.modo = modo;
+    }
+
+    public String getStrDescripcion() {
+        return strDescripcion;
+    }
+
+    public void setStrDescripcion(String strDescripcion) {
+        this.strDescripcion = strDescripcion;
+    }
+
+    public String getStrCargo() {
+        return strCargo;
+    }
+
+    public void setStrCargo(String strCargo) {
+        this.strCargo = strCargo;
+    }
+
+    public String getStrCorreo() {
+        return strCorreo;
+    }
+
+    public void setStrCorreo(String strCorreo) {
+        this.strCorreo = strCorreo;
     }
 
     public String getStrSexo() {
@@ -339,6 +364,118 @@ public class EvaluadosView extends BaseView implements Serializable {
         this.strAreaNegocio = strAreaNegocio;
     }
 
+    public Integer getIntCorrelativo() {
+        return intCorrelativo;
+    }
+
+    public void setIntCorrelativo(Integer intCorrelativo) {
+        this.intCorrelativo = intCorrelativo;
+    }
+
+    public Integer getIdParticipantePk() {
+        return idParticipantePk;
+    }
+
+    public void setIdParticipantePk(Integer idParticipantePk) {
+        this.idParticipantePk = idParticipantePk;
+    }
+
+    public Boolean getPaInAutoevaluar() {
+        return paInAutoevaluar;
+    }
+
+    public void setPaInAutoevaluar(Boolean paInAutoevaluar) {
+        this.paInAutoevaluar = paInAutoevaluar;
+    }
+
+    public List<Evaluado> getLstEvaluado() {
+        return lstEvaluado;
+    }
+
+    public void setLstEvaluado(List<Evaluado> lstEvaluado) {
+        this.lstEvaluado = lstEvaluado;
+    }
+
+    public List<Evaluado> getLstCargaMasiva() {
+        return lstCargaMasiva;
+    }
+
+    public void setLstCargaMasiva(List<Evaluado> lstCargaMasiva) {
+        this.lstCargaMasiva = lstCargaMasiva;
+    }
+
+    public Integer getCantidadEvaluadosRegistrados() {
+        return cantidadEvaluadosRegistrados;
+    }
+
+    public void setCantidadEvaluadosRegistrados(Integer cantidadEvaluadosRegistrados) {
+        this.cantidadEvaluadosRegistrados = cantidadEvaluadosRegistrados;
+    }
+
+    public UploadedFile getFile() {
+        return file;
+    }
+
+    public void setFile(UploadedFile file) {
+        this.file = file;
+    }
+
+    public StreamedContent getXlsContent() {
+        return xlsContent;
+    }
+
+    public void setXlsContent(StreamedContent xlsContent) {
+        this.xlsContent = xlsContent;
+    }
+
+    public Integer getIntCantTempCorrect() {
+        return intCantTempCorrect;
+    }
+
+    public void setIntCantTempCorrect(Integer intCantTempCorrect) {
+        this.intCantTempCorrect = intCantTempCorrect;
+    }
+
+    public Integer getIntCantTempIncorrect() {
+        return intCantTempIncorrect;
+    }
+
+    public void setIntCantTempIncorrect(Integer intCantTempIncorrect) {
+        this.intCantTempIncorrect = intCantTempIncorrect;
+    }
+
+    public Integer getModoEvaluadores() {
+        return modoEvaluadores;
+    }
+
+    public void setModoEvaluadores(Integer modoEvaluadores) {
+        this.modoEvaluadores = modoEvaluadores;
+    }
+
+    public String getStrDescripcionEvaluadores() {
+        return strDescripcionEvaluadores;
+    }
+
+    public void setStrDescripcionEvaluadores(String strDescripcionEvaluadores) {
+        this.strDescripcionEvaluadores = strDescripcionEvaluadores;
+    }
+
+    public String getStrCargoEvaluadores() {
+        return strCargoEvaluadores;
+    }
+
+    public void setStrCargoEvaluadores(String strCargoEvaluadores) {
+        this.strCargoEvaluadores = strCargoEvaluadores;
+    }
+
+    public String getStrCorreoEvaluadores() {
+        return strCorreoEvaluadores;
+    }
+
+    public void setStrCorreoEvaluadores(String strCorreoEvaluadores) {
+        this.strCorreoEvaluadores = strCorreoEvaluadores;
+    }
+
     public String getStrSexoEvaluadores() {
         return strSexoEvaluadores;
     }
@@ -377,94 +514,6 @@ public class EvaluadosView extends BaseView implements Serializable {
 
     public void setStrAreaNegocioEvaluadores(String strAreaNegocioEvaluadores) {
         this.strAreaNegocioEvaluadores = strAreaNegocioEvaluadores;
-    }
-
-    public String getStrCargoEvaluadores() {
-        return strCargoEvaluadores;
-    }
-
-    public boolean isBlHabilitarSexo() {
-        return blHabilitarSexo;
-    }
-
-    public void setBlHabilitarSexo(boolean blHabilitarSexo) {
-        this.blHabilitarSexo = blHabilitarSexo;
-    }
-
-    public boolean isBlHabilitarEdad() {
-        return blHabilitarEdad;
-    }
-
-    public void setBlHabilitarEdad(boolean blHabilitarEdad) {
-        this.blHabilitarEdad = blHabilitarEdad;
-    }
-
-    public List<SelectItem> getLstNivelOcupacional() {
-        return lstNivelOcupacional;
-    }
-
-    public void setLstNivelOcupacional(List<SelectItem> lstNivelOcupacional) {
-        this.lstNivelOcupacional = lstNivelOcupacional;
-    }
-
-    public List<SelectItem> getLstAreaNegocio() {
-        return lstAreaNegocio;
-    }
-
-    public void setLstAreaNegocio(List<SelectItem> lstAreaNegocio) {
-        this.lstAreaNegocio = lstAreaNegocio;
-    }
-
-    public boolean isBlHabilitarTiempoEmpresa() {
-        return blHabilitarTiempoEmpresa;
-    }
-
-    public void setBlHabilitarTiempoEmpresa(boolean blHabilitarTiempoEmpresa) {
-        this.blHabilitarTiempoEmpresa = blHabilitarTiempoEmpresa;
-    }
-
-    public boolean isBlHabilitarNivelOcupacional() {
-        return blHabilitarNivelOcupacional;
-    }
-
-    public void setBlHabilitarNivelOcupacional(boolean blHabilitarNivelOcupacional) {
-        this.blHabilitarNivelOcupacional = blHabilitarNivelOcupacional;
-    }
-
-    public boolean isBlHabilitarAreaNegocio() {
-        return blHabilitarAreaNegocio;
-    }
-
-    public void setBlHabilitarAreaNegocio(boolean blHabilitarAreaNegocio) {
-        this.blHabilitarAreaNegocio = blHabilitarAreaNegocio;
-    }
-
-    public void setStrCargoEvaluadores(String strCargoEvaluadores) {
-        this.strCargoEvaluadores = strCargoEvaluadores;
-    }
-
-    public Integer getModoEvaluadores() {
-        return modoEvaluadores;
-    }
-
-    public void setModoEvaluadores(Integer modoEvaluadores) {
-        this.modoEvaluadores = modoEvaluadores;
-    }
-
-    public String getStrDescripcionEvaluadores() {
-        return strDescripcionEvaluadores;
-    }
-
-    public void setStrDescripcionEvaluadores(String strDescripcionEvaluadores) {
-        this.strDescripcionEvaluadores = strDescripcionEvaluadores;
-    }
-
-    public String getStrCorreoEvaluadores() {
-        return strCorreoEvaluadores;
-    }
-
-    public void setStrCorreoEvaluadores(String strCorreoEvaluadores) {
-        this.strCorreoEvaluadores = strCorreoEvaluadores;
     }
 
     public Integer getIntCorrelativoEvaluadores() {
@@ -539,120 +588,164 @@ public class EvaluadosView extends BaseView implements Serializable {
         this.intCantTempIncorrectEvaluadores = intCantTempIncorrectEvaluadores;
     }
 
-    public Integer getIntCantTempIncorrect() {
-        return intCantTempIncorrect;
+    public List<RelacionBean> getLstAvanRelacion() {
+        return lstAvanRelacion;
     }
 
-    public Integer getModo() {
-        return modo;
+    public void setLstAvanRelacion(List<RelacionBean> lstAvanRelacion) {
+        this.lstAvanRelacion = lstAvanRelacion;
     }
 
-    public void setModo(Integer modo) {
-        this.modo = modo;
+    public List<EvaluadoAvan> getLstAvanPersonas() {
+        return lstAvanPersonas;
     }
 
-    public void setIntCantTempIncorrect(Integer intCantTempIncorrect) {
-        this.intCantTempIncorrect = intCantTempIncorrect;
+    public void setLstAvanPersonas(List<EvaluadoAvan> lstAvanPersonas) {
+        this.lstAvanPersonas = lstAvanPersonas;
     }
 
-    public Integer getIntCantTempCorrect() {
-        return intCantTempCorrect;
+    public StreamedContent getXlsContentAvanzado() {
+        return xlsContentAvanzado;
     }
 
-    public void setIntCantTempCorrect(Integer intCantTempCorrect) {
-        this.intCantTempCorrect = intCantTempCorrect;
+    public void setXlsContentAvanzado(StreamedContent xlsContentAvanzado) {
+        this.xlsContentAvanzado = xlsContentAvanzado;
     }
 
-    public UploadedFile getFile() {
-        return file;
+    public UploadedFile getFileAvanzado() {
+        return fileAvanzado;
     }
 
-    public void setFile(UploadedFile file) {
-        this.file = file;
+    public void setFileAvanzado(UploadedFile fileAvanzado) {
+        this.fileAvanzado = fileAvanzado;
     }
 
-    public Integer getCantidadEvaluadosRegistrados() {
-        return cantidadEvaluadosRegistrados;
+    public Boolean getBlCargarCorrectoAvan() {
+        return blCargarCorrectoAvan;
     }
 
-    public void setCantidadEvaluadosRegistrados(Integer cantidadEvaluadosRegistrados) {
-        this.cantidadEvaluadosRegistrados = cantidadEvaluadosRegistrados;
+    public void setBlCargarCorrectoAvan(Boolean blCargarCorrectoAvan) {
+        this.blCargarCorrectoAvan = blCargarCorrectoAvan;
     }
 
-    public List<Evaluado> getLstCargaMasiva() {
-        return lstCargaMasiva;
+    public List<RelacionAvanzada> getLstRelacionAvanzadas() {
+        return lstRelacionAvanzadas;
     }
 
-    public void setLstCargaMasiva(List<Evaluado> lstCargaMasiva) {
-        this.lstCargaMasiva = lstCargaMasiva;
+    public void setLstRelacionAvanzadas(List<RelacionAvanzada> lstRelacionAvanzadas) {
+        this.lstRelacionAvanzadas = lstRelacionAvanzadas;
     }
 
-    public String getStrDescripcion() {
-        return strDescripcion;
+    public Map getMapRelacionesAvanzado() {
+        return mapRelacionesAvanzado;
     }
 
-    public void setStrDescripcion(String strDescripcion) {
-        this.strDescripcion = strDescripcion;
+    public void setMapRelacionesAvanzado(Map mapRelacionesAvanzado) {
+        this.mapRelacionesAvanzado = mapRelacionesAvanzado;
     }
 
-    public String getStrCargo() {
-        return strCargo;
+    public Map getMapRelacionesAbrev() {
+        return mapRelacionesAbrev;
     }
 
-    public void setStrCargo(String strCargo) {
-        this.strCargo = strCargo;
+    public void setMapRelacionesAbrev(Map mapRelacionesAbrev) {
+        this.mapRelacionesAbrev = mapRelacionesAbrev;
     }
 
-    public String getStrCorreo() {
-        return strCorreo;
+    public Map getMapPersonasAvanzado() {
+        return mapPersonasAvanzado;
     }
 
-    public void setStrCorreo(String strCorreo) {
-        this.strCorreo = strCorreo;
+    public void setMapPersonasAvanzado(Map mapPersonasAvanzado) {
+        this.mapPersonasAvanzado = mapPersonasAvanzado;
     }
 
-    public Integer getIdParticipantePk() {
-        return idParticipantePk;
+    public Map getMapRelacionesPersonasAvanzado() {
+        return mapRelacionesPersonasAvanzado;
     }
 
-    public void setIdParticipantePk(Integer idParticipantePk) {
-        this.idParticipantePk = idParticipantePk;
+    public void setMapRelacionesPersonasAvanzado(Map mapRelacionesPersonasAvanzado) {
+        this.mapRelacionesPersonasAvanzado = mapRelacionesPersonasAvanzado;
     }
 
-    public Integer getIntCorrelativo() {
-        return intCorrelativo;
+    public Map getMapPerEvaluados() {
+        return mapPerEvaluados;
     }
 
-    public void setIntCorrelativo(Integer intCorrelativo) {
-        this.intCorrelativo = intCorrelativo;
+    public void setMapPerEvaluados(Map mapPerEvaluados) {
+        this.mapPerEvaluados = mapPerEvaluados;
     }
 
-    public Boolean getPaInAutoevaluar() {
-        return paInAutoevaluar;
+    public Map getMapPerEvaluadores() {
+        return mapPerEvaluadores;
     }
 
-    public void setPaInAutoevaluar(Boolean paInAutoevaluar) {
-        this.paInAutoevaluar = paInAutoevaluar;
+    public void setMapPerEvaluadores(Map mapPerEvaluadores) {
+        this.mapPerEvaluadores = mapPerEvaluadores;
     }
 
-    public List<Evaluado> getLstEvaluado() {
-        return lstEvaluado;
+    public String getStrNombre() {
+        return strNombre;
     }
 
-    public void setLstEvaluado(List<Evaluado> lstEvaluado) {
-        this.lstEvaluado = lstEvaluado;
+    public void setStrNombre(String strNombre) {
+        this.strNombre = strNombre;
     }
 
-    public StreamedContent getXlsContent() {
-        return xlsContent;
+    public String getStrAbreviatura() {
+        return strAbreviatura;
     }
 
-    public void setXlsContent(StreamedContent xlsContent) {
-        this.xlsContent = xlsContent;
+    public void setStrAbreviatura(String strAbreviatura) {
+        this.strAbreviatura = strAbreviatura;
     }
 
-    public EvaluadosView() {
-        this.lstEvaluado = new ArrayList<>();
+    public String getStrDescripcionRelacion() {
+        return strDescripcionRelacion;
+    }
+
+    public void setStrDescripcionRelacion(String strDescripcionRelacion) {
+        this.strDescripcionRelacion = strDescripcionRelacion;
+    }
+
+    public String getStrColor() {
+        return strColor;
+    }
+
+    public void setStrColor(String strColor) {
+        this.strColor = strColor;
+    }
+
+    public Integer getIdRelacionPk() {
+        return idRelacionPk;
+    }
+
+    public void setIdRelacionPk(Integer idRelacionPk) {
+        this.idRelacionPk = idRelacionPk;
+    }
+
+    public Integer getIntIdEstadoProyecto() {
+        return intIdEstadoProyecto;
+    }
+
+    public void setIntIdEstadoProyecto(Integer intIdEstadoProyecto) {
+        this.intIdEstadoProyecto = intIdEstadoProyecto;
+    }
+
+    public List<RelacionBean> getLstRelacionBean() {
+        return lstRelacionBean;
+    }
+
+    public void setLstRelacionBean(List<RelacionBean> lstRelacionBean) {
+        this.lstRelacionBean = lstRelacionBean;
+    }
+
+    public List<RelacionAvanzada> getLstRelacionesEvaluadoEvaluador() {
+        return lstRelacionesEvaluadoEvaluador;
+    }
+
+    public void setLstRelacionesEvaluadoEvaluador(List<RelacionAvanzada> lstRelacionesEvaluadoEvaluador) {
+        this.lstRelacionesEvaluadoEvaluador = lstRelacionesEvaluadoEvaluador;
     }
 
     @PostConstruct
@@ -664,6 +757,7 @@ public class EvaluadosView extends BaseView implements Serializable {
 
         List<Participante> lstParticipantes = objParticipanteDAO.obtenListaParticipanteXProyecto(Utilitarios.obtenerProyecto().getIntIdProyecto());
 
+        this.blTotalPonderado = BigDecimal.ZERO;
         this.blCargarCorrectoAvan = false;
         this.lstRelacionesEvaluadoEvaluador = new ArrayList<>();
         this.lstEvaluado = new ArrayList<>();
@@ -776,11 +870,14 @@ public class EvaluadosView extends BaseView implements Serializable {
             objRelacionBean.setIdRelacionPk(obj.getReIdRelacionPk());
             objRelacionBean.setIntIdEstado(obj.getReIdEstado());
             objRelacionBean.setStrEstado(msg(obj.getReIdEstado().toString()));
+            objRelacionBean.setDbPonderado(obj.getReDePonderacion());
 
             objRelacionBean.setIntCantidadUso(objRelacionParticipanteDAO.existeRelacionesXRelacion(obj.getReIdRelacionPk()));
 
             lstRelacionBean.add(objRelacionBean);
         }
+
+        calcularTotalPonderadoRelaciones();
 
         if (!lstEvaluado.isEmpty() && !lstEvaluadores.isEmpty() && !lstRelacionBean.isEmpty()) {
 
@@ -840,7 +937,7 @@ public class EvaluadosView extends BaseView implements Serializable {
 
             calculaIndicadores();
 
-            mostrarAlertaInfo("step1.evaluado.agregado.correctamente", null);
+            mostrarAlertaInfo("step1.evaluado.agregado.correctamente");
 
             incluirComoEvaluador(evaluado.getPaTxDescripcion(), evaluado.getPaTxNombreCargo(), evaluado.getPaTxCorreo(), evaluado.getPaTxSexo(), evaluado.getPaNrEdad(), evaluado.getPaNrTiempoTrabajo(), evaluado.getPaTxOcupacion(), evaluado.getPaTxAreaNegocio(), false);
 
@@ -848,7 +945,7 @@ public class EvaluadosView extends BaseView implements Serializable {
 
         } else {
             evaluado = determinaError(evaluado, error);
-            mostrarAlertaError(evaluado.getStrObservacionMasivo(), null);
+            mostrarAlertaError(evaluado.getStrObservacionMasivo());
         }
 
     }
@@ -871,9 +968,9 @@ public class EvaluadosView extends BaseView implements Serializable {
 
         objParticipante.setPaIdTipoParticipante(Constantes.INT_ET_TIPO_PARTICIPANTE_EVALUADO);
         objParticipante.setPaIdEstado(Constantes.INT_ET_ESTADO_EVALUADO_REGISTRADO);
-        objParticipante.setPaInAutoevaluar(objEvaluado.isPaInAutoevaluar());
-        objParticipante.setPaInRedCargada(objEvaluado.isPaInRedCargada());
-        objParticipante.setPaInRedVerificada(objEvaluado.isPaInRedVerificada());
+        objParticipante.setPaInAutoevaluar(objEvaluado.getPaInAutoevaluar());
+        objParticipante.setPaInRedCargada(objEvaluado.getPaInRedCargada());
+        objParticipante.setPaInRedVerificada(objEvaluado.getPaInRedVerificada());
         objParticipante.setPaTxCorreo(objEvaluado.getPaTxCorreo());
         objParticipante.setPaTxDescripcion(objEvaluado.getPaTxDescripcion());
         objParticipante.setPaTxNombreCargo(objEvaluado.getPaTxNombreCargo());
@@ -1068,7 +1165,7 @@ public class EvaluadosView extends BaseView implements Serializable {
 
         }
 
-        mostrarAlertaInfo("step1.evaluado.borrado.correctamente", null);
+        mostrarAlertaInfo("step1.evaluado.borrado.correctamente");
 
         resetFail();
     }
@@ -1081,12 +1178,12 @@ public class EvaluadosView extends BaseView implements Serializable {
             boolean correcto = objParticipanteDAO.guardaParticipante(this.lstEvaluado, Utilitarios.obtenerProyecto().getIntIdProyecto());
 
             if (correcto) {
-                msg("success", null);
+                msg("success");
             } else {
-                msg("error.saving", null);
+                msg("error.saving");
             }
 
-        } catch (Exception e) {
+        } catch (HibernateException e) {
             mostrarError(log, e);
         }
 
@@ -1109,79 +1206,78 @@ public class EvaluadosView extends BaseView implements Serializable {
         this.strOcupacion = objEvaluado.getPaTxOcupacion();
         this.strAreaNegocio = objEvaluado.getPaTxAreaNegocio();
         this.idParticipantePk = objEvaluado.getPaIdParticipantePk();
-        this.paInAutoevaluar = objEvaluado.isPaInAutoevaluar();
+        this.paInAutoevaluar = objEvaluado.getPaInAutoevaluar();
 
     }
 
     public void generaExcel() {
 
-        HSSFWorkbook xlsEvaluados = new HSSFWorkbook();
+        XSSFWorkbook xlsEvaluados = new XSSFWorkbook();
 
-        HSSFSheet hoja = xlsEvaluados.createSheet(msg("evaluated", null));
-
-        HSSFRow row = hoja.createRow(0);
+        XSSFSheet hoja = xlsEvaluados.createSheet(msg("evaluated"));
+        XSSFRow row = hoja.createRow(0);
 
         int c = 0;
 
-        HSSFCell cell0 = row.createCell(c);
-        HSSFRichTextString texto0 = new HSSFRichTextString(msg("description", null));
+        XSSFCell cell0 = row.createCell(c);
+        XSSFRichTextString texto0 = new XSSFRichTextString(msg("description"));
         cell0.setCellValue(texto0);
 
         c++;
 
-        HSSFCell cell1 = row.createCell(c);
-        HSSFRichTextString texto1 = new HSSFRichTextString(msg("work.range", null));
+        XSSFCell cell1 = row.createCell(c);
+        XSSFRichTextString texto1 = new XSSFRichTextString(msg("work.range"));
         cell1.setCellValue(texto1);
 
         c++;
 
-        HSSFCell cell2 = row.createCell(c);
-        HSSFRichTextString texto2 = new HSSFRichTextString(msg("email", null));
+        XSSFCell cell2 = row.createCell(c);
+        XSSFRichTextString texto2 = new XSSFRichTextString(msg("email"));
         cell2.setCellValue(texto2);
 
         if (blHabilitarSexo) {
             c++;
-            HSSFCell cell3 = row.createCell(c);
-            HSSFRichTextString texto3 = new HSSFRichTextString(msg("sex", null));
+            XSSFCell cell3 = row.createCell(c);
+            XSSFRichTextString texto3 = new XSSFRichTextString(msg("sex"));
             cell3.setCellValue(texto3);
         }
 
         if (blHabilitarEdad) {
             c++;
-            HSSFCell cell4 = row.createCell(c);
-            HSSFRichTextString texto4 = new HSSFRichTextString(msg("age", null));
+            XSSFCell cell4 = row.createCell(c);
+            XSSFRichTextString texto4 = new XSSFRichTextString(msg("age"));
             cell4.setCellValue(texto4);
         }
 
         if (blHabilitarTiempoEmpresa) {
             c++;
-            HSSFCell cell5 = row.createCell(c);
-            HSSFRichTextString texto5 = new HSSFRichTextString(msg("hiring.time", null));
+            XSSFCell cell5 = row.createCell(c);
+            XSSFRichTextString texto5 = new XSSFRichTextString(msg("hiring.time"));
             cell5.setCellValue(texto5);
         }
 
         if (blHabilitarNivelOcupacional) {
             c++;
-            HSSFCell cell6 = row.createCell(c);
-            HSSFRichTextString texto6 = new HSSFRichTextString(msg("work.range", null));
+            XSSFCell cell6 = row.createCell(c);
+            XSSFRichTextString texto6 = new XSSFRichTextString(msg("work.range"));
             cell6.setCellValue(texto6);
         }
 
         if (blHabilitarAreaNegocio) {
             c++;
-            HSSFCell cell7 = row.createCell(c);
-            HSSFRichTextString texto7 = new HSSFRichTextString(msg("working.area", null));
+            XSSFCell cell7 = row.createCell(c);
+            XSSFRichTextString texto7 = new XSSFRichTextString(msg("working.area"));
             cell7.setCellValue(texto7);
         }
 
         c++;
-        HSSFCell cell8 = row.createCell(c);
-        HSSFRichTextString texto8 = new HSSFRichTextString(msg("autoevaluation", null));
+        XSSFCell cell8 = row.createCell(c);
+        XSSFRichTextString texto8 = new XSSFRichTextString(msg("autoevaluation"));
         cell8.setCellValue(texto8);
 
-        HSSFCellStyle myStyle = xlsEvaluados.createCellStyle();
+        XSSFCellStyle myStyle = xlsEvaluados.createCellStyle();
 
-        HSSFFont hSSFFont = xlsEvaluados.createFont();
+        XSSFFont hSSFFont = xlsEvaluados.createFont();
         hSSFFont.setBold(true);
 
         myStyle.setFont(hSSFFont);
@@ -1192,7 +1288,7 @@ public class EvaluadosView extends BaseView implements Serializable {
         for (Evaluado objEvaluado : lstEvaluado) {
 
             if (objEvaluado.getPaIdEstado().equals(Constantes.INT_ET_ESTADO_EVALUADO_REGISTRADO)) {
-                HSSFRow nextrow = hoja.createRow(i);
+                XSSFRow nextrow = hoja.createRow(i);
 
                 int r = 0;
 
@@ -1223,7 +1319,7 @@ public class EvaluadosView extends BaseView implements Serializable {
                     nextrow.createCell(r).setCellValue(objEvaluado.getPaTxAreaNegocio());
                 }
                 r++;
-                nextrow.createCell(r).setCellValue(objEvaluado.isPaInAutoevaluar() == true ? msg("a.indicator.autoevaluation") : null);
+                nextrow.createCell(r).setCellValue(objEvaluado.getPaInAutoevaluar() == true ? msg("a.indicator.autoevaluation") : null);
                 i++;
             }
 
@@ -1244,7 +1340,7 @@ public class EvaluadosView extends BaseView implements Serializable {
             FacesContext facesContext = FacesContext.getCurrentInstance();
             ExternalContext externalContext = facesContext.getExternalContext();
             externalContext.setResponseContentType("application/vnd.ms-excel");
-            externalContext.setResponseHeader("Content-Disposition", "attachment; filename=\"" + msg("evaluated", null) + ".xls\"");
+            externalContext.setResponseHeader("Content-Disposition", "attachment; filename=\"" + msg("evaluated") + ".xls\"");
 
             xlsEvaluados.write(externalContext.getResponseOutputStream());
             facesContext.responseComplete();
@@ -1256,76 +1352,76 @@ public class EvaluadosView extends BaseView implements Serializable {
 
     public void generaExcelRespuesta() {
 
-        HSSFWorkbook xlsEvaluados = new HSSFWorkbook();
+        XSSFWorkbook xlsEvaluados = new XSSFWorkbook();
 
-        HSSFSheet hoja = xlsEvaluados.createSheet(msg("evaluated", null));
+        XSSFSheet hoja = xlsEvaluados.createSheet(msg("evaluated"));
 
-        HSSFRow row = hoja.createRow(0);
+        XSSFRow row = hoja.createRow(0);
 
         int c = 0;
 
-        HSSFCell cell0 = row.createCell(c);
-        HSSFRichTextString texto0 = new HSSFRichTextString(msg("description", null));
+        XSSFCell cell0 = row.createCell(c);
+        XSSFRichTextString texto0 = new XSSFRichTextString(msg("description"));
         cell0.setCellValue(texto0);
 
         c++;
-        HSSFCell cell1 = row.createCell(c);
-        HSSFRichTextString texto1 = new HSSFRichTextString(msg("work.range", null));
+        XSSFCell cell1 = row.createCell(c);
+        XSSFRichTextString texto1 = new XSSFRichTextString(msg("work.range"));
         cell1.setCellValue(texto1);
 
         c++;
-        HSSFCell cell2 = row.createCell(c);
-        HSSFRichTextString texto2 = new HSSFRichTextString(msg("mail", null));
+        XSSFCell cell2 = row.createCell(c);
+        XSSFRichTextString texto2 = new XSSFRichTextString(msg("mail"));
         cell2.setCellValue(texto2);
 
         if (blHabilitarSexo) {
             c++;
-            HSSFCell cell3 = row.createCell(c);
-            HSSFRichTextString texto3 = new HSSFRichTextString(msg("sex", null));
+            XSSFCell cell3 = row.createCell(c);
+            XSSFRichTextString texto3 = new XSSFRichTextString(msg("sex"));
             cell3.setCellValue(texto3);
         }
 
         if (blHabilitarEdad) {
             c++;
-            HSSFCell cell4 = row.createCell(c);
-            HSSFRichTextString texto4 = new HSSFRichTextString(msg("age", null));
+            XSSFCell cell4 = row.createCell(c);
+            XSSFRichTextString texto4 = new XSSFRichTextString(msg("age"));
             cell4.setCellValue(texto4);
         }
 
         if (blHabilitarTiempoEmpresa) {
             c++;
-            HSSFCell cell5 = row.createCell(c);
-            HSSFRichTextString texto5 = new HSSFRichTextString(msg("hiring.time", null));
+            XSSFCell cell5 = row.createCell(c);
+            XSSFRichTextString texto5 = new XSSFRichTextString(msg("hiring.time"));
             cell5.setCellValue(texto5);
         }
 
         if (blHabilitarNivelOcupacional) {
             c++;
-            HSSFCell cell6 = row.createCell(c);
-            HSSFRichTextString texto6 = new HSSFRichTextString(msg("work.range", null));
+            XSSFCell cell6 = row.createCell(c);
+            XSSFRichTextString texto6 = new XSSFRichTextString(msg("work.range"));
             cell6.setCellValue(texto6);
         }
 
         if (blHabilitarAreaNegocio) {
             c++;
-            HSSFCell cell7 = row.createCell(c);
-            HSSFRichTextString texto7 = new HSSFRichTextString(msg("working.area", null));
+            XSSFCell cell7 = row.createCell(c);
+            XSSFRichTextString texto7 = new XSSFRichTextString(msg("working.area"));
             cell7.setCellValue(texto7);
         }
 
         c++;
-        HSSFCell cell8 = row.createCell(c);
-        HSSFRichTextString texto8 = new HSSFRichTextString(msg("autoevaluate", null));
+        XSSFCell cell8 = row.createCell(c);
+        XSSFRichTextString texto8 = new XSSFRichTextString(msg("autoevaluate"));
         cell8.setCellValue(texto8);
 
         c++;
-        HSSFCell cell9 = row.createCell(c);
-        HSSFRichTextString texto9 = new HSSFRichTextString(msg("observation", null));
+        XSSFCell cell9 = row.createCell(c);
+        XSSFRichTextString texto9 = new XSSFRichTextString(msg("observation"));
         cell9.setCellValue(texto9);
 
-        HSSFCellStyle myStyle = xlsEvaluados.createCellStyle();
+        XSSFCellStyle myStyle = xlsEvaluados.createCellStyle();
 
-        HSSFFont hSSFFont = xlsEvaluados.createFont();
+        XSSFFont hSSFFont = xlsEvaluados.createFont();
         hSSFFont.setBold(true);
 
         myStyle.setFont(hSSFFont);
@@ -1337,7 +1433,7 @@ public class EvaluadosView extends BaseView implements Serializable {
 
             int r = 0;
 
-            HSSFRow nextrow = hoja.createRow(i);
+            XSSFRow nextrow = hoja.createRow(i);
             nextrow.createCell(r).setCellValue(objEvaluado.getPaTxDescripcion());
             r++;
             nextrow.createCell(r).setCellValue(objEvaluado.getPaTxNombreCargo());
@@ -1366,7 +1462,7 @@ public class EvaluadosView extends BaseView implements Serializable {
             }
 
             r++;
-            nextrow.createCell(r).setCellValue(objEvaluado.isPaInAutoevaluar() == true ? msg("a.indicator.autoevaluation") : null);
+            nextrow.createCell(r).setCellValue(objEvaluado.getPaInAutoevaluar() == true ? msg("a.indicator.autoevaluation") : null);
             r++;
             nextrow.createCell(r).setCellValue(objEvaluado.getStrObservacionMasivo());
             i++;
@@ -1390,7 +1486,7 @@ public class EvaluadosView extends BaseView implements Serializable {
             FacesContext facesContext = FacesContext.getCurrentInstance();
             ExternalContext externalContext = facesContext.getExternalContext();
             externalContext.setResponseContentType("application/vnd.ms-excel");
-            externalContext.setResponseHeader("Content-Disposition", "attachment; filename=\"" + msg("evaluated", null) + ".xls\"");
+            externalContext.setResponseHeader("Content-Disposition", "attachment; filename=\"" + msg("evaluated") + ".xls\"");
 
             xlsEvaluados.write(externalContext.getResponseOutputStream());
             facesContext.responseComplete();
@@ -1408,16 +1504,16 @@ public class EvaluadosView extends BaseView implements Serializable {
         intCantTempIncorrect = 0;
 
         if (event.getFile() == null) {
-            mostrarAlertaError("file.empty", null);
+            mostrarAlertaError("file.empty");
         } else {
 
-            HSSFWorkbook xlsEvaluados = null;
+            XSSFWorkbook xlsEvaluados = null;
 
             try {
 
-                xlsEvaluados = new HSSFWorkbook(event.getFile().getInputStream());
+                xlsEvaluados = new XSSFWorkbook(event.getFile().getInputStream());
 
-                HSSFSheet sheet = xlsEvaluados.getSheetAt(0);
+                XSSFSheet sheet = xlsEvaluados.getSheetAt(0);
 
                 Iterator<Row> rowIterator = sheet.iterator();
 
@@ -1459,7 +1555,7 @@ public class EvaluadosView extends BaseView implements Serializable {
                     String strTiempoEmpresa = null;
                     if (blHabilitarTiempoEmpresa) {
                         c++;
-                        strTiempoEmpresa = Utilitarios.obtieneDatoCelda(row, c);;
+                        strTiempoEmpresa = Utilitarios.obtieneDatoCelda(row, c);
                     }
 
                     String strOcupacion = null;
@@ -1652,7 +1748,7 @@ public class EvaluadosView extends BaseView implements Serializable {
 
                 if (objEvaluado.getStrCorrectoMasivo().equals("good")) {
 
-                    Integer error = buscarLista(objEvaluado.getPaTxDescripcion(), objEvaluado.getPaTxNombreCargo(), objEvaluado.getPaTxCorreo(), objEvaluado.isPaInAutoevaluar(), false);
+                    Integer error = buscarLista(objEvaluado.getPaTxDescripcion(), objEvaluado.getPaTxNombreCargo(), objEvaluado.getPaTxCorreo(), objEvaluado.getPaInAutoevaluar(), false);
 
                     Evaluado nuevoEvaluado = new Evaluado();
 
@@ -1664,7 +1760,7 @@ public class EvaluadosView extends BaseView implements Serializable {
                     nuevoEvaluado.setPaNrTiempoTrabajo(objEvaluado.getPaNrTiempoTrabajo());
                     nuevoEvaluado.setPaTxOcupacion(objEvaluado.getPaTxOcupacion());
                     nuevoEvaluado.setPaTxAreaNegocio(objEvaluado.getPaTxAreaNegocio());
-                    nuevoEvaluado.setPaInAutoevaluar(objEvaluado.isPaInAutoevaluar());
+                    nuevoEvaluado.setPaInAutoevaluar(objEvaluado.getPaInAutoevaluar());
                     nuevoEvaluado.setPaIdEstado(Constantes.INT_ET_ESTADO_EVALUADO_REGISTRADO);
                     nuevoEvaluado.setPaStrEstado(msg(Constantes.INT_ET_ESTADO_EVALUADO_REGISTRADO.toString()));
 
@@ -1993,66 +2089,66 @@ public class EvaluadosView extends BaseView implements Serializable {
 
     public void generaExcelEvaluadores() {
 
-        HSSFWorkbook xlsEvaluadores = new HSSFWorkbook();
+        XSSFWorkbook xlsEvaluadores = new XSSFWorkbook();
 
-        HSSFSheet hoja = xlsEvaluadores.createSheet(msg("evaluator"));
+        XSSFSheet hoja = xlsEvaluadores.createSheet(msg("evaluator"));
 
-        HSSFRow row = hoja.createRow(0);
+        XSSFRow row = hoja.createRow(0);
 
         int c = 0;
 
-        HSSFCell cell0 = row.createCell(c);
-        HSSFRichTextString texto0 = new HSSFRichTextString(msg("description"));
+        XSSFCell cell0 = row.createCell(c);
+        XSSFRichTextString texto0 = new XSSFRichTextString(msg("description"));
         cell0.setCellValue(texto0);
 
         c++;
-        HSSFCell cell1 = row.createCell(c);
-        HSSFRichTextString texto1 = new HSSFRichTextString(msg("work.range"));
+        XSSFCell cell1 = row.createCell(c);
+        XSSFRichTextString texto1 = new XSSFRichTextString(msg("work.range"));
         cell1.setCellValue(texto1);
 
         c++;
-        HSSFCell cell2 = row.createCell(c);
-        HSSFRichTextString texto2 = new HSSFRichTextString(msg("email"));
+        XSSFCell cell2 = row.createCell(c);
+        XSSFRichTextString texto2 = new XSSFRichTextString(msg("email"));
         cell2.setCellValue(texto2);
 
         if (blHabilitarSexo) {
             c++;
-            HSSFCell cell3 = row.createCell(c);
-            HSSFRichTextString texto3 = new HSSFRichTextString(msg("sex"));
+            XSSFCell cell3 = row.createCell(c);
+            XSSFRichTextString texto3 = new XSSFRichTextString(msg("sex"));
             cell3.setCellValue(texto3);
         }
 
         if (blHabilitarEdad) {
             c++;
-            HSSFCell cell4 = row.createCell(c);
-            HSSFRichTextString texto4 = new HSSFRichTextString(msg("age"));
+            XSSFCell cell4 = row.createCell(c);
+            XSSFRichTextString texto4 = new XSSFRichTextString(msg("age"));
             cell4.setCellValue(texto4);
         }
 
         if (blHabilitarTiempoEmpresa) {
             c++;
-            HSSFCell cell5 = row.createCell(c);
-            HSSFRichTextString texto5 = new HSSFRichTextString(msg("hiring.time"));
+            XSSFCell cell5 = row.createCell(c);
+            XSSFRichTextString texto5 = new XSSFRichTextString(msg("hiring.time"));
             cell5.setCellValue(texto5);
         }
 
         if (blHabilitarNivelOcupacional) {
             c++;
-            HSSFCell cell6 = row.createCell(c);
-            HSSFRichTextString texto6 = new HSSFRichTextString(msg("work.range"));
+            XSSFCell cell6 = row.createCell(c);
+            XSSFRichTextString texto6 = new XSSFRichTextString(msg("work.range"));
             cell6.setCellValue(texto6);
         }
 
         if (blHabilitarAreaNegocio) {
             c++;
-            HSSFCell cell7 = row.createCell(c);
-            HSSFRichTextString texto7 = new HSSFRichTextString(msg("working.area"));
+            XSSFCell cell7 = row.createCell(c);
+            XSSFRichTextString texto7 = new XSSFRichTextString(msg("working.area"));
             cell7.setCellValue(texto7);
         }
 
-        HSSFCellStyle myStyle = xlsEvaluadores.createCellStyle();
+        XSSFCellStyle myStyle = xlsEvaluadores.createCellStyle();
 
-        HSSFFont hSSFFont = xlsEvaluadores.createFont();
+        XSSFFont hSSFFont = xlsEvaluadores.createFont();
         hSSFFont.setBold(true);
 
         myStyle.setFont(hSSFFont);
@@ -2063,7 +2159,7 @@ public class EvaluadosView extends BaseView implements Serializable {
         for (Evaluador objEvaluador : lstEvaluadores) {
 
             if (objEvaluador.getReIdEstado().equals(Constantes.INT_ET_ESTADO_EVALUADOR_REGISTRADO)) {
-                HSSFRow nextrow = hoja.createRow(i);
+                XSSFRow nextrow = hoja.createRow(i);
                 int r = 0;
                 nextrow.createCell(r).setCellValue(objEvaluador.getReTxDescripcion());
                 r++;
@@ -2121,70 +2217,70 @@ public class EvaluadosView extends BaseView implements Serializable {
 
     public void generaExcelRespuestaEvaluadores() {
 
-        HSSFWorkbook xlsEvaluadores = new HSSFWorkbook();
+        XSSFWorkbook xlsEvaluadores = new XSSFWorkbook();
 
-        HSSFSheet hoja = xlsEvaluadores.createSheet(msg("evaluator"));
+        XSSFSheet hoja = xlsEvaluadores.createSheet(msg("evaluator"));
 
         int c = 0;
 
-        HSSFRow row = hoja.createRow(0);
+        XSSFRow row = hoja.createRow(0);
 
-        HSSFCell cell0 = row.createCell(c);
-        HSSFRichTextString texto0 = new HSSFRichTextString(msg("description"));
+        XSSFCell cell0 = row.createCell(c);
+        XSSFRichTextString texto0 = new XSSFRichTextString(msg("description"));
         cell0.setCellValue(texto0);
 
         c++;
-        HSSFCell cell1 = row.createCell(c);
-        HSSFRichTextString texto1 = new HSSFRichTextString(msg("work.range"));
+        XSSFCell cell1 = row.createCell(c);
+        XSSFRichTextString texto1 = new XSSFRichTextString(msg("work.range"));
         cell1.setCellValue(texto1);
 
         c++;
-        HSSFCell cell2 = row.createCell(c);
-        HSSFRichTextString texto2 = new HSSFRichTextString(msg("email"));
+        XSSFCell cell2 = row.createCell(c);
+        XSSFRichTextString texto2 = new XSSFRichTextString(msg("email"));
         cell2.setCellValue(texto2);
 
         if (blHabilitarSexo) {
             c++;
-            HSSFCell cell3 = row.createCell(c);
-            HSSFRichTextString texto3 = new HSSFRichTextString(msg("sex"));
+            XSSFCell cell3 = row.createCell(c);
+            XSSFRichTextString texto3 = new XSSFRichTextString(msg("sex"));
             cell3.setCellValue(texto3);
         }
 
         if (blHabilitarEdad) {
             c++;
-            HSSFCell cell4 = row.createCell(c);
-            HSSFRichTextString texto4 = new HSSFRichTextString(msg("age"));
+            XSSFCell cell4 = row.createCell(c);
+            XSSFRichTextString texto4 = new XSSFRichTextString(msg("age"));
             cell4.setCellValue(texto4);
         }
 
         if (blHabilitarTiempoEmpresa) {
             c++;
-            HSSFCell cell5 = row.createCell(c);
-            HSSFRichTextString texto5 = new HSSFRichTextString(msg("hiring.time"));
+            XSSFCell cell5 = row.createCell(c);
+            XSSFRichTextString texto5 = new XSSFRichTextString(msg("hiring.time"));
             cell5.setCellValue(texto5);
         }
 
         if (blHabilitarNivelOcupacional) {
             c++;
-            HSSFCell cell6 = row.createCell(c);
-            HSSFRichTextString texto6 = new HSSFRichTextString(msg("work.range"));
+            XSSFCell cell6 = row.createCell(c);
+            XSSFRichTextString texto6 = new XSSFRichTextString(msg("work.range"));
             cell6.setCellValue(texto6);
         }
 
         if (blHabilitarAreaNegocio) {
             c++;
-            HSSFCell cell7 = row.createCell(c);
-            HSSFRichTextString texto7 = new HSSFRichTextString(msg("working.area"));
+            XSSFCell cell7 = row.createCell(c);
+            XSSFRichTextString texto7 = new XSSFRichTextString(msg("working.area"));
             cell7.setCellValue(texto7);
         }
 
-        HSSFCell cell8 = row.createCell(8);
-        HSSFRichTextString texto8 = new HSSFRichTextString(msg("observation"));
+        XSSFCell cell8 = row.createCell(8);
+        XSSFRichTextString texto8 = new XSSFRichTextString(msg("observation"));
         cell8.setCellValue(texto8);
 
-        HSSFCellStyle myStyle = xlsEvaluadores.createCellStyle();
+        XSSFCellStyle myStyle = xlsEvaluadores.createCellStyle();
 
-        HSSFFont hSSFFont = xlsEvaluadores.createFont();
+        XSSFFont hSSFFont = xlsEvaluadores.createFont();
         hSSFFont.setBold(true);
 
         myStyle.setFont(hSSFFont);
@@ -2194,7 +2290,7 @@ public class EvaluadosView extends BaseView implements Serializable {
         int i = 1;
         for (Evaluador objEvaluador : lstCargaMasivaEvaluadores) {
             int r = 0;
-            HSSFRow nextrow = hoja.createRow(i);
+            XSSFRow nextrow = hoja.createRow(i);
             nextrow.createCell(r).setCellValue(objEvaluador.getReTxDescripcion());
             r++;
             nextrow.createCell(r).setCellValue(objEvaluador.getReTxNombreCargo());
@@ -2262,13 +2358,13 @@ public class EvaluadosView extends BaseView implements Serializable {
             mostrarAlertaError("file.empty");
         } else {
 
-            HSSFWorkbook xlsEvaluadores = null;
+            XSSFWorkbook xlsEvaluadores = null;
 
             try {
 
-                xlsEvaluadores = new HSSFWorkbook(event.getFile().getInputStream());
+                xlsEvaluadores = new XSSFWorkbook(event.getFile().getInputStream());
 
-                HSSFSheet sheet = xlsEvaluadores.getSheetAt(0);
+                XSSFSheet sheet = xlsEvaluadores.getSheetAt(0);
 
                 Iterator<Row> rowIterator = sheet.iterator();
 
@@ -2302,7 +2398,7 @@ public class EvaluadosView extends BaseView implements Serializable {
                         String strSexo = null;
                         if (blHabilitarSexo) {
                             c++;
-                            strSexo = Utilitarios.obtieneDatoCelda(row, c);;
+                            strSexo = Utilitarios.obtieneDatoCelda(row, c);
                         }
 
                         String strEdad = null;
@@ -2595,7 +2691,7 @@ public class EvaluadosView extends BaseView implements Serializable {
         }
     }
 
-    private boolean incluirComoEvaluador(String paTxDescripcion, String strCargoEvaluadores, String paTxCorreo, String paTxSexo, Integer paNrEdad, Integer paNrTiempoTrabajo, String paTxOcupacion, String paTxAreaNegocio, boolean esMasivoEvaluado) {
+    private Boolean incluirComoEvaluador(String paTxDescripcion, String strCargoEvaluadores, String paTxCorreo, String paTxSexo, Integer paNrEdad, Integer paNrTiempoTrabajo, String paTxOcupacion, String paTxAreaNegocio, boolean esMasivoEvaluado) {
         this.strDescripcionEvaluadores = paTxDescripcion;
         this.strCargoEvaluadores = strCargoEvaluadores;
         this.strCorreoEvaluadores = paTxCorreo.toLowerCase();
@@ -2675,7 +2771,7 @@ public class EvaluadosView extends BaseView implements Serializable {
 
     }
 
-    private boolean validaCabecera(Row cabecera, boolean flag) {
+    private Boolean validaCabecera(Row cabecera, boolean flag) {
 
         if (flag) {
 
@@ -2712,11 +2808,11 @@ public class EvaluadosView extends BaseView implements Serializable {
             mostrarAlertaError("search.file.first");
         } else {
 
-            HSSFWorkbook xlsAvanzado = null;
+            XSSFWorkbook xlsAvanzado = null;
 
             try {
 
-                xlsAvanzado = new HSSFWorkbook(fileAvanzado.getInputStream());
+                xlsAvanzado = new XSSFWorkbook(fileAvanzado.getInputStream());
 
                 validaEstructuraAvanzado(xlsAvanzado);
 
@@ -2733,7 +2829,7 @@ public class EvaluadosView extends BaseView implements Serializable {
                     /**
                      * *************
                      */
-                    HSSFSheet sheetPersonas = xlsAvanzado.getSheetAt(0);
+                    XSSFSheet sheetPersonas = xlsAvanzado.getSheetAt(0);
                     Iterator<Row> rowIteratorPersonas = sheetPersonas.iterator();
                     rowIteratorPersonas.next();
 
@@ -2749,7 +2845,7 @@ public class EvaluadosView extends BaseView implements Serializable {
                     /**
                      * ***************
                      */
-                    HSSFSheet sheetRelaciones = xlsAvanzado.getSheetAt(1);
+                    XSSFSheet sheetRelaciones = xlsAvanzado.getSheetAt(1);
                     Iterator<Row> rowIteratorRelaciones = sheetRelaciones.iterator();
                     rowIteratorRelaciones.next();
 
@@ -2766,14 +2862,14 @@ public class EvaluadosView extends BaseView implements Serializable {
 
                         if (!mapPerEvaluados.containsKey(Utilitarios.limpiarTexto(objEvaluadoAvan.getPaTxCorreo()))
                                 && !mapPerEvaluadores.containsKey(Utilitarios.limpiarTexto(objEvaluadoAvan.getPaTxCorreo()))) {
-                            if (objEvaluadoAvan.isPaInAutoevaluar()) {
+                            if (objEvaluadoAvan.getPaInAutoevaluar()) {
                                 mapRelacionesPersonasAvanzado.put(Utilitarios.limpiarTexto(objEvaluadoAvan.getPaTxCorreo()), objEvaluadoAvan.getPaTxCorreo());
                             } else {
                                 lstErrorAvan.add(new ErrorBean(lstErrorAvan.size(), msg("email") + " " + objEvaluadoAvan.getPaTxCorreo() + " " + msg("step1.person.without.evaluator")));
                             }
                         }
 
-                        if (objEvaluadoAvan.isPaInAutoevaluar()) {
+                        if (objEvaluadoAvan.getPaInAutoevaluar()) {
                             blAlMenosUnAutoevaluado = true;
                         }
                     }
@@ -2817,10 +2913,10 @@ public class EvaluadosView extends BaseView implements Serializable {
 
     }
 
-    private void validaEstructuraAvanzado(HSSFWorkbook xlsAvanzado) {
+    private void validaEstructuraAvanzado(XSSFWorkbook xlsAvanzado) {
 
-        HSSFSheet sheetPersonas = null;
-        HSSFSheet sheetRelacion = null;
+        XSSFSheet sheetPersonas = null;
+        XSSFSheet sheetRelacion = null;
 
         boolean blLibrosOk = true;
         boolean blCabPersonasOk = true;
@@ -3647,7 +3743,9 @@ public class EvaluadosView extends BaseView implements Serializable {
 
         UsuarioDAO objUsuarioDAO = new UsuarioDAO();
 
-        List lstGrupos = Utilitarios.distribute(lstCorreos, 50);
+        List lstGrupos = new ArrayList<>();
+        
+        lstGrupos.addAll(Utilitarios.splitListBySize(lstCorreos, 50));
 
         Iterator itLstGrupos = lstGrupos.iterator();
 
@@ -3738,7 +3836,7 @@ public class EvaluadosView extends BaseView implements Serializable {
                 mostrarAlertaInfo("abbreviation.was.updated");
 
             } else {
-                mostrarAlertaError("adm.least.value", null);
+                mostrarAlertaError("adm.least.value");
             }
         } catch (Exception e) {
             mostrarError(log, e);
@@ -3773,7 +3871,7 @@ public class EvaluadosView extends BaseView implements Serializable {
                 }
 
             } else {
-                mostrarAlertaError("adm.least.value", null);
+                mostrarAlertaError("adm.least.value");
             }
         } catch (Exception e) {
             mostrarError(log, e);
@@ -3812,81 +3910,81 @@ public class EvaluadosView extends BaseView implements Serializable {
 
         habilitarParametros();
 
-        HSSFWorkbook xlsEvaluados = new HSSFWorkbook();
+        XSSFWorkbook xlsEvaluados = new XSSFWorkbook();
 
-        HSSFSheet hojaPersonas = xlsEvaluados.createSheet(msg("persons"));
-        HSSFSheet hojaRedEvaluacion = xlsEvaluados.createSheet(msg("network"));
+        XSSFSheet hojaPersonas = xlsEvaluados.createSheet(msg("persons"));
+        XSSFSheet hojaRedEvaluacion = xlsEvaluados.createSheet(msg("network"));
 
-        HSSFRow row = hojaPersonas.createRow(0);
-        HSSFRow rowR = hojaRedEvaluacion.createRow(0);
+        XSSFRow row = hojaPersonas.createRow(0);
+        XSSFRow rowR = hojaRedEvaluacion.createRow(0);
 
         int c = 0;
 
-        HSSFCell cell0 = row.createCell(c);
-        HSSFRichTextString texto0 = new HSSFRichTextString(msg("description"));
+        XSSFCell cell0 = row.createCell(c);
+        XSSFRichTextString texto0 = new XSSFRichTextString(msg("description"));
         cell0.setCellValue(texto0);
 
         c++;
 
-        HSSFCell cell1 = row.createCell(c);
-        HSSFRichTextString texto1 = new HSSFRichTextString(msg("role"));
+        XSSFCell cell1 = row.createCell(c);
+        XSSFRichTextString texto1 = new XSSFRichTextString(msg("role"));
         cell1.setCellValue(texto1);
 
         c++;
 
-        HSSFCell cell2 = row.createCell(c);
-        HSSFRichTextString texto2 = new HSSFRichTextString(msg("email"));
+        XSSFCell cell2 = row.createCell(c);
+        XSSFRichTextString texto2 = new XSSFRichTextString(msg("email"));
         cell2.setCellValue(texto2);
 
         c++;
 
-        HSSFCell cell9 = row.createCell(c);
-        HSSFRichTextString texto9 = new HSSFRichTextString(msg("url.image"));
+        XSSFCell cell9 = row.createCell(c);
+        XSSFRichTextString texto9 = new XSSFRichTextString(msg("url.image"));
         cell9.setCellValue(texto9);
 
         if (blHabilitarSexo) {
             c++;
-            HSSFCell cell3 = row.createCell(c);
-            HSSFRichTextString texto3 = new HSSFRichTextString(msg("sex"));
+            XSSFCell cell3 = row.createCell(c);
+            XSSFRichTextString texto3 = new XSSFRichTextString(msg("sex"));
             cell3.setCellValue(texto3);
         }
 
         if (blHabilitarEdad) {
             c++;
-            HSSFCell cell4 = row.createCell(c);
-            HSSFRichTextString texto4 = new HSSFRichTextString(msg("age"));
+            XSSFCell cell4 = row.createCell(c);
+            XSSFRichTextString texto4 = new XSSFRichTextString(msg("age"));
             cell4.setCellValue(texto4);
         }
 
         if (blHabilitarTiempoEmpresa) {
             c++;
-            HSSFCell cell5 = row.createCell(c);
-            HSSFRichTextString texto5 = new HSSFRichTextString(msg("hiring.time"));
+            XSSFCell cell5 = row.createCell(c);
+            XSSFRichTextString texto5 = new XSSFRichTextString(msg("hiring.time"));
             cell5.setCellValue(texto5);
         }
 
         if (blHabilitarNivelOcupacional) {
             c++;
-            HSSFCell cell6 = row.createCell(c);
-            HSSFRichTextString texto6 = new HSSFRichTextString(msg("work.range"));
+            XSSFCell cell6 = row.createCell(c);
+            XSSFRichTextString texto6 = new XSSFRichTextString(msg("work.range"));
             cell6.setCellValue(texto6);
         }
 
         if (blHabilitarAreaNegocio) {
             c++;
-            HSSFCell cell7 = row.createCell(c);
-            HSSFRichTextString texto7 = new HSSFRichTextString(msg("working.area"));
+            XSSFCell cell7 = row.createCell(c);
+            XSSFRichTextString texto7 = new XSSFRichTextString(msg("working.area"));
             cell7.setCellValue(texto7);
         }
 
         c++;
-        HSSFCell cell8 = row.createCell(c);
-        HSSFRichTextString texto8 = new HSSFRichTextString(msg("autoevaluate"));
+        XSSFCell cell8 = row.createCell(c);
+        XSSFRichTextString texto8 = new XSSFRichTextString(msg("autoevaluate"));
         cell8.setCellValue(texto8);
 
-        HSSFCellStyle myStyle = xlsEvaluados.createCellStyle();
+        XSSFCellStyle myStyle = xlsEvaluados.createCellStyle();
 
-        HSSFFont hSSFFont = xlsEvaluados.createFont();
+        XSSFFont hSSFFont = xlsEvaluados.createFont();
 
         hSSFFont.setBold(true);
 
@@ -3905,16 +4003,16 @@ public class EvaluadosView extends BaseView implements Serializable {
         hojaPersonas.autoSizeColumn(8);
         hojaPersonas.autoSizeColumn(9);
 
-        HSSFCell cellR0 = rowR.createCell(0);
-        HSSFRichTextString textoR0 = new HSSFRichTextString(msg("evaluated"));
+        XSSFCell cellR0 = rowR.createCell(0);
+        XSSFRichTextString textoR0 = new XSSFRichTextString(msg("evaluated"));
         cellR0.setCellValue(textoR0);
 
-        HSSFCell cellR1 = rowR.createCell(1);
-        HSSFRichTextString textoR1 = new HSSFRichTextString(msg("relationship"));
+        XSSFCell cellR1 = rowR.createCell(1);
+        XSSFRichTextString textoR1 = new XSSFRichTextString(msg("relationship"));
         cellR1.setCellValue(textoR1);
 
-        HSSFCell cellR2 = rowR.createCell(2);
-        HSSFRichTextString textoR2 = new HSSFRichTextString(msg("evaluator"));
+        XSSFCell cellR2 = rowR.createCell(2);
+        XSSFRichTextString textoR2 = new XSSFRichTextString(msg("evaluator"));
         cellR2.setCellValue(textoR2);
 
         myStyle.setFont(hSSFFont);
@@ -3929,11 +4027,59 @@ public class EvaluadosView extends BaseView implements Serializable {
 
             FacesContext facesContext = FacesContext.getCurrentInstance();
             ExternalContext externalContext = facesContext.getExternalContext();
-            externalContext.setResponseContentType("application/vnd.ms-excel");
-            externalContext.setResponseHeader("Content-Disposition", "attachment; filename=\"" + msg("advance.configuration") + ".xls\"");
+            externalContext.setResponseContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            externalContext.setResponseHeader("Content-Disposition", "attachment; filename=\"" + msg("advance.configuration") + ".xlsx\"");
 
             xlsEvaluados.write(externalContext.getResponseOutputStream());
             facesContext.responseComplete();
+
+        } catch (Exception e) {
+            mostrarError(log, e);
+        }
+    }
+
+    public void actualizaPonderado(RelacionBean objRelacionBean) {
+
+        try {
+
+            if (objRelacionBean.getDbPonderado().doubleValue() >= 0) {
+
+                Relacion objRelacion = objRelacionDAO.obtenRelacion(objRelacionBean.getIdRelacionPk());
+
+                objRelacion.setReDePonderacion(objRelacionBean.getDbPonderado());
+
+                objRelacionDAO.actualizaRelacion(objRelacion);
+
+                calcularTotalPonderadoRelaciones();
+
+                mostrarAlertaInfo("average.relationships.updated");
+
+            } else {
+                mostrarAlertaError("average.relationships.notok");
+            }
+
+        } catch (Exception e) {
+            mostrarError(log, e);
+        }
+
+    }
+
+    private void calcularTotalPonderadoRelaciones() {
+        try {
+
+            BigDecimal bdTotal = BigDecimal.ZERO;
+
+            for (RelacionBean objLstRelacionBean : lstRelacionBean) {
+
+                if (objLstRelacionBean.getDbPonderado() != null) {
+
+                    bdTotal = bdTotal.add(objLstRelacionBean.getDbPonderado());
+
+                }
+
+            }
+
+            this.blTotalPonderado = bdTotal;
 
         } catch (Exception e) {
             mostrarError(log, e);

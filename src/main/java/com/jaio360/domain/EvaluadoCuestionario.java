@@ -2,11 +2,7 @@ package com.jaio360.domain;
 
 import java.io.Serializable;
 
-/**
- *
- * @author Favio
- */
-public class EvaluadoCuestionario implements Serializable{
+public class EvaluadoCuestionario implements Serializable {
 
     private Integer intIdEvaluado;
     private String strDescNombre;
@@ -18,32 +14,6 @@ public class EvaluadoCuestionario implements Serializable{
     private String strEstadoEvaluado;
     private String strCuestionarioDesc;
     private String paTxImgUrl;
-
-    public String getPaTxImgUrl() {
-        return paTxImgUrl;
-    }
-
-    public void setPaTxImgUrl(String paTxImgUrl) {
-        this.paTxImgUrl = paTxImgUrl;
-    }
-    
-    
-
-    public String getStrCuestionarioDesc() {
-        return strCuestionarioDesc;
-    }
-
-    public void setStrCuestionarioDesc(String strCuestionarioDesc) {
-        this.strCuestionarioDesc = strCuestionarioDesc;
-    }
-    
-    public String getStrEstadoEvaluado() {
-        return strEstadoEvaluado;
-    }
-
-    public void setStrEstadoEvaluado(String strEstadoEvaluado) {
-        this.strEstadoEvaluado = strEstadoEvaluado;
-    }
 
     public Integer getIntIdEvaluado() {
         return intIdEvaluado;
@@ -99,6 +69,30 @@ public class EvaluadoCuestionario implements Serializable{
 
     public void setStrEstadoSel(String strEstadoSel) {
         this.strEstadoSel = strEstadoSel;
+    }
+
+    public String getStrEstadoEvaluado() {
+        return strEstadoEvaluado;
+    }
+
+    public void setStrEstadoEvaluado(String strEstadoEvaluado) {
+        this.strEstadoEvaluado = strEstadoEvaluado;
+    }
+
+    public String getStrCuestionarioDesc() {
+        return strCuestionarioDesc;
+    }
+
+    public void setStrCuestionarioDesc(String strCuestionarioDesc) {
+        this.strCuestionarioDesc = strCuestionarioDesc;
+    }
+
+    public String getPaTxImgUrl() {
+        return paTxImgUrl;
+    }
+
+    public void setPaTxImgUrl(String paTxImgUrl) {
+        this.paTxImgUrl = paTxImgUrl;
     }
 
 }

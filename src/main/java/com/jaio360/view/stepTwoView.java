@@ -5,14 +5,16 @@ import com.jaio360.utils.Utilitarios;
 import java.io.IOException;
 import java.io.Serializable;
 import javax.annotation.PostConstruct;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.faces.bean.ViewScoped;
+import javax.faces.bean.ManagedBean;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 @ManagedBean(name = "stepTwoView")
 @ViewScoped
+
 public class stepTwoView extends BaseView implements Serializable {
 
     private static Log log = LogFactory.getLog(stepTwoView.class);
@@ -55,7 +57,7 @@ public class stepTwoView extends BaseView implements Serializable {
             } catch (Exception ex) {
                 log.error(ex);
             }
-            
+
         }
     }
 
@@ -74,7 +76,7 @@ public class stepTwoView extends BaseView implements Serializable {
             log.error(ex);
         }
     }
-    
+
     public void goToStep(Integer intStep) {
 
         try {
@@ -105,5 +107,5 @@ public class stepTwoView extends BaseView implements Serializable {
         }
 
     }
-  
+
 }

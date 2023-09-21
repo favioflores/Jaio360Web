@@ -57,7 +57,7 @@ public class ReporteGrupalSumarioCategoriaGeneral extends BaseView implements Se
         this.objDatosReporte = objDatosReporte;
 
         String strNombreReporte = strNameFile + Constantes.STR_EXTENSION_PDF;
-        JasperPdfExporterBuilder pdfExporter = export.pdfExporter(Constantes.STR_INBOX_PRELIMINAR + File.separator + strNombreReporte)
+        JasperPdfExporterBuilder pdfExporter = export.pdfExporter(Utilitarios.getPathTempPreliminar() + File.separator + strNombreReporte)
                 .setEncrypted(Boolean.FALSE);
 
         InputStream medida = new FileInputStream(map.get(Constantes.INT_PARAM_GRAF_MEDIDA) + Constantes.STR_EXTENSION_PNG);
@@ -67,8 +67,8 @@ public class ReporteGrupalSumarioCategoriaGeneral extends BaseView implements Se
             report().setTemplate(ModeloGeneral.reportTemplate)
                     .setSummaryWithPageHeaderAndFooter(Boolean.TRUE)
                     .pageHeader(generaCabecera(map, medida))
-                    .summary(generaConenido())
-                    .pageFooter(generaPie(map))
+                    .summary(generaContenido())
+                    .pageFooter(ModeloGeneral.generaPie(map))
                     .toPdf(pdfExporter);
 
         } catch (DRException ex) {
@@ -80,7 +80,7 @@ public class ReporteGrupalSumarioCategoriaGeneral extends BaseView implements Se
         return strNombreReporte;
     }
 
-    private MultiPageListBuilder generaConenido() {
+    private MultiPageListBuilder generaContenido() {
 
         List lstDatos = resultadoDAO.listaGrupalSumarioCategoriaGeneral(objDatosReporte);
 
@@ -114,8 +114,7 @@ public class ReporteGrupalSumarioCategoriaGeneral extends BaseView implements Se
                         multiPageList.add(cmp.verticalGap(10));
                     }
                     multiPageList.add(cmp.horizontalList(
-                            //cmp.text(contCat +". " + obj[1].toString()).setStyle(ModeloGeneral.styleNegrita).setWidth(400).setHorizontalAlignment(HorizontalAlignment.LEFT)
-                            cmp.text(obj[1].toString()).setStyle(ModeloGeneral.styleNegrita).setWidth(400).setHorizontalAlignment(HorizontalAlignment.LEFT)
+                            cmp.text(obj[1].toString()).setStyle(ModeloGeneral.styleTextoRegular)
                     )
                     );
                     keyTit = obj[2].toString();
@@ -145,18 +144,19 @@ public class ReporteGrupalSumarioCategoriaGeneral extends BaseView implements Se
                                 .setShowLabels(Boolean.FALSE)
                                 .setShowValues(Boolean.FALSE)
                                 .setShowTickLabels(Boolean.FALSE)
-                                .setHeight(5)/* es util, en relacion de 10 por 1 categoria*/
+                                .setHeight(10)/* es util, en relacion de 10 por 1 categoria*/
+                                .setWidth(115)
                                 .setShowTickMarks(Boolean.FALSE)
-                                .setCustomizer(new ReporteGrupalSumarioCategoriaGeneral.ChartCustomizerBar()),
+                                .addCustomizer(new ReporteGrupalSumarioCategoriaGeneral.ChartCustomizerBar()),
+                        cmp.horizontalGap(60),
                         cmp.horizontalList(
-                                cmp.text(bdProm.doubleValue()).setHorizontalAlignment(HorizontalAlignment.RIGHT)
-                        ).setWidth(80),
+                                cmp.text(Utilitarios.truncateTheDecimal(bdProm, 2)).setStyle(ModeloGeneral.styleContenidoDatos)
+                        ).setWidth(35),
                         cmp.horizontalList(
-                                cmp.text(strDesc).setHorizontalAlignment(HorizontalAlignment.RIGHT)
-                        ).setWidth(200)
+                                cmp.text(strDesc).setStyle(ModeloGeneral.styleContenidoDatos)
+                        ).setWidth(87)
                 )
                 );
-
             }
 
         } else {
@@ -178,41 +178,19 @@ public class ReporteGrupalSumarioCategoriaGeneral extends BaseView implements Se
     private ComponentBuilder<?, ?> generaCabecera(Map map, InputStream medida) throws FileNotFoundException {
 
         return cmp.verticalList(
-                cmp.verticalGap(5),//SALTO DE LINEA
-
+                cmp.verticalGap(5),
                 cmp.horizontalList(
-                        cmp.text(objDatosReporte.getStrDescripcion()).setStyle(ModeloGeneral.styleTituloPrincipal)
-                ) //,//SALTO DE LINEA
-                //cmp.line().setPen(stl.pen(new Float("0.1"), LineStyle.SOLID))
-                ,//SALTO DE LINEA
-                 cmp.verticalGap(10), //SALTO DE LINEA
+                        cmp.text(objDatosReporte.getStrDescripcion().toUpperCase()).setStyle(ModeloGeneral.styleTituloReporte)
+                ),
+                cmp.verticalGap(10),
                 cmp.horizontalList(
-                        //cmp.text("Medida").setStyle(styleColumnaSubtitulo).setWidth(350), 
                         cmp.image(medida).setFixedDimension(225, 20),
                         cmp.horizontalGap(50),
-                        //cmp.text("Rel").setStyle(ModeloGeneral.styleColumnaSubtitulo).setWidth(140),
-                        cmp.text(msg("prom")).setStyle(ModeloGeneral.styleColumnaSubtitulo).setWidth(80),
-                        cmp.text(msg("evaluated")).setStyle(ModeloGeneral.styleColumnaSubtitulo).setHorizontalAlignment(HorizontalAlignment.RIGHT).setWidth(220)
+                        cmp.text(msg("prom").toUpperCase()).setStyle(ModeloGeneral.styleHeaderColumnas).setWidth(80),
+                        cmp.text(msg("evaluated").toUpperCase()).setStyle(ModeloGeneral.styleHeaderColumnas).setWidth(220)
                 ),
                 cmp.verticalGap(5)
         );
-    }
-
-    private ComponentBuilder<?, ?> generaPie(Map map) throws FileNotFoundException {
-
-        return cmp.horizontalList().add(cmp.line().setPen(stl.pen(new Float("0.25"), LineStyle.SOLID)))
-                .newRow()
-                .add(cmp.verticalGap(5))
-                .newRow()
-                .add(cmp.horizontalList(
-                        cmp.verticalList(
-                                cmp.text(objDatosReporte.getStrNombreEvaluado()).setStyle(ModeloNormal.styleFooterLeftBottomParam),
-                                cmp.text(objDatosReporte.getStrCuestionario()).setStyle(ModeloNormal.styleFooterLeftTopParam)
-                        ).setWidth(400),
-                        cmp.verticalList( //cmp.pageNumber().setStyle(ModeloNormal.styleFooterRightBottomParam)
-                                )
-                )
-                );
     }
 
     public class ChartCustomizerBar implements DRIChartCustomizer, Serializable {
@@ -240,9 +218,10 @@ public class ReporteGrupalSumarioCategoriaGeneral extends BaseView implements Se
 
             CategoryPlot categoryPlot = chart.getCategoryPlot();
             categoryPlot.setAxisOffset(new RectangleInsets(0, 0, 0, 0));
-            //FAFO6categoryPlot.setRangeGridlinePaint(Color.WHITE);
             categoryPlot.setDomainGridlinesVisible(false);
-            //FAFO5categoryPlot.setRangeGridlinesVisible(false);
+            categoryPlot.setRangeGridlinesVisible(true);// Muestra las lineas punteadas entre las barras
+            categoryPlot.setRangeGridlinePaint(ModeloGeneral.colorJAIOYellow);
+
             //categoryPlot.setBackgroundPaint(Color.white);
             categoryPlot.setOutlineVisible(false);
 

@@ -20,7 +20,7 @@ public class EjecutarEvaluacionDAO implements Serializable {
 
     private Session sesion;
     private Transaction tx;
-    private static Log log = LogFactory.getLog(EjecutarEvaluacionView.class);
+    private Log log = LogFactory.getLog(EjecutarEvaluacionDAO.class);
 
     public EjecutarEvaluacionDAO() {
         this.sesion = HibernateUtil.getSessionFactory().openSession();
@@ -140,7 +140,7 @@ public class EjecutarEvaluacionDAO implements Serializable {
             iniciaOperacion(); 
             Query query = sesion.createQuery("from RedEvaluacion r where r.proyecto.poIdProyectoPk = ? order by r.reIdParticipantePk "); 
             
-            query.setInteger(0, intProyectoPk);;
+            query.setInteger(0, intProyectoPk);
             
             listaRedEvaluacion = query.list();
             

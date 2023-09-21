@@ -13,10 +13,10 @@ public class EvaluacionesXEjecutar implements Serializable {
     private String strCorreoEvaluado;
     private String strCorreoEvaluador;
     private String strURLImagen;
-    private boolean blGrupal;
+    private Boolean blGrupal;
     private Integer intRptaSeleccionada;
     private String strRptaPreguntaAbierta;
-    private boolean blAutoevaluation;
+    private Boolean blAutoevaluation;
     private RelacionParticipanteId relacionParticipanteId;
     private List<PreguntaCerradaBean> lstPreguntasCerradas;
     private List<PreguntaAbiertaBean> lstPreguntasAbiertas;
@@ -24,66 +24,6 @@ public class EvaluacionesXEjecutar implements Serializable {
     public EvaluacionesXEjecutar() {
         this.lstPreguntasCerradas = new ArrayList<>();
         this.lstPreguntasAbiertas = new ArrayList<>();
-    }
-
-    public String getStrCorreoEvaluador() {
-        return strCorreoEvaluador;
-    }
-
-    public void setStrCorreoEvaluador(String strCorreoEvaluador) {
-        this.strCorreoEvaluador = strCorreoEvaluador;
-    }
-    
-    
-
-    public RelacionParticipanteId getRelacionParticipanteId() {
-        return relacionParticipanteId;
-    }
-
-    public boolean isBlAutoevaluation() {
-        return blAutoevaluation;
-    }
-
-    public void setBlAutoevaluation(boolean blAutoevaluation) {
-        this.blAutoevaluation = blAutoevaluation;
-    }
-    
-
-    public void setRelacionParticipanteId(RelacionParticipanteId relacionParticipanteId) {
-        this.relacionParticipanteId = relacionParticipanteId;
-    }
-
-    
-    public String getStrRptaPreguntaAbierta() {
-        return strRptaPreguntaAbierta;
-    }
-
-    public void setStrRptaPreguntaAbierta(String strRptaPreguntaAbierta) {
-        this.strRptaPreguntaAbierta = strRptaPreguntaAbierta;
-    }
-
-    public List<PreguntaCerradaBean> getLstPreguntasCerradas() {
-        return lstPreguntasCerradas;
-    }
-
-    public void setLstPreguntasCerradas(List<PreguntaCerradaBean> lstPreguntasCerradas) {
-        this.lstPreguntasCerradas = lstPreguntasCerradas;
-    }
-
-    public List<PreguntaAbiertaBean> getLstPreguntasAbiertas() {
-        return lstPreguntasAbiertas;
-    }
-
-    public void setLstPreguntasAbiertas(List<PreguntaAbiertaBean> lstPreguntasAbiertas) {
-        this.lstPreguntasAbiertas = lstPreguntasAbiertas;
-    }
-
-    public Integer getIntRptaSeleccionada() {
-        return intRptaSeleccionada;
-    }
-
-    public void setIntRptaSeleccionada(Integer intRptaSeleccionada) {
-        this.intRptaSeleccionada = intRptaSeleccionada;
     }
 
     public Integer getIdProyecto() {
@@ -110,12 +50,20 @@ public class EvaluacionesXEjecutar implements Serializable {
         this.strNombreEvaluado = strNombreEvaluado;
     }
 
-    public String getStrCorreoEvaludo() {
+    public String getStrCorreoEvaluado() {
         return strCorreoEvaluado;
     }
 
     public void setStrCorreoEvaluado(String strCorreoEvaluado) {
         this.strCorreoEvaluado = strCorreoEvaluado;
+    }
+
+    public String getStrCorreoEvaluador() {
+        return strCorreoEvaluador;
+    }
+
+    public void setStrCorreoEvaluador(String strCorreoEvaluador) {
+        this.strCorreoEvaluador = strCorreoEvaluador;
     }
 
     public String getStrURLImagen() {
@@ -126,12 +74,60 @@ public class EvaluacionesXEjecutar implements Serializable {
         this.strURLImagen = strURLImagen;
     }
 
-    public boolean isBlGrupal() {
+    public Boolean getBlGrupal() {
         return blGrupal;
     }
 
-    public void setBlGrupal(boolean blGrupal) {
+    public void setBlGrupal(Boolean blGrupal) {
         this.blGrupal = blGrupal;
+    }
+
+    public Integer getIntRptaSeleccionada() {
+        return intRptaSeleccionada;
+    }
+
+    public void setIntRptaSeleccionada(Integer intRptaSeleccionada) {
+        this.intRptaSeleccionada = intRptaSeleccionada;
+    }
+
+    public String getStrRptaPreguntaAbierta() {
+        return strRptaPreguntaAbierta;
+    }
+
+    public void setStrRptaPreguntaAbierta(String strRptaPreguntaAbierta) {
+        this.strRptaPreguntaAbierta = strRptaPreguntaAbierta;
+    }
+
+    public Boolean getBlAutoevaluation() {
+        return blAutoevaluation;
+    }
+
+    public void setBlAutoevaluation(Boolean blAutoevaluation) {
+        this.blAutoevaluation = blAutoevaluation;
+    }
+
+    public RelacionParticipanteId getRelacionParticipanteId() {
+        return relacionParticipanteId;
+    }
+
+    public void setRelacionParticipanteId(RelacionParticipanteId relacionParticipanteId) {
+        this.relacionParticipanteId = relacionParticipanteId;
+    }
+
+    public List<PreguntaCerradaBean> getLstPreguntasCerradas() {
+        return lstPreguntasCerradas;
+    }
+
+    public void setLstPreguntasCerradas(List<PreguntaCerradaBean> lstPreguntasCerradas) {
+        this.lstPreguntasCerradas = lstPreguntasCerradas;
+    }
+
+    public List<PreguntaAbiertaBean> getLstPreguntasAbiertas() {
+        return lstPreguntasAbiertas;
+    }
+
+    public void setLstPreguntasAbiertas(List<PreguntaAbiertaBean> lstPreguntasAbiertas) {
+        this.lstPreguntasAbiertas = lstPreguntasAbiertas;
     }
 
 }

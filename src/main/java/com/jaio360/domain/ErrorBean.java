@@ -2,30 +2,30 @@ package com.jaio360.domain;
 
 import java.io.Serializable;
 
-public class ErrorBean implements Serializable{
+public class ErrorBean implements Serializable {
 
-    private int intNum;
+    private Integer intNum;
     private String strDesc;
     private String strCues;
     private String strLinea;
 
-    public ErrorBean(int intNum, String strDesc) {
+    public ErrorBean(Integer intNum, String strDesc) {
         this.intNum = intNum;
         this.strDesc = strDesc;
     }
-    
-    public ErrorBean(int intNum, String strDesc, String strCues, String strLinea) {
+
+    public ErrorBean(Integer intNum, String strDesc, String strCues, String strLinea) {
         this.intNum = intNum;
         this.strDesc = strDesc;
         this.strCues = strCues;
         this.strLinea = strLinea;
     }
-        
-    public int getIntNum() {
+
+    public Integer getIntNum() {
         return intNum;
     }
 
-    public void setIntNum(int intNum) {
+    public void setIntNum(Integer intNum) {
         this.intNum = intNum;
     }
 
@@ -52,7 +52,5 @@ public class ErrorBean implements Serializable{
     public void setStrLinea(String strLinea) {
         this.strLinea = strLinea;
     }
-    
+
 }
-
-

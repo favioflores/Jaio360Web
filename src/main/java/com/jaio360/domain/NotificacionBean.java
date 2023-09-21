@@ -1,6 +1,5 @@
 package com.jaio360.domain;
 
-import com.jaio360.orm.Destinatarios;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -14,14 +13,6 @@ public class NotificacionBean implements Serializable {
     private String noTxAsunto;
     private String noTxError;
     private List<String> lstDestinatarios;
-
-    public List<String> getLstDestinatarios() {
-        return lstDestinatarios;
-    }
-
-    public void setLstDestinatarios(List<String> lstDestinatarios) {
-        this.lstDestinatarios = lstDestinatarios;
-    }
 
     public Integer getNoIdNotificacionPk() {
         return noIdNotificacionPk;
@@ -69,6 +60,14 @@ public class NotificacionBean implements Serializable {
 
     public void setNoTxError(String noTxError) {
         this.noTxError = noTxError;
+    }
+
+    public List<String> getLstDestinatarios() {
+        return lstDestinatarios;
+    }
+
+    public void setLstDestinatarios(List<String> lstDestinatarios) {
+        this.lstDestinatarios = lstDestinatarios;
     }
 
 }

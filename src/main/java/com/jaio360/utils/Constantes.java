@@ -1,18 +1,14 @@
 package com.jaio360.utils;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.text.DateFormat;
-import javax.faces.bean.ApplicationScoped;
-import javax.faces.bean.ManagedBean;
 
-@ManagedBean(name = "constantes")
-@ApplicationScoped
 public class Constantes {
 
-    public static String STR_INBOX_PRELIMINAR = File.separator + "var" + File.separator + "tmp" + File.separator + "InboxPreliminar";
-    public static String STR_INBOX_DEFINITIVO = File.separator + "var" + File.separator + "tmp" + File.separator + "InboxDefinitivo";
-    
+    //public static String STR_INBOX_PRELIMINAR = File.separator + "var" + File.separator + "tmp" + File.separator + "InboxPreliminar";
+    //public static String STR_INBOX_DEFINITIVO = File.separator + "var" + File.separator + "tmp" + File.separator + "InboxDefinitivo";
     //public static String STR_INBOX_PRELIMINAR = File.separator + "D://InboxPreliminar";
     //public static String STR_INBOX_DEFINITIVO = File.separator + "D://InboxDefinitivo";
 
@@ -24,7 +20,7 @@ public class Constantes {
     public final static int INT_PARAMETER_ONE_POS = 1;
     public static String ZERO = "0";
     public static Integer ZERO_INTEGER = 0;
-    public String strApp = "Constantes";
+    public static String strApp = "Constantes";
 
     public static byte[] TRUE_BYTE = new byte[]{(byte) 1};
     public static byte[] FALSE_BYTE = new byte[]{(byte) 0};
@@ -55,7 +51,7 @@ public class Constantes {
 
     //public static Integer INT_ET_TIPO_USUARIO_ADMINISTRADOR = 3;
     public static Integer INT_ET_TIPO_USUARIO_MANAGING_DIRECTOR = 3;
-    
+
     public static Integer INT_ET_TIPO_USUARIO_COUNTRY_MANAGER = 6;
 
     //public static Integer INT_ET_TIPO_USUARIO_USUARIO_MAESTRO = 4;
@@ -68,6 +64,9 @@ public class Constantes {
     public static Integer INT_ET_ESTADO_USUARIO_CONFIRMADO = 13;
     public static Integer INT_ET_ESTADO_USUARIO_BLOQUEADO = 14;
     public static Integer INT_ET_ESTADO_USUARIO_ELIMINADO = 214;
+    
+    public static Integer INT_ET_PATH_TEMP_PRELIMINAR = 215;
+    public static Integer INT_ET_PATH_TEMP_DEFINITIVO = 216;
 
     public static Integer INT_ET_ESTADO_CONTRATO_REGISTRADO = 19;
     public static Integer INT_ET_ESTADO_CONTRATO_CONFIRMADO = 20;
@@ -116,7 +115,7 @@ public class Constantes {
     public static Integer INT_DT_TIPO_CUENTA = 2;
     public static Integer INT_DT_ROLES = 27;
     public static Integer INT_DT_AREAS = 28;
-    
+
     public static Integer INT_ET_MAX_QUANTITY = 212;
 
     public static Integer INT_ET_ESTADO_TARIFA_REGISTRADO = 25;
@@ -161,6 +160,7 @@ public class Constantes {
     public static Integer INT_ET_TIPO_PARAMETRO_TIEMPO = 84;
     public static Integer INT_ET_TIPO_PARAMETRO_NIVEL = 85;
     public static Integer INT_ET_TIPO_PARAMETRO_AREA = 86;
+    public static Integer INT_ET_TIPO_PARAMETRO_PONDERACION_RELACIONES = 87;
 
     public static String strEspacio = " ";
     public static String strDobleEspacio = "  ";
@@ -173,7 +173,7 @@ public class Constantes {
     public static String DDMMYYYY = "dd/MM/yyyy";
 
     public static Integer INT_MAX_HOURS_WAITING_FOR_VERIFICATION = 24;
-    
+
     public static String STR_EXTENSION_PDF = ".pdf";
     public static String STR_EXTENSION_PNG = ".png";
     public static String STR_EXTENSION_ZIP = ".zip";
@@ -199,6 +199,7 @@ public class Constantes {
     public static int FIRST_GREATER = 1;
     public static int SECOND_GREATER = -1;
 
+    public static BigDecimal PERCENT_100 = new BigDecimal("100");
     /**
      * *********
      */
@@ -219,19 +220,34 @@ public class Constantes {
     //public static Integer INT_REPORTE_GRUPAL_PERSONAS_CON_MENOR_PUNTAJE_GENERAL = 15;
     //public static Integer INT_REPORTE_GRUPAL_RESUMEN_DE_PROMEDIO = 16;
     //public static Integer INT_REPORTE_GRUPAL_RESUMEN_DE_EVALUADOS_POR_RELACIONES = 22;
-
     public static Integer INT_REPORTE_INDIVIDUAL_CARATULA = 0;
+    
     public static Integer INT_REPORTE_INDIVIDUAL_SUMARIO_X_CATEGORIA = 1;
+    public static Integer INT_REPORTE_INDIVIDUAL_SUMARIO_X_CATEGORIA_WEIGHTED = 11;
+    
     public static Integer INT_REPORTE_INDIVIDUAL_SUMARIO_X_CATEGORIA_MISMO = 2;
+    public static Integer INT_REPORTE_INDIVIDUAL_SUMARIO_X_CATEGORIA_MISMO_WEIGHTED = 12;
+    
     public static Integer INT_REPORTE_INDIVIDUAL_SUMARIO_X_CATEGORIA_MISMO_RELACION = 3;
+    public static Integer INT_REPORTE_INDIVIDUAL_SUMARIO_X_CATEGORIA_MISMO_RELACION_WEIGHTED = 13;
+    
     public static Integer INT_REPORTE_INDIVIDUAL_CALIFICACION_X_ITEM_CATEGORIA = 4;
+    public static Integer INT_REPORTE_INDIVIDUAL_CALIFICACION_X_ITEM_CATEGORIA_WEIGHTED = 14; 
+    
     public static Integer INT_REPORTE_INDIVIDUAL_CALIFICACION_X_ITEM_PROMEDIO = 5;
+    public static Integer INT_REPORTE_INDIVIDUAL_CALIFICACION_X_ITEM_PROMEDIO_WEIGHTED = 15;
+    
     public static Integer INT_REPORTE_INDIVIDUAL_ITEM_ALTA_CALIFICACION_OTROS = 6;
+    public static Integer INT_REPORTE_INDIVIDUAL_ITEM_ALTA_CALIFICACION_OTROS_WEIGHTED = 16;
+    
     public static Integer INT_REPORTE_INDIVIDUAL_ITEM_BAJA_CALIFICACION_OTROS = 7;
+    public static Integer INT_REPORTE_INDIVIDUAL_ITEM_BAJA_CALIFICACION_OTROS_WEIGHTED = 17;
+    
+    
     public static Integer INT_REPORTE_INDIVIDUAL_ITEM_ALTA_CALIFICACION_MISMO = 8;
     public static Integer INT_REPORTE_INDIVIDUAL_ITEM_BAJA_CALIFICACION_MISMO = 9;
+    public static Integer INT_REPORTE_INDIVIDUAL_GENERAL_X_CATEGORIA_RELACION = 11;
     public static Integer INT_REPORTE_INDIVIDUAL_PREGUNTAS_ABIERTAS = 10;
-    
 
     public static int FORMAT_DATE_SHORT = DateFormat.SHORT;
     public static int FORMAT_DATE_MEDIUM = DateFormat.MEDIUM;

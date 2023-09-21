@@ -9,33 +9,29 @@ import com.jaio360.dao.UsuarioDAO;
 import com.jaio360.domain.ProyectoInfo;
 import com.jaio360.domain.UsuarioInfo;
 import com.jaio360.orm.Destinatarios;
-import com.jaio360.orm.HistorialAcceso;
-import com.jaio360.orm.ManageUserRelation;
 import com.jaio360.orm.Notificaciones;
 import com.jaio360.orm.Usuario;
 import com.jaio360.utils.Constantes;
 import com.jaio360.utils.EncryptDecrypt;
 import com.jaio360.utils.Utilitarios;
-import static com.jaio360.view.BaseView.mostrarError;
-import static com.jaio360.view.BaseView.msg;
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Map;
 import java.util.Properties;
 import java.util.TimeZone;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.faces.bean.ViewScoped;
+import javax.faces.bean.ManagedBean;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
 import org.apache.commons.lang.CharEncoding;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -51,43 +47,18 @@ import org.apache.velocity.exception.ResourceNotFoundException;
 public class UsuarioSesion extends BaseView implements Serializable {
 
     private static Log log = LogFactory.getLog(UsuarioSesion.class);
-
+    
     private static final long serialVersionUID = -1L;
 
     private String usuario;
     private String contraseña;
     private String timeClient;
     private Date timeServer;
-
     private UsuarioInfo usuarioInfo;
     private ElementoDAO objElementoDAO = new ElementoDAO();
 
     public String getUsuario() {
         return usuario;
-    }
-
-    public UsuarioInfo getUsuarioInfo() {
-        return usuarioInfo;
-    }
-
-    public String getTimeClient() {
-        return timeClient;
-    }
-
-    public Date getTimeServer() {
-        return timeServer;
-    }
-
-    public void setTimeServer(Date timeServer) {
-        this.timeServer = timeServer;
-    }
-
-    public void setTimeClient(String timeClient) {
-        this.timeClient = timeClient;
-    }
-
-    public void setUsuarioInfo(UsuarioInfo usuarioInfo) {
-        this.usuarioInfo = usuarioInfo;
     }
 
     public void setUsuario(String usuario) {
@@ -100,6 +71,38 @@ public class UsuarioSesion extends BaseView implements Serializable {
 
     public void setContraseña(String contraseña) {
         this.contraseña = contraseña;
+    }
+
+    public String getTimeClient() {
+        return timeClient;
+    }
+
+    public void setTimeClient(String timeClient) {
+        this.timeClient = timeClient;
+    }
+
+    public Date getTimeServer() {
+        return timeServer;
+    }
+
+    public void setTimeServer(Date timeServer) {
+        this.timeServer = timeServer;
+    }
+
+    public UsuarioInfo getUsuarioInfo() {
+        return usuarioInfo;
+    }
+
+    public void setUsuarioInfo(UsuarioInfo usuarioInfo) {
+        this.usuarioInfo = usuarioInfo;
+    }
+
+    public ElementoDAO getObjElementoDAO() {
+        return objElementoDAO;
+    }
+
+    public void setObjElementoDAO(ElementoDAO objElementoDAO) {
+        this.objElementoDAO = objElementoDAO;
     }
 
     public void abandonarSistema(ActionEvent event) {
@@ -124,7 +127,7 @@ public class UsuarioSesion extends BaseView implements Serializable {
 
         try {
 
-            if (usuario.isEmpty() || contraseña.isEmpty()) {
+            if (Utilitarios.esNuloOVacio(usuario) || Utilitarios.esNuloOVacio(contraseña.isEmpty())) {
                 mostrarAlertaError("login.error");
             } else {
                 UsuarioDAO objUsuarioDAO = new UsuarioDAO();
@@ -162,8 +165,10 @@ public class UsuarioSesion extends BaseView implements Serializable {
                     HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
 
                     FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("usuarioInfo", usuarioInfo);
-                    
+
                     session.setAttribute("usuarioInfo", usuarioInfo);
+
+                    System.out.println("La sesión se abrió automaticamente a las " + new Date());
 
                     FacesContext.getCurrentInstance().getExternalContext().redirect("welcome.jsf");
 
@@ -173,6 +178,13 @@ public class UsuarioSesion extends BaseView implements Serializable {
         } catch (Exception ex) {
             mostrarError(log, ex);
         }
+
+    }
+
+    @PreDestroy
+    private void sesionCerrada() {
+
+        System.out.println("La sesión se cerro automaticamente a las " + new Date());
 
     }
 

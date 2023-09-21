@@ -19,21 +19,25 @@ import com.jaio360.utils.Movimientos;
 import com.jaio360.utils.Utilitarios;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
+
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
+import javax.faces.bean.ViewScoped;
+import javax.faces.bean.ManagedBean;
+
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 @ManagedBean(name = "mantenimientoLicenciaView")
 @ViewScoped
+
+
 public class MantenimientoLicenciaView extends BaseView implements Serializable {
 
     private static Log log = LogFactory.getLog(MantenimientoLicenciaView.class);
@@ -49,42 +53,8 @@ public class MantenimientoLicenciaView extends BaseView implements Serializable 
     private Integer idTarifa;
     private String strMontoBruto;
 
-    List<MovimientoBean> lstMovimientos;
-    List<UsuarioSaldoBean> lstUsuarioSaldo;
-
-    public List<UsuarioSaldoBean> getLstUsuarioSaldo() {
-        return lstUsuarioSaldo;
-    }
-
-    public void setLstUsuarioSaldo(List<UsuarioSaldoBean> lstUsuarioSaldo) {
-        this.lstUsuarioSaldo = lstUsuarioSaldo;
-    }
-
-    public List<MovimientoBean> getLstMovimientos() {
-        return lstMovimientos;
-    }
-
-    public void setLstMovimientos(List<MovimientoBean> lstMovimientos) {
-        this.lstMovimientos = lstMovimientos;
-    }
-
-    public Integer getIntCantidadLicencias() {
-        return intCantidadLicencias;
-    }
-
-    public void setIntCantidadLicencias(Integer intCantidadLicencias) {
-        this.intCantidadLicencias = intCantidadLicencias;
-    }
-
-    public String getStrMontoBruto() {
-        return strMontoBruto;
-    }
-
-    public void setStrMontoBruto(String strMontoBruto) {
-        this.strMontoBruto = strMontoBruto;
-    }
-
-    private boolean isEdit;
+    private List<MovimientoBean> lstMovimientos;
+    private List<UsuarioSaldoBean> lstUsuarioSaldo;
 
     public List<SelectItem> getLstTarifas() {
         return lstTarifas;
@@ -102,14 +72,6 @@ public class MantenimientoLicenciaView extends BaseView implements Serializable 
         this.lstUsuarios = lstUsuarios;
     }
 
-    public Integer getIdTarifa() {
-        return idTarifa;
-    }
-
-    public void setIdTarifa(Integer idTarifa) {
-        this.idTarifa = idTarifa;
-    }
-
     public Integer getIdUsuario() {
         return idUsuario;
     }
@@ -118,14 +80,47 @@ public class MantenimientoLicenciaView extends BaseView implements Serializable 
         this.idUsuario = idUsuario;
     }
 
-    public boolean isIsEdit() {
-        return isEdit;
+    public Integer getIntCantidadLicencias() {
+        return intCantidadLicencias;
     }
 
-    public void setIsEdit(boolean isEdit) {
-        this.isEdit = isEdit;
+    public void setIntCantidadLicencias(Integer intCantidadLicencias) {
+        this.intCantidadLicencias = intCantidadLicencias;
     }
 
+    public Integer getIdTarifa() {
+        return idTarifa;
+    }
+
+    public void setIdTarifa(Integer idTarifa) {
+        this.idTarifa = idTarifa;
+    }
+
+    public String getStrMontoBruto() {
+        return strMontoBruto;
+    }
+
+    public void setStrMontoBruto(String strMontoBruto) {
+        this.strMontoBruto = strMontoBruto;
+    }
+
+    public List<MovimientoBean> getLstMovimientos() {
+        return lstMovimientos;
+    }
+
+    public void setLstMovimientos(List<MovimientoBean> lstMovimientos) {
+        this.lstMovimientos = lstMovimientos;
+    }
+
+    public List<UsuarioSaldoBean> getLstUsuarioSaldo() {
+        return lstUsuarioSaldo;
+    }
+
+    public void setLstUsuarioSaldo(List<UsuarioSaldoBean> lstUsuarioSaldo) {
+        this.lstUsuarioSaldo = lstUsuarioSaldo;
+    }
+
+    
     @PostConstruct
     public void init() {
 
@@ -240,7 +235,7 @@ public class MantenimientoLicenciaView extends BaseView implements Serializable 
                 UsuarioSaldoDAO objUsuarioSaldoDAO = new UsuarioSaldoDAO();
                 UsuarioSaldo objUsuarioSaldo = objUsuarioSaldoDAO.obtenUsuarioSaldo(idUsuario);
 
-                if (lstMovimiento.isEmpty() || objUsuarioSaldo==null ) {
+                if (lstMovimiento.isEmpty() || objUsuarioSaldo == null) {
                     FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "No se encontraron licencias asignadas", null);
                     FacesContext.getCurrentInstance().addMessage(null, message);
                 } else {
@@ -258,7 +253,7 @@ public class MantenimientoLicenciaView extends BaseView implements Serializable 
 
                         lstMovimientos.add(objMovimientoBean);
                     }
-                    
+
                     UsuarioSaldoBean objUsuarioSaldoBean = new UsuarioSaldoBean();
                     objUsuarioSaldoBean.setIntTotalIndividual(objUsuarioSaldo.getUsNrTotalIndividual());
                     objUsuarioSaldoBean.setIntTotalMasivo(objUsuarioSaldo.getUsNrTotalMasivo());
@@ -268,7 +263,7 @@ public class MantenimientoLicenciaView extends BaseView implements Serializable 
                     objUsuarioSaldoBean.setIntReservadoMasivo(objUsuarioSaldo.getUsNrReservadoMasivo());
                     objUsuarioSaldoBean.setIntUtilizadoIndividual(objUsuarioSaldo.getUsNrUsadoIndividual());
                     objUsuarioSaldoBean.setIntUtilizadoMasivo(objUsuarioSaldo.getUsNrUsadoMasivo());
-                    
+
                     lstUsuarioSaldo.add(objUsuarioSaldoBean);
 
                     FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Se encontraron licencias asignadas", null);

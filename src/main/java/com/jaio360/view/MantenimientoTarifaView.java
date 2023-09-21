@@ -15,16 +15,21 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
+
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
+import javax.faces.bean.ViewScoped;
+import javax.faces.bean.ManagedBean;
+
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.primefaces.event.RowEditEvent;
 
 @ManagedBean(name = "mantenimientoTarifaView")
 @ViewScoped
+
+
 public class MantenimientoTarifaView extends BaseView implements Serializable {
 
     private static Log log = LogFactory.getLog(MantenimientoTarifaView.class);
@@ -54,14 +59,6 @@ public class MantenimientoTarifaView extends BaseView implements Serializable {
         this.bdPrecio = bdPrecio;
     }
 
-    public List<TarifaBean> getLstTarifas() {
-        return lstTarifas;
-    }
-
-    public void setLstTarifas(List<TarifaBean> lstTarifas) {
-        this.lstTarifas = lstTarifas;
-    }
-
     public List<SelectItem> getLstEstados() {
         return lstEstados;
     }
@@ -70,6 +67,39 @@ public class MantenimientoTarifaView extends BaseView implements Serializable {
         this.lstEstados = lstEstados;
     }
 
+    public List<TarifaBean> getLstTarifas() {
+        return lstTarifas;
+    }
+
+    public void setLstTarifas(List<TarifaBean> lstTarifas) {
+        this.lstTarifas = lstTarifas;
+    }
+
+    public TarifaDAO getObjTarifaDAO() {
+        return objTarifaDAO;
+    }
+
+    public void setObjTarifaDAO(TarifaDAO objTarifaDAO) {
+        this.objTarifaDAO = objTarifaDAO;
+    }
+
+    public ContratoDAO getObjContratoDAO() {
+        return objContratoDAO;
+    }
+
+    public void setObjContratoDAO(ContratoDAO objContratoDAO) {
+        this.objContratoDAO = objContratoDAO;
+    }
+
+    public ElementoDAO getObjElementoDAO() {
+        return objElementoDAO;
+    }
+
+    public void setObjElementoDAO(ElementoDAO objElementoDAO) {
+        this.objElementoDAO = objElementoDAO;
+    }
+
+    
     @PostConstruct
     public void init() {
 

@@ -17,10 +17,12 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.faces.bean.ViewScoped;
+import javax.faces.bean.ManagedBean;
 import javax.servlet.http.HttpSession;
+
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.validator.constraints.Email;
@@ -31,16 +33,12 @@ import org.primefaces.model.file.UploadedFile;
 
 @ManagedBean(name = "actualizaDatosView")
 @ViewScoped
-//@Named
-//@RequestScoped
 public class ActualizaDatosView extends BaseView implements Serializable {
 
     private static Log log = LogFactory.getLog(ActualizaDatosView.class);
 
     private String pNombre = "[A-Za-z0-9]";
     private String pCorreo = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
-    ;
-    
     private List<Ubigeo> lstPaises;
     private List<Ubigeo> lstCiudades;
     private List<Tema> lstTemas;
@@ -55,19 +53,8 @@ public class ActualizaDatosView extends BaseView implements Serializable {
     private Integer ciudad;
 
     private ElementoDAO objElementoDAO = new ElementoDAO();
-    /*
-    private String cmbTema;
 
-    public String getCmbTema() {
-        return cmbTema;
-    }
-
-    public void setCmbTema(String cmbTema) {
-        this.cmbTema = cmbTema;
-    }
-     */
-
- /* CONTRASEÑA */
+    /* CONTRASEÑA */
     private String strContrasenia;
     private String strContraseniaNueva;
     private String strContraseniaReNueva;
@@ -80,45 +67,7 @@ public class ActualizaDatosView extends BaseView implements Serializable {
     /* LOGO */
     private StreamedContent grafico;
 
-    public StreamedContent getGrafico() {
-        return grafico;
-    }
-
-    public Integer getIdUsuario() {
-        return idUsuario;
-    }
-
-    public void setIdUsuario(Integer idUsuario) {
-        this.idUsuario = idUsuario;
-    }
-
-    public void setGrafico(StreamedContent grafico) {
-        this.grafico = grafico;
-    }
-
-    public Integer getIntIdTipoDocumento() {
-        return intIdTipoDocumento;
-    }
-
-    public void setIntIdTipoDocumento(Integer intIdTipoDocumento) {
-        this.intIdTipoDocumento = intIdTipoDocumento;
-    }
-
-    public List<Documento> getLstTipoDocumento() {
-        return lstTipoDocumento;
-    }
-
-    public void setLstTipoDocumento(List<Documento> lstTipoDocumento) {
-        this.lstTipoDocumento = lstTipoDocumento;
-    }
-
-    public List<Tema> getLstTemas() {
-        return lstTemas;
-    }
-
-    public void setLstTemas(List<Tema> lstTemas) {
-        this.lstTemas = lstTemas;
-    }
+    private DefaultStreamedContent graphicText;
 
     public String getpNombre() {
         return pNombre;
@@ -136,6 +85,46 @@ public class ActualizaDatosView extends BaseView implements Serializable {
         this.pCorreo = pCorreo;
     }
 
+    public List<Ubigeo> getLstPaises() {
+        return lstPaises;
+    }
+
+    public void setLstPaises(List<Ubigeo> lstPaises) {
+        this.lstPaises = lstPaises;
+    }
+
+    public List<Ubigeo> getLstCiudades() {
+        return lstCiudades;
+    }
+
+    public void setLstCiudades(List<Ubigeo> lstCiudades) {
+        this.lstCiudades = lstCiudades;
+    }
+
+    public List<Tema> getLstTemas() {
+        return lstTemas;
+    }
+
+    public void setLstTemas(List<Tema> lstTemas) {
+        this.lstTemas = lstTemas;
+    }
+
+    public List<Documento> getLstTipoDocumento() {
+        return lstTipoDocumento;
+    }
+
+    public void setLstTipoDocumento(List<Documento> lstTipoDocumento) {
+        this.lstTipoDocumento = lstTipoDocumento;
+    }
+
+    public Integer getIdUsuario() {
+        return idUsuario;
+    }
+
+    public void setIdUsuario(Integer idUsuario) {
+        this.idUsuario = idUsuario;
+    }
+
     public String getStrNombre() {
         return strNombre;
     }
@@ -150,6 +139,30 @@ public class ActualizaDatosView extends BaseView implements Serializable {
 
     public void setStrCorreo(String strCorreo) {
         this.strCorreo = strCorreo;
+    }
+
+    public Integer getPais() {
+        return pais;
+    }
+
+    public void setPais(Integer pais) {
+        this.pais = pais;
+    }
+
+    public Integer getCiudad() {
+        return ciudad;
+    }
+
+    public void setCiudad(Integer ciudad) {
+        this.ciudad = ciudad;
+    }
+
+    public ElementoDAO getObjElementoDAO() {
+        return objElementoDAO;
+    }
+
+    public void setObjElementoDAO(ElementoDAO objElementoDAO) {
+        this.objElementoDAO = objElementoDAO;
     }
 
     public String getStrContrasenia() {
@@ -192,39 +205,21 @@ public class ActualizaDatosView extends BaseView implements Serializable {
         this.strDocumento = strDocumento;
     }
 
-    public Integer getPais() {
-        return pais;
+    public Integer getIntIdTipoDocumento() {
+        return intIdTipoDocumento;
     }
 
-    public void setPais(Integer pais) {
-        this.pais = pais;
+    public void setIntIdTipoDocumento(Integer intIdTipoDocumento) {
+        this.intIdTipoDocumento = intIdTipoDocumento;
     }
 
-    public Integer getCiudad() {
-        return ciudad;
+    public StreamedContent getGrafico() {
+        return grafico;
     }
 
-    public void setCiudad(Integer ciudad) {
-        this.ciudad = ciudad;
+    public void setGrafico(StreamedContent grafico) {
+        this.grafico = grafico;
     }
-
-    public List<Ubigeo> getLstPaises() {
-        return lstPaises;
-    }
-
-    public void setLstPaises(List<Ubigeo> lstPaises) {
-        this.lstPaises = lstPaises;
-    }
-
-    public List<Ubigeo> getLstCiudades() {
-        return lstCiudades;
-    }
-
-    public void setLstCiudades(List<Ubigeo> lstCiudades) {
-        this.lstCiudades = lstCiudades;
-    }
-
-    private DefaultStreamedContent graphicText;
 
     public DefaultStreamedContent getGraphicText() {
         return graphicText;

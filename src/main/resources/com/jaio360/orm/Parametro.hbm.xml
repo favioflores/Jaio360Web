@@ -17,5 +17,9 @@
         <property name="paTxPatron" type="binary">
             <column name="PA_TX_PATRON" />
         </property>
+        <property name="paInHabilitado" type="boolean">
+            <column name="PA_IN_HABILITADO" />
+        </property>
+        
     </class>
 </hibernate-mapping>

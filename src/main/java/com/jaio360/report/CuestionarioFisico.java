@@ -41,13 +41,13 @@ public class CuestionarioFisico implements Serializable {
                 + Utilitarios.formatearFecha(Utilitarios.getCurrentDate(), Constantes.DDMMYYYYHH24MISS)
                 + "_" + Constantes.STR_EXTENSION_PDF;
 
-        File directory = new File(Constantes.STR_INBOX_PRELIMINAR);
+        File directory = new File(Utilitarios.getPathTempPreliminar());
 
         if (!directory.exists()) {
             directory.mkdir();
         }
 
-        JasperPdfExporterBuilder pdfExporter = export.pdfExporter(Constantes.STR_INBOX_PRELIMINAR + File.separator + strNombreReporte)
+        JasperPdfExporterBuilder pdfExporter = export.pdfExporter(Utilitarios.getPathTempPreliminar() + File.separator + strNombreReporte)
                 .setEncrypted(Boolean.FALSE);
 
         try {

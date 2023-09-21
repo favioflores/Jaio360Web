@@ -24,10 +24,10 @@ public class MenuPrincipalView extends BaseView implements Serializable {
 
     private static Log log = LogFactory.getLog(MenuPrincipalView.class);
 
-    private MenuModel menuPrincipal;
+    private MenuModel menuPrincipal = new DefaultMenuModel();
     private UsuarioInfo usuarioInfo;
     private ProyectoInfo proyectoInfo;
-    private boolean existProyecto;
+    private Boolean existProyecto;
     private ElementoDAO objElementoDAO;
     private String strMailHelp;
 
@@ -55,13 +55,31 @@ public class MenuPrincipalView extends BaseView implements Serializable {
         this.proyectoInfo = proyectoInfo;
     }
 
-    public boolean isExistProyecto() {
+    public Boolean getExistProyecto() {
         return existProyecto;
     }
 
-    public void setExistProyecto(boolean existProyecto) {
+    public void setExistProyecto(Boolean existProyecto) {
         this.existProyecto = existProyecto;
     }
+
+    public ElementoDAO getObjElementoDAO() {
+        return objElementoDAO;
+    }
+
+    public void setObjElementoDAO(ElementoDAO objElementoDAO) {
+        this.objElementoDAO = objElementoDAO;
+    }
+
+    public String getStrMailHelp() {
+        return strMailHelp;
+    }
+
+    public void setStrMailHelp(String strMailHelp) {
+        this.strMailHelp = strMailHelp;
+    }
+    
+    
 
     private DefaultSubMenu agregarMenu(String strNombre, String strIcon, MenuModel subMenuPrincipal) {
         try {
@@ -128,12 +146,12 @@ public class MenuPrincipalView extends BaseView implements Serializable {
 
         if (objUsuarioInfoProxy != null) {
             objUsuarioInfo = objUsuarioInfoProxy;
-            agregarItem(msg("menu.close.proxy.mode"), null, "pi pi-fw pi-step-backward-alt", menuPrincipal, "#{menuPrincipal.leftModeProxy}");
+            agregarItem(msg("menu.close.proxy.mode"), null, "pi pi-fw pi-step-backward-alt", menuPrincipal, "#{MenuPrincipal.leftModeProxy}");
         } else {
 
             if (objUsuarioInfo.getManagingDirector()) {//MANAGING DIRECTOR
                 //Home
-                //DefaultSubMenu home = agregarMenu("", "pi pi-fw pi-home", menuPrincipal);
+                //DefaultSubMenu home = agregarMenu("", "pi pi-fw pi-home", MenuPrincipal);
                 //agregarItem(msg("ir.a.bienvenida"), "welcome.jsf", "", home);
                 agregarItem("", "welcome.jsf", "pi pi-fw pi-home", menuPrincipal, null);
                 //Proyectos
@@ -152,7 +170,7 @@ public class MenuPrincipalView extends BaseView implements Serializable {
                 //User guide
                 agregarItem(msg("user.guide"), "guidesForUsers.jsf", "pi pi-file-pdf", menuPrincipal, null);
                 //Upgrades
-                agregarItem("", "upgrades.jsf", "pi pi-info-circle", menuPrincipal, null);
+                //agregarItem("", "upgrades.jsf", "pi pi-info-circle", menuPrincipal, null);
 
             } else if (objUsuarioInfo.getCountryManager()) {//COUNTRY MANAGER
 
@@ -173,7 +191,7 @@ public class MenuPrincipalView extends BaseView implements Serializable {
                 //User guide
                 agregarItem(msg("user.guide"), "guidesForUsers.jsf", "pi pi-file-pdf", menuPrincipal, null);
                 //Upgrades
-                agregarItem("", "upgrades.jsf", "pi pi-info-circle", menuPrincipal, null);
+                //agregarItem("", "upgrades.jsf", "pi pi-info-circle", menuPrincipal, null);
 
             } else if (objUsuarioInfo.getProjectManager()) {//PROJECT MANAGER
                 //Home
@@ -190,7 +208,7 @@ public class MenuPrincipalView extends BaseView implements Serializable {
                 //User guide
                 agregarItem(msg("user.guide"), "guidesForUsers.jsf", "pi pi-file-pdf", menuPrincipal, null);
                 //Upgrades
-                agregarItem("", "upgrades.jsf", "pi pi-cloud-upload", menuPrincipal, null);
+                //agregarItem("", "upgrades.jsf", "pi pi-cloud-upload", menuPrincipal, null);
             } else {//USER EVALUATOR / EVALUATED
                 //Home
                 //DefaultSubMenu home = agregarMenu("", "pi pi-fw pi-home", menuPrincipal);
@@ -212,7 +230,7 @@ public class MenuPrincipalView extends BaseView implements Serializable {
         this.usuarioInfo = Utilitarios.obtenerUsuario();
         this.proyectoInfo = Utilitarios.obtenerProyecto();
         this.existProyecto = this.proyectoInfo != null;
-        this.strMailHelp = null;//objElementoDAO.obtenElemento(0).getElTxValor1();
+        this.strMailHelp = null;
 
     }
 

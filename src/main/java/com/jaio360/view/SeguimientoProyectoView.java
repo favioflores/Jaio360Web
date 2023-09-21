@@ -49,7 +49,6 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -60,11 +59,13 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 import javax.annotation.PostConstruct;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
+
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.faces.bean.ViewScoped;
+import javax.faces.bean.ManagedBean;
 import javax.servlet.http.HttpSession;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -83,17 +84,11 @@ import org.primefaces.model.charts.radar.RadarChartModel;
 
 @ManagedBean(name = "seguimientoProyectoView")
 @ViewScoped
+
 public class SeguimientoProyectoView extends BaseView implements Serializable {
 
     private static Log log = LogFactory.getLog(SeguimientoProyectoView.class);
 
-    /**
-     * ****************
-     */
-    /* Iniciar proceso */
-    /**
-     * ****************
-     */
     private Integer intCantPartTodos;
     private Integer intCantPartRegistrados;
     private Integer intCantPartEjecucion;
@@ -107,7 +102,7 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
     private Integer intLicenciasIndividualesRequerido;
     private Integer intLicenciasMasivasRequerido;
     private String strHorario;
-    private boolean blLicenciasOK;
+    private Boolean blLicenciasOK;
 
     private RadarChartModel radarGrupo;
     private LinkedHashMap<String, String> mapItemsHorarios;
@@ -128,24 +123,9 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
 
     private Integer inTypeMethodSend;
 
-    /**
-     * ************
-     */
-    /* SEGUIMIENTO */
-    /**
-     * ************
-     */
     private Integer intPorcentajeGeneral;
     private List<Evaluado> lstParticipantesIniciados;
     private List<RelacionEvaluadoEvaluador> lstRelacionEvaluadoEvaluador;
-
-    public String getStrHorario() {
-        return strHorario;
-    }
-
-    public void setStrHorario(String strHorario) {
-        this.strHorario = strHorario;
-    }
 
     private StreamedContent fileIndividual;
     private StreamedContent fileIndividualFisico;
@@ -156,222 +136,6 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
 
     private Integer idParametroElegido;
     private LinkedHashMap<String, String> mapItemsParametros;
-
-    public StreamedContent getFileIndividualFisico() {
-        return fileIndividualFisico;
-    }
-
-    public LinkedHashMap<String, String> getMapItemsHorarios() {
-        return mapItemsHorarios;
-    }
-
-    public void setMapItemsHorarios(LinkedHashMap<String, String> mapItemsHorarios) {
-        this.mapItemsHorarios = mapItemsHorarios;
-    }
-
-    public void setFileIndividualFisico(StreamedContent fileIndividualFisico) {
-        this.fileIndividualFisico = fileIndividualFisico;
-    }
-
-    public Date getIni() {
-        return ini;
-    }
-
-    public void setIni(Date ini) {
-        this.ini = ini;
-    }
-
-    public Integer getInTypeMethodSend() {
-        return inTypeMethodSend;
-    }
-
-    public void setInTypeMethodSend(Integer inTypeMethodSend) {
-        this.inTypeMethodSend = inTypeMethodSend;
-    }
-
-    public Date getEnd() {
-        return end;
-    }
-
-    public void setEnd(Date end) {
-        this.end = end;
-    }
-
-    public Integer getIdParametroElegido() {
-        return idParametroElegido;
-    }
-
-    public List<NotificacionBean> getLstNotificacion() {
-        return lstNotificacion;
-    }
-
-    public void setLstNotificacion(List<NotificacionBean> lstNotificacion) {
-        this.lstNotificacion = lstNotificacion;
-    }
-
-    public Integer getIntLicenciasIndividualesRequerido() {
-        return intLicenciasIndividualesRequerido;
-    }
-
-    public void setIntLicenciasIndividualesRequerido(Integer intLicenciasIndividualesRequerido) {
-        this.intLicenciasIndividualesRequerido = intLicenciasIndividualesRequerido;
-    }
-
-    public Integer getIntLicenciasMasivasRequerido() {
-        return intLicenciasMasivasRequerido;
-    }
-
-    public boolean isBlLicenciasOK() {
-        return blLicenciasOK;
-    }
-
-    public void setBlLicenciasOK(boolean blLicenciasOK) {
-        this.blLicenciasOK = blLicenciasOK;
-    }
-
-    public void setIntLicenciasMasivasRequerido(Integer intLicenciasMasivasRequerido) {
-        this.intLicenciasMasivasRequerido = intLicenciasMasivasRequerido;
-    }
-
-    public void setIdParametroElegido(Integer idParametroElegido) {
-        this.idParametroElegido = idParametroElegido;
-    }
-
-    public LinkedHashMap<String, String> getMapItemsParametros() {
-        return mapItemsParametros;
-    }
-
-    public void setMapItemsParametros(LinkedHashMap<String, String> mapItemsParametros) {
-        this.mapItemsParametros = mapItemsParametros;
-    }
-
-    public Integer getIntLicenciasIndividuales() {
-        return intLicenciasIndividuales;
-    }
-
-    public void setIntLicenciasIndividuales(Integer intLicenciasIndividuales) {
-        this.intLicenciasIndividuales = intLicenciasIndividuales;
-    }
-
-    public Integer getIntLicenciasMasivas() {
-        return intLicenciasMasivas;
-    }
-
-    public void setIntLicenciasMasivas(Integer intLicenciasMasivas) {
-        this.intLicenciasMasivas = intLicenciasMasivas;
-    }
-
-    public RadarChartModel getRadarGrupo() {
-        return radarGrupo;
-    }
-
-    public void setRadarGrupo(RadarChartModel radarGrupo) {
-        this.radarGrupo = radarGrupo;
-    }
-
-    public Boolean getFlagComunicar() {
-        return flagComunicar;
-    }
-
-    public void setFlagComunicar(Boolean flagComunicar) {
-        this.flagComunicar = flagComunicar;
-    }
-
-    public Boolean getFlagFiltrarRed() {
-        return flagFiltrarRed;
-    }
-
-    public void setFlagFiltrarRed(Boolean flagFiltrarRed) {
-        this.flagFiltrarRed = flagFiltrarRed;
-    }
-
-    public Boolean getFlagDescargaFisico() {
-        return flagDescargaFisico;
-    }
-
-    public void setFlagDescargaFisico(Boolean flagDescargaFisico) {
-        this.flagDescargaFisico = flagDescargaFisico;
-    }
-
-    public StreamedContent getFileIndividual() {
-        return fileIndividual;
-    }
-
-    public void setFileIndividual(StreamedContent fileIndividual) {
-        this.fileIndividual = fileIndividual;
-    }
-
-    public Integer getIntIdEstadoProyecto() {
-        return intIdEstadoProyecto;
-    }
-
-    public void setIntIdEstadoProyecto(Integer intIdEstadoProyecto) {
-        this.intIdEstadoProyecto = intIdEstadoProyecto;
-    }
-
-    public List<RelacionEvaluadoEvaluador> getLstRelacionEvaluadoEvaluador() {
-        return lstRelacionEvaluadoEvaluador;
-    }
-
-    public void setLstRelacionEvaluadoEvaluador(List<RelacionEvaluadoEvaluador> lstRelacionEvaluadoEvaluador) {
-        this.lstRelacionEvaluadoEvaluador = lstRelacionEvaluadoEvaluador;
-    }
-
-    public Integer getIntPorcentajeGeneral() {
-        return intPorcentajeGeneral;
-    }
-
-    public void setIntPorcentajeGeneral(Integer intPorcentajeGeneral) {
-        this.intPorcentajeGeneral = intPorcentajeGeneral;
-    }
-
-    public List<Evaluado> getLstParticipantesIniciados() {
-        return lstParticipantesIniciados;
-    }
-
-    public void setLstParticipantesIniciados(List<Evaluado> lstParticipantesIniciados) {
-        this.lstParticipantesIniciados = lstParticipantesIniciados;
-    }
-
-    public List<RelacionParticipante> getLstRelacionParticipante() {
-        return lstRelacionParticipante;
-    }
-
-    public void setLstRelacionParticipante(List<RelacionParticipante> lstRelacionParticipante) {
-        this.lstRelacionParticipante = lstRelacionParticipante;
-    }
-
-    public Integer getIntCantPartCuesEje() {
-        return intCantPartCuesEje;
-    }
-
-    public void setIntCantPartCuesEje(Integer intCantPartCuesEje) {
-        this.intCantPartCuesEje = intCantPartCuesEje;
-    }
-
-    public Integer getIntCantPartCuesNoEje() {
-        return intCantPartCuesNoEje;
-    }
-
-    public void setIntCantPartCuesNoEje(Integer intCantPartCuesNoEje) {
-        this.intCantPartCuesNoEje = intCantPartCuesNoEje;
-    }
-
-    public Integer getIntCantPartParam() {
-        return intCantPartParam;
-    }
-
-    public void setIntCantPartParam(Integer intCantPartParam) {
-        this.intCantPartParam = intCantPartParam;
-    }
-
-    public Integer getIntCantPartEjecucion() {
-        return intCantPartEjecucion;
-    }
-
-    public void setIntCantPartEjecucion(Integer intCantPartEjecucion) {
-        this.intCantPartEjecucion = intCantPartEjecucion;
-    }
 
     public Integer getIntCantPartTodos() {
         return intCantPartTodos;
@@ -387,6 +151,22 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
 
     public void setIntCantPartRegistrados(Integer intCantPartRegistrados) {
         this.intCantPartRegistrados = intCantPartRegistrados;
+    }
+
+    public Integer getIntCantPartEjecucion() {
+        return intCantPartEjecucion;
+    }
+
+    public void setIntCantPartEjecucion(Integer intCantPartEjecucion) {
+        this.intCantPartEjecucion = intCantPartEjecucion;
+    }
+
+    public Integer getIntCantPartParam() {
+        return intCantPartParam;
+    }
+
+    public void setIntCantPartParam(Integer intCantPartParam) {
+        this.intCantPartParam = intCantPartParam;
     }
 
     public Integer getIntCantPartVeri() {
@@ -405,12 +185,100 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
         this.intCantPartSel = intCantPartSel;
     }
 
+    public Integer getIntCantPartCuesNoEje() {
+        return intCantPartCuesNoEje;
+    }
+
+    public void setIntCantPartCuesNoEje(Integer intCantPartCuesNoEje) {
+        this.intCantPartCuesNoEje = intCantPartCuesNoEje;
+    }
+
+    public Integer getIntCantPartCuesEje() {
+        return intCantPartCuesEje;
+    }
+
+    public void setIntCantPartCuesEje(Integer intCantPartCuesEje) {
+        this.intCantPartCuesEje = intCantPartCuesEje;
+    }
+
+    public Integer getIntLicenciasIndividuales() {
+        return intLicenciasIndividuales;
+    }
+
+    public void setIntLicenciasIndividuales(Integer intLicenciasIndividuales) {
+        this.intLicenciasIndividuales = intLicenciasIndividuales;
+    }
+
+    public Integer getIntLicenciasMasivas() {
+        return intLicenciasMasivas;
+    }
+
+    public void setIntLicenciasMasivas(Integer intLicenciasMasivas) {
+        this.intLicenciasMasivas = intLicenciasMasivas;
+    }
+
+    public Integer getIntLicenciasIndividualesRequerido() {
+        return intLicenciasIndividualesRequerido;
+    }
+
+    public void setIntLicenciasIndividualesRequerido(Integer intLicenciasIndividualesRequerido) {
+        this.intLicenciasIndividualesRequerido = intLicenciasIndividualesRequerido;
+    }
+
+    public Integer getIntLicenciasMasivasRequerido() {
+        return intLicenciasMasivasRequerido;
+    }
+
+    public void setIntLicenciasMasivasRequerido(Integer intLicenciasMasivasRequerido) {
+        this.intLicenciasMasivasRequerido = intLicenciasMasivasRequerido;
+    }
+
+    public String getStrHorario() {
+        return strHorario;
+    }
+
+    public void setStrHorario(String strHorario) {
+        this.strHorario = strHorario;
+    }
+
+    public Boolean getBlLicenciasOK() {
+        return blLicenciasOK;
+    }
+
+    public void setBlLicenciasOK(Boolean blLicenciasOK) {
+        this.blLicenciasOK = blLicenciasOK;
+    }
+
+    public RadarChartModel getRadarGrupo() {
+        return radarGrupo;
+    }
+
+    public void setRadarGrupo(RadarChartModel radarGrupo) {
+        this.radarGrupo = radarGrupo;
+    }
+
+    public LinkedHashMap<String, String> getMapItemsHorarios() {
+        return mapItemsHorarios;
+    }
+
+    public void setMapItemsHorarios(LinkedHashMap<String, String> mapItemsHorarios) {
+        this.mapItemsHorarios = mapItemsHorarios;
+    }
+
     public Boolean getBoProyectoEjecutado() {
         return boProyectoEjecutado;
     }
 
     public void setBoProyectoEjecutado(Boolean boProyectoEjecutado) {
         this.boProyectoEjecutado = boProyectoEjecutado;
+    }
+
+    public Integer getIntIdEstadoProyecto() {
+        return intIdEstadoProyecto;
+    }
+
+    public void setIntIdEstadoProyecto(Integer intIdEstadoProyecto) {
+        this.intIdEstadoProyecto = intIdEstadoProyecto;
     }
 
     public List<Participante> getLstParticipante() {
@@ -453,6 +321,126 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
         this.lstRelacion = lstRelacion;
     }
 
+    public List<RelacionParticipante> getLstRelacionParticipante() {
+        return lstRelacionParticipante;
+    }
+
+    public void setLstRelacionParticipante(List<RelacionParticipante> lstRelacionParticipante) {
+        this.lstRelacionParticipante = lstRelacionParticipante;
+    }
+
+    public List<NotificacionBean> getLstNotificacion() {
+        return lstNotificacion;
+    }
+
+    public void setLstNotificacion(List<NotificacionBean> lstNotificacion) {
+        this.lstNotificacion = lstNotificacion;
+    }
+
+    public Date getIni() {
+        return ini;
+    }
+
+    public void setIni(Date ini) {
+        this.ini = ini;
+    }
+
+    public Date getEnd() {
+        return end;
+    }
+
+    public void setEnd(Date end) {
+        this.end = end;
+    }
+
+    public Integer getInTypeMethodSend() {
+        return inTypeMethodSend;
+    }
+
+    public void setInTypeMethodSend(Integer inTypeMethodSend) {
+        this.inTypeMethodSend = inTypeMethodSend;
+    }
+
+    public Integer getIntPorcentajeGeneral() {
+        return intPorcentajeGeneral;
+    }
+
+    public void setIntPorcentajeGeneral(Integer intPorcentajeGeneral) {
+        this.intPorcentajeGeneral = intPorcentajeGeneral;
+    }
+
+    public List<Evaluado> getLstParticipantesIniciados() {
+        return lstParticipantesIniciados;
+    }
+
+    public void setLstParticipantesIniciados(List<Evaluado> lstParticipantesIniciados) {
+        this.lstParticipantesIniciados = lstParticipantesIniciados;
+    }
+
+    public List<RelacionEvaluadoEvaluador> getLstRelacionEvaluadoEvaluador() {
+        return lstRelacionEvaluadoEvaluador;
+    }
+
+    public void setLstRelacionEvaluadoEvaluador(List<RelacionEvaluadoEvaluador> lstRelacionEvaluadoEvaluador) {
+        this.lstRelacionEvaluadoEvaluador = lstRelacionEvaluadoEvaluador;
+    }
+
+    public StreamedContent getFileIndividual() {
+        return fileIndividual;
+    }
+
+    public void setFileIndividual(StreamedContent fileIndividual) {
+        this.fileIndividual = fileIndividual;
+    }
+
+    public StreamedContent getFileIndividualFisico() {
+        return fileIndividualFisico;
+    }
+
+    public void setFileIndividualFisico(StreamedContent fileIndividualFisico) {
+        this.fileIndividualFisico = fileIndividualFisico;
+    }
+
+    public Boolean getFlagDescargaFisico() {
+        return flagDescargaFisico;
+    }
+
+    public void setFlagDescargaFisico(Boolean flagDescargaFisico) {
+        this.flagDescargaFisico = flagDescargaFisico;
+    }
+
+    public Boolean getFlagFiltrarRed() {
+        return flagFiltrarRed;
+    }
+
+    public void setFlagFiltrarRed(Boolean flagFiltrarRed) {
+        this.flagFiltrarRed = flagFiltrarRed;
+    }
+
+    public Boolean getFlagComunicar() {
+        return flagComunicar;
+    }
+
+    public void setFlagComunicar(Boolean flagComunicar) {
+        this.flagComunicar = flagComunicar;
+    }
+
+    public Integer getIdParametroElegido() {
+        return idParametroElegido;
+    }
+
+    public void setIdParametroElegido(Integer idParametroElegido) {
+        this.idParametroElegido = idParametroElegido;
+    }
+
+    public LinkedHashMap<String, String> getMapItemsParametros() {
+        return mapItemsParametros;
+    }
+
+    public void setMapItemsParametros(LinkedHashMap<String, String> mapItemsParametros) {
+        this.mapItemsParametros = mapItemsParametros;
+    }
+
     @PostConstruct
     public void init() {
 
@@ -466,6 +454,7 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
         intCantPartCuesNoEje = 0;
         intCantPartCuesEje = 0;
         intPorcentajeGeneral = 0;
+        blLicenciasOK = false;
 
         Integer idProyecto = Utilitarios.obtenerProyecto().getIntIdProyecto();
 
@@ -787,14 +776,16 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
                     objRelacionEvaluadoEvaluador.setStrDescRelacion(msg("autoevaluate.cap"));
 
                     CuestionarioDAO objCuestionarioDAO = new CuestionarioDAO();
-                    Cuestionario objCuestionario = objCuestionarioDAO.obtenCuestionarioXEvaluado(objParticipante.getPaIdParticipantePk());;
+                    Cuestionario objCuestionario = objCuestionarioDAO.obtenCuestionarioXEvaluado(objParticipante.getPaIdParticipantePk());
 
-                    objRelacionEvaluadoEvaluador.setIntIdCuestionario(objCuestionario.getCuIdCuestionarioPk());
-                    objRelacionEvaluadoEvaluador.setStrDescEvaluador(objParticipante.getPaTxDescripcion());
-                    objRelacionEvaluadoEvaluador.setStrDescEvaluado(objParticipante.getPaTxDescripcion());
-                    objRelacionEvaluadoEvaluador.setStrCorreoEvaluador(objParticipante.getPaTxCorreo());
+                    if (objCuestionario != null) {
+                        objRelacionEvaluadoEvaluador.setIntIdCuestionario(objCuestionario.getCuIdCuestionarioPk());
+                        objRelacionEvaluadoEvaluador.setStrDescEvaluador(objParticipante.getPaTxDescripcion());
+                        objRelacionEvaluadoEvaluador.setStrDescEvaluado(objParticipante.getPaTxDescripcion());
+                        objRelacionEvaluadoEvaluador.setStrCorreoEvaluador(objParticipante.getPaTxCorreo());
 
-                    lstRelacionEvaluadoEvaluador.add(objRelacionEvaluadoEvaluador);
+                        lstRelacionEvaluadoEvaluador.add(objRelacionEvaluadoEvaluador);
+                    }
 
                 }
 
@@ -982,8 +973,8 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
             if (!lstArchivos.isEmpty()) {
                 try {
                     String ZipName = msg("step2.evaluations") + "_" + Utilitarios.formatearFecha(Utilitarios.getCurrentDate(), Constantes.DDMMYYYYHH24MISS) + Constantes.STR_EXTENSION_ZIP;
-                    File objFile = new File(Constantes.STR_INBOX_DEFINITIVO + File.separator + ZipName);
-                    File directory = new File(Constantes.STR_INBOX_DEFINITIVO);
+                    File objFile = new File(Utilitarios.getPathTempDefinitivo() + File.separator + ZipName);
+                    File directory = new File(Utilitarios.getPathTempDefinitivo());
 
                     if (!directory.exists()) {
                         directory.mkdir();

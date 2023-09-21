@@ -2,8 +2,8 @@ package com.jaio360.domain;
 
 import java.io.Serializable;
 
-public class Documento implements Serializable{
-    
+public class Documento implements Serializable {
+
     private Integer idTipoDocumento;
     private String strDescDocumento;
 
@@ -22,5 +22,5 @@ public class Documento implements Serializable{
     public void setStrDescDocumento(String strDescDocumento) {
         this.strDescDocumento = strDescDocumento;
     }
-           
+
 }

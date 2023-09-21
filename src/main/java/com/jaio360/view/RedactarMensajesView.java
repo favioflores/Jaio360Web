@@ -18,9 +18,11 @@ import java.util.Map;
 import java.util.Properties;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
+
 import javax.faces.context.FacesContext;
+import javax.faces.bean.ViewScoped;
+import javax.faces.bean.ManagedBean;
+
 import org.apache.commons.lang.CharEncoding;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -40,10 +42,10 @@ public class RedactarMensajesView extends BaseView implements Serializable {
 
     private static Log log = LogFactory.getLog(RedactarMensajesView.class);
 
-    private boolean blConvocatoria = false;
-    private boolean blBienvenida = false;
-    private boolean blAgradecimiento = false;
-    private boolean blProyectoTerminado = false;
+    private Boolean blConvocatoria = false;
+    private Boolean blBienvenida = false;
+    private Boolean blAgradecimiento = false;
+    private Boolean blProyectoTerminado = false;
     private Integer intIdEstadoProyecto;
     private String strPreview;
     private String correoExtra;
@@ -72,28 +74,76 @@ public class RedactarMensajesView extends BaseView implements Serializable {
 
     private String strContenido;
 
-    public String getStrPreviewAgradecimientoTemplate() {
-        return strPreviewAgradecimientoTemplate;
+    public Boolean getBlConvocatoria() {
+        return blConvocatoria;
     }
 
-    public void setStrPreviewAgradecimientoTemplate(String strPreviewAgradecimientoTemplate) {
-        this.strPreviewAgradecimientoTemplate = strPreviewAgradecimientoTemplate;
+    public void setBlConvocatoria(Boolean blConvocatoria) {
+        this.blConvocatoria = blConvocatoria;
     }
 
-    public String getStrAgradecimiento() {
-        return strAgradecimiento;
+    public Boolean getBlBienvenida() {
+        return blBienvenida;
     }
 
-    public String getStrURLLogoCliente() {
-        return strURLLogoCliente;
+    public void setBlBienvenida(Boolean blBienvenida) {
+        this.blBienvenida = blBienvenida;
     }
 
-    public void setStrURLLogoCliente(String strURLLogoCliente) {
-        this.strURLLogoCliente = strURLLogoCliente;
+    public Boolean getBlAgradecimiento() {
+        return blAgradecimiento;
     }
 
-    public void setStrAgradecimiento(String strAgradecimiento) {
-        this.strAgradecimiento = strAgradecimiento;
+    public void setBlAgradecimiento(Boolean blAgradecimiento) {
+        this.blAgradecimiento = blAgradecimiento;
+    }
+
+    public Boolean getBlProyectoTerminado() {
+        return blProyectoTerminado;
+    }
+
+    public void setBlProyectoTerminado(Boolean blProyectoTerminado) {
+        this.blProyectoTerminado = blProyectoTerminado;
+    }
+
+    public Integer getIntIdEstadoProyecto() {
+        return intIdEstadoProyecto;
+    }
+
+    public void setIntIdEstadoProyecto(Integer intIdEstadoProyecto) {
+        this.intIdEstadoProyecto = intIdEstadoProyecto;
+    }
+
+    public String getStrPreview() {
+        return strPreview;
+    }
+
+    public void setStrPreview(String strPreview) {
+        this.strPreview = strPreview;
+    }
+
+    public String getCorreoExtra() {
+        return correoExtra;
+    }
+
+    public void setCorreoExtra(String correoExtra) {
+        this.correoExtra = correoExtra;
+    }
+
+    public List<String> getLstCorreosExtra() {
+        return lstCorreosExtra;
+    }
+
+    public void setLstCorreosExtra(List<String> lstCorreosExtra) {
+        this.lstCorreosExtra = lstCorreosExtra;
+    }
+
+    public String getStrPreviewConvocatoriaTemplate() {
+        return strPreviewConvocatoriaTemplate;
+    }
+
+    public void setStrPreviewConvocatoriaTemplate(String strPreviewConvocatoriaTemplate) {
+        this.strPreviewConvocatoriaTemplate = strPreviewConvocatoriaTemplate;
     }
 
     public String getStrPreviewBienvenidaTemplate() {
@@ -104,44 +154,12 @@ public class RedactarMensajesView extends BaseView implements Serializable {
         this.strPreviewBienvenidaTemplate = strPreviewBienvenidaTemplate;
     }
 
-    public String getStrBienvenidaRecomendaciones() {
-        return strBienvenidaRecomendaciones;
+    public String getStrPreviewAgradecimientoTemplate() {
+        return strPreviewAgradecimientoTemplate;
     }
 
-    public void setStrBienvenidaRecomendaciones(String strBienvenidaRecomendaciones) {
-        this.strBienvenidaRecomendaciones = strBienvenidaRecomendaciones;
-    }
-
-    public String getStrBienvenidaConfidencialidad() {
-        return strBienvenidaConfidencialidad;
-    }
-
-    public void setStrBienvenidaConfidencialidad(String strBienvenidaConfidencialidad) {
-        this.strBienvenidaConfidencialidad = strBienvenidaConfidencialidad;
-    }
-
-    public String getStrBienvenidaAgradecimiento() {
-        return strBienvenidaAgradecimiento;
-    }
-
-    public void setStrBienvenidaAgradecimiento(String strBienvenidaAgradecimiento) {
-        this.strBienvenidaAgradecimiento = strBienvenidaAgradecimiento;
-    }
-
-    public String getStrAsuntoConvocatoria() {
-        return strAsuntoConvocatoria;
-    }
-
-    public void setStrAsuntoConvocatoria(String strAsuntoConvocatoria) {
-        this.strAsuntoConvocatoria = strAsuntoConvocatoria;
-    }
-
-    public String getStrContenido() {
-        return strContenido;
-    }
-
-    public void setStrContenido(String strContenido) {
-        this.strContenido = strContenido;
+    public void setStrPreviewAgradecimientoTemplate(String strPreviewAgradecimientoTemplate) {
+        this.strPreviewAgradecimientoTemplate = strPreviewAgradecimientoTemplate;
     }
 
     public String getID_CONVOCATORIA() {
@@ -168,12 +186,28 @@ public class RedactarMensajesView extends BaseView implements Serializable {
         this.ID_AGRADECIMIENTO = ID_AGRADECIMIENTO;
     }
 
+    public String getStrAsuntoConvocatoria() {
+        return strAsuntoConvocatoria;
+    }
+
+    public void setStrAsuntoConvocatoria(String strAsuntoConvocatoria) {
+        this.strAsuntoConvocatoria = strAsuntoConvocatoria;
+    }
+
     public String getStrTituloConvocatoria() {
         return strTituloConvocatoria;
     }
 
     public void setStrTituloConvocatoria(String strTituloConvocatoria) {
         this.strTituloConvocatoria = strTituloConvocatoria;
+    }
+
+    public String getStrURLLogoCliente() {
+        return strURLLogoCliente;
+    }
+
+    public void setStrURLLogoCliente(String strURLLogoCliente) {
+        this.strURLLogoCliente = strURLLogoCliente;
     }
 
     public String getStrParrafoConvocatoria() {
@@ -184,76 +218,44 @@ public class RedactarMensajesView extends BaseView implements Serializable {
         this.strParrafoConvocatoria = strParrafoConvocatoria;
     }
 
-    public String getStrPreviewConvocatoriaTemplate() {
-        return strPreviewConvocatoriaTemplate;
+    public String getStrBienvenidaRecomendaciones() {
+        return strBienvenidaRecomendaciones;
     }
 
-    public void setStrPreviewConvocatoriaTemplate(String strPreviewConvocatoriaTemplate) {
-        this.strPreviewConvocatoriaTemplate = strPreviewConvocatoriaTemplate;
+    public void setStrBienvenidaRecomendaciones(String strBienvenidaRecomendaciones) {
+        this.strBienvenidaRecomendaciones = strBienvenidaRecomendaciones;
     }
 
-    public String getCorreoExtra() {
-        return correoExtra;
+    public String getStrBienvenidaConfidencialidad() {
+        return strBienvenidaConfidencialidad;
     }
 
-    public void setCorreoExtra(String correoExtra) {
-        this.correoExtra = correoExtra;
+    public void setStrBienvenidaConfidencialidad(String strBienvenidaConfidencialidad) {
+        this.strBienvenidaConfidencialidad = strBienvenidaConfidencialidad;
     }
 
-    public List<String> getLstCorreosExtra() {
-        return lstCorreosExtra;
+    public String getStrBienvenidaAgradecimiento() {
+        return strBienvenidaAgradecimiento;
     }
 
-    public void setLstCorreosExtra(List<String> lstCorreosExtra) {
-        this.lstCorreosExtra = lstCorreosExtra;
+    public void setStrBienvenidaAgradecimiento(String strBienvenidaAgradecimiento) {
+        this.strBienvenidaAgradecimiento = strBienvenidaAgradecimiento;
     }
 
-    public Integer getIntIdEstadoProyecto() {
-        return intIdEstadoProyecto;
+    public String getStrAgradecimiento() {
+        return strAgradecimiento;
     }
 
-    public void setIntIdEstadoProyecto(Integer intIdEstadoProyecto) {
-        this.intIdEstadoProyecto = intIdEstadoProyecto;
+    public void setStrAgradecimiento(String strAgradecimiento) {
+        this.strAgradecimiento = strAgradecimiento;
     }
 
-    public String getStrPreview() {
-        return strPreview;
+    public String getStrContenido() {
+        return strContenido;
     }
 
-    public void setStrPreview(String strPreview) {
-        this.strPreview = strPreview;
-    }
-
-    public boolean isBlProyectoTerminado() {
-        return blProyectoTerminado;
-    }
-
-    public void setBlProyectoTerminado(boolean blProyectoTerminado) {
-        this.blProyectoTerminado = blProyectoTerminado;
-    }
-
-    public boolean isBlConvocatoria() {
-        return blConvocatoria;
-    }
-
-    public void setBlConvocatoria(boolean blConvocatoria) {
-        this.blConvocatoria = blConvocatoria;
-    }
-
-    public boolean isBlBienvenida() {
-        return blBienvenida;
-    }
-
-    public void setBlBienvenida(boolean blBienvenida) {
-        this.blBienvenida = blBienvenida;
-    }
-
-    public boolean isBlAgradecimiento() {
-        return blAgradecimiento;
-    }
-
-    public void setBlAgradecimiento(boolean blAgradecimiento) {
-        this.blAgradecimiento = blAgradecimiento;
+    public void setStrContenido(String strContenido) {
+        this.strContenido = strContenido;
     }
 
     public void notiticacionCreada() {
@@ -283,7 +285,7 @@ public class RedactarMensajesView extends BaseView implements Serializable {
     @PostConstruct
     public void init() {
 
-        lstCorreosExtra = new ArrayList<String>();
+        lstCorreosExtra = new ArrayList<>();
         strPreview = Constantes.strVacio;
 
         Integer intIdProyecto = Utilitarios.obtenerProyecto().getIntIdProyecto();
@@ -299,7 +301,7 @@ public class RedactarMensajesView extends BaseView implements Serializable {
                     strPreviewConvocatoriaTemplate = Utilitarios.decodeUTF8(objMensaje.getMeTxCuerpo());
                     strAsuntoConvocatoria = objMensaje.getMeTxAsunto();
                     strTituloConvocatoria = Utilitarios.decodeUTF8(objMensaje.getMeTxConvocatoriaTitulo());
-                    if(Utilitarios.noEsNuloOVacio(objMensaje.getMeTxConvocatoriaURL())){
+                    if (Utilitarios.noEsNuloOVacio(objMensaje.getMeTxConvocatoriaURL())) {
                         strURLLogoCliente = Utilitarios.decodeUTF8(objMensaje.getMeTxConvocatoriaURL());
                     }
                     strParrafoConvocatoria = Utilitarios.decodeUTF8(objMensaje.getMeTxConvocatoriaParrafo());
@@ -615,7 +617,7 @@ public class RedactarMensajesView extends BaseView implements Serializable {
         FacesContext.getCurrentInstance().addMessage(null, message);
     }
 
-    private boolean contenidoValido(String texto, String campo) {
+    private Boolean contenidoValido(String texto, String campo) {
 
         if (Utilitarios.esNuloOVacio(texto)) {
 

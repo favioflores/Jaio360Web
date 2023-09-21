@@ -20,11 +20,14 @@ import java.util.Locale;
 import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
+
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
+import javax.faces.bean.ViewScoped;
+import javax.faces.bean.ManagedBean;
+
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.primefaces.PrimeFaces;
@@ -58,7 +61,7 @@ public class MantenimientoCuentaView extends BaseView implements Serializable {
     private String usTxDescripcionEmpresa;
     private Integer usIdTipoDocumento;
     private String usTxDocumento;
-    private boolean isEdit;
+    private Boolean isEdit;
     private Integer pais;
     private Integer ciudad;
     private String strContraseniaNueva;
@@ -67,40 +70,8 @@ public class MantenimientoCuentaView extends BaseView implements Serializable {
     private ElementoDAO objElementoDAO = new ElementoDAO();
     private UsuarioDAO objUsuarioDAO = new UsuarioDAO();
 
-    public String getStrContraseniaNueva() {
-        return strContraseniaNueva;
-    }
-
-    public void setStrContraseniaNueva(String strContraseniaNueva) {
-        this.strContraseniaNueva = strContraseniaNueva;
-    }
-
-    public String getStrContraseniaReNueva() {
-        return strContraseniaReNueva;
-    }
-
-    public void setStrContraseniaReNueva(String strContraseniaReNueva) {
-        this.strContraseniaReNueva = strContraseniaReNueva;
-    }
-
     public List<UsuarioInfo> getLstUsuario() {
         return lstUsuario;
-    }
-
-    public Integer getPais() {
-        return pais;
-    }
-
-    public void setPais(Integer pais) {
-        this.pais = pais;
-    }
-
-    public Integer getCiudad() {
-        return ciudad;
-    }
-
-    public void setCiudad(Integer ciudad) {
-        this.ciudad = ciudad;
     }
 
     public void setLstUsuario(List<UsuarioInfo> lstUsuario) {
@@ -267,14 +238,63 @@ public class MantenimientoCuentaView extends BaseView implements Serializable {
         this.usTxDocumento = usTxDocumento;
     }
 
-    public boolean isIsEdit() {
+    public Boolean getIsEdit() {
         return isEdit;
     }
 
-    public void setIsEdit(boolean isEdit) {
+    public void setIsEdit(Boolean isEdit) {
         this.isEdit = isEdit;
     }
 
+    public Integer getPais() {
+        return pais;
+    }
+
+    public void setPais(Integer pais) {
+        this.pais = pais;
+    }
+
+    public Integer getCiudad() {
+        return ciudad;
+    }
+
+    public void setCiudad(Integer ciudad) {
+        this.ciudad = ciudad;
+    }
+
+    public String getStrContraseniaNueva() {
+        return strContraseniaNueva;
+    }
+
+    public void setStrContraseniaNueva(String strContraseniaNueva) {
+        this.strContraseniaNueva = strContraseniaNueva;
+    }
+
+    public String getStrContraseniaReNueva() {
+        return strContraseniaReNueva;
+    }
+
+    public void setStrContraseniaReNueva(String strContraseniaReNueva) {
+        this.strContraseniaReNueva = strContraseniaReNueva;
+    }
+
+    public ElementoDAO getObjElementoDAO() {
+        return objElementoDAO;
+    }
+
+    public void setObjElementoDAO(ElementoDAO objElementoDAO) {
+        this.objElementoDAO = objElementoDAO;
+    }
+
+    public UsuarioDAO getObjUsuarioDAO() {
+        return objUsuarioDAO;
+    }
+
+    public void setObjUsuarioDAO(UsuarioDAO objUsuarioDAO) {
+        this.objUsuarioDAO = objUsuarioDAO;
+    }
+
+    
     @PostConstruct
     public void init() {
 
@@ -555,7 +575,7 @@ public class MantenimientoCuentaView extends BaseView implements Serializable {
                 objUsuarioDAO.actualizaUsuario(objUsuario);
 
                 mostrarAlertaInfo("password.changed.success");
-                
+
                 resetFormUsuario();
 
             }

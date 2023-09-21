@@ -12,9 +12,9 @@
             <p:growl id="growl" showDetail="true" skipDetailIfEqualsSummary="true" />
             <p:accordionPanel id="listados" widgetVar="basic" >
 
-                <c:if test="#{(menuPrincipal.usuarioInfo.managingDirector == true ||
-                              menuPrincipal.usuarioInfo.countryManager == true ||
-                              menuPrincipal.usuarioInfo.projectManager == true
+                <c:if test="#{(MenuPrincipal.usuarioInfo.managingDirector == true ||
+                              MenuPrincipal.usuarioInfo.countryManager == true ||
+                              MenuPrincipal.usuarioInfo.projectManager == true
                               ) and
                               listasPrincipalView.cantidadLstProyectos>=0}">
                     <p:tab id="lstPendientes" title="#{msg['pendientes.proyectos.titulo']}" >
@@ -164,10 +164,10 @@
                         </p:dataTable>
                     </p:tab>
                 </c:if>
-                <c:if test="#{(menuPrincipal.usuarioInfo.managingDirector == true ||
-                              menuPrincipal.usuarioInfo.countryManager == true ||
-                              menuPrincipal.usuarioInfo.projectManager == true ||
-                              menuPrincipal.usuarioInfo.evaluatedEvaluator == true) and
+                <c:if test="#{(MenuPrincipal.usuarioInfo.managingDirector == true ||
+                              MenuPrincipal.usuarioInfo.countryManager == true ||
+                              MenuPrincipal.usuarioInfo.projectManager == true ||
+                              MenuPrincipal.usuarioInfo.evaluatedEvaluator == true) and
                               listasPrincipalView.cantidadLstEvaluaciones>0}">
                     <p:tab title="#{msg['pendientes.evaluaciones.titulo']}" >
                         <h:panelGrid columns="1" cellpadding="10">
@@ -206,10 +206,10 @@
                         </h:panelGrid>
                     </p:tab>
                 </c:if>
-                <c:if test="#{(menuPrincipal.usuarioInfo.managingDirector == true ||
-                              menuPrincipal.usuarioInfo.countryManager == true ||
-                              menuPrincipal.usuarioInfo.projectManager == true ||
-                              menuPrincipal.usuarioInfo.evaluatedEvaluator == true) and
+                <c:if test="#{(MenuPrincipal.usuarioInfo.managingDirector == true ||
+                              MenuPrincipal.usuarioInfo.countryManager == true ||
+                              MenuPrincipal.usuarioInfo.projectManager == true ||
+                              MenuPrincipal.usuarioInfo.evaluatedEvaluator == true) and
                               listasPrincipalView.cantidadLstRedes>0}">
                     <p:tab title="#{msg['pendientes.redes.titulo']}" >
                         <h:panelGrid columns="1" cellpadding="10">
@@ -250,9 +250,9 @@
                 </c:if>
             </p:accordionPanel>
 
-            <c:if test="#{(menuPrincipal.usuarioInfo.managingDirector == false and
-                          menuPrincipal.usuarioInfo.countryManager == false and
-                          menuPrincipal.usuarioInfo.projectManager == false) and
+            <c:if test="#{(MenuPrincipal.usuarioInfo.managingDirector == false and
+                          MenuPrincipal.usuarioInfo.countryManager == false and
+                          MenuPrincipal.usuarioInfo.projectManager == false) and
                           listasPrincipalView.cantidadLstProyectos==0 and 
                           listasPrincipalView.cantidadLstEvaluaciones==0 and 
                           listasPrincipalView.cantidadLstRedes==0}">

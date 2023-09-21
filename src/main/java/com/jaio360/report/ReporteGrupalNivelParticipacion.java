@@ -22,6 +22,7 @@ import net.sf.dynamicreports.report.builder.component.ComponentBuilder;
 import net.sf.dynamicreports.report.builder.component.ComponentBuilders;
 import net.sf.dynamicreports.report.builder.component.VerticalListBuilder;
 import net.sf.dynamicreports.report.builder.tableofcontents.TableOfContentsCustomizer;
+import net.sf.dynamicreports.report.constant.HorizontalAlignment;
 import net.sf.dynamicreports.report.constant.LineStyle;
 import net.sf.dynamicreports.report.datasource.DRDataSource;
 import net.sf.dynamicreports.report.exception.DRException;
@@ -41,25 +42,28 @@ public class ReporteGrupalNivelParticipacion implements Serializable {
 
         String strNombreReporte = strNameFile + Constantes.STR_EXTENSION_PDF;
 
-        JasperPdfExporterBuilder pdfExporter = export.pdfExporter(Constantes.STR_INBOX_PRELIMINAR + File.separator + strNombreReporte)
+        JasperPdfExporterBuilder pdfExporter = export.pdfExporter(Utilitarios.getPathTempPreliminar() + File.separator + strNombreReporte)
                 .setEncrypted(Boolean.FALSE);
 
         ResultadoDAO objResultadoDAO = new ResultadoDAO();
         List lstResultado = objResultadoDAO.listaReporteNivelParticipacion(objDatosReporte.getIntIdCuestionario());
 
-        TextColumnBuilder<String> nombreEvaluadoColumn = col.column("Nombre (Evaluado)", "nombres", type.stringType()).setTitleStyle(stl.style().setBold(Boolean.TRUE));
-        TextColumnBuilder<String> personasColumn = col.column("Nro. Personas", "personas", type.stringType()).setTitleStyle(stl.style().setBold(Boolean.TRUE));
-        TextColumnBuilder<String> respuestasColumn = col.column("Nro. Respuestas", "respuestas", type.stringType()).setTitleStyle(stl.style().setBold(Boolean.TRUE));
-        TextColumnBuilder<String> participacionColumn = col.column("Participación", "participacion", type.stringType()).setTitleStyle(stl.style().setBold(Boolean.TRUE));
+        TextColumnBuilder<String> nombreEvaluadoColumn = col.column("EVALUADO", "nombres", type.stringType()).setTitleStyle(ModeloGeneral.styleHeaderColumnas.setHorizontalAlignment(HorizontalAlignment.LEFT));
+        TextColumnBuilder<String> personasColumn = col.column("NO. PERSONAS", "personas", type.stringType()).setTitleStyle(ModeloGeneral.styleHeaderColumnas);
+        TextColumnBuilder<String> respuestasColumn = col.column("NO. RESPUESTAS", "respuestas", type.stringType()).setTitleStyle(ModeloGeneral.styleHeaderColumnas);
+        TextColumnBuilder<String> participacionColumn = col.column("PARTICIPACIÓN", "participacion", type.stringType()).setTitleStyle(ModeloGeneral.styleHeaderColumnas);
 
         try {
+            
+            objDatosReporte.setStrCuestionario("");
 
             report()
                     .setTemplate(ModeloGeneral.reportTemplate)
                     .columns(nombreEvaluadoColumn, personasColumn, respuestasColumn, participacionColumn)
-                    .pageHeader(generaCabecera(map))
-                    .pageFooter(generaPie(map))
+                    .pageHeader(ModeloGeneral.generaCabeceraSinMetricas(map, this.objDatosReporte))
+                    .pageFooter(ModeloGeneral.generaPie(map))
                     .setDataSource(createDataSource(lstResultado))
+                    .setSummaryStyle(ModeloGeneral.styleContenidoDatos)
                     .toPdf(pdfExporter);
 
         } catch (DRException e) {
@@ -102,74 +106,6 @@ public class ReporteGrupalNivelParticipacion implements Serializable {
 
         return dataSource;
 
-    }
-
-    private ComponentBuilder<?, ?> generaCabecera(Map map) throws FileNotFoundException {
-
-        ComponentBuilders cmp = new ComponentBuilders();
-
-        return cmp.verticalList(
-                cmp.verticalGap(5),//SALTO DE LINEA
-
-                cmp.horizontalList(
-                        cmp.text(objDatosReporte.getStrDescripcion()).setStyle(ModeloGeneral.styleTituloPrincipal)
-                ),//SALTO DE LINEA
-                cmp.line().setPen(stl.pen(new Float("0.1"), LineStyle.SOLID)),//SALTO DE LINEA
-                cmp.verticalGap(10), //SALTO DE LINEA
-                cmp.horizontalList(
-                        //cmp.text("Medida").setStyle(styleColumnaSubtitulo).setWidth(350), 
-                        //cmp.image(medida).setFixedDimension(225, 20),
-                        cmp.horizontalGap(50)//,
-                //cmp.text("Rel").setStyle(ModeloGeneral.styleColumnaSubtitulo).setWidth(140),
-                //cmp.text("Prom").setStyle(ModeloGeneral.styleColumnaSubtitulo).setWidth(80),
-                //cmp.text("Descripcion").setStyle(ModeloGeneral.styleColumnaSubtitulo).setHorizontalAlignment(HorizontalAlignment.RIGHT).setWidth(220)
-                ),
-                cmp.verticalGap(5)
-        );
-    }
-
-    private ComponentBuilder<?, ?> generaPie(Map map) throws FileNotFoundException {
-
-        return cmp.horizontalList().add(cmp.line().setPen(stl.pen(new Float("0.25"), LineStyle.SOLID)))
-                .newRow()
-                .add(cmp.verticalGap(5))
-                .newRow()
-                .add(cmp.horizontalList(
-                        cmp.verticalList(
-                                cmp.text(objDatosReporte.getStrNombreEvaluado()).setStyle(ModeloNormal.styleFooterLeftBottomParam),
-                                cmp.text(objDatosReporte.getStrCuestionario()).setStyle(ModeloNormal.styleFooterLeftTopParam)
-                        ).setWidth(400),
-                        cmp.verticalList( //cmp.pageNumber().setStyle(ModeloNormal.styleFooterRightBottomParam)
-                                )
-                )
-                );
-    }
-
-    private class CustomTableOfContentsCustomizer extends TableOfContentsCustomizer {
-
-        private static final long serialVersionUID = 1L;
-
-        @Override
-        protected ComponentBuilder<?, ?> title() {
-            VerticalListBuilder verticalList = cmp.verticalList();
-            verticalList.add(cmp.line());
-            verticalList.add(super.title());
-            verticalList.add(cmp.line());
-            return verticalList;
-        }
-
-        @Override
-        protected ComponentBuilder<?, ?> headingComponent(int level) {
-
-            if (level == 0) {
-                VerticalListBuilder verticalList = cmp.verticalList();
-                verticalList.add(super.headingComponent(level));
-                verticalList.add(cmp.line());
-                return verticalList;
-            } else {
-                return super.headingComponent(level);
-            }
-        }
     }
 
 }

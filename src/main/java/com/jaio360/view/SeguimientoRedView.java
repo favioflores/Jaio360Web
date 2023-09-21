@@ -28,10 +28,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
+
 import javax.faces.context.FacesContext;
+import javax.faces.bean.ViewScoped;
+import javax.faces.bean.ManagedBean;
 import javax.servlet.http.HttpSession;
+
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.HibernateException;
@@ -41,21 +44,18 @@ import org.primefaces.model.StreamedContent;
 
 @ManagedBean(name = "seguimientoRedView")
 @ViewScoped
+
+
 public class SeguimientoRedView extends BaseView implements Serializable {
 
     private static Log log = LogFactory.getLog(SeguimientoRedView.class);
 
+    private static final long serialVersionUID = -1L;
+    
     private ProyectoDAO objProyectoDAO = new ProyectoDAO();
     private RelacionDAO objRelacionDAO = new RelacionDAO();
     private NotificacionesDAO objNotificacionesDAO = new NotificacionesDAO();
 
-    /**
-     * ************
-     */
-    /* Seguimiento */
-    /**
-     * ************
-     */
     private Integer intCorrelativo;
     private Boolean paInRedCargada;
     private Boolean paInRedVerificada;
@@ -75,28 +75,35 @@ public class SeguimientoRedView extends BaseView implements Serializable {
     private List<RelacionParticipante> lstRelacionParticipante;
     private StreamedContent content;
 
-    public Integer getCantRedCargada() {
-        return cantRedCargada;
+    private Integer intNumEvadoReg;
+    private Integer intNumEvadoPam;
+    private Integer intNumEvadoEje;
+    private Integer intNumEvadorReg;
+    private Integer intNumEvadorPam;
+    private Integer intNumEvadorEje;
+
+    public ProyectoDAO getObjProyectoDAO() {
+        return objProyectoDAO;
     }
 
-    public void setCantRedCargada(Integer cantRedCargada) {
-        this.cantRedCargada = cantRedCargada;
+    public void setObjProyectoDAO(ProyectoDAO objProyectoDAO) {
+        this.objProyectoDAO = objProyectoDAO;
     }
 
-    public Integer getIntIdEstadoProyecto() {
-        return intIdEstadoProyecto;
+    public RelacionDAO getObjRelacionDAO() {
+        return objRelacionDAO;
     }
 
-    public void setIntIdEstadoProyecto(Integer intIdEstadoProyecto) {
-        this.intIdEstadoProyecto = intIdEstadoProyecto;
+    public void setObjRelacionDAO(RelacionDAO objRelacionDAO) {
+        this.objRelacionDAO = objRelacionDAO;
     }
 
-    public Integer getIntCantidadVerificados() {
-        return intCantidadVerificados;
+    public NotificacionesDAO getObjNotificacionesDAO() {
+        return objNotificacionesDAO;
     }
 
-    public void setIntCantidadVerificados(Integer intCantidadVerificados) {
-        this.intCantidadVerificados = intCantidadVerificados;
+    public void setObjNotificacionesDAO(NotificacionesDAO objNotificacionesDAO) {
+        this.objNotificacionesDAO = objNotificacionesDAO;
     }
 
     public Integer getIntCorrelativo() {
@@ -123,20 +130,52 @@ public class SeguimientoRedView extends BaseView implements Serializable {
         this.paInRedVerificada = paInRedVerificada;
     }
 
+    public Integer getIntRedCargada() {
+        return intRedCargada;
+    }
+
+    public void setIntRedCargada(Integer intRedCargada) {
+        this.intRedCargada = intRedCargada;
+    }
+
+    public Integer getIntRedRevisada() {
+        return intRedRevisada;
+    }
+
+    public void setIntRedRevisada(Integer intRedRevisada) {
+        this.intRedRevisada = intRedRevisada;
+    }
+
+    public Integer getCantRedCargada() {
+        return cantRedCargada;
+    }
+
+    public void setCantRedCargada(Integer cantRedCargada) {
+        this.cantRedCargada = cantRedCargada;
+    }
+
+    public Integer getIntIdEstadoProyecto() {
+        return intIdEstadoProyecto;
+    }
+
+    public void setIntIdEstadoProyecto(Integer intIdEstadoProyecto) {
+        this.intIdEstadoProyecto = intIdEstadoProyecto;
+    }
+
+    public Integer getIntCantidadVerificados() {
+        return intCantidadVerificados;
+    }
+
+    public void setIntCantidadVerificados(Integer intCantidadVerificados) {
+        this.intCantidadVerificados = intCantidadVerificados;
+    }
+
     public List<Evaluado> getLstParticipantesCargados() {
         return lstParticipantesCargados;
     }
 
     public void setLstParticipantesCargados(List<Evaluado> lstParticipantesCargados) {
         this.lstParticipantesCargados = lstParticipantesCargados;
-    }
-
-    public List<RelacionParticipante> getLstRelacionParticipante() {
-        return lstRelacionParticipante;
-    }
-
-    public void setLstRelacionParticipante(List<RelacionParticipante> lstRelacionParticipante) {
-        this.lstRelacionParticipante = lstRelacionParticipante;
     }
 
     public List<EvaluadorRelacion> getLstRed() {
@@ -163,20 +202,12 @@ public class SeguimientoRedView extends BaseView implements Serializable {
         this.lstRelaciones = lstRelaciones;
     }
 
-    public Integer getIntRedCargada() {
-        return intRedCargada;
+    public List<RelacionParticipante> getLstRelacionParticipante() {
+        return lstRelacionParticipante;
     }
 
-    public void setIntRedCargada(Integer intRedCargada) {
-        this.intRedCargada = intRedCargada;
-    }
-
-    public Integer getIntRedRevisada() {
-        return intRedRevisada;
-    }
-
-    public void setIntRedRevisada(Integer intRedRevisada) {
-        this.intRedRevisada = intRedRevisada;
+    public void setLstRelacionParticipante(List<RelacionParticipante> lstRelacionParticipante) {
+        this.lstRelacionParticipante = lstRelacionParticipante;
     }
 
     public StreamedContent getContent() {
@@ -185,28 +216,6 @@ public class SeguimientoRedView extends BaseView implements Serializable {
 
     public void setContent(StreamedContent content) {
         this.content = content;
-    }
-
-    /**
-     * ************
-     */
-    /* Iniciar Red */
-    /**
-     * ************
-     */
-    private Integer intNumEvadoReg;
-    private Integer intNumEvadoPam;
-    private Integer intNumEvadoEje;
-    private Integer intNumEvadorReg;
-    private Integer intNumEvadorPam;
-    private Integer intNumEvadorEje;
-
-    public Integer getIntNumEvadorPam() {
-        return intNumEvadorPam;
-    }
-
-    public void setIntNumEvadorPam(Integer intNumEvadorPam) {
-        this.intNumEvadorPam = intNumEvadorPam;
     }
 
     public Integer getIntNumEvadoReg() {
@@ -241,6 +250,14 @@ public class SeguimientoRedView extends BaseView implements Serializable {
         this.intNumEvadorReg = intNumEvadorReg;
     }
 
+    public Integer getIntNumEvadorPam() {
+        return intNumEvadorPam;
+    }
+
+    public void setIntNumEvadorPam(Integer intNumEvadorPam) {
+        this.intNumEvadorPam = intNumEvadorPam;
+    }
+
     public Integer getIntNumEvadorEje() {
         return intNumEvadorEje;
     }
@@ -249,6 +266,7 @@ public class SeguimientoRedView extends BaseView implements Serializable {
         this.intNumEvadorEje = intNumEvadorEje;
     }
 
+    
     @PostConstruct
     public void init() {
 
@@ -296,9 +314,9 @@ public class SeguimientoRedView extends BaseView implements Serializable {
                 objParticipante.setPaIdParticipantePk(obj.getPaIdParticipantePk());
                 objParticipante.setPaIdEstado(obj.getPaIdEstado());
                 objParticipante.setPaIdTipoParticipante(obj.getPaIdTipoParticipante());
-                objParticipante.setPaInAutoevaluar(obj.isPaInAutoevaluar());
-                objParticipante.setPaInRedCargada(obj.isPaInRedCargada());
-                objParticipante.setPaInRedVerificada(obj.isPaInRedVerificada());
+                objParticipante.setPaInAutoevaluar(obj.getPaInAutoevaluar());
+                objParticipante.setPaInRedCargada(obj.getPaInRedCargada());
+                objParticipante.setPaInRedVerificada(obj.getPaInRedVerificada());
                 objParticipante.setPaTxCorreo(obj.getPaTxCorreo());
                 objParticipante.setPaTxDescripcion(obj.getPaTxDescripcion());
                 objParticipante.setPaTxNombreCargo(obj.getPaTxNombreCargo());
@@ -335,10 +353,10 @@ public class SeguimientoRedView extends BaseView implements Serializable {
 
         for (Evaluado objEvaluado : this.lstParticipantesCargados) {
 
-            if (objEvaluado.isPaInRedCargada()) {
+            if (objEvaluado.getPaInRedCargada()) {
                 cantRedCargada++;
             }
-            if (objEvaluado.isPaInRedVerificada()) {
+            if (objEvaluado.getPaInRedVerificada()) {
                 cantRedRevisada++;
             }
         }
@@ -363,7 +381,6 @@ public class SeguimientoRedView extends BaseView implements Serializable {
            }
     }
      */
-
     public void iniciarRed() {
 
         FacesContext context = FacesContext.getCurrentInstance();
@@ -575,13 +592,13 @@ public class SeguimientoRedView extends BaseView implements Serializable {
         Integer c = 0;
 
         for (Evaluado objEvaluado : lstParticipantesCargados) {
-            if (objEvaluado.isPaInRedVerificada()) {
+            if (objEvaluado.getPaInRedVerificada()) {
                 intCantidadVerificados++;
             }
-            if (!objEvaluado.isPaInRedVerificada() || objEvaluado.isPaInRedCargada()) {
+            if (!objEvaluado.getPaInRedVerificada() || objEvaluado.getPaInRedCargada()) {
                 intCantidadVerificados++;
             }
-            if (!objEvaluado.isPaInRedVerificada() && !objEvaluado.isPaInRedCargada()) {
+            if (!objEvaluado.getPaInRedVerificada() && !objEvaluado.getPaInRedCargada()) {
                 c++;
             }
         }
@@ -640,9 +657,9 @@ public class SeguimientoRedView extends BaseView implements Serializable {
 
             Participante objParticipante = objParticipanteDAO.obtenParticipante(objEvaluado.getPaIdParticipantePk());
 
-            objParticipante.setPaInRedCargada(objEvaluado.isPaInRedCargada());
+            objParticipante.setPaInRedCargada(objEvaluado.getPaInRedCargada());
 
-            if (!objEvaluado.isPaInRedCargada()) {
+            if (!objEvaluado.getPaInRedCargada()) {
                 objParticipante.setPaInRedVerificada(false);
             }
 
@@ -676,7 +693,7 @@ public class SeguimientoRedView extends BaseView implements Serializable {
 
             if (objEvaluado.getPaIdParticipantePk().equals(objEvaluadoT.getPaIdParticipantePk())) {
 
-                objEvaluadoT.setBlEnvioCorreo(objEvaluado.isBlEnvioCorreo());
+                objEvaluadoT.setBlEnvioCorreo(objEvaluado.getBlEnvioCorreo());
 
             }
 
@@ -687,7 +704,7 @@ public class SeguimientoRedView extends BaseView implements Serializable {
 
         boolean correcto = false;
         for (Evaluado objEvaluado : lstParticipantesCargados) {
-            if (objEvaluado.isBlEnvioCorreo()) {
+            if (objEvaluado.getBlEnvioCorreo()) {
                 correcto = true;
             }
         }
@@ -709,7 +726,7 @@ public class SeguimientoRedView extends BaseView implements Serializable {
 
             List<String> list3 = new ArrayList();
             for (Evaluado objEvaluado : lstParticipantesCargados) {
-                if (objEvaluado.isBlEnvioCorreo()) {
+                if (objEvaluado.getBlEnvioCorreo()) {
                     list3.add(objEvaluado.getPaTxCorreo());
                 }
             }

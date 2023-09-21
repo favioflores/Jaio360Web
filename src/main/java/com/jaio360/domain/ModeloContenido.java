@@ -1,16 +1,8 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.jaio360.domain;
 
 import java.io.Serializable;
 
-/**
- *
- * @author Favio
- */
-public class ModeloContenido implements Serializable{
+public class ModeloContenido implements Serializable {
 
     private Integer intModeloPk;
     private String strDescModelo;
@@ -65,6 +57,5 @@ public class ModeloContenido implements Serializable{
     public void setStrTipoArchivo(String strTipoArchivo) {
         this.strTipoArchivo = strTipoArchivo;
     }
-    
-}
 
+}

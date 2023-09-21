@@ -11,9 +11,11 @@ import java.io.Serializable;
 import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.faces.bean.ViewScoped;
+import javax.faces.bean.ManagedBean;
+
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.HibernateException;
@@ -21,6 +23,8 @@ import org.primefaces.PrimeFaces;
 
 @ManagedBean(name = "guardarNotificacionView")
 @ViewScoped
+
+
 public class GuardarNotificacionView extends BaseView implements Serializable {
     private static final long serialVersionUID = -1L;
     
@@ -42,20 +46,28 @@ public class GuardarNotificacionView extends BaseView implements Serializable {
         this.strIdNotificacion = strIdNotificacion;
     }
 
-    public String getStrAsunto() {
-        return strAsunto;
+    public String getStrRecordatorio() {
+        return strRecordatorio;
     }
 
-    public void setStrAsunto(String strAsunto) {
-        this.strAsunto = strAsunto;
+    public void setStrRecordatorio(String strRecordatorio) {
+        this.strRecordatorio = strRecordatorio;
     }
-    
+
     public String getStrTipoNotificacion() {
         return strTipoNotificacion;
     }
 
     public void setStrTipoNotificacion(String strTipoNotificacion) {
         this.strTipoNotificacion = strTipoNotificacion;
+    }
+
+    public String[] getEvaluados() {
+        return evaluados;
+    }
+
+    public void setEvaluados(String[] evaluados) {
+        this.evaluados = evaluados;
     }
 
     public String getStrDescTipoNotificacion() {
@@ -66,6 +78,14 @@ public class GuardarNotificacionView extends BaseView implements Serializable {
         this.strDescTipoNotificacion = strDescTipoNotificacion;
     }
 
+    public String getStrAsunto() {
+        return strAsunto;
+    }
+
+    public void setStrAsunto(String strAsunto) {
+        this.strAsunto = strAsunto;
+    }
+
     public String getStrContenido() {
         return strContenido;
     }
@@ -73,7 +93,8 @@ public class GuardarNotificacionView extends BaseView implements Serializable {
     public void setStrContenido(String strContenido) {
         this.strContenido = strContenido;
     }
-        
+    
+
     @PostConstruct
     public void init() {
        
@@ -217,7 +238,7 @@ public class GuardarNotificacionView extends BaseView implements Serializable {
         PrimeFaces.current().dialog().closeDynamic("crearNotificacion");
     }
 
-    private boolean contenidoValido() {
+    private Boolean  contenidoValido() {
         
         if(Utilitarios.esNuloOVacio(strContenido)){
         

@@ -2,8 +2,8 @@ package com.jaio360.domain;
 
 import java.io.Serializable;
 
-public class PreguntaAbiertaBean implements Serializable{
-    
+public class PreguntaAbiertaBean implements Serializable {
+
     private Integer id;
     private String strDescripcion;
     private String strRespuesta;
@@ -31,5 +31,5 @@ public class PreguntaAbiertaBean implements Serializable{
     public void setStrRespuesta(String strRespuesta) {
         this.strRespuesta = strRespuesta;
     }
-      
+
 }

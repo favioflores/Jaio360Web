@@ -1,21 +1,7 @@
-/*
- * Copyright 2010 Prime Technology.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.jaio360.domain;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 public class RelacionBean implements Serializable {
 
@@ -27,16 +13,22 @@ public class RelacionBean implements Serializable {
     private Integer intIdEstado;
     private String strEstado;
     private Integer intCantidadUso;
+    private BigDecimal dbPonderado;
 
-    public Integer getIntCantidadUso() {
-        return intCantidadUso;
+    public BigDecimal getDbPonderado() {
+        return dbPonderado;
     }
 
-    public void setIntCantidadUso(Integer intCantidadUso) {
-        this.intCantidadUso = intCantidadUso;
+    public void setDbPonderado(BigDecimal dbPonderado) {
+        this.dbPonderado = dbPonderado;
     }
-    
-    public RelacionBean() {
+
+    public String getStrNombre() {
+        return strNombre;
+    }
+
+    public void setStrNombre(String strNombre) {
+        this.strNombre = strNombre;
     }
 
     public String getStrAbreviatura() {
@@ -69,7 +61,7 @@ public class RelacionBean implements Serializable {
 
     public void setIdRelacionPk(Integer idRelacionPk) {
         this.idRelacionPk = idRelacionPk;
-    }   
+    }
 
     public Integer getIntIdEstado() {
         return intIdEstado;
@@ -79,14 +71,6 @@ public class RelacionBean implements Serializable {
         this.intIdEstado = intIdEstado;
     }
 
-    public String getStrNombre() {
-        return strNombre;
-    }
-
-    public void setStrNombre(String strNombre) {
-        this.strNombre = strNombre;
-    }
-
     public String getStrEstado() {
         return strEstado;
     }
@@ -94,6 +78,13 @@ public class RelacionBean implements Serializable {
     public void setStrEstado(String strEstado) {
         this.strEstado = strEstado;
     }
- 
-    
+
+    public Integer getIntCantidadUso() {
+        return intCantidadUso;
+    }
+
+    public void setIntCantidadUso(Integer intCantidadUso) {
+        this.intCantidadUso = intCantidadUso;
+    }
+
 }

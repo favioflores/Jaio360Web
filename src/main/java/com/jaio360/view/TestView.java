@@ -1,58 +1,58 @@
 package com.jaio360.view;
 
 import com.jaio360.dao.ElementoDAO;
-import com.jaio360.domain.UsuarioInfo;
-import com.jaio360.report.FontsReport;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Map;
 import javax.annotation.PostConstruct;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
-import javax.faces.context.ExternalContext;
+import javax.annotation.PreDestroy;
 import javax.faces.context.FacesContext;
+import javax.faces.bean.ViewScoped;
+import javax.faces.bean.ManagedBean;
 import javax.servlet.http.HttpSession;
+
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-@ManagedBean(name = "testView")
+@ManagedBean(name = "TestView")
 @ViewScoped
+
+
 public class TestView extends BaseView implements Serializable {
 
     private static Log log = LogFactory.getLog(TestView.class);
 
     private static final long serialVersionUID = -1L;
 
-    private String texto;
-
+    private String texto; 
+    
     @PostConstruct
     public void init() {
         ElementoDAO objElementoDAO = new ElementoDAO();
 
-        //Map<String, HttpSession> sessions = null;
-        //sessions = HttpSessionCollector./);
-        
-        texto = "";
-        Map<String,Object> sessions = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
+        HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
+
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("usuarioInfo", "hora");
+
+        texto = "Hola";
+        Map<String, Object> sessions = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
 
         for (Map.Entry<String, Object> entry : sessions.entrySet()) {
-            
+
             //UsuarioInfo objUsuarioInfo = (UsuarioInfo) entry.getValue().getAttribute("usuarioInfo");
-            System.out.println("Key = " + entry.getKey() +
-                             ", Value = " + entry.getValue());
+            //if(entry instanceof TestView)
+            System.out.println("Key = " + entry.getKey()
+                    + ", Value = " + entry.getValue());
         }
-        
+
     }
 
-    public String getTexto() {
-        return texto;
-    }
+    @PreDestroy
+    private void sesionCerrada() {
 
-    public void setTexto(String texto) {
-        this.texto = texto;
-    }
-    
-    public void generarReporte(){
-        FontsReport obj = new FontsReport();
+        System.out.println("La sesión se cerro automaticamente a las " + new Date());
+
     }
 
 }

@@ -101,7 +101,7 @@ public class AuthFilter implements Filter {
                 session.removeAttribute("proyectoInfo");
             } catch (Exception e) {
             }
-            
+
             res.sendRedirect(req.getContextPath() + "/ui/sesionExpirada.jsf");  // Anonymous user. Redirect to login page
 
         } catch (IOException e) {
@@ -109,7 +109,7 @@ public class AuthFilter implements Filter {
         }
     }
 
-    private boolean permissionToAccessFreely(HttpServletRequest req) {
+    private Boolean permissionToAccessFreely(HttpServletRequest req) {
 
         String strUri = req.getServletPath();
 
@@ -133,7 +133,7 @@ public class AuthFilter implements Filter {
                 || strUri.contains("javax.faces.resource");
     }
 
-    private boolean permissionOnlyToUserProxy(HttpServletRequest req) {
+    private Boolean permissionOnlyToUserProxy(HttpServletRequest req) {
 
         String strUri = req.getServletPath();
 
@@ -142,6 +142,7 @@ public class AuthFilter implements Filter {
                 || strUri.contains("/ui/stepThree.jsf")
                 || strUri.contains("/ui/stepFour.jsf")
                 || strUri.contains("/ui/stepFive.jsf")
-                || strUri.contains("/ui/stepSix.jsf");
+                || strUri.contains("/ui/stepSix.jsf")
+                || strUri.contains("/ui/dashboard.jsf");
     }
 }

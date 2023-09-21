@@ -2,11 +2,7 @@ package com.jaio360.domain;
 
 import java.io.Serializable;
 
-/**
- *
- * @author Favio
- */
-public class BibliotecaInfo implements Serializable{
+public class BibliotecaInfo implements Serializable {
 
     private String strNroElemento;
     private String strDescMetodologia;
@@ -16,14 +12,6 @@ public class BibliotecaInfo implements Serializable{
     private String strCuestionarios;
     private String strProyectos;
     private String strFechaProyecto;
-
-    public String getStrFechaProyecto() {
-        return strFechaProyecto;
-    }
-
-    public void setStrFechaProyecto(String strFechaProyecto) {
-        this.strFechaProyecto = strFechaProyecto;
-    }
 
     public String getStrNroElemento() {
         return strNroElemento;
@@ -79,6 +67,14 @@ public class BibliotecaInfo implements Serializable{
 
     public void setStrProyectos(String strProyectos) {
         this.strProyectos = strProyectos;
+    }
+
+    public String getStrFechaProyecto() {
+        return strFechaProyecto;
+    }
+
+    public void setStrFechaProyecto(String strFechaProyecto) {
+        this.strFechaProyecto = strFechaProyecto;
     }
 
 }

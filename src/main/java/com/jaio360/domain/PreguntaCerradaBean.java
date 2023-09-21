@@ -7,25 +7,9 @@ public class PreguntaCerradaBean implements Serializable {
 
     private Integer id;
     private String strDescripcion;
-    private boolean blRespondido;
+    private Boolean blRespondido;
     private Integer idRespuesta;
     private List<ComentarioBean> lstComentarios;
-
-    public Integer getIdRespuesta() {
-        return idRespuesta;
-    }
-
-    public void setIdRespuesta(Integer idRespuesta) {
-        this.idRespuesta = idRespuesta;
-    }
-
-    public boolean isBlRespondido() {
-        return blRespondido;
-    }
-
-    public void setBlRespondido(boolean blRespondido) {
-        this.blRespondido = blRespondido;
-    }
 
     public Integer getId() {
         return id;
@@ -41,6 +25,22 @@ public class PreguntaCerradaBean implements Serializable {
 
     public void setStrDescripcion(String strDescripcion) {
         this.strDescripcion = strDescripcion;
+    }
+
+    public Boolean getBlRespondido() {
+        return blRespondido;
+    }
+
+    public void setBlRespondido(Boolean blRespondido) {
+        this.blRespondido = blRespondido;
+    }
+
+    public Integer getIdRespuesta() {
+        return idRespuesta;
+    }
+
+    public void setIdRespuesta(Integer idRespuesta) {
+        this.idRespuesta = idRespuesta;
     }
 
     public List<ComentarioBean> getLstComentarios() {

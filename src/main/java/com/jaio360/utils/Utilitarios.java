@@ -51,12 +51,15 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.ResourceBundle;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import javax.faces.context.FacesContext;
@@ -88,6 +91,27 @@ public class Utilitarios extends BaseView implements Serializable {
             return true;
         }
         return false;
+    }
+
+    public static <T> List<List<T>> distribute(List<T> elements, int nrOfGroups) {
+        int elementsPerGroup = elements.size() / nrOfGroups;
+        int leftoverElements = elements.size() % nrOfGroups;
+
+        List<List<T>> groups = new ArrayList<>();
+        for (int i = 0; i < nrOfGroups; i++) {
+            groups.add(elements.subList(i * elementsPerGroup + Math.min(i, leftoverElements),
+                    (i + 1) * elementsPerGroup + Math.min(i + 1, leftoverElements)));
+        }
+        return groups;
+    }
+
+    public static Collection<List<String>> splitListBySize(List<String> intList, int size) {
+
+        if (!intList.isEmpty() && size > 0) {
+            final AtomicInteger counter = new AtomicInteger(0);
+            return intList.stream().collect(Collectors.groupingBy(it -> counter.getAndIncrement() / size)).values();
+        }
+        return null;
     }
 
     public static String formatearFecha(Date dtFecha, String strFormato) {
@@ -160,6 +184,16 @@ public class Utilitarios extends BaseView implements Serializable {
         HttpSession ses = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
         return (ProyectoInfo) ses.getAttribute("proyectoInfo");
 
+    }
+
+    public static String getPathTempPreliminar() {
+        ElementoDAO objElementoDAO = new ElementoDAO();
+        return objElementoDAO.obtenElemento(Constantes.INT_ET_PATH_TEMP_PRELIMINAR).getElTxValor1();
+    }
+
+    public static String getPathTempDefinitivo() {
+        ElementoDAO objElementoDAO = new ElementoDAO();
+        return objElementoDAO.obtenElemento(Constantes.INT_ET_PATH_TEMP_DEFINITIVO).getElTxValor1();
     }
 
     public static boolean refrescarProyecto(Integer intIdProyecto) {
@@ -339,6 +373,22 @@ public class Utilitarios extends BaseView implements Serializable {
                 Integer.valueOf(colorStr.substring(5, 7), 16));
     }
 
+    public static String convertColorHexToRgbChartPrimefacesRGBA(String colorStr) {
+        //rgba(255, 99, 132, 0.2)
+        return "rgba("
+                + Integer.valueOf(colorStr.substring(1, 3), 16) + ","
+                + Integer.valueOf(colorStr.substring(3, 5), 16) + ","
+                + Integer.valueOf(colorStr.substring(5, 7), 16) + ", 0.2)";
+    }
+
+    public static String convertColorHexToRgbChartPrimefacesRGB(String colorStr) {
+        //rgba(255, 99, 132, 0.2)
+        return "rgb("
+                + Integer.valueOf(colorStr.substring(1, 3), 16) + ","
+                + Integer.valueOf(colorStr.substring(3, 5), 16) + ","
+                + Integer.valueOf(colorStr.substring(5, 7), 16) + ")";
+    }
+
     public static String combinaReportesTemporalesPDF(List<String> list) {
 
         String IdReporteSalida = Utilitarios.generaIDReporte() + Constantes.STR_EXTENSION_PDF;
@@ -349,7 +399,7 @@ public class Utilitarios extends BaseView implements Serializable {
 
             OutputStream outputStream;
 
-            outputStream = new FileOutputStream(Constantes.STR_INBOX_PRELIMINAR + File.separator + IdReporteSalida);
+            outputStream = new FileOutputStream(Utilitarios.getPathTempPreliminar() + File.separator + IdReporteSalida);
 
             PdfWriter writer = PdfWriter.getInstance(document, outputStream);
 
@@ -358,7 +408,7 @@ public class Utilitarios extends BaseView implements Serializable {
             PdfContentByte cb = writer.getDirectContent();
 
             for (String strId : list) {
-                InputStream in = new FileInputStream(Constantes.STR_INBOX_PRELIMINAR + File.separator + strId);
+                InputStream in = new FileInputStream(Utilitarios.getPathTempPreliminar() + File.separator + strId);
                 PdfReader reader = new PdfReader(in);
                 for (int i = 1; i <= reader.getNumberOfPages(); i++) {
                     document.newPage();
@@ -396,7 +446,7 @@ public class Utilitarios extends BaseView implements Serializable {
 
             OutputStream outputStream;
 
-            outputStream = new FileOutputStream(Constantes.STR_INBOX_PRELIMINAR + File.separator + IdReporteSalida);
+            outputStream = new FileOutputStream(Utilitarios.getPathTempPreliminar() + File.separator + IdReporteSalida);
 
             PdfWriter writer = PdfWriter.getInstance(document, outputStream);
 
@@ -405,7 +455,7 @@ public class Utilitarios extends BaseView implements Serializable {
             PdfContentByte cb = writer.getDirectContent();
 
             for (DatosReporte objDatosReporte : list) {
-                try ( InputStream in = new FileInputStream(Constantes.STR_INBOX_PRELIMINAR + File.separator + objDatosReporte.getStrID())) {
+                try ( InputStream in = new FileInputStream(Utilitarios.getPathTempPreliminar() + File.separator + objDatosReporte.getStrID())) {
                     PdfReader reader = new PdfReader(in);
                     for (int i = 1; i <= reader.getNumberOfPages(); i++) {
                         document.newPage();
@@ -437,15 +487,11 @@ public class Utilitarios extends BaseView implements Serializable {
 
         try {
 
-            //Document document = new Document();
-            //OutputStream outputStream = new FileOutputStream(Constantes.STR_INBOX_PRELIMINAR + File.separator + "Final_" + IdReporteSalida);
-            //PdfWriter writer = PdfWriter.getInstance(document, outputStream);
-            //document.open();
             PdfContentByte cb;// = writer.getDirectContent();
 
-            PdfReader reader = new PdfReader(Constantes.STR_INBOX_PRELIMINAR + File.separator + IdReporteSalida);
+            PdfReader reader = new PdfReader(Utilitarios.getPathTempPreliminar() + File.separator + IdReporteSalida);
             reader.makeRemoteNamedDestinationsLocal();
-            PdfStamper stamper = new PdfStamper(reader, new FileOutputStream(Constantes.STR_INBOX_PRELIMINAR + File.separator + "Final_" + IdReporteSalida));
+            PdfStamper stamper = new PdfStamper(reader, new FileOutputStream(Utilitarios.getPathTempPreliminar() + File.separator + "Final_" + IdReporteSalida));
             BaseFont bf = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
 
             int n = reader.getNumberOfPages();
@@ -492,7 +538,7 @@ public class Utilitarios extends BaseView implements Serializable {
 
         OutputStream outputStream;
 
-        outputStream = new FileOutputStream(Constantes.STR_INBOX_PRELIMINAR + File.separator);
+        outputStream = new FileOutputStream(Utilitarios.getPathTempPreliminar() + File.separator);
 
         PdfWriter writer = PdfWriter.getInstance(document, outputStream);
 
@@ -501,7 +547,7 @@ public class Utilitarios extends BaseView implements Serializable {
         PdfContentByte cb = writer.getDirectContent();
 
         PdfReader reader = new PdfReader("C:\\InboxDefinitivo\\FAFO.pdf");
-        reader.makeRemoteNamedDestinationsLocal();;
+        reader.makeRemoteNamedDestinationsLocal();
         PdfStamper stamper = new PdfStamper(reader, new FileOutputStream("C:\\InboxDefinitivo\\FAFO3.pdf"));
         BaseFont bf = BaseFont.createFont(BaseFont.HELVETICA,
                 BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
@@ -541,7 +587,7 @@ public class Utilitarios extends BaseView implements Serializable {
 
             OutputStream outputStream;
 
-            outputStream = new FileOutputStream(Constantes.STR_INBOX_PRELIMINAR + File.separator + IdReporteSalida);
+            outputStream = new FileOutputStream(Utilitarios.getPathTempPreliminar() + File.separator + IdReporteSalida);
 
             PdfWriter writer = PdfWriter.getInstance(document, outputStream);
 
@@ -550,7 +596,7 @@ public class Utilitarios extends BaseView implements Serializable {
             PdfContentByte cb = writer.getDirectContent();
 
             for (DatosReporte objDatosReporte : list) {
-                InputStream in = new FileInputStream(Constantes.STR_INBOX_PRELIMINAR + File.separator + objDatosReporte.getStrID());
+                InputStream in = new FileInputStream(Utilitarios.getPathTempPreliminar() + File.separator + objDatosReporte.getStrID());
                 PdfReader reader = new PdfReader(in);
                 for (int i = 1; i <= reader.getNumberOfPages(); i++) {
                     document.newPage();
@@ -601,7 +647,7 @@ public class Utilitarios extends BaseView implements Serializable {
 
             for (DatosReporte objDatosReporte : lstReportes) {
 
-                File fl = new File(Constantes.STR_INBOX_PRELIMINAR + File.separator + objDatosReporte.getStrID());
+                File fl = new File(Utilitarios.getPathTempPreliminar() + File.separator + objDatosReporte.getStrID());
 
                 try {
 
@@ -637,7 +683,7 @@ public class Utilitarios extends BaseView implements Serializable {
 
             for (String objDatosReporte : lstReportes) {
 
-                File fl = new File(Constantes.STR_INBOX_PRELIMINAR + File.separator + objDatosReporte);
+                File fl = new File(Utilitarios.getPathTempPreliminar() + File.separator + objDatosReporte);
 
                 try {
 
@@ -677,9 +723,9 @@ public class Utilitarios extends BaseView implements Serializable {
 
             for (DatosReporte objDatosReporte : lstReportes) {
 
-                File fl = new File(Constantes.STR_INBOX_PRELIMINAR + File.separator + objDatosReporte.getStrID());
+                File fl = new File(Utilitarios.getPathTempPreliminar() + File.separator + objDatosReporte.getStrID());
 
-                if (objDatosReporte.isBlDefinitivo()) {
+                if (objDatosReporte.getBlDefinitivo()) {
 
                     FileInputStream fi = new FileInputStream(fl);
 
@@ -738,7 +784,7 @@ public class Utilitarios extends BaseView implements Serializable {
 
             for (String strArchivo : lstArchivos) {
 
-                File fl = new File(Constantes.STR_INBOX_PRELIMINAR + File.separator + strArchivo);
+                File fl = new File(Utilitarios.getPathTempPreliminar() + File.separator + strArchivo);
 
                 FileInputStream fi = new FileInputStream(fl);
 
@@ -932,7 +978,7 @@ public class Utilitarios extends BaseView implements Serializable {
 
             strEntera = strData;
 
-            strDecimal = Constantes.ZERO;
+            strDecimal = Constantes.ZERO + Constantes.ZERO;
 
         }
 
@@ -1169,7 +1215,7 @@ public class Utilitarios extends BaseView implements Serializable {
         List lstEvaluacion = objProyectoDAO.obtenListaEvaluacionesPorUsuario(objUsuarioInfo.getStrEmail());
 
         if (!lstEvaluacion.isEmpty()) {
-            
+
             lstEvaluaciones = new ArrayList();
 
             LinkedHashMap<String, ProyectoInfo> mapEvaluaciones = new LinkedHashMap<>();
@@ -1177,15 +1223,15 @@ public class Utilitarios extends BaseView implements Serializable {
             Iterator itLstEvaluaciones = lstEvaluacion.iterator();
 
             ProyectoInfo objProyectoInfo;
-            
+
             EvaluacionesXEjecutar objEvaluacionesXEjecutar;
 
             if (intEvaluationPreferenceView == 0) {//INDIVIDUAL
 
                 while (itLstEvaluaciones.hasNext()) {
-                    
+
                     Object[] objProyecto = (Object[]) itLstEvaluaciones.next();
-                    
+
                     objProyectoInfo = new ProyectoInfo();
                     objProyectoInfo.setIntIdProyecto((Integer) objProyecto[0]);
                     objProyectoInfo.setIntCantidadEvaluaciones(1);
@@ -1211,9 +1257,9 @@ public class Utilitarios extends BaseView implements Serializable {
                     List<EvaluacionesXEjecutar> lstEvaluacionesXEjecutar = new ArrayList<>();
                     lstEvaluacionesXEjecutar.add(objEvaluacionesXEjecutar);
                     objProyectoInfo.setLstEvaluacionesXEjecutar(lstEvaluacionesXEjecutar);
-                    
+
                     lstEvaluaciones.add(objProyectoInfo);
-                    
+
                 }
 
             } else {//GRUPAL
@@ -1360,16 +1406,4 @@ public class Utilitarios extends BaseView implements Serializable {
 
     }
 
-    public static <T> List<List<T>> distribute(List<T> elements, int nrOfGroups) {
-        int elementsPerGroup = elements.size() / nrOfGroups;
-        int leftoverElements = elements.size() % nrOfGroups;
-
-        List<List<T>> groups = new ArrayList<>();
-        for (int i = 0; i < nrOfGroups; i++) {
-            groups.add(elements.subList(i * elementsPerGroup + Math.min(i, leftoverElements),
-                    (i + 1) * elementsPerGroup + Math.min(i + 1, leftoverElements)));
-        }
-        return groups;
-    }
-    
 }

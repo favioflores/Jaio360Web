@@ -2,11 +2,7 @@ package com.jaio360.domain;
 
 import java.io.Serializable;
 
-/**
- *
- * @author Favio
- */
-public class RelacionAvanzada implements Serializable{
+public class RelacionAvanzada implements Serializable {
 
     private String strEvaluado;
     private String strEvaluadoDesc;
@@ -16,12 +12,12 @@ public class RelacionAvanzada implements Serializable{
     private String strRelacionAbreviatura;
     private String strRelacionColor;
 
-    public String getStrEvaluadorDesc() {
-        return strEvaluadorDesc;
+    public String getStrEvaluado() {
+        return strEvaluado;
     }
 
-    public void setStrEvaluadorDesc(String strEvaluadorDesc) {
-        this.strEvaluadorDesc = strEvaluadorDesc;
+    public void setStrEvaluado(String strEvaluado) {
+        this.strEvaluado = strEvaluado;
     }
 
     public String getStrEvaluadoDesc() {
@@ -30,6 +26,30 @@ public class RelacionAvanzada implements Serializable{
 
     public void setStrEvaluadoDesc(String strEvaluadoDesc) {
         this.strEvaluadoDesc = strEvaluadoDesc;
+    }
+
+    public String getStrEvaluador() {
+        return strEvaluador;
+    }
+
+    public void setStrEvaluador(String strEvaluador) {
+        this.strEvaluador = strEvaluador;
+    }
+
+    public String getStrEvaluadorDesc() {
+        return strEvaluadorDesc;
+    }
+
+    public void setStrEvaluadorDesc(String strEvaluadorDesc) {
+        this.strEvaluadorDesc = strEvaluadorDesc;
+    }
+
+    public String getStrRelacion() {
+        return strRelacion;
+    }
+
+    public void setStrRelacion(String strRelacion) {
+        this.strRelacion = strRelacion;
     }
 
     public String getStrRelacionAbreviatura() {
@@ -48,28 +68,4 @@ public class RelacionAvanzada implements Serializable{
         this.strRelacionColor = strRelacionColor;
     }
 
-    public String getStrEvaluado() {
-        return strEvaluado;
-    }
-
-    public void setStrEvaluado(String strEvaluado) {
-        this.strEvaluado = strEvaluado;
-    }
-
-    public String getStrEvaluador() {
-        return strEvaluador;
-    }
-
-    public void setStrEvaluador(String strEvaluador) {
-        this.strEvaluador = strEvaluador;
-    }
-
-    public String getStrRelacion() {
-        return strRelacion;
-    }
-
-    public void setStrRelacion(String strRelacion) {
-        this.strRelacion = strRelacion;
-    }
-    
 }

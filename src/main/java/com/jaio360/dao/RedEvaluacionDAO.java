@@ -220,7 +220,7 @@ public class RedEvaluacionDAO implements Serializable
             iniciaOperacion(); 
             Query query = sesion.createQuery("from RedEvaluacion r where r.proyecto.poIdProyectoPk = ? order by r.reIdParticipantePk "); 
             
-            query.setInteger(0, intProyectoPk);;
+            query.setInteger(0, intProyectoPk);
             
             listaRedEvaluacion = query.list();
             

@@ -52,7 +52,7 @@ public class ModeloNormal {
                                                         .setFontSize(9)
                                                         .setForegroundColor(Color.LIGHT_GRAY)
                                                         //.setBorder(stl.pen1Point())
-                                                        .setVerticalAlignment(VerticalAlignment.TOP);;
+                                                        .setVerticalAlignment(VerticalAlignment.TOP);
 
             styleHeaderLeftBottomParam    = stl.style().setPadding(1)
                                                         .setHorizontalAlignment(HorizontalAlignment.LEFT)

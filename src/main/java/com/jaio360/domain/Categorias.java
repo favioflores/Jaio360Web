@@ -4,18 +4,18 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Categorias implements Serializable{
-    
+public class Categorias implements Serializable {
+
     private String strCategoria;
     private Integer intIdComponente;
     private List<PreguntaCerradaBean> lstPreguntasCerradas;
-    
+
     public Categorias(String strCategoria, Integer intIdComponente, List<PreguntaCerradaBean> lstPreguntasCerradas) {
         this.strCategoria = strCategoria;
         this.intIdComponente = intIdComponente;
         this.lstPreguntasCerradas = lstPreguntasCerradas;
     }
-    
+
     public Categorias(Integer intIdComponente) {
         this.intIdComponente = intIdComponente;
         this.lstPreguntasCerradas = new ArrayList<>();
@@ -23,10 +23,6 @@ public class Categorias implements Serializable{
 
     public Integer getIntIdComponente() {
         return intIdComponente;
-    }
-
-    public void setIntIdComponente(Integer intIdComponente) {
-        this.intIdComponente = intIdComponente;
     }
 
     public String getStrCategoria() {

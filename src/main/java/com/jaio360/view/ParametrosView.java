@@ -8,24 +8,29 @@ import com.jaio360.orm.Proyecto;
 import com.jaio360.utils.Constantes;
 import com.jaio360.utils.Utilitarios;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.bean.ManagedBean;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 @ManagedBean(name = "parametrosView")
 @ViewScoped
+
 public class ParametrosView extends BaseView implements Serializable {
 
     private static Log log = LogFactory.getLog(ParametrosView.class);
 
-    private boolean blSexo = false;
-    private boolean blRangoEdad = false;
-    private boolean blTiempoEmpresa = false;
-    private boolean blNivelOcupacional = false;
-    private boolean blAreaNegocio = false;
+    private Boolean blSexo = false;
+    private Boolean blRangoEdad = false;
+    private Boolean blTiempoEmpresa = false;
+    private Boolean blNivelOcupacional = false;
+    private Boolean blAreaNegocio = false;
+
+    private Boolean blPonderacionHabilitado = false;
 
     private String strSex;
     private String strRangoEdad;
@@ -39,10 +44,52 @@ public class ParametrosView extends BaseView implements Serializable {
     private ParametroDAO objParametroDAO = new ParametroDAO();
     private ElementoDAO objElementoDAO = new ElementoDAO();
 
-    public ParametrosView() {
-        cargarJobs();
-        cargarAreas();
-        cargarDatosExistentes();
+    public Boolean getBlPonderacionHabilitado() {
+        return blPonderacionHabilitado;
+    }
+
+    public void setBlPonderacionHabilitado(Boolean blPonderacionHabilitado) {
+        this.blPonderacionHabilitado = blPonderacionHabilitado;
+    }
+
+    public Boolean getBlSexo() {
+        return blSexo;
+    }
+
+    public void setBlSexo(Boolean blSexo) {
+        this.blSexo = blSexo;
+    }
+
+    public Boolean getBlRangoEdad() {
+        return blRangoEdad;
+    }
+
+    public void setBlRangoEdad(Boolean blRangoEdad) {
+        this.blRangoEdad = blRangoEdad;
+    }
+
+    public Boolean getBlTiempoEmpresa() {
+        return blTiempoEmpresa;
+    }
+
+    public void setBlTiempoEmpresa(Boolean blTiempoEmpresa) {
+        this.blTiempoEmpresa = blTiempoEmpresa;
+    }
+
+    public Boolean getBlNivelOcupacional() {
+        return blNivelOcupacional;
+    }
+
+    public void setBlNivelOcupacional(Boolean blNivelOcupacional) {
+        this.blNivelOcupacional = blNivelOcupacional;
+    }
+
+    public Boolean getBlAreaNegocio() {
+        return blAreaNegocio;
+    }
+
+    public void setBlAreaNegocio(Boolean blAreaNegocio) {
+        this.blAreaNegocio = blAreaNegocio;
     }
 
     public String getStrSex() {
@@ -51,50 +98,6 @@ public class ParametrosView extends BaseView implements Serializable {
 
     public void setStrSex(String strSex) {
         this.strSex = strSex;
-    }
-    
-    public String[] getSelectedAreaNegocio() {
-        return selectedAreaNegocio;
-    }
-
-    public void setSelectedAreaNegocio(String[] selectedAreaNegocio) {
-        this.selectedAreaNegocio = selectedAreaNegocio;
-    }
-
-    public boolean isBlRangoEdad() {
-        return blRangoEdad;
-    }
-
-    public void setBlRangoEdad(boolean blRangoEdad) {
-        this.blRangoEdad = blRangoEdad;
-    }
-
-    public boolean isBlTiempoEmpresa() {
-        return blTiempoEmpresa;
-    }
-
-    public void setBlTiempoEmpresa(boolean blTiempoEmpresa) {
-        this.blTiempoEmpresa = blTiempoEmpresa;
-    }
-
-    public boolean isBlNivelOcupacional() {
-        return blNivelOcupacional;
-    }
-
-    public void setBlNivelOcupacional(boolean blNivelOcupacional) {
-        this.blNivelOcupacional = blNivelOcupacional;
-    }
-
-    public boolean isBlAreaNegocio() {
-        return blAreaNegocio;
-    }
-
-    public void setBlAreaNegocio(boolean blAreaNegocio) {
-        this.blAreaNegocio = blAreaNegocio;
-    }
-
-    public boolean isBlSexo() {
-        return blSexo;
     }
 
     public String getStrRangoEdad() {
@@ -113,18 +116,6 @@ public class ParametrosView extends BaseView implements Serializable {
         this.strRangoTiempo = strRangoTiempo;
     }
 
-    public void setBlSexo(boolean blSexo) {
-        this.blSexo = blSexo;
-    }
-
-    public String[] getSelectedJob() {
-        return selectedJob;
-    }
-
-    public void setSelectedJob(String[] selectedJob) {
-        this.selectedJob = selectedJob;
-    }
-
     public List<String> getJob() {
         return job;
     }
@@ -139,6 +130,44 @@ public class ParametrosView extends BaseView implements Serializable {
 
     public void setArea(List<String> area) {
         this.area = area;
+    }
+
+    public String[] getSelectedJob() {
+        return selectedJob;
+    }
+
+    public void setSelectedJob(String[] selectedJob) {
+        this.selectedJob = selectedJob;
+    }
+
+    public String[] getSelectedAreaNegocio() {
+        return selectedAreaNegocio;
+    }
+
+    public void setSelectedAreaNegocio(String[] selectedAreaNegocio) {
+        this.selectedAreaNegocio = selectedAreaNegocio;
+    }
+
+    public ParametroDAO getObjParametroDAO() {
+        return objParametroDAO;
+    }
+
+    public void setObjParametroDAO(ParametroDAO objParametroDAO) {
+        this.objParametroDAO = objParametroDAO;
+    }
+
+    public ElementoDAO getObjElementoDAO() {
+        return objElementoDAO;
+    }
+
+    public void setObjElementoDAO(ElementoDAO objElementoDAO) {
+        this.objElementoDAO = objElementoDAO;
+    }
+
+    public ParametrosView() {
+        cargarJobs();
+        cargarAreas();
+        cargarDatosExistentes();
     }
 
     public void activarParametro(Integer intIdTipoParametro) {
@@ -195,6 +224,11 @@ public class ParametrosView extends BaseView implements Serializable {
                         objParametro.setPaTxPatron(strPatron.getBytes());
                         objParametroDAO.guardaParametro(objParametro);
                     }
+                } else if (intIdTipoParametro.equals(Constantes.INT_ET_TIPO_PARAMETRO_PONDERACION_RELACIONES)) {
+                    if (blPonderacionHabilitado) {
+                        objParametro.setPaInHabilitado(blPonderacionHabilitado);
+                        objParametroDAO.guardaParametro(objParametro);
+                    }
                 }
 
                 mostrarAlertaInfo("enabled");
@@ -204,7 +238,7 @@ public class ParametrosView extends BaseView implements Serializable {
 
                 if (intIdTipoParametro.equals(Constantes.INT_ET_TIPO_PARAMETRO_SEXO)) {
                     if (!blSexo) {
-                        strSex="";
+                        strSex = "";
                         objParametroDAO.eliminaParametro(objParametro);
                     }
                 } else if (intIdTipoParametro.equals(Constantes.INT_ET_TIPO_PARAMETRO_EDAD)) {
@@ -225,6 +259,10 @@ public class ParametrosView extends BaseView implements Serializable {
                 } else if (intIdTipoParametro.equals(Constantes.INT_ET_TIPO_PARAMETRO_AREA)) {
                     if (!blAreaNegocio) {
                         selectedAreaNegocio = null;
+                        objParametroDAO.eliminaParametro(objParametro);
+                    }
+                } else if (intIdTipoParametro.equals(Constantes.INT_ET_TIPO_PARAMETRO_PONDERACION_RELACIONES)) {
+                    if (!blPonderacionHabilitado) {
                         objParametroDAO.eliminaParametro(objParametro);
                     }
                 }
@@ -264,7 +302,7 @@ public class ParametrosView extends BaseView implements Serializable {
         List<Parametro> lstParametros = objParametroDAO.obtenListaParametros(Utilitarios.obtenerProyecto().getIntIdProyecto());
 
         for (Parametro objParametro : lstParametros) {
-            if (Utilitarios.noEsNuloOVacio(objParametro.getPaTxPatron())) {
+            if (Utilitarios.noEsNuloOVacio(objParametro.getPaTxPatron()) || objParametro.getPaInHabilitado()) {
 
                 if (objParametro.getPaIdTipoParametro().equals(Constantes.INT_ET_TIPO_PARAMETRO_SEXO)) {
                     blSexo = true;
@@ -283,6 +321,8 @@ public class ParametrosView extends BaseView implements Serializable {
                     blNivelOcupacional = true;
                     String temp = new String(objParametro.getPaTxPatron());
                     selectedJob = temp.split(",");
+                } else if (objParametro.getPaIdTipoParametro().equals(Constantes.INT_ET_TIPO_PARAMETRO_PONDERACION_RELACIONES)) {
+                    blPonderacionHabilitado = objParametro.getPaInHabilitado();
                 }
 
             }
@@ -335,6 +375,12 @@ public class ParametrosView extends BaseView implements Serializable {
 
             strPatron = strRangoTiempo;
             objParametro.setPaTxPatron(strPatron.getBytes());
+            objParametroDAO.actualizaParametro(objParametro);
+
+        } else if (intIdTipoParametro.equals(Constantes.INT_ET_TIPO_PARAMETRO_PONDERACION_RELACIONES)) {
+
+            objParametro.setPaInHabilitado(blPonderacionHabilitado);
+
             objParametroDAO.actualizaParametro(objParametro);
 
         }

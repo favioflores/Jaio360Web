@@ -14,14 +14,17 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
+
 import javax.faces.context.FacesContext;
+import javax.faces.bean.ViewScoped;
+import javax.faces.bean.ManagedBean;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 @ManagedBean(name = "relacionesView")
 @ViewScoped
+
 public class RelacionesView extends BaseView implements Serializable {
 
     private static Log log = LogFactory.getLog(RelacionesView.class);
@@ -33,18 +36,8 @@ public class RelacionesView extends BaseView implements Serializable {
     private String strDescripcion;
     private String strColor;
     private Integer idRelacionPk;
-
     private Integer intIdEstadoProyecto;
-
     private List<RelacionBean> lstRelacionBean;
-
-    public Integer getIntIdEstadoProyecto() {
-        return intIdEstadoProyecto;
-    }
-
-    public void setIntIdEstadoProyecto(Integer intIdEstadoProyecto) {
-        this.intIdEstadoProyecto = intIdEstadoProyecto;
-    }
 
     public String getStrNombre() {
         return strNombre;
@@ -52,10 +45,6 @@ public class RelacionesView extends BaseView implements Serializable {
 
     public void setStrNombre(String strNombre) {
         this.strNombre = strNombre;
-    }
-
-    public static void setLog(Log log) {
-        RelacionesView.log = log;
     }
 
     public String getStrAbreviatura() {
@@ -90,17 +79,20 @@ public class RelacionesView extends BaseView implements Serializable {
         this.idRelacionPk = idRelacionPk;
     }
 
+    public Integer getIntIdEstadoProyecto() {
+        return intIdEstadoProyecto;
+    }
+
+    public void setIntIdEstadoProyecto(Integer intIdEstadoProyecto) {
+        this.intIdEstadoProyecto = intIdEstadoProyecto;
+    }
+
     public List<RelacionBean> getLstRelacionBean() {
         return lstRelacionBean;
     }
 
     public void setLstRelacionBean(List<RelacionBean> lstRelacionBean) {
         this.lstRelacionBean = lstRelacionBean;
-    }
-
-    public RelacionesView() {
-        this.lstRelacionBean = new ArrayList();
-        //this.resetFail();
     }
 
     @PostConstruct

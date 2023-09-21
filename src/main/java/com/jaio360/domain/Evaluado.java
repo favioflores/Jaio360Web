@@ -3,16 +3,16 @@ package com.jaio360.domain;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-public class Evaluado implements Serializable{
-    
+public class Evaluado implements Serializable {
+
     private Integer paIdParticipantePk;
     private String paTxDescripcion;
     private String paTxCorreo;
     private String paTxNombreCargo;
-    private boolean paInRedCargada;
-    private boolean paInRedVerificada;
+    private Boolean paInRedCargada;
+    private Boolean paInRedVerificada;
     private Integer paIdTipoParticipante;
-    private boolean paInAutoevaluar;
+    private Boolean paInAutoevaluar;
     private Integer paIdEstado;
     private String paStrEstado;
     private BigDecimal bdPorcentajeAvance;
@@ -21,33 +21,171 @@ public class Evaluado implements Serializable{
     private String strCorrectoMasivo;
     private String strObservacionMasivo;
     private Integer intCantidadRed;
-    private boolean blManual;
-    private boolean blEnvioCorreo;
-    private boolean blAnalizado;
+    private Boolean blManual;
+    private Boolean blEnvioCorreo;
+    private Boolean blAnalizado;
     private Integer inAnalizado;
-    
+
     private String paTxSexo;
     private Integer paNrEdad;
     private Integer paNrTiempoTrabajo;
     private String paTxOcupacion;
     private String paTxAreaNegocio;
     private String paTxImgUrl;
-    
+
     private Integer intNumberEvaluators;
     private Integer intNumberEvaluationFinished;
 
-    public String getPaTxImgUrl() {
-        return paTxImgUrl; 
+    public Integer getPaIdParticipantePk() {
+        return paIdParticipantePk;
     }
 
-    public void setPaTxImgUrl(String paTxImgUrl) {
-        this.paTxImgUrl = paTxImgUrl;
+    public void setPaIdParticipantePk(Integer paIdParticipantePk) {
+        this.paIdParticipantePk = paIdParticipantePk;
     }
 
-    
-    
-    public Integer getIntNumberEvaluators() {
-        return intNumberEvaluators;
+    public String getPaTxDescripcion() {
+        return paTxDescripcion;
+    }
+
+    public void setPaTxDescripcion(String paTxDescripcion) {
+        this.paTxDescripcion = paTxDescripcion;
+    }
+
+    public String getPaTxCorreo() {
+        return paTxCorreo;
+    }
+
+    public void setPaTxCorreo(String paTxCorreo) {
+        this.paTxCorreo = paTxCorreo;
+    }
+
+    public String getPaTxNombreCargo() {
+        return paTxNombreCargo;
+    }
+
+    public void setPaTxNombreCargo(String paTxNombreCargo) {
+        this.paTxNombreCargo = paTxNombreCargo;
+    }
+
+    public Boolean getPaInRedCargada() {
+        return paInRedCargada;
+    }
+
+    public void setPaInRedCargada(Boolean paInRedCargada) {
+        this.paInRedCargada = paInRedCargada;
+    }
+
+    public Boolean getPaInRedVerificada() {
+        return paInRedVerificada;
+    }
+
+    public void setPaInRedVerificada(Boolean paInRedVerificada) {
+        this.paInRedVerificada = paInRedVerificada;
+    }
+
+    public Integer getPaIdTipoParticipante() {
+        return paIdTipoParticipante;
+    }
+
+    public void setPaIdTipoParticipante(Integer paIdTipoParticipante) {
+        this.paIdTipoParticipante = paIdTipoParticipante;
+    }
+
+    public Boolean getPaInAutoevaluar() {
+        return paInAutoevaluar;
+    }
+
+    public void setPaInAutoevaluar(Boolean paInAutoevaluar) {
+        this.paInAutoevaluar = paInAutoevaluar;
+    }
+
+    public Integer getPaIdEstado() {
+        return paIdEstado;
+    }
+
+    public void setPaIdEstado(Integer paIdEstado) {
+        this.paIdEstado = paIdEstado;
+    }
+
+    public String getPaStrEstado() {
+        return paStrEstado;
+    }
+
+    public void setPaStrEstado(String paStrEstado) {
+        this.paStrEstado = paStrEstado;
+    }
+
+    public BigDecimal getBdPorcentajeAvance() {
+        return bdPorcentajeAvance;
+    }
+
+    public void setBdPorcentajeAvance(BigDecimal bdPorcentajeAvance) {
+        this.bdPorcentajeAvance = bdPorcentajeAvance;
+    }
+
+    public Boolean getBoCheckFilterSeg() {
+        return boCheckFilterSeg;
+    }
+
+    public void setBoCheckFilterSeg(Boolean boCheckFilterSeg) {
+        this.boCheckFilterSeg = boCheckFilterSeg;
+    }
+
+    public String getStrDescCuestionario() {
+        return strDescCuestionario;
+    }
+
+    public void setStrDescCuestionario(String strDescCuestionario) {
+        this.strDescCuestionario = strDescCuestionario;
+    }
+
+    public String getStrCorrectoMasivo() {
+        return strCorrectoMasivo;
+    }
+
+    public void setStrCorrectoMasivo(String strCorrectoMasivo) {
+        this.strCorrectoMasivo = strCorrectoMasivo;
+    }
+
+    public String getStrObservacionMasivo() {
+        return strObservacionMasivo;
+    }
+
+    public void setStrObservacionMasivo(String strObservacionMasivo) {
+        this.strObservacionMasivo = strObservacionMasivo;
+    }
+
+    public Integer getIntCantidadRed() {
+        return intCantidadRed;
+    }
+
+    public void setIntCantidadRed(Integer intCantidadRed) {
+        this.intCantidadRed = intCantidadRed;
+    }
+
+    public Boolean getBlManual() {
+        return blManual;
+    }
+
+    public void setBlManual(Boolean blManual) {
+        this.blManual = blManual;
+    }
+
+    public Boolean getBlEnvioCorreo() {
+        return blEnvioCorreo;
+    }
+
+    public void setBlEnvioCorreo(Boolean blEnvioCorreo) {
+        this.blEnvioCorreo = blEnvioCorreo;
+    }
+
+    public Boolean getBlAnalizado() {
+        return blAnalizado;
+    }
+
+    public void setBlAnalizado(Boolean blAnalizado) {
+        this.blAnalizado = blAnalizado;
     }
 
     public Integer getInAnalizado() {
@@ -56,44 +194,6 @@ public class Evaluado implements Serializable{
 
     public void setInAnalizado(Integer inAnalizado) {
         this.inAnalizado = inAnalizado;
-    }
-
-    public void setIntNumberEvaluators(Integer intNumberEvaluators) {
-        this.intNumberEvaluators = intNumberEvaluators;
-    }
-
-    public Integer getIntNumberEvaluationFinished() {
-        return intNumberEvaluationFinished;
-    }
-
-    public boolean isBlAnalizado() {
-        return blAnalizado;
-    }
-
-    public void setBlAnalizado(boolean blAnalizado) {
-        this.blAnalizado = blAnalizado;
-    }
-    
-    
-
-    public void setIntNumberEvaluationFinished(Integer intNumberEvaluationFinished) {
-        this.intNumberEvaluationFinished = intNumberEvaluationFinished;
-    }
-
-    public boolean isBlManual() {
-        return blManual;
-    }
-
-    public boolean isBlEnvioCorreo() {
-        return blEnvioCorreo;
-    }
-
-    public void setBlEnvioCorreo(boolean blEnvioCorreo) {
-        this.blEnvioCorreo = blEnvioCorreo;
-    }
-    
-    public void setBlManual(boolean blManual) {
-        this.blManual = blManual;
     }
 
     public String getPaTxSexo() {
@@ -136,134 +236,28 @@ public class Evaluado implements Serializable{
         this.paTxAreaNegocio = paTxAreaNegocio;
     }
 
-    public String getStrCorrectoMasivo() {
-        return strCorrectoMasivo;
+    public String getPaTxImgUrl() {
+        return paTxImgUrl;
     }
 
-    public Integer getIntCantidadRed() {
-        return intCantidadRed;
+    public void setPaTxImgUrl(String paTxImgUrl) {
+        this.paTxImgUrl = paTxImgUrl;
     }
 
-    public void setIntCantidadRed(Integer intCantidadRed) {
-        this.intCantidadRed = intCantidadRed;
+    public Integer getIntNumberEvaluators() {
+        return intNumberEvaluators;
     }
 
-    public void setStrCorrectoMasivo(String strCorrectoMasivo) {
-        this.strCorrectoMasivo = strCorrectoMasivo;
+    public void setIntNumberEvaluators(Integer intNumberEvaluators) {
+        this.intNumberEvaluators = intNumberEvaluators;
     }
 
-    public String getStrObservacionMasivo() {
-        return strObservacionMasivo;
+    public Integer getIntNumberEvaluationFinished() {
+        return intNumberEvaluationFinished;
     }
 
-    public void setStrObservacionMasivo(String strObservacionMasivo) {
-        this.strObservacionMasivo = strObservacionMasivo;
-    }
-    
-    public String getStrDescCuestionario() {
-        return strDescCuestionario;
+    public void setIntNumberEvaluationFinished(Integer intNumberEvaluationFinished) {
+        this.intNumberEvaluationFinished = intNumberEvaluationFinished;
     }
 
-    public void setStrDescCuestionario(String strDescCuestionario) {
-        this.strDescCuestionario = strDescCuestionario;
-    }
-
-    public Boolean getBoCheckFilterSeg() {
-        return boCheckFilterSeg;
-    }
-
-    public void setBoCheckFilterSeg(Boolean boCheckFilterSeg) {
-        this.boCheckFilterSeg = boCheckFilterSeg;
-    }
-
-    public BigDecimal getBdPorcentajeAvance() {
-        return bdPorcentajeAvance;
-    }
-
-    public void setBdPorcentajeAvance(BigDecimal bdPorcentajeAvance) {
-        this.bdPorcentajeAvance = bdPorcentajeAvance;
-    }
-    
-    public String getPaStrEstado() {
-        return paStrEstado;
-    }
-
-    public void setPaStrEstado(String paStrEstado) {
-        this.paStrEstado = paStrEstado;
-    }
-
-    public Integer getPaIdParticipantePk() {
-        return paIdParticipantePk;
-    }
-
-    public void setPaIdParticipantePk(Integer paIdParticipantePk) {
-        this.paIdParticipantePk = paIdParticipantePk;
-    }
-
-    public String getPaTxDescripcion() {
-        return paTxDescripcion;
-    }
-
-    public void setPaTxDescripcion(String paTxDescripcion) {
-        this.paTxDescripcion = paTxDescripcion;
-    }
-
-    public String getPaTxCorreo() {
-        return paTxCorreo;
-    }
-
-    public void setPaTxCorreo(String paTxCorreo) {
-        this.paTxCorreo = paTxCorreo;
-    }
-
-    public String getPaTxNombreCargo() {
-        return paTxNombreCargo;
-    }
-
-    public void setPaTxNombreCargo(String paTxNombreCargo) {
-        this.paTxNombreCargo = paTxNombreCargo;
-    }
-
-    public boolean isPaInRedCargada() {
-        return paInRedCargada;
-    }
-
-    public void setPaInRedCargada(boolean paInRedCargada) {
-        this.paInRedCargada = paInRedCargada;
-    }
-
-    public boolean isPaInRedVerificada() {
-        return paInRedVerificada;
-    }
-
-    public void setPaInRedVerificada(boolean paInRedVerificada) {
-        this.paInRedVerificada = paInRedVerificada;
-    }
-
-    public Integer getPaIdTipoParticipante() {
-        return paIdTipoParticipante;
-    }
-
-    public void setPaIdTipoParticipante(Integer paIdTipoParticipante) {
-        this.paIdTipoParticipante = paIdTipoParticipante;
-    }
-
-    public boolean isPaInAutoevaluar() {
-        return paInAutoevaluar;
-    }
-
-    public void setPaInAutoevaluar(boolean paInAutoevaluar) {
-        this.paInAutoevaluar = paInAutoevaluar;
-    }
-
-    public Integer getPaIdEstado() {
-        return paIdEstado;
-    }
-
-    public void setPaIdEstado(Integer paIdEstado) {
-        this.paIdEstado = paIdEstado;
-    }
-    
 }
-
-

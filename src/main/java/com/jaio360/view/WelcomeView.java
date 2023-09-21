@@ -3,19 +3,17 @@ package com.jaio360.view;
 import com.jaio360.domain.ProyectoInfo;
 import com.jaio360.domain.UsuarioInfo;
 import com.jaio360.utils.Utilitarios;
-import static com.jaio360.view.BaseView.mostrarError;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Enumeration;
 import java.util.List;
 import javax.annotation.PostConstruct;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
+
 import javax.faces.context.FacesContext;
-import javax.servlet.http.HttpServletRequest;
+import javax.faces.bean.ViewScoped;
+import javax.faces.bean.ManagedBean;
 import javax.servlet.http.HttpSession;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -24,8 +22,6 @@ import org.apache.commons.logging.LogFactory;
 public class WelcomeView extends BaseView implements Serializable {
 
     private static Log log = LogFactory.getLog(WelcomeView.class);
-
-    private static final long serialVersionUID = -1L;
 
     private Integer intEvaluationPreferenceView;
     private List<ProyectoInfo> lstEvaluaciones;

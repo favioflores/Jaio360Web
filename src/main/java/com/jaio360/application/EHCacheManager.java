@@ -4,16 +4,8 @@
  */
 package com.jaio360.application;
 
-import com.jaio360.orm.Elemento;
-import com.jaio360.utils.Constantes;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Ehcache;
-import net.sf.ehcache.Element;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -25,8 +17,8 @@ import org.apache.commons.logging.LogFactory;
 public class EHCacheManager implements Serializable{
     
     private static Log log = LogFactory.getLog(EHCacheManager.class);
-    private static final CacheManager cacheManager;
-    private static Ehcache elementosCache;
+    //private static final CacheManager cacheManager;
+    //private static Ehcache elementosCache;
     
     static{
 
@@ -34,12 +26,13 @@ public class EHCacheManager implements Serializable{
         
         InputStream resourceAsStream = contextClassLoader.getResourceAsStream("ehcache.xml");
 
-        cacheManager = CacheManager.create(resourceAsStream);
+        //cacheManager = CacheManager. create(resourceAsStream);
 
     }
     
     public EHCacheManager(){
-        elementosCache = cacheManager.getEhcache("elementosCache");
+        //elementosCache = cacheManager.getEhcache("elementosCache");
+        System.out.println("com.jaio360.application.EHCacheManager.<init>()");
     }
 /*
     public void agregarElemento(Elemento objElemento){

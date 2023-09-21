@@ -2,10 +2,6 @@ package com.jaio360.domain;
 
 import java.io.Serializable;
 
-/**
- *
- * @author Favio
- */
 public class RelacionEvaluadoEvaluador implements Serializable {
 
     private Integer intIdEvaluado;
@@ -19,38 +15,6 @@ public class RelacionEvaluadoEvaluador implements Serializable {
     private Boolean blEvaluacionTerminada;
     private Boolean blEnvioCorreo;
     private String strColorRelacion;
-
-    public Integer getIntIdCuestionario() {
-        return intIdCuestionario;
-    }
-
-    public void setIntIdCuestionario(Integer intIdCuestionario) {
-        this.intIdCuestionario = intIdCuestionario;
-    }
-
-    public String getStrColorRelacion() {
-        return strColorRelacion;
-    }
-
-    public void setStrColorRelacion(String strColorRelacion) {
-        this.strColorRelacion = strColorRelacion;
-    }
-
-    public Boolean getBlEnvioCorreo() {
-        return blEnvioCorreo;
-    }
-
-    public void setBlEnvioCorreo(Boolean blEnvioCorreo) {
-        this.blEnvioCorreo = blEnvioCorreo;
-    }
-
-    public String getStrCorreoEvaluador() {
-        return strCorreoEvaluador;
-    }
-
-    public void setStrCorreoEvaluador(String strCorreoEvaluador) {
-        this.strCorreoEvaluador = strCorreoEvaluador;
-    }
 
     public Integer getIntIdEvaluado() {
         return intIdEvaluado;
@@ -76,12 +40,28 @@ public class RelacionEvaluadoEvaluador implements Serializable {
         this.intIdEvaluador = intIdEvaluador;
     }
 
+    public Integer getIntIdCuestionario() {
+        return intIdCuestionario;
+    }
+
+    public void setIntIdCuestionario(Integer intIdCuestionario) {
+        this.intIdCuestionario = intIdCuestionario;
+    }
+
     public String getStrDescEvaluador() {
         return strDescEvaluador;
     }
 
     public void setStrDescEvaluador(String strDescEvaluador) {
         this.strDescEvaluador = strDescEvaluador;
+    }
+
+    public String getStrCorreoEvaluador() {
+        return strCorreoEvaluador;
+    }
+
+    public void setStrCorreoEvaluador(String strCorreoEvaluador) {
+        this.strCorreoEvaluador = strCorreoEvaluador;
     }
 
     public Integer getIntIdRelacion() {
@@ -106,6 +86,22 @@ public class RelacionEvaluadoEvaluador implements Serializable {
 
     public void setBlEvaluacionTerminada(Boolean blEvaluacionTerminada) {
         this.blEvaluacionTerminada = blEvaluacionTerminada;
+    }
+
+    public Boolean getBlEnvioCorreo() {
+        return blEnvioCorreo;
+    }
+
+    public void setBlEnvioCorreo(Boolean blEnvioCorreo) {
+        this.blEnvioCorreo = blEnvioCorreo;
+    }
+
+    public String getStrColorRelacion() {
+        return strColorRelacion;
+    }
+
+    public void setStrColorRelacion(String strColorRelacion) {
+        this.strColorRelacion = strColorRelacion;
     }
 
 }

@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.ListUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.HibernateException;
@@ -501,10 +503,31 @@ public class ProyectoDAO implements Serializable {
                     + "where p.PO_ID_PROYECTO_FK = :idProject "
                     + "and p.PA_IN_AUTOEVALUAR = true "
                     + "and p.PA_ID_ESTADO = 69 "
+                    + "and not exists( "
+                    + "	select 1 from "
+                    + "		manage_user_relation mur, "
+                    + "		usuario uc, "
+                    + "		usuario um "
+                    + "	where "
+                    + "		mur.US_ID_CUENTA_FK = uc.US_ID_CUENTA_PK "
+                    + "		and mur.US_ID_CUENTA_MANAGER_PK = um.US_ID_CUENTA_PK "
+                    + "		and um.US_ID_CUENTA_PK = :idManager "
+                    + "		and uc.US_ID_MAIL = p.PA_TX_CORREO ) "
                     + "union all "
                     + "select re.RE_TX_CORREO as correo "
                     + "from red_evaluacion re "
-                    + "where re.PO_ID_PROYECTO_FK = :idProject ) dat, "
+                    + "where re.PO_ID_PROYECTO_FK = :idProject "
+                    + "and not exists( "
+                    + "	select 1 from "
+                    + "		manage_user_relation mur, "
+                    + "		usuario uc, "
+                    + "		usuario um "
+                    + "	where "
+                    + "		mur.US_ID_CUENTA_FK = uc.US_ID_CUENTA_PK "
+                    + "		and mur.US_ID_CUENTA_MANAGER_PK = um.US_ID_CUENTA_PK "
+                    + "		and um.US_ID_CUENTA_PK = :idManager "
+                    + "		and uc.US_ID_MAIL = re.RE_TX_CORREO )"
+                    + " ) dat, "
                     + "usuario u "
                     + "where u.US_ID_MAIL = dat.correo "
                     + ") det ");

@@ -3,8 +3,8 @@ package com.jaio360.domain;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-public class TarifaBean implements Serializable{
-    
+public class TarifaBean implements Serializable {
+
     private Integer taIdTarifaPk;
     private String taTxDescripcion;
     private BigDecimal taDePrecio;
@@ -14,22 +14,6 @@ public class TarifaBean implements Serializable{
     private Integer taNroContratoTotal;
     private Integer taNroContratoUso;
 
-    public Integer getTaNroContratoTotal() {
-        return taNroContratoTotal;
-    }
-
-    public void setTaNroContratoTotal(Integer taNroContratoTotal) {
-        this.taNroContratoTotal = taNroContratoTotal;
-    }
-
-    public Integer getTaNroContratoUso() {
-        return taNroContratoUso;
-    }
-
-    public void setTaNroContratoUso(Integer taNroContratoUso) {
-        this.taNroContratoUso = taNroContratoUso;
-    }
-    
     public Integer getTaIdTarifaPk() {
         return taIdTarifaPk;
     }
@@ -77,7 +61,21 @@ public class TarifaBean implements Serializable{
     public void setTaTxEstado(String taTxEstado) {
         this.taTxEstado = taTxEstado;
     }
-    
+
+    public Integer getTaNroContratoTotal() {
+        return taNroContratoTotal;
+    }
+
+    public void setTaNroContratoTotal(Integer taNroContratoTotal) {
+        this.taNroContratoTotal = taNroContratoTotal;
+    }
+
+    public Integer getTaNroContratoUso() {
+        return taNroContratoUso;
+    }
+
+    public void setTaNroContratoUso(Integer taNroContratoUso) {
+        this.taNroContratoUso = taNroContratoUso;
+    }
+
 }
-
-

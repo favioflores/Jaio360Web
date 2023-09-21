@@ -4,7 +4,6 @@ import com.jaio360.dao.ComponenteDAO;
 import com.jaio360.dao.ResultadoDAO;
 import com.jaio360.domain.DatosReporte;
 import com.jaio360.model.ModeloGeneral;
-import com.jaio360.model.ModeloNormal;
 import com.jaio360.orm.Componente;
 import com.jaio360.orm.Relacion;
 import com.jaio360.orm.ResultadoInfo;
@@ -13,7 +12,6 @@ import com.jaio360.utils.Utilitarios;
 import java.awt.Color;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -30,11 +28,8 @@ import net.sf.dynamicreports.report.builder.column.TextColumnBuilder;
 import net.sf.dynamicreports.report.builder.component.ComponentBuilder;
 import net.sf.dynamicreports.report.builder.component.MultiPageListBuilder;
 import net.sf.dynamicreports.report.builder.component.VerticalListBuilder;
-import net.sf.dynamicreports.report.constant.HorizontalAlignment;
-import net.sf.dynamicreports.report.constant.LineStyle;
 import net.sf.dynamicreports.report.constant.Orientation;
 import net.sf.dynamicreports.report.constant.Position;
-import net.sf.dynamicreports.report.constant.VerticalAlignment;
 import net.sf.dynamicreports.report.datasource.DRDataSource;
 import net.sf.dynamicreports.report.definition.ReportParameters;
 import net.sf.dynamicreports.report.definition.chart.DRIChartCustomizer;
@@ -66,9 +61,7 @@ public class ReporteIndividualCalificacionXCategoria implements Serializable {
         this.objDatosReporte = objDatosReporte;
 
         String strNombreReporte = strNameFile + Constantes.STR_EXTENSION_PDF;
-        
-        InputStream medida = new FileInputStream(map.get(Constantes.INT_PARAM_GRAF_MEDIDA) + Constantes.STR_EXTENSION_PNG);
-        
+
         try {
 
             List<Componente> lstCategorias = componenteDao.listaComponenteProyectoTipo(Utilitarios.obtenerProyecto().getIntIdProyecto(), objDatosReporte.getIntIdCuestionario(), Constantes.INT_ET_TIPO_COMPONENTE_CATEGORIA, null);
@@ -78,15 +71,19 @@ public class ReporteIndividualCalificacionXCategoria implements Serializable {
             for (Componente objComponente : lstCategorias) {
 
                 String strNombreReporteC = strNameFile + objComponente.getCoIdComponentePk() + Constantes.STR_EXTENSION_PDF;
-                JasperPdfExporterBuilder pdfExporterC = export.pdfExporter(Constantes.STR_INBOX_PRELIMINAR + File.separator + strNombreReporteC)
+                JasperPdfExporterBuilder pdfExporterC = export.pdfExporter(Utilitarios.getPathTempPreliminar() + File.separator + strNombreReporteC)
                         .setEncrypted(Boolean.FALSE);
+
+                InputStream medida = new FileInputStream(map.get(Constantes.INT_PARAM_GRAF_MEDIDA) + Constantes.STR_EXTENSION_PNG);
 
                 report().setTemplate(ModeloGeneral.reportTemplate)
                         .setSummaryWithPageHeaderAndFooter(Boolean.TRUE)
-                        .pageHeader(generaCabecera(map, objComponente, medida))
-                        .summary(generaConenido(intEvaluadoPk, objComponente))
-                        .pageFooter(generaPie(map))
+                        .pageHeader(ModeloGeneral.generaCabeceraConMetricasConComponentes(map, objComponente, medida, this.objDatosReporte))
+                        .summary(generaContenido(intEvaluadoPk, objComponente))
+                        .pageFooter(ModeloGeneral.generaPie(map))
                         .toPdf(pdfExporterC);
+
+                medida.close();
 
                 lstArchivos.add(strNombreReporteC);
 
@@ -97,14 +94,12 @@ public class ReporteIndividualCalificacionXCategoria implements Serializable {
 
         } catch (DRException ex) {
             log.error(ex);
-        } finally {
-            medida.close();
         }
 
         return strNombreReporte;
     }
 
-    private MultiPageListBuilder generaConenido(Integer intEvaluadoPk, Componente objCategoria) {
+    private MultiPageListBuilder generaContenido(Integer intEvaluadoPk, Componente objCategoria) {
 
         TextColumnBuilder<String> evaluacion = col.column("Evaluacion", "evaluacion", type.stringType());
         TextColumnBuilder<String> relacion = col.column("Relacion", "relacion", type.stringType());
@@ -173,8 +168,7 @@ public class ReporteIndividualCalificacionXCategoria implements Serializable {
             multiPageList.add(
                     cmp.horizontalList(
                             cmp.verticalList(
-                                    //cmp.text(i+". " +objComponente.getCoTxDescripcion()),
-                                    cmp.text(objComponente.getCoTxDescripcion()),
+                                    cmp.text(objComponente.getCoTxDescripcion().toUpperCase()).setStyle(ModeloGeneral.styleTextoRegular),
                                     cmp.horizontalList(
                                             cht.barChart().setCategory(evaluacion)
                                                     .seriesColorsByName(seriesColors)
@@ -187,8 +181,9 @@ public class ReporteIndividualCalificacionXCategoria implements Serializable {
                                                     .setShowValues(Boolean.FALSE)
                                                     .setShowTickLabels(Boolean.FALSE)
                                                     .setHeight(10)/* es util, en relacion de 10 por 1 categoria*/
+                                                    .setWidth(350)
                                                     .setShowTickMarks(Boolean.FALSE)
-                                                    .setCustomizer(new ReporteIndividualCalificacionXCategoria.ChartCustomizerBar()),
+                                                    .addCustomizer(new ReporteIndividualCalificacionXCategoria.ChartCustomizerBar()),
                                             crearDatosDelGrafico(objComponente, intEvaluadoPk)
                                     ))), vComentarios);
 
@@ -232,22 +227,22 @@ public class ReporteIndividualCalificacionXCategoria implements Serializable {
                 if (rel.equals(obj[0].toString())) {
                     blExiste = true;
                     bdFrec = new BigDecimal(obj[1].toString());
-                    datos.add(cmp.horizontalList(cmp.text("").setWidth(25),
-                            cmp.text("").setStyle(ModeloGeneral.styleContenidoDatos.setHorizontalAlignment(HorizontalAlignment.LEFT)).setWidth(25),
-                            cmp.text(obj[0].toString()).setStyle(ModeloGeneral.styleContenidoDatos.setHorizontalAlignment(HorizontalAlignment.RIGHT).setVerticalAlignment(VerticalAlignment.MIDDLE)).setWidth(60),
-                            cmp.text(Utilitarios.truncateTheDecimal(bdFrec, 2)).setStyle(ModeloGeneral.styleContenidoDatos.setHorizontalAlignment(HorizontalAlignment.RIGHT).setVerticalAlignment(VerticalAlignment.MIDDLE)).setWidth(60),
-                            cmp.text(obj[2].toString()).setStyle(ModeloGeneral.styleContenidoDatos.setHorizontalAlignment(HorizontalAlignment.RIGHT).setVerticalAlignment(VerticalAlignment.MIDDLE)).setWidth(35),
-                            cmp.text("").setWidth(25)));
+                    datos.add(cmp.horizontalList(
+                            cmp.horizontalGap(30),
+                            cmp.text(obj[0].toString()).setStyle(ModeloGeneral.styleContenidoDatos).setWidth(140),
+                            cmp.text(Utilitarios.truncateTheDecimal(bdFrec, 2)).setStyle(ModeloGeneral.styleContenidoDatos).setWidth(120),
+                            cmp.text(obj[2].toString()).setStyle(ModeloGeneral.styleContenidoDatos).setWidth(65))
+                    );
                 }
             }
 
             if (!blExiste) {
-                datos.add(cmp.horizontalList(cmp.text("").setWidth(25),
-                        cmp.text("").setStyle(ModeloGeneral.styleContenidoDatos.setHorizontalAlignment(HorizontalAlignment.LEFT)).setWidth(25),
-                        cmp.text(rel).setStyle(ModeloGeneral.styleContenidoDatos.setHorizontalAlignment(HorizontalAlignment.RIGHT).setVerticalAlignment(VerticalAlignment.MIDDLE)).setWidth(60),
-                        cmp.text(Utilitarios.truncateTheDecimal(bdFrec, 2)).setStyle(ModeloGeneral.styleContenidoDatos.setHorizontalAlignment(HorizontalAlignment.RIGHT).setVerticalAlignment(VerticalAlignment.MIDDLE)).setWidth(60),
-                        cmp.text("0").setStyle(ModeloGeneral.styleContenidoDatos.setHorizontalAlignment(HorizontalAlignment.RIGHT).setVerticalAlignment(VerticalAlignment.MIDDLE)).setWidth(35),
-                        cmp.text("").setWidth(25)));
+                datos.add(cmp.horizontalList(
+                        cmp.horizontalGap(30),
+                        cmp.text(rel).setStyle(ModeloGeneral.styleContenidoDatos).setWidth(140),
+                        cmp.text(Utilitarios.truncateTheDecimal(bdFrec, 2)).setStyle(ModeloGeneral.styleContenidoDatos).setWidth(120),
+                        cmp.text("0").setStyle(ModeloGeneral.styleContenidoDatos).setWidth(65))
+                );
             }
             //}
         }
@@ -280,9 +275,10 @@ public class ReporteIndividualCalificacionXCategoria implements Serializable {
 
             CategoryPlot categoryPlot = chart.getCategoryPlot();
             categoryPlot.setAxisOffset(new RectangleInsets(0, 0, 0, 0));
-            //FAFO6categoryPlot.setRangeGridlinePaint(Color.WHITE);
             categoryPlot.setDomainGridlinesVisible(false);
-            //FAFO5categoryPlot.setRangeGridlinesVisible(false);
+            categoryPlot.setRangeGridlinesVisible(true);// Muestra las lineas punteadas entre las barras
+            categoryPlot.setRangeGridlinePaint(ModeloGeneral.colorJAIOYellow);
+
             //categoryPlot.setBackgroundPaint(Color.white);
             categoryPlot.setOutlineVisible(false);
 
@@ -345,49 +341,6 @@ public class ReporteIndividualCalificacionXCategoria implements Serializable {
         }
 
         return dataSource;
-    }
-
-    private ComponentBuilder<?, ?> generaCabecera(Map map, Componente objComponente, InputStream medida) throws FileNotFoundException {
-
-        return cmp.verticalList(
-                cmp.verticalGap(5),//SALTO DE LINEA
-
-                cmp.horizontalList(
-                        cmp.text(objDatosReporte.getStrDescripcion().trim()).setStyle(ModeloGeneral.styleTituloPrincipal)
-                ),//SALTO DE LINEA
-                cmp.verticalGap(10),
-                cmp.horizontalList(
-                        cmp.text(objComponente.getCoTxDescripcion().trim()).setStyle(ModeloGeneral.styleSubtituloCab)
-                ) //,//SALTO DE LINEA
-                //cmp.line().setPen(stl.pen(new Float("0.1"), LineStyle.SOLID))
-                ,//SALTO DE LINEA
-                 cmp.verticalGap(15),//SALTO DE LINEA
-                cmp.horizontalList(
-                        //cmp.text("Medida").setStyle(styleColumnaSubtitulo).setWidth(350), 
-                        cmp.image(medida).setFixedDimension(250, 20),
-                        cmp.horizontalGap(100),
-                        cmp.text("Rel").setStyle(ModeloGeneral.styleColumnaSubtitulo).setWidth(140),
-                        cmp.text("Frec").setStyle(ModeloGeneral.styleColumnaSubtitulo).setWidth(120),
-                        cmp.text("N").setStyle(ModeloGeneral.styleColumnaSubtitulo).setWidth(65)
-                )
-        );
-    }
-
-    private ComponentBuilder<?, ?> generaPie(Map map) throws FileNotFoundException {
-
-        return cmp.horizontalList().add(cmp.line().setPen(stl.pen(new Float("0.25"), LineStyle.SOLID)))
-                .newRow()
-                .add(cmp.verticalGap(5))
-                .newRow()
-                .add(cmp.horizontalList(
-                        cmp.verticalList(
-                                cmp.text(objDatosReporte.getStrNombreEvaluado()).setStyle(ModeloNormal.styleFooterLeftBottomParam),
-                                cmp.text(objDatosReporte.getStrCuestionario()).setStyle(ModeloNormal.styleFooterLeftTopParam)
-                        ).setWidth(400),
-                        cmp.verticalList( //cmp.pageNumber().setStyle(ModeloNormal.styleFooterRightBottomParam)
-                                )
-                )
-                );
     }
 
 }

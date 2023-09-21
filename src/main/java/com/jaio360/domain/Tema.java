@@ -1,9 +1,6 @@
 package com.jaio360.domain;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 public class Tema implements Serializable {
 
@@ -11,11 +8,12 @@ public class Tema implements Serializable {
     private String strNombre;
     private String strImagen;
 
-    public Tema(Integer Id, String strNombre, String strImagen){
-    this.Id = Id;
-    this.strNombre = strNombre;
-    this.strImagen = strImagen;
+    public Tema(Integer Id, String strNombre, String strImagen) {
+        this.Id = Id;
+        this.strNombre = strNombre;
+        this.strImagen = strImagen;
     }
+
     public Integer getId() {
         return Id;
     }
@@ -39,5 +37,5 @@ public class Tema implements Serializable {
     public void setStrImagen(String strImagen) {
         this.strImagen = strImagen;
     }
-    
+
 }

@@ -59,9 +59,9 @@ public class ParticipanteDAO implements Serializable {
 
                 objParticipante.setPaIdTipoParticipante(Constantes.INT_ET_TIPO_PARTICIPANTE_EVALUADO);
                 objParticipante.setPaIdEstado(Constantes.INT_ET_ESTADO_EVALUADO_REGISTRADO);
-                objParticipante.setPaInAutoevaluar(obj.isPaInAutoevaluar());
-                objParticipante.setPaInRedCargada(obj.isPaInRedCargada());
-                objParticipante.setPaInRedVerificada(obj.isPaInRedVerificada());
+                objParticipante.setPaInAutoevaluar(obj.getPaInAutoevaluar());
+                objParticipante.setPaInRedCargada(obj.getPaInRedCargada());
+                objParticipante.setPaInRedVerificada(obj.getPaInRedVerificada());
                 objParticipante.setPaTxCorreo(obj.getPaTxCorreo());
                 objParticipante.setPaTxDescripcion(obj.getPaTxDescripcion());
                 objParticipante.setPaTxNombreCargo(obj.getPaTxNombreCargo());

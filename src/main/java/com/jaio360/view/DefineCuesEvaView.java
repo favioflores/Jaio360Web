@@ -19,10 +19,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
-import javax.faces.application.FacesMessage;
-import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
-import javax.faces.context.FacesContext;
+import javax.faces.bean.ManagedBean;
+
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -32,6 +32,8 @@ import org.apache.commons.logging.LogFactory;
  */
 @ManagedBean(name = "defineCuesEvaView")
 @ViewScoped
+
+
 public class DefineCuesEvaView extends BaseView implements Serializable {
 
     private static final Log log = LogFactory.getLog(DefineCuesEvaView.class);
@@ -54,6 +56,38 @@ public class DefineCuesEvaView extends BaseView implements Serializable {
     private Integer idCuestionario;
     private ElementoDAO objElementoDAO = new ElementoDAO();
 
+    public List<EvaluadoCuestionario> getLstEvaluados() {
+        return lstEvaluados;
+    }
+
+    public void setLstEvaluados(List<EvaluadoCuestionario> lstEvaluados) {
+        this.lstEvaluados = lstEvaluados;
+    }
+
+    public List<EvaluadoCuestionario> getLstEvaluadosAsignados() {
+        return lstEvaluadosAsignados;
+    }
+
+    public void setLstEvaluadosAsignados(List<EvaluadoCuestionario> lstEvaluadosAsignados) {
+        this.lstEvaluadosAsignados = lstEvaluadosAsignados;
+    }
+
+    public List<Cuestionario> getLstCuestionarios() {
+        return lstCuestionarios;
+    }
+
+    public void setLstCuestionarios(List<Cuestionario> lstCuestionarios) {
+        this.lstCuestionarios = lstCuestionarios;
+    }
+
+    public LinkedHashMap<String, String> getMapItemsCuestionarios() {
+        return mapItemsCuestionarios;
+    }
+
+    public void setMapItemsCuestionarios(LinkedHashMap<String, String> mapItemsCuestionarios) {
+        this.mapItemsCuestionarios = mapItemsCuestionarios;
+    }
+
     public Integer getIntCantidadPendientesAsignar() {
         return intCantidadPendientesAsignar;
     }
@@ -68,54 +102,6 @@ public class DefineCuesEvaView extends BaseView implements Serializable {
 
     public void setIntCantidadAsignados(Integer intCantidadAsignados) {
         this.intCantidadAsignados = intCantidadAsignados;
-    }
-
-    public List<EvaluadoCuestionario> getLstSelectedAsignados() {
-        return lstSelectedAsignados;
-    }
-
-    public void setLstSelectedAsignados(List<EvaluadoCuestionario> lstSelectedAsignados) {
-        this.lstSelectedAsignados = lstSelectedAsignados;
-    }
-
-    public List<EvaluadoCuestionario> getLstEvaluadosAsignados() {
-        return lstEvaluadosAsignados;
-    }
-
-    public void setLstEvaluadosAsignados(List<EvaluadoCuestionario> lstEvaluadosAsignados) {
-        this.lstEvaluadosAsignados = lstEvaluadosAsignados;
-    }
-
-    public Integer getIdCuestionario() {
-        return idCuestionario;
-    }
-
-    public void setIdCuestionario(Integer idCuestionario) {
-        this.idCuestionario = idCuestionario;
-    }
-
-    public List<EvaluadoCuestionario> getLstSelectedEvaluados() {
-        return lstSelectedEvaluados;
-    }
-
-    public void setLstSelectedEvaluados(List<EvaluadoCuestionario> lstSelectedEvaluados) {
-        this.lstSelectedEvaluados = lstSelectedEvaluados;
-    }
-
-    public Integer getIntItEstadoProyecto() {
-        return intItEstadoProyecto;
-    }
-
-    public LinkedHashMap<String, String> getMapItemsCuestionarios() {
-        return mapItemsCuestionarios;
-    }
-
-    public void setMapItemsCuestionarios(LinkedHashMap<String, String> mapItemsCuestionarios) {
-        this.mapItemsCuestionarios = mapItemsCuestionarios;
-    }
-
-    public void setIntItEstadoProyecto(Integer intItEstadoProyecto) {
-        this.intItEstadoProyecto = intItEstadoProyecto;
     }
 
     public Integer getIntCantidadEvadosVeri() {
@@ -150,22 +136,47 @@ public class DefineCuesEvaView extends BaseView implements Serializable {
         this.intCantidadCuesNConf = intCantidadCuesNConf;
     }
 
-    public List<EvaluadoCuestionario> getLstEvaluados() {
-        return lstEvaluados;
+    public List<EvaluadoCuestionario> getLstSelectedEvaluados() {
+        return lstSelectedEvaluados;
     }
 
-    public void setLstEvaluados(List<EvaluadoCuestionario> lstEvaluados) {
-        this.lstEvaluados = lstEvaluados;
+    public void setLstSelectedEvaluados(List<EvaluadoCuestionario> lstSelectedEvaluados) {
+        this.lstSelectedEvaluados = lstSelectedEvaluados;
     }
 
-    public List<Cuestionario> getLstCuestionarios() {
-        return lstCuestionarios;
+    public List<EvaluadoCuestionario> getLstSelectedAsignados() {
+        return lstSelectedAsignados;
     }
 
-    public void setLstCuestionarios(List<Cuestionario> lstCuestionarios) {
-        this.lstCuestionarios = lstCuestionarios;
+    public void setLstSelectedAsignados(List<EvaluadoCuestionario> lstSelectedAsignados) {
+        this.lstSelectedAsignados = lstSelectedAsignados;
     }
 
+    public Integer getIntItEstadoProyecto() {
+        return intItEstadoProyecto;
+    }
+
+    public void setIntItEstadoProyecto(Integer intItEstadoProyecto) {
+        this.intItEstadoProyecto = intItEstadoProyecto;
+    }
+
+    public Integer getIdCuestionario() {
+        return idCuestionario;
+    }
+
+    public void setIdCuestionario(Integer idCuestionario) {
+        this.idCuestionario = idCuestionario;
+    }
+
+    public ElementoDAO getObjElementoDAO() {
+        return objElementoDAO;
+    }
+
+    public void setObjElementoDAO(ElementoDAO objElementoDAO) {
+        this.objElementoDAO = objElementoDAO;
+    }
+
+    
     @PostConstruct
     public void init() {
 
@@ -181,7 +192,7 @@ public class DefineCuesEvaView extends BaseView implements Serializable {
 
         ProyectoDAO objProyectoDAO = new ProyectoDAO();
         Proyecto objProyecto = objProyectoDAO.obtenProyecto(Utilitarios.obtenerProyecto().getIntIdProyecto());
-        
+
         this.intItEstadoProyecto = objProyecto.getPoIdEstado();
 
         List<Cuestionario> lstCuestionarios = objCuestionarioDAO.obtenListaCuestionario(Utilitarios.obtenerProyecto().getIntIdProyecto());
@@ -354,15 +365,16 @@ public class DefineCuesEvaView extends BaseView implements Serializable {
         }
 
     }
-    public void eliminarRelacionCuestionario(Integer IdEvaluado){
+
+    public void eliminarRelacionCuestionario(Integer IdEvaluado) {
         try {
             CuestionarioDAO objCuestionarioDAO = new CuestionarioDAO();
             boolean result = objCuestionarioDAO.eliminaSeleccion(IdEvaluado, Utilitarios.obtenerProyecto().getIntIdProyecto());
-            
-            if(result){
+
+            if (result) {
                 mostrarAlertaInfo("relation.to.evaluation.deleted");
                 init();
-            }else{
+            } else {
                 mostrarAlertaError("error.was.occurred");
             }
         } catch (Exception e) {

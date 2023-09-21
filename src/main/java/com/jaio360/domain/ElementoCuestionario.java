@@ -3,8 +3,8 @@ package com.jaio360.domain;
 import com.jaio360.orm.Componente;
 import java.io.Serializable;
 
-public class ElementoCuestionario implements Serializable{
-    
+public class ElementoCuestionario implements Serializable {
+
     private String strTipo;
     private String strDescripcion;
     private String strColor;

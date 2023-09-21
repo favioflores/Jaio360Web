@@ -6,11 +6,7 @@ package com.jaio360.domain;
 
 import java.io.Serializable;
 
-/**
- *
- * @author Favio
- */
-public class EstadoPasosProyecto implements Serializable{
+public class EstadoPasosProyecto implements Serializable {
 
     private String strPaso;
     private String strActividad;
@@ -22,6 +18,14 @@ public class EstadoPasosProyecto implements Serializable{
         this.strActividad = strActividad;
         this.strEstado = strEstado;
         this.strUrl = strUrl;
+    }
+
+    public String getStrPaso() {
+        return strPaso;
+    }
+
+    public void setStrPaso(String strPaso) {
+        this.strPaso = strPaso;
     }
 
     public String getStrActividad() {
@@ -46,14 +50,6 @@ public class EstadoPasosProyecto implements Serializable{
 
     public void setStrUrl(String strUrl) {
         this.strUrl = strUrl;
-    }
-
-    public String getStrPaso() {
-        return strPaso;
-    }
-
-    public void setStrPaso(String strPaso) {
-        this.strPaso = strPaso;
     }
 
 }

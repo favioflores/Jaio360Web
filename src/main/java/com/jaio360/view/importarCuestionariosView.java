@@ -18,23 +18,26 @@ import com.jaio360.utils.Constantes;
 import com.jaio360.utils.Utilitarios;
 import com.jaio360.validator.validaTextoIngresado;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
+
 import javax.faces.context.FacesContext;
+import javax.faces.bean.ViewScoped;
+import javax.faces.bean.ManagedBean;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.RowEditEvent;
 import org.primefaces.model.DefaultStreamedContent;
@@ -54,8 +57,8 @@ public class importarCuestionariosView extends BaseView implements Serializable 
     private List<DosDatos> lstElementosDelCuestionarios;
     private List<ElementoCuestionario> lstElementoCuestionario;
     private UploadedFile inputFile;
-    private boolean processOk;
-    private boolean blExistPrevImport;
+    private Boolean processOk;
+    private Boolean blExistPrevImport;
     private StreamedContent fileImport;
     private Integer intIdEstadoProyecto;
 
@@ -64,31 +67,21 @@ public class importarCuestionariosView extends BaseView implements Serializable 
 
             ServletContext servletContext = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
 
-            String fullPath = servletContext.getRealPath(File.separator + "WEB-INF" + File.separator + "resources" + File.separator + "ModeloDeImportacionCuestionario.xls");
+            String fullPath = servletContext.getRealPath(File.separator + "resources" + File.separator + "other" + File.separator + "ModeloDeImportacionCuestionario.xlsx");
 
-            File objFile = new File(fullPath);
-
+            InputStream stream = new FileInputStream(fullPath);
+            
             fileImport = DefaultStreamedContent.builder()
-                    .name("ModeloDeImportacionCuestionario.xls")
-                    .contentType("application/vnd.ms-excel")
-                    .stream(() -> FacesContext.getCurrentInstance().getExternalContext().getResourceAsStream(File.separator + "WEB-INF" + File.separator + "resources" + File.separator + "ModeloDeImportacionCuestionario.xls"))
+                    .name("ModeloDeImportacionCuestionario.xlsx")
+                    .contentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+                    .stream(() -> stream)
                     .build();
 
         } catch (Exception ex) {
-            log.error(ex);
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_FATAL, "Modelo de importación de cuestionario", "No existe el documento. Por favor contactese con el administrador");
-            FacesContext.getCurrentInstance().addMessage(null, message);
+            mostrarError(log, ex);
         }
 
         return fileImport;
-    }
-
-    public boolean isBlExistPrevImport() {
-        return blExistPrevImport;
-    }
-
-    public void setBlExistPrevImport(boolean blExistPrevImport) {
-        this.blExistPrevImport = blExistPrevImport;
     }
 
     public List<ElementoCuestionario> getLstElementoCuestionario() {
@@ -119,12 +112,20 @@ public class importarCuestionariosView extends BaseView implements Serializable 
         this.strCuestionario = strCuestionario;
     }
 
-    public boolean isProcessOk() {
+    public Boolean getProcessOk() {
         return processOk;
     }
 
-    public void setProcessOk(boolean processOk) {
+    public void setProcessOk(Boolean processOk) {
         this.processOk = processOk;
+    }
+
+    public Boolean getBlExistPrevImport() {
+        return blExistPrevImport;
+    }
+
+    public void setBlExistPrevImport(Boolean blExistPrevImport) {
+        this.blExistPrevImport = blExistPrevImport;
     }
 
     public UploadedFile getInputFile() {
@@ -203,17 +204,17 @@ public class importarCuestionariosView extends BaseView implements Serializable 
         this.lstElementosDelCuestionarios = new ArrayList<>();
         this.lstElementoCuestionario = new ArrayList();
         this.lstErrores = new ArrayList<>();
-        
+
         inputFile = event.getFile();
 
         if (inputFile == null) {
             mostrarAlertaInfo("search.file.first");
         } else {
 
-            HSSFWorkbook xlsAvanzado;
+            XSSFWorkbook xlsAvanzado;
 
             try {
-                xlsAvanzado = new HSSFWorkbook(inputFile.getInputStream());
+                xlsAvanzado = new XSSFWorkbook(inputFile.getInputStream());
 
                 lstErrores = validaContenido(xlsAvanzado);
 
@@ -234,11 +235,11 @@ public class importarCuestionariosView extends BaseView implements Serializable 
 
     }
 
-    private List<ErrorBean> validaContenido(HSSFWorkbook xlsAvanzado) {
+    private List<ErrorBean> validaContenido(XSSFWorkbook xlsAvanzado) {
 
         validaTextoIngresado PatterTexto = new validaTextoIngresado();
 
-        HSSFSheet sheet = xlsAvanzado.getSheetAt(0);
+        XSSFSheet sheet = xlsAvanzado.getSheetAt(0);
         Iterator<Row> rowElementos = sheet.iterator();
 
         int contador = 0;
@@ -320,11 +321,11 @@ public class importarCuestionariosView extends BaseView implements Serializable 
         return lstErrores;
     }
 
-    private void procesaArchivo(HSSFWorkbook xlsAvanzado) {
+    private void procesaArchivo(XSSFWorkbook xlsAvanzado) {
 
         try {
 
-            HSSFSheet sheet = xlsAvanzado.getSheetAt(0);
+            XSSFSheet sheet = xlsAvanzado.getSheetAt(0);
             Iterator<Row> rowElementos = sheet.iterator();
             String key = null;
             CuestionarioImportado objCuestionarioImportado = null;
@@ -525,7 +526,7 @@ public class importarCuestionariosView extends BaseView implements Serializable 
     public void onRowEdit(RowEditEvent<DosDatos> event) {
 
         try {
-            
+
             ComponenteDAO objComponenteDao = new ComponenteDAO();
 
             Componente objComponente = objComponenteDao.obtenComponente(event.getObject().getIntComponente());

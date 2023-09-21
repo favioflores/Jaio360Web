@@ -29,6 +29,9 @@
         <property name="reIdEstado" type="int">
             <column name="RE_ID_ESTADO" not-null="true" />
         </property>
+        <property name="reDePonderacion" type="big_decimal">
+            <column name="RE_DE_PONDERACION" precision="15" scale="10" not-null="true" />
+        </property>
         <set name="relacionParticipantes" inverse="true">
             <key>
                 <column name="RE_ID_RELACION_FK" not-null="true" />

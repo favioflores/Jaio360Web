@@ -27,10 +27,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
+
+
 import javax.faces.context.FacesContext;
+import javax.faces.bean.ViewScoped;
+import javax.faces.bean.ManagedBean;
 import javax.servlet.http.HttpSession;
+
+
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -55,7 +59,7 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
     private Integer indexTocomment;
 
     private List<EvaluacionesXEjecutar> lstEvaluacionesXEjecutar;
-    private boolean blVisualGroup;
+    private Boolean blVisualGroup;
 
     private List<Componente> lstComponenteCerrada;
     private List<Componente> lstComponenteAbierta;
@@ -63,7 +67,7 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
     private List<DetalleMetrica> lstDetalleMetrica;
     private RelacionParticipanteId relacionParticipanteId;
 
-    private boolean blTerminado;
+    private Boolean blTerminado;
 
     public static int TIPO_COMPONENTE_CATEGORIA = 45;
     public static int TIPO_COMPONENTE_CERRADA = 46;
@@ -78,7 +82,7 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
     private Integer intRptaSeleccionada;
     private String[] strRptaComentario = new String[50];
     private LinkedHashMap<Integer, String> mapRespuestas;
-    private boolean isPreguntaCerradaActual;
+    private Boolean isPreguntaCerradaActual;
 
     /**
      * ** NUEVO PREGUNTA ABIERTA ***
@@ -94,20 +98,20 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
     private Integer intNroPreguntasActual;
     private Integer intNroTotalPreguntasRespondidas;
 
-    public List<EvaluacionesXEjecutar> getLstEvaluacionesXEjecutar() {
-        return lstEvaluacionesXEjecutar;
+    public String getStrDescCuestionario() {
+        return strDescCuestionario;
     }
 
-    public void setLstEvaluacionesXEjecutar(List<EvaluacionesXEjecutar> lstEvaluacionesXEjecutar) {
-        this.lstEvaluacionesXEjecutar = lstEvaluacionesXEjecutar;
+    public void setStrDescCuestionario(String strDescCuestionario) {
+        this.strDescCuestionario = strDescCuestionario;
     }
 
-    public Integer getIndexTocomment() {
-        return indexTocomment;
+    public String getStrDescEvaluado() {
+        return strDescEvaluado;
     }
 
-    public void setIndexTocomment(Integer indexTocomment) {
-        this.indexTocomment = indexTocomment;
+    public void setStrDescEvaluado(String strDescEvaluado) {
+        this.strDescEvaluado = strDescEvaluado;
     }
 
     public String getStrCargoEvaluado() {
@@ -134,116 +138,12 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
         this.strUrlImagen = strUrlImagen;
     }
 
-    public String getStrDescripcionPreguntaAbiertaActual() {
-        return strDescripcionPreguntaAbiertaActual;
+    public String getStrInstrucciones() {
+        return strInstrucciones;
     }
 
-    public void setStrDescripcionPreguntaAbiertaActual(String strDescripcionPreguntaAbiertaActual) {
-        this.strDescripcionPreguntaAbiertaActual = strDescripcionPreguntaAbiertaActual;
-    }
-
-    public String getStrRptaPreguntaAbierta() {
-        return strRptaPreguntaAbierta;
-    }
-
-    public void setStrRptaPreguntaAbierta(String strRptaPreguntaAbierta) {
-        this.strRptaPreguntaAbierta = strRptaPreguntaAbierta;
-    }
-
-    public boolean isIsPreguntaCerradaActual() {
-        return isPreguntaCerradaActual;
-    }
-
-    public boolean isBlVisualGroup() {
-        return blVisualGroup;
-    }
-
-    public void setBlVisualGroup(boolean blVisualGroup) {
-        this.blVisualGroup = blVisualGroup;
-    }
-
-    public void setIsPreguntaCerradaActual(boolean isPreguntaCerradaActual) {
-        this.isPreguntaCerradaActual = isPreguntaCerradaActual;
-    }
-
-    public List<PreguntaAbiertaBean> getLstPreguntasAbiertas() {
-        return lstPreguntasAbiertas;
-    }
-
-    public void setLstPreguntasAbiertas(List<PreguntaAbiertaBean> lstPreguntasAbiertas) {
-        this.lstPreguntasAbiertas = lstPreguntasAbiertas;
-    }
-
-    public Integer getIntNroPreguntasActual() {
-        return intNroPreguntasActual;
-    }
-
-    public void setIntNroPreguntasActual(Integer intNroPreguntasActual) {
-        this.intNroPreguntasActual = intNroPreguntasActual;
-    }
-
-    public Integer getIntNroTotalPreguntas() {
-        return intNroTotalPreguntas;
-    }
-
-    public void setIntNroTotalPreguntas(Integer intNroTotalPreguntas) {
-        this.intNroTotalPreguntas = intNroTotalPreguntas;
-    }
-
-    public Integer getIntNroTotalPreguntasRespondidas() {
-        return intNroTotalPreguntasRespondidas;
-    }
-
-    public void setIntNroTotalPreguntasRespondidas(Integer intNroTotalPreguntasRespondidas) {
-        this.intNroTotalPreguntasRespondidas = intNroTotalPreguntasRespondidas;
-    }
-
-    public String getStrDescripcionPreguntaCerradaActual() {
-        return strDescripcionPreguntaCerradaActual;
-    }
-
-    public void setStrDescripcionPreguntaCerradaActual(String strDescripcionPreguntaCerradaActual) {
-        this.strDescripcionPreguntaCerradaActual = strDescripcionPreguntaCerradaActual;
-    }
-
-    public LinkedHashMap<Integer, String> getMapRespuestas() {
-        return mapRespuestas;
-    }
-
-    public List<PreguntaCerradaBean> getLstPreguntasCerradas() {
-        return lstPreguntasCerradas;
-    }
-
-    public void setLstPreguntasCerradas(List<PreguntaCerradaBean> lstPreguntasCerradas) {
-        this.lstPreguntasCerradas = lstPreguntasCerradas;
-    }
-
-    public void setMapRespuestas(LinkedHashMap<Integer, String> mapRespuestas) {
-        this.mapRespuestas = mapRespuestas;
-    }
-
-    public Integer getIntRptaSeleccionada() {
-        return intRptaSeleccionada;
-    }
-
-    public void setIntRptaSeleccionada(Integer intRptaSeleccionada) {
-        this.intRptaSeleccionada = intRptaSeleccionada;
-    }
-
-    public String[] getStrRptaComentario() {
-        return strRptaComentario;
-    }
-
-    public void setStrRptaComentario(String[] strRptaComentario) {
-        this.strRptaComentario = strRptaComentario;
-    }
-
-    public String getStrDescEvaluado() {
-        return strDescEvaluado;
-    }
-
-    public void setStrDescEvaluado(String strDescEvaluado) {
-        this.strDescEvaluado = strDescEvaluado;
+    public void setStrInstrucciones(String strInstrucciones) {
+        this.strInstrucciones = strInstrucciones;
     }
 
     public String getStrAgradecimiento() {
@@ -254,28 +154,28 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
         this.strAgradecimiento = strAgradecimiento;
     }
 
-    public boolean isBlTerminado() {
-        return blTerminado;
+    public Integer getIndexTocomment() {
+        return indexTocomment;
     }
 
-    public void setBlTerminado(boolean blTerminado) {
-        this.blTerminado = blTerminado;
+    public void setIndexTocomment(Integer indexTocomment) {
+        this.indexTocomment = indexTocomment;
     }
 
-    public String getStrInstrucciones() {
-        return strInstrucciones;
+    public List<EvaluacionesXEjecutar> getLstEvaluacionesXEjecutar() {
+        return lstEvaluacionesXEjecutar;
     }
 
-    public void setStrInstrucciones(String strInstrucciones) {
-        this.strInstrucciones = strInstrucciones;
+    public void setLstEvaluacionesXEjecutar(List<EvaluacionesXEjecutar> lstEvaluacionesXEjecutar) {
+        this.lstEvaluacionesXEjecutar = lstEvaluacionesXEjecutar;
     }
 
-    public String getStrDescCuestionario() {
-        return strDescCuestionario;
+    public Boolean getBlVisualGroup() {
+        return blVisualGroup;
     }
 
-    public void setStrDescCuestionario(String strDescCuestionario) {
-        this.strDescCuestionario = strDescCuestionario;
+    public void setBlVisualGroup(Boolean blVisualGroup) {
+        this.blVisualGroup = blVisualGroup;
     }
 
     public List<Componente> getLstComponenteCerrada() {
@@ -294,6 +194,14 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
         this.lstComponenteAbierta = lstComponenteAbierta;
     }
 
+    public List<Componente> getLstCompComentario() {
+        return lstCompComentario;
+    }
+
+    public void setLstCompComentario(List<Componente> lstCompComentario) {
+        this.lstCompComentario = lstCompComentario;
+    }
+
     public List<DetalleMetrica> getLstDetalleMetrica() {
         return lstDetalleMetrica;
     }
@@ -310,13 +218,143 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
         this.relacionParticipanteId = relacionParticipanteId;
     }
 
-    public List<Componente> getLstCompComentario() {
-        return lstCompComentario;
+    public Boolean getBlTerminado() {
+        return blTerminado;
     }
 
-    public void setLstCompComentario(List<Componente> lstCompComentario) {
-        this.lstCompComentario = lstCompComentario;
+    public void setBlTerminado(Boolean blTerminado) {
+        this.blTerminado = blTerminado;
     }
+
+    public static int getTIPO_COMPONENTE_CATEGORIA() {
+        return TIPO_COMPONENTE_CATEGORIA;
+    }
+
+    public static void setTIPO_COMPONENTE_CATEGORIA(int TIPO_COMPONENTE_CATEGORIA) {
+        EjecutarEvaluacionView.TIPO_COMPONENTE_CATEGORIA = TIPO_COMPONENTE_CATEGORIA;
+    }
+
+    public static int getTIPO_COMPONENTE_CERRADA() {
+        return TIPO_COMPONENTE_CERRADA;
+    }
+
+    public static void setTIPO_COMPONENTE_CERRADA(int TIPO_COMPONENTE_CERRADA) {
+        EjecutarEvaluacionView.TIPO_COMPONENTE_CERRADA = TIPO_COMPONENTE_CERRADA;
+    }
+
+    public static int getTIPO_COMPONENTE_ABIERTA() {
+        return TIPO_COMPONENTE_ABIERTA;
+    }
+
+    public static void setTIPO_COMPONENTE_ABIERTA(int TIPO_COMPONENTE_ABIERTA) {
+        EjecutarEvaluacionView.TIPO_COMPONENTE_ABIERTA = TIPO_COMPONENTE_ABIERTA;
+    }
+
+    public static int getTIPO_COMPONENTE_COMENTARIO() {
+        return TIPO_COMPONENTE_COMENTARIO;
+    }
+
+    public static void setTIPO_COMPONENTE_COMENTARIO(int TIPO_COMPONENTE_COMENTARIO) {
+        EjecutarEvaluacionView.TIPO_COMPONENTE_COMENTARIO = TIPO_COMPONENTE_COMENTARIO;
+    }
+
+    public List<PreguntaCerradaBean> getLstPreguntasCerradas() {
+        return lstPreguntasCerradas;
+    }
+
+    public void setLstPreguntasCerradas(List<PreguntaCerradaBean> lstPreguntasCerradas) {
+        this.lstPreguntasCerradas = lstPreguntasCerradas;
+    }
+
+    public String getStrDescripcionPreguntaCerradaActual() {
+        return strDescripcionPreguntaCerradaActual;
+    }
+
+    public void setStrDescripcionPreguntaCerradaActual(String strDescripcionPreguntaCerradaActual) {
+        this.strDescripcionPreguntaCerradaActual = strDescripcionPreguntaCerradaActual;
+    }
+
+    public Integer getIntRptaSeleccionada() {
+        return intRptaSeleccionada;
+    }
+
+    public void setIntRptaSeleccionada(Integer intRptaSeleccionada) {
+        this.intRptaSeleccionada = intRptaSeleccionada;
+    }
+
+    public String[] getStrRptaComentario() {
+        return strRptaComentario;
+    }
+
+    public void setStrRptaComentario(String[] strRptaComentario) {
+        this.strRptaComentario = strRptaComentario;
+    }
+
+    public LinkedHashMap<Integer, String> getMapRespuestas() {
+        return mapRespuestas;
+    }
+
+    public void setMapRespuestas(LinkedHashMap<Integer, String> mapRespuestas) {
+        this.mapRespuestas = mapRespuestas;
+    }
+
+    public Boolean getIsPreguntaCerradaActual() {
+        return isPreguntaCerradaActual;
+    }
+
+    public void setIsPreguntaCerradaActual(Boolean isPreguntaCerradaActual) {
+        this.isPreguntaCerradaActual = isPreguntaCerradaActual;
+    }
+
+    public List<PreguntaAbiertaBean> getLstPreguntasAbiertas() {
+        return lstPreguntasAbiertas;
+    }
+
+    public void setLstPreguntasAbiertas(List<PreguntaAbiertaBean> lstPreguntasAbiertas) {
+        this.lstPreguntasAbiertas = lstPreguntasAbiertas;
+    }
+
+    public String getStrRptaPreguntaAbierta() {
+        return strRptaPreguntaAbierta;
+    }
+
+    public void setStrRptaPreguntaAbierta(String strRptaPreguntaAbierta) {
+        this.strRptaPreguntaAbierta = strRptaPreguntaAbierta;
+    }
+
+    public String getStrDescripcionPreguntaAbiertaActual() {
+        return strDescripcionPreguntaAbiertaActual;
+    }
+
+    public void setStrDescripcionPreguntaAbiertaActual(String strDescripcionPreguntaAbiertaActual) {
+        this.strDescripcionPreguntaAbiertaActual = strDescripcionPreguntaAbiertaActual;
+    }
+
+    public Integer getIntNroTotalPreguntas() {
+        return intNroTotalPreguntas;
+    }
+
+    public void setIntNroTotalPreguntas(Integer intNroTotalPreguntas) {
+        this.intNroTotalPreguntas = intNroTotalPreguntas;
+    }
+
+    public Integer getIntNroPreguntasActual() {
+        return intNroPreguntasActual;
+    }
+
+    public void setIntNroPreguntasActual(Integer intNroPreguntasActual) {
+        this.intNroPreguntasActual = intNroPreguntasActual;
+    }
+
+    public Integer getIntNroTotalPreguntasRespondidas() {
+        return intNroTotalPreguntasRespondidas;
+    }
+
+    public void setIntNroTotalPreguntasRespondidas(Integer intNroTotalPreguntasRespondidas) {
+        this.intNroTotalPreguntasRespondidas = intNroTotalPreguntasRespondidas;
+    }
+    
+    
 
     public void siguientePregunta() {
 
@@ -550,7 +588,7 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
 
             this.lstEvaluacionesXEjecutar = objProyectoInfo.getLstEvaluacionesXEjecutar();
 
-            if (objProyectoInfo.isBoDefineArtificio()) {
+            if (objProyectoInfo.getBoDefineArtificio()) {
                 strDescEvaluado = ""
                         + objProyectoInfo.getStrNombreEvaluado();
             } else {
@@ -627,7 +665,7 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
             RelacionParticipanteDAO relacionParticipanteDAO = new RelacionParticipanteDAO();
             int a = 0;
             for (EvaluacionesXEjecutar objEvaluacionesXEjecutar : lstEvaluacionesXEjecutar) {
-                if (!objEvaluacionesXEjecutar.isBlAutoevaluation()) {
+                if (!objEvaluacionesXEjecutar.getBlAutoevaluation()) {
                     objEvaluacionesXEjecutar.setRelacionParticipanteId(relacionParticipanteDAO.obtenRelacionParticipanteId(objProyectoInfo, objEvaluacionesXEjecutar.getStrCorreoEvaluador(), objEvaluacionesXEjecutar.getIdParticipante()));
                 }
 
@@ -700,7 +738,7 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
 
             if (session.getAttribute("evalInfo") == null) {
                 if (objUsuarioInfo.getManagingDirector()|| objUsuarioInfo.getCountryManager()|| objUsuarioInfo.getProjectManager()) {
-                    if (objProyectoInfo.isBoDefineArtificio()) {
+                    if (objProyectoInfo.getBoDefineArtificio()) {
                         FacesContext.getCurrentInstance().getExternalContext().redirect("stepFive.jsf");
                     } else {
                         FacesContext.getCurrentInstance().getExternalContext().redirect("welcome.jsf");
@@ -714,7 +752,7 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
 
                     /* GUARDA RESPUESTAS PREGUNTAS CERRADAS */
                     for (PreguntaCerradaBean objPreguntaCerradaBean : objEvaluacionesXEjecutar.getLstPreguntasCerradas()) {
-                        if (objPreguntaCerradaBean.isBlRespondido()) {
+                        if (objPreguntaCerradaBean.getBlRespondido()) {
                             guardarResultadoEval(objPreguntaCerradaBean.getId().toString(), objPreguntaCerradaBean.getIdRespuesta().toString(), null, idProyecto, objEvaluacionesXEjecutar, null);
                         }
 
@@ -764,7 +802,7 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
             ProyectoInfo objProyectoInfo = Utilitarios.obtenerEvaluacion();
 
             if (objUsuarioInfo.getManagingDirector()|| objUsuarioInfo.getCountryManager()|| objUsuarioInfo.getProjectManager()) {
-                if (objProyectoInfo.isBoDefineArtificio()) {
+                if (objProyectoInfo.getBoDefineArtificio()) {
                     FacesContext.getCurrentInstance().getExternalContext().redirect("stepFive.jsf");
                 } else {
                     FacesContext.getCurrentInstance().getExternalContext().redirect("welcome.jsf");

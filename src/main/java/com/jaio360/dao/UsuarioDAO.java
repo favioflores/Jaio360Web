@@ -62,6 +62,39 @@ public class UsuarioDAO implements Serializable {
 
         return id;
     }
+    
+    public boolean actualizaManageUserRelation(ManageUserRelation manageUserRelation) throws HibernateException {
+        boolean correcto = true;
+
+        try {
+            iniciaOperacion();
+            
+            Query query = sesion.createQuery(
+                    "update ManageUserRelation m "
+                    + " set m.maFeVerificationExpired = :newDateExpired , "
+                    + " m.maHashLinkVerificacion = :newToken "
+                    + " where m.usIdCuentaManagerPk = :idManager "
+                    + "   and m.usuario.usIdCuentaPk = :idClient ");
+                    
+            query.setTimestamp("newDateExpired", manageUserRelation.getMaFeVerificationExpired());
+            query.setString("newToken", manageUserRelation.getMaHashLinkVerificacion());
+            query.setInteger("idManager", manageUserRelation.getUsIdCuentaManagerPk());
+            query.setInteger("idClient", manageUserRelation.getUsuario().getUsIdCuentaPk());
+            
+            query.executeUpdate();
+            
+            tx.commit();
+            
+        } catch (HibernateException he) {
+            manejaExcepcion(he);
+            throw he;
+        } finally {
+            sesion.close();
+        }
+
+        return correcto;
+    }
+
 
     public boolean actualizaUsuario(Usuario usuario) throws HibernateException {
         boolean correcto = true;

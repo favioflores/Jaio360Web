@@ -54,14 +54,6 @@ public class UsuarioSaldoBean implements Serializable {
         this.intUtilizadoIndividual = intUtilizadoIndividual;
     }
 
-    public Integer getIntUtilizadoMasivo() {
-        return intUtilizadoMasivo;
-    }
-
-    public void setIntUtilizadoMasivo(Integer intUtilizadoMasivo) {
-        this.intUtilizadoMasivo = intUtilizadoMasivo;
-    }
-    
     public Integer getIntTotalMasivo() {
         return intTotalMasivo;
     }
@@ -86,6 +78,12 @@ public class UsuarioSaldoBean implements Serializable {
         this.intReservadoMasivo = intReservadoMasivo;
     }
 
-    
-    
+    public Integer getIntUtilizadoMasivo() {
+        return intUtilizadoMasivo;
+    }
+
+    public void setIntUtilizadoMasivo(Integer intUtilizadoMasivo) {
+        this.intUtilizadoMasivo = intUtilizadoMasivo;
+    }
+
 }

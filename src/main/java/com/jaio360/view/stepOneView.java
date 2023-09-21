@@ -6,14 +6,17 @@ import com.jaio360.utils.Utilitarios;
 import java.io.IOException;
 import java.io.Serializable;
 import javax.annotation.PostConstruct;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
+
 import javax.faces.context.FacesContext;
+import javax.faces.bean.ViewScoped;
+import javax.faces.bean.ManagedBean;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 @ManagedBean(name = "stepOneView")
 @ViewScoped
+
 public class stepOneView extends BaseView implements Serializable {
 
     private static Log log = LogFactory.getLog(stepOneView.class);
@@ -26,20 +29,20 @@ public class stepOneView extends BaseView implements Serializable {
 
     private Integer activeIndex;
 
-    public UsuarioInfo getObjUsuarioInfoProxy() {
-        return objUsuarioInfoProxy;
-    }
-
-    public void setObjUsuarioInfoProxy(UsuarioInfo objUsuarioInfoProxy) {
-        this.objUsuarioInfoProxy = objUsuarioInfoProxy;
-    }
-
     public ProyectoInfo getObjProyectoInfo() {
         return objProyectoInfo;
     }
 
     public void setObjProyectoInfo(ProyectoInfo objProyectoInfo) {
         this.objProyectoInfo = objProyectoInfo;
+    }
+
+    public UsuarioInfo getObjUsuarioInfoProxy() {
+        return objUsuarioInfoProxy;
+    }
+
+    public void setObjUsuarioInfoProxy(UsuarioInfo objUsuarioInfoProxy) {
+        this.objUsuarioInfoProxy = objUsuarioInfoProxy;
     }
 
     public Integer getActiveIndex() {

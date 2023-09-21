@@ -2,8 +2,8 @@ package com.jaio360.domain;
 
 import java.io.Serializable;
 
-public class Evaluador implements Serializable{
-    
+public class Evaluador implements Serializable {
+
     private Integer reIdParticipantePk;
     private String reTxDescripcion;
     private String reTxNombreCargo;
@@ -14,76 +14,12 @@ public class Evaluador implements Serializable{
     private Integer intCorrelativo;
     private String strCorrectoMasivo;
     private String strObservacionMasivo;
-    
+
     private String reTxSexo;
     private Integer reNrEdad;
     private Integer reNrTiempoTrabajo;
     private String reTxOcupacion;
     private String reTxAreaNegocio;
-
-    public String getReTxSexo() {
-        return reTxSexo;
-    }
-
-    public void setReTxSexo(String reTxSexo) {
-        this.reTxSexo = reTxSexo;
-    }
-
-    public Integer getReNrEdad() {
-        return reNrEdad;
-    }
-
-    public void setReNrEdad(Integer reNrEdad) {
-        this.reNrEdad = reNrEdad;
-    }
-
-    public Integer getReNrTiempoTrabajo() {
-        return reNrTiempoTrabajo;
-    }
-
-    public void setReNrTiempoTrabajo(Integer reNrTiempoTrabajo) {
-        this.reNrTiempoTrabajo = reNrTiempoTrabajo;
-    }
-
-    public String getReTxOcupacion() {
-        return reTxOcupacion;
-    }
-
-    public void setReTxOcupacion(String reTxOcupacion) {
-        this.reTxOcupacion = reTxOcupacion;
-    }
-
-    public String getReTxAreaNegocio() {
-        return reTxAreaNegocio;
-    }
-
-    public void setReTxAreaNegocio(String reTxAreaNegocio) {
-        this.reTxAreaNegocio = reTxAreaNegocio;
-    }
-
-    public String getReTxNombreCargo() {
-        return reTxNombreCargo;
-    }
-
-    public void setReTxNombreCargo(String reTxNombreCargo) {
-        this.reTxNombreCargo = reTxNombreCargo;
-    }
-
-    public String getStrCorrectoMasivo() {
-        return strCorrectoMasivo;
-    }
-
-    public void setStrCorrectoMasivo(String strCorrectoMasivo) {
-        this.strCorrectoMasivo = strCorrectoMasivo;
-    }
-
-    public String getStrObservacionMasivo() {
-        return strObservacionMasivo;
-    }
-
-    public void setStrObservacionMasivo(String strObservacionMasivo) {
-        this.strObservacionMasivo = strObservacionMasivo;
-    }
 
     public Integer getReIdParticipantePk() {
         return reIdParticipantePk;
@@ -99,6 +35,14 @@ public class Evaluador implements Serializable{
 
     public void setReTxDescripcion(String reTxDescripcion) {
         this.reTxDescripcion = reTxDescripcion;
+    }
+
+    public String getReTxNombreCargo() {
+        return reTxNombreCargo;
+    }
+
+    public void setReTxNombreCargo(String reTxNombreCargo) {
+        this.reTxNombreCargo = reTxNombreCargo;
     }
 
     public String getReTxCorreo() {
@@ -140,7 +84,61 @@ public class Evaluador implements Serializable{
     public void setIntCorrelativo(Integer intCorrelativo) {
         this.intCorrelativo = intCorrelativo;
     }
-    
+
+    public String getStrCorrectoMasivo() {
+        return strCorrectoMasivo;
+    }
+
+    public void setStrCorrectoMasivo(String strCorrectoMasivo) {
+        this.strCorrectoMasivo = strCorrectoMasivo;
+    }
+
+    public String getStrObservacionMasivo() {
+        return strObservacionMasivo;
+    }
+
+    public void setStrObservacionMasivo(String strObservacionMasivo) {
+        this.strObservacionMasivo = strObservacionMasivo;
+    }
+
+    public String getReTxSexo() {
+        return reTxSexo;
+    }
+
+    public void setReTxSexo(String reTxSexo) {
+        this.reTxSexo = reTxSexo;
+    }
+
+    public Integer getReNrEdad() {
+        return reNrEdad;
+    }
+
+    public void setReNrEdad(Integer reNrEdad) {
+        this.reNrEdad = reNrEdad;
+    }
+
+    public Integer getReNrTiempoTrabajo() {
+        return reNrTiempoTrabajo;
+    }
+
+    public void setReNrTiempoTrabajo(Integer reNrTiempoTrabajo) {
+        this.reNrTiempoTrabajo = reNrTiempoTrabajo;
+    }
+
+    public String getReTxOcupacion() {
+        return reTxOcupacion;
+    }
+
+    public void setReTxOcupacion(String reTxOcupacion) {
+        this.reTxOcupacion = reTxOcupacion;
+    }
+
+    public String getReTxAreaNegocio() {
+        return reTxAreaNegocio;
+    }
+
+    public void setReTxAreaNegocio(String reTxAreaNegocio) {
+        this.reTxAreaNegocio = reTxAreaNegocio;
+    }
+
 }
-
-

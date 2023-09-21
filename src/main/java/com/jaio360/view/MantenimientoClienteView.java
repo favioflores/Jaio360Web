@@ -21,7 +21,6 @@ import com.jaio360.utils.EncryptDecrypt;
 import com.jaio360.utils.Utilitarios;
 import static com.jaio360.view.BaseView.mostrarError;
 import static com.jaio360.view.BaseView.msg;
-import java.io.IOException;
 import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -32,12 +31,15 @@ import java.util.Locale;
 import java.util.Properties;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
+
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
+import javax.faces.bean.ViewScoped;
+import javax.faces.bean.ManagedBean;
 import javax.servlet.http.HttpSession;
+
+
 import org.apache.commons.lang.CharEncoding;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -48,7 +50,6 @@ import org.apache.velocity.exception.MethodInvocationException;
 import org.apache.velocity.exception.ParseErrorException;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.hibernate.HibernateException;
-import org.jfree.ui.about.ProjectInfo;
 
 @ManagedBean(name = "mantenimientoClienteView")
 @ViewScoped
@@ -79,7 +80,7 @@ public class MantenimientoClienteView extends BaseView implements Serializable {
     private String usTxDescripcionEmpresa;
     private Integer usIdTipoDocumento;
     private String usTxDocumento;
-    private boolean isEdit;
+    private Boolean isEdit;
     private Integer pais;
     private Integer ciudad;
     private String strContraseniaNueva;
@@ -92,72 +93,8 @@ public class MantenimientoClienteView extends BaseView implements Serializable {
     private ElementoDAO objElementoDAO = new ElementoDAO();
     private UsuarioDAO objUsuarioDAO = new UsuarioDAO();
 
-    public List<ProyectoInfo> getLstProjectsClient() {
-        return lstProjectsClient;
-    }
-
-    public void setLstProjectsClient(List<ProyectoInfo> lstProjectsClient) {
-        this.lstProjectsClient = lstProjectsClient;
-    }
-
-    public Integer getUsIdCuentaPkCP() {
-        return usIdCuentaPkCP;
-    }
-
-    public void setUsIdCuentaPkCP(Integer usIdCuentaPkCP) {
-        this.usIdCuentaPkCP = usIdCuentaPkCP;
-    }
-
-    public String getStrContraseniaNuevaCP() {
-        return strContraseniaNuevaCP;
-    }
-
-    public void setStrContraseniaNuevaCP(String strContraseniaNuevaCP) {
-        this.strContraseniaNuevaCP = strContraseniaNuevaCP;
-    }
-
-    public String getStrContraseniaReNuevaCP() {
-        return strContraseniaReNuevaCP;
-    }
-
-    public void setStrContraseniaReNuevaCP(String strContraseniaReNuevaCP) {
-        this.strContraseniaReNuevaCP = strContraseniaReNuevaCP;
-    }
-
-    public String getStrContraseniaNueva() {
-        return strContraseniaNueva;
-    }
-
-    public void setStrContraseniaNueva(String strContraseniaNueva) {
-        this.strContraseniaNueva = strContraseniaNueva;
-    }
-
-    public String getStrContraseniaReNueva() {
-        return strContraseniaReNueva;
-    }
-
-    public void setStrContraseniaReNueva(String strContraseniaReNueva) {
-        this.strContraseniaReNueva = strContraseniaReNueva;
-    }
-
     public List<UsuarioInfo> getLstUsuario() {
         return lstUsuario;
-    }
-
-    public Integer getPais() {
-        return pais;
-    }
-
-    public void setPais(Integer pais) {
-        this.pais = pais;
-    }
-
-    public Integer getCiudad() {
-        return ciudad;
-    }
-
-    public void setCiudad(Integer ciudad) {
-        this.ciudad = ciudad;
     }
 
     public void setLstUsuario(List<UsuarioInfo> lstUsuario) {
@@ -324,14 +261,95 @@ public class MantenimientoClienteView extends BaseView implements Serializable {
         this.usTxDocumento = usTxDocumento;
     }
 
-    public boolean isIsEdit() {
+    public Boolean getIsEdit() {
         return isEdit;
     }
 
-    public void setIsEdit(boolean isEdit) {
+    public void setIsEdit(Boolean isEdit) {
         this.isEdit = isEdit;
     }
 
+    public Integer getPais() {
+        return pais;
+    }
+
+    public void setPais(Integer pais) {
+        this.pais = pais;
+    }
+
+    public Integer getCiudad() {
+        return ciudad;
+    }
+
+    public void setCiudad(Integer ciudad) {
+        this.ciudad = ciudad;
+    }
+
+    public String getStrContraseniaNueva() {
+        return strContraseniaNueva;
+    }
+
+    public void setStrContraseniaNueva(String strContraseniaNueva) {
+        this.strContraseniaNueva = strContraseniaNueva;
+    }
+
+    public String getStrContraseniaReNueva() {
+        return strContraseniaReNueva;
+    }
+
+    public void setStrContraseniaReNueva(String strContraseniaReNueva) {
+        this.strContraseniaReNueva = strContraseniaReNueva;
+    }
+
+    public Integer getUsIdCuentaPkCP() {
+        return usIdCuentaPkCP;
+    }
+
+    public void setUsIdCuentaPkCP(Integer usIdCuentaPkCP) {
+        this.usIdCuentaPkCP = usIdCuentaPkCP;
+    }
+
+    public String getStrContraseniaNuevaCP() {
+        return strContraseniaNuevaCP;
+    }
+
+    public void setStrContraseniaNuevaCP(String strContraseniaNuevaCP) {
+        this.strContraseniaNuevaCP = strContraseniaNuevaCP;
+    }
+
+    public String getStrContraseniaReNuevaCP() {
+        return strContraseniaReNuevaCP;
+    }
+
+    public void setStrContraseniaReNuevaCP(String strContraseniaReNuevaCP) {
+        this.strContraseniaReNuevaCP = strContraseniaReNuevaCP;
+    }
+
+    public List<ProyectoInfo> getLstProjectsClient() {
+        return lstProjectsClient;
+    }
+
+    public void setLstProjectsClient(List<ProyectoInfo> lstProjectsClient) {
+        this.lstProjectsClient = lstProjectsClient;
+    }
+
+    public ElementoDAO getObjElementoDAO() {
+        return objElementoDAO;
+    }
+
+    public void setObjElementoDAO(ElementoDAO objElementoDAO) {
+        this.objElementoDAO = objElementoDAO;
+    }
+
+    public UsuarioDAO getObjUsuarioDAO() {
+        return objUsuarioDAO;
+    }
+
+    public void setObjUsuarioDAO(UsuarioDAO objUsuarioDAO) {
+        this.objUsuarioDAO = objUsuarioDAO;
+    }
+
+    
     @PostConstruct
     public void init() {
 
@@ -567,7 +585,7 @@ public class MantenimientoClienteView extends BaseView implements Serializable {
                             mostrarAlertaError("cannot.use.email.for.client");
 
                             isValidAccount = false;
-/*
+                            /*
                             mostrarAlertaWarning("can.use.email.for.client");
 
                             UsuarioInfo objUsuarioInfo = new UsuarioInfo(objUsuario, null, false);
@@ -575,7 +593,7 @@ public class MantenimientoClienteView extends BaseView implements Serializable {
                             editarUsuario(objUsuarioInfo);
 
                             isValidAccount = true;
-*/
+                             */
                         } else {
 
                             mostrarAlertaError("cannot.use.email.for.client");
@@ -609,6 +627,7 @@ public class MantenimientoClienteView extends BaseView implements Serializable {
         try {
             ManageUserRelation objManageUserRelation = objUsuarioDAO.verifyClientForVerification(objUsuario.getStrEmail());
             renewToken(objManageUserRelation);
+            objUsuarioDAO.actualizaManageUserRelation(objManageUserRelation);
             sendMailForVerification(objManageUserRelation, objUsuario.getUsuario());
         } catch (HibernateException e) {
             mostrarError(log, e);
@@ -680,7 +699,6 @@ public class MantenimientoClienteView extends BaseView implements Serializable {
 
     }
 
-   
     public void resetFormUsuario() {
 
         this.usIdCuentaPk = null;

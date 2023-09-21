@@ -19,10 +19,12 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Properties;
 import javax.annotation.PostConstruct;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
+
 import javax.faces.context.FacesContext;
+import javax.faces.bean.ViewScoped;
+import javax.faces.bean.ManagedBean;
 import javax.servlet.http.HttpSession;
+
 import org.apache.commons.lang.CharEncoding;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -36,6 +38,7 @@ import org.hibernate.HibernateException;
 
 @ManagedBean(name = "verifyAccountView")
 @ViewScoped
+
 public class VerifyAccountView extends BaseView implements Serializable {
 
     private static Log log = LogFactory.getLog(VerifyAccountView.class);
@@ -102,15 +105,6 @@ public class VerifyAccountView extends BaseView implements Serializable {
         verifyAccountExists();
     }
 
-    private void clean() {
-        this.strEmail = null;
-        this.intOne = null;
-        this.intTwo = null;
-        this.intThree = null;
-        this.intFour = null;
-        this.intFive = null;
-    }
-
     public void verifyAccount() {
         try {
 
@@ -140,7 +134,7 @@ public class VerifyAccountView extends BaseView implements Serializable {
 
                             objUsuarioDAO.actualizaCliente(objManageUserRelation, objUsuario);
                             objUsuarioDAO.actualizaUsuario(objUsuario);
-                            
+
                             sendMailWithPassword(objUsuario);
 
                             //Redirige a la pantalla con mensaje que cuenta no existe
@@ -236,13 +230,12 @@ public class VerifyAccountView extends BaseView implements Serializable {
             context.put("TEMPLATEPASSWORDPARRAFO4", msg("TEMPLATEPASSWORDPARRAFO4"));
             context.put("TEMPLATEPASSWORDPARRAFO5", msg("TEMPLATEPASSWORDPARRAFO5"));
             context.put("TEMPLATEPASSWORDPARRAFO6", msg("TEMPLATEPASSWORDPARRAFO6"));
- 
+
             StringWriter out = new StringWriter();
             t.merge(context, out);
 
             NotificacionesDAO objNotificacionesDAO = new NotificacionesDAO();
 
-            
             Notificaciones objNotificaciones = new Notificaciones();
             objNotificaciones.setNoFeCreacion(new Date());
             objNotificaciones.setNoIdEstado(Constantes.INT_ET_ESTADO_NOTIFICACION_PENDIENTE);

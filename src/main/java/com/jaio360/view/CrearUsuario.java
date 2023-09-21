@@ -1,6 +1,5 @@
 package com.jaio360.view;
 
-import com.jaio360.application.EHCacheManager;
 import com.jaio360.dao.ElementoDAO;
 import com.jaio360.dao.UbigeoDAO;
 import com.jaio360.dao.UsuarioDAO;
@@ -19,16 +18,16 @@ import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
+import javax.faces.bean.ViewScoped;
+import javax.faces.bean.ManagedBean;
 import javax.servlet.http.HttpSession;
+
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.annotations.Proxy;
-import org.primefaces.PrimeFaces;
 
 /**
  *
@@ -36,7 +35,6 @@ import org.primefaces.PrimeFaces;
  */
 @ManagedBean(name = "crearUsuario")
 @ViewScoped
-@Proxy(lazy = false)
 public class CrearUsuario extends BaseView implements Serializable {
 
     private static final Log log = LogFactory.getLog(CrearUsuario.class);
@@ -93,30 +91,6 @@ public class CrearUsuario extends BaseView implements Serializable {
         this.intIdEstado = intIdEstado;
     }
 
-    public List<SelectItem> getLstEstados() {
-        return lstEstados;
-    }
-
-    public void setLstEstados(List<SelectItem> lstEstados) {
-        this.lstEstados = lstEstados;
-    }
-
-    public List<SelectItem> getLstTipoCuenta() {
-        return lstTipoCuenta;
-    }
-
-    public void setLstTipoCuenta(List<SelectItem> lstTipoCuenta) {
-        this.lstTipoCuenta = lstTipoCuenta;
-    }
-
-    public List<SelectItem> getLstTipoDocumento() {
-        return lstTipoDocumento;
-    }
-
-    public void setLstTipoDocumento(List<SelectItem> lstTipoDocumento) {
-        this.lstTipoDocumento = lstTipoDocumento;
-    }
-
     public Integer getIntIdTipoCuenta() {
         return intIdTipoCuenta;
     }
@@ -139,6 +113,30 @@ public class CrearUsuario extends BaseView implements Serializable {
 
     public void setUsuarioForm(Usuario usuarioForm) {
         this.usuarioForm = usuarioForm;
+    }
+
+    public List<SelectItem> getLstEstados() {
+        return lstEstados;
+    }
+
+    public void setLstEstados(List<SelectItem> lstEstados) {
+        this.lstEstados = lstEstados;
+    }
+
+    public List<SelectItem> getLstTipoCuenta() {
+        return lstTipoCuenta;
+    }
+
+    public void setLstTipoCuenta(List<SelectItem> lstTipoCuenta) {
+        this.lstTipoCuenta = lstTipoCuenta;
+    }
+
+    public List<SelectItem> getLstTipoDocumento() {
+        return lstTipoDocumento;
+    }
+
+    public void setLstTipoDocumento(List<SelectItem> lstTipoDocumento) {
+        this.lstTipoDocumento = lstTipoDocumento;
     }
 
     public List<Ubigeo> getLstPaises() {
@@ -173,6 +171,23 @@ public class CrearUsuario extends BaseView implements Serializable {
         this.ciudad = ciudad;
     }
 
+    public UsuarioDAO getObjUsuarioDAO() {
+        return objUsuarioDAO;
+    }
+
+    public void setObjUsuarioDAO(UsuarioDAO objUsuarioDAO) {
+        this.objUsuarioDAO = objUsuarioDAO;
+    }
+
+    public ElementoDAO getObjElementoDAO() {
+        return objElementoDAO;
+    }
+
+    public void setObjElementoDAO(ElementoDAO objElementoDAO) {
+        this.objElementoDAO = objElementoDAO;
+    }
+
+    
     private void poblarPaises() {
         lstCiudades = new ArrayList<>();
 

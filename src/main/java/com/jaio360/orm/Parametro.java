@@ -1,11 +1,12 @@
 package com.jaio360.orm;
 
-public class Parametro  implements java.io.Serializable {
+public class Parametro implements java.io.Serializable {
 
     private Integer paIdParametroPk;
     private Proyecto proyecto;
     private Integer paIdTipoParametro;
     private byte[] paTxPatron;
+    private Boolean paInHabilitado;
 
     public Integer getPaIdParametroPk() {
         return paIdParametroPk;
@@ -39,6 +40,13 @@ public class Parametro  implements java.io.Serializable {
         this.paTxPatron = paTxPatron;
     }
 
+    public Boolean getPaInHabilitado() {
+        return paInHabilitado;
+    }
+
+    public void setPaInHabilitado(Boolean paInHabilitado) {
+        this.paInHabilitado = paInHabilitado;
+    }
+
+    
 }
-
-

@@ -128,7 +128,7 @@ public class CargaAvanzadaDAO implements Serializable {
                     objParticipante.setPaInRedVerificada(true);
                     objParticipante.setPaTxCorreo(objEvaluadoAvan.getPaTxCorreo());
                     objParticipante.setPaIdTipoParticipante(Constantes.INT_ET_TIPO_PARTICIPANTE_EVALUADO);
-                    objParticipante.setPaInAutoevaluar(objEvaluadoAvan.isPaInAutoevaluar());
+                    objParticipante.setPaInAutoevaluar(objEvaluadoAvan.getPaInAutoevaluar());
                     objParticipante.setPaIdEstado(Constantes.INT_ET_ESTADO_EVALUADO_EN_PARAMETRIZACION);
                     objParticipante.setPaTxSexo(objEvaluadoAvan.getPaTxSexo());
                     objParticipante.setPaNrEdad(objEvaluadoAvan.getPaNrEdad());

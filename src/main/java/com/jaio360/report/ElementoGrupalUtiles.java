@@ -3,7 +3,9 @@ package com.jaio360.report;
 import com.jaio360.domain.DatosReporte;
 import com.jaio360.utils.Constantes;
 import com.jaio360.utils.Utilitarios;
+import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Font;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -34,7 +36,6 @@ import org.jfree.chart.entity.StandardEntityCollection;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.Plot;
 import org.jfree.chart.renderer.category.BarRenderer;
-import org.jfree.ui.RectangleInsets;
 
 public class ElementoGrupalUtiles implements Serializable {
 
@@ -44,8 +45,8 @@ public class ElementoGrupalUtiles implements Serializable {
     public String build(Integer intMaxRango, List lstFilesTemp) throws IOException {
 
         this.intMaxRango = intMaxRango;
-
-        JasperPdfExporterBuilder pdfExporter = export.pdfExporter(Constantes.STR_INBOX_PRELIMINAR + File.separator + strNombreReporte + Constantes.STR_EXTENSION_PDF).setEncrypted(Boolean.FALSE);
+ 
+        JasperPdfExporterBuilder pdfExporter = export.pdfExporter(Utilitarios.getPathTempPreliminar() + File.separator + strNombreReporte + Constantes.STR_EXTENSION_PDF).setEncrypted(Boolean.FALSE);
 
         TextColumnBuilder<String> evaluacion = col.column("Evaluacion", "evaluacion", type.stringType());
         TextColumnBuilder<String> relacion = col.column("Relacion", "relacion", type.stringType());
@@ -66,17 +67,18 @@ public class ElementoGrupalUtiles implements Serializable {
                     .setShowLegend(Boolean.FALSE)
                     .setShowLabels(Boolean.FALSE)
                     .setShowValues(Boolean.FALSE)
-                    //.setShowTickLabels(Boolean.FALSE)
+                    //.setShowTickLabels(Boolean.FALSE) // OCULTA LOS NÚMEROS DE X
                     .setHeight(8)
-                    //.setShowTickMarks(Boolean.FALSE)
-                    .setCustomizer(new ChartCustomizerHeader())
-                    .setWidth(110)).toPdf(pdfExporter);
+                    //.setShowTickMarks(Boolean.FALSE) // OCULTA LAS RAYITAS DEBAJO DE LOS NÚMEROS DE X
+                    .addCustomizer(new ChartCustomizerHeader())
+                    .setWidth(110))         
+                    .toPdf(pdfExporter);
 
             DatosReporte temppdf = new DatosReporte();
             temppdf.setStrID(strNombreReporte + Constantes.STR_EXTENSION_PDF);
             lstFilesTemp.add(temppdf);
 
-            File file = new File(Constantes.STR_INBOX_PRELIMINAR + File.separator + strNombreReporte + Constantes.STR_EXTENSION_PNG);
+            File file = new File(Utilitarios.getPathTempPreliminar() + File.separator + strNombreReporte + Constantes.STR_EXTENSION_PNG);
             if (file.exists()) {
                 DatosReporte temp = new DatosReporte();
                 temp.setStrID(strNombreReporte + Constantes.STR_EXTENSION_PNG);
@@ -116,30 +118,41 @@ public class ElementoGrupalUtiles implements Serializable {
             domainAxis.setAxisLineVisible(false);//este es util
             domainAxis.setTickMarksVisible(false);
             domainAxis.setTickLabelsVisible(false);
-
+            
             Plot plot = chart.getPlot();
             plot.setOutlineVisible(false);
-            plot.setInsets(new RectangleInsets(0, 0, 0, 0));//este sera util
+            //plot.setInsets(new RectangleInsets(0, 0, 0, 0));//este sera util
 
             CategoryPlot categoryPlot = chart.getCategoryPlot();
-            categoryPlot.setAxisOffset(new RectangleInsets(0, 0, 0, 0));
+            //categoryPlot.setAxisOffset(new RectangleInsets(0, 0, 0, 0));
             categoryPlot.setRangeGridlinePaint(Color.WHITE);
             categoryPlot.setDomainGridlinesVisible(false);
             categoryPlot.setRangeGridlinesVisible(false);
             categoryPlot.setBackgroundPaint(Color.white);
             categoryPlot.setOutlineVisible(false);
-            categoryPlot.setDomainGridlinesVisible(false);
             categoryPlot.setDomainCrosshairVisible(false);
 
             ValueAxis valueAsix = categoryPlot.getRangeAxis();
             valueAsix.setStandardTickUnits(NumberAxis.createIntegerTickUnits());//este es muy util
-
+            valueAsix.setTickLabelPaint(new Color(0, 117, 189)); // CAMBIA EL COLOR DE LOS VALORES DE X
+            valueAsix.setTickMarkPaint(new Color(255, 192, 16)); // CAMBIA EL COLOR A LAS RAYITAS DEBAJO DE LOS VALORES DE X
+            valueAsix.setTickMarkStroke(new BasicStroke(1)); // CAMBIA EL TIPO DE LINEA A LAS RAYITAS DEBAJO DE LOS VALORES DE X
+            valueAsix.setAxisLinePaint(new Color(255, 192, 16)); // CAMBIA EL COLOR DE LA LINEA DEL EJE X
+            valueAsix.setAxisLineStroke(new BasicStroke(1)); // CAMBIA EL TIPO DE LINEA DEL EJE X
+            
+            
+            Font font = new Font("Arial", Font.BOLD, 17);
+            valueAsix.setTickLabelFont(font); // PERMITE AJUSTA EL FONT DE LOS VALORES DE X
+            
+            Plot plotValueAxis = valueAsix.getPlot();
+            plotValueAxis.setOutlineVisible(false);
+            
             ChartRenderingInfo info = new ChartRenderingInfo(new StandardEntityCollection());
 
-            File file = new File(Constantes.STR_INBOX_PRELIMINAR + File.separator + strNombreReporte + Constantes.STR_EXTENSION_PNG);
+            File file = new File(Utilitarios.getPathTempPreliminar() + File.separator + strNombreReporte + Constantes.STR_EXTENSION_PNG);
 
             try {
-                ChartUtilities.saveChartAsPNG(file, chart, 426, 17, info);
+                ChartUtilities.saveChartAsPNG(file, chart, 430, 28, info);
             } catch (IOException ex) {
                 Logger.getLogger(ElementoGrupalUtiles.class.getName()).log(Level.SEVERE, null, ex);
             }

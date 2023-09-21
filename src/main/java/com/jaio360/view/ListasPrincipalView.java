@@ -5,7 +5,6 @@
 package com.jaio360.view;
 
 import com.jaio360.dao.ProyectoDAO;
-import com.jaio360.domain.EvaluacionesXEjecutar;
 import com.jaio360.domain.ProyectoInfo;
 import com.jaio360.domain.UsuarioInfo;
 import com.jaio360.orm.Proyecto;
@@ -16,17 +15,19 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import javax.annotation.PostConstruct;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
+import javax.faces.bean.ViewScoped;
+import javax.faces.bean.ManagedBean;
 import javax.servlet.http.HttpSession;
+
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.HibernateException;
 import org.primefaces.event.CellEditEvent;
 
 /**
@@ -35,6 +36,8 @@ import org.primefaces.event.CellEditEvent;
  */
 @ManagedBean(name = "listasPrincipalView")
 @ViewScoped
+
+
 public class ListasPrincipalView extends BaseView implements Serializable {
 
     private static Log log = LogFactory.getLog(ListasPrincipalView.class);
@@ -67,71 +70,55 @@ public class ListasPrincipalView extends BaseView implements Serializable {
     private Date txtFechaRegistroFinal;
     private Date txtFechaEjecucionInicial;
     private Date txtFechaEjecucionFinal;
-    private boolean blOcultos = false;
+    private Boolean blOcultos = false;
 
     private int intLicenciasRequeridas;
     private int intLicenciasDisponibles;
     private int intLicenciasReservadas;
-    private boolean blLicenciasReservadas;
+    private Boolean blLicenciasReservadas;
 
-    private boolean globalFilterOnly;
+    private Boolean globalFilterOnly;
     private List<ProyectoInfo> filteredProyectos;
     private String filterValue;
 
-    public String getFilterValue() {
-        return filterValue;
+    public List<ProyectoInfo> getLstProyectos() {
+        return lstProyectos;
     }
 
-    public void setFilterValue(String filterValue) {
-        this.filterValue = filterValue;
+    public void setLstProyectos(List<ProyectoInfo> lstProyectos) {
+        this.lstProyectos = lstProyectos;
     }
 
-    public boolean isGlobalFilterOnly() {
-        return globalFilterOnly;
+    public List<ProyectoInfo> getFiltroProyectos() {
+        return filtroProyectos;
     }
 
-    public void setGlobalFilterOnly(boolean globalFilterOnly) {
-        this.globalFilterOnly = globalFilterOnly;
+    public void setFiltroProyectos(List<ProyectoInfo> filtroProyectos) {
+        this.filtroProyectos = filtroProyectos;
     }
 
-    public List<ProyectoInfo> getFilteredProyectos() {
-        return filteredProyectos;
+    public List<ProyectoInfo> getLstEvaluaciones() {
+        return lstEvaluaciones;
     }
 
-    public void setFilteredProyectos(List<ProyectoInfo> filteredProyectos) {
-        this.filteredProyectos = filteredProyectos;
+    public void setLstEvaluaciones(List<ProyectoInfo> lstEvaluaciones) {
+        this.lstEvaluaciones = lstEvaluaciones;
     }
 
-    public boolean isBlLicenciasReservadas() {
-        return blLicenciasReservadas;
+    public List<ProyectoInfo> getLstRedes() {
+        return lstRedes;
     }
 
-    public void setBlLicenciasReservadas(boolean blLicenciasReservadas) {
-        this.blLicenciasReservadas = blLicenciasReservadas;
+    public void setLstRedes(List<ProyectoInfo> lstRedes) {
+        this.lstRedes = lstRedes;
     }
 
-    public int getIntLicenciasRequeridas() {
-        return intLicenciasRequeridas;
+    public List<SelectItem> getLstMetodologias() {
+        return lstMetodologias;
     }
 
-    public void setIntLicenciasRequeridas(int intLicenciasRequeridas) {
-        this.intLicenciasRequeridas = intLicenciasRequeridas;
-    }
-
-    public int getIntLicenciasDisponibles() {
-        return intLicenciasDisponibles;
-    }
-
-    public void setIntLicenciasDisponibles(int intLicenciasDisponibles) {
-        this.intLicenciasDisponibles = intLicenciasDisponibles;
-    }
-
-    public int getIntLicenciasReservadas() {
-        return intLicenciasReservadas;
-    }
-
-    public void setIntLicenciasReservadas(int intLicenciasReservadas) {
-        this.intLicenciasReservadas = intLicenciasReservadas;
+    public void setLstMetodologias(List<SelectItem> lstMetodologias) {
+        this.lstMetodologias = lstMetodologias;
     }
 
     public List<SelectItem> getLstEstados() {
@@ -142,12 +129,52 @@ public class ListasPrincipalView extends BaseView implements Serializable {
         this.lstEstados = lstEstados;
     }
 
-    public List<SelectItem> getLstMetodologias() {
-        return lstMetodologias;
+    public int getCantidadLstProyectos() {
+        return cantidadLstProyectos;
     }
 
-    public void setLstMetodologias(List<SelectItem> lstMetodologias) {
-        this.lstMetodologias = lstMetodologias;
+    public void setCantidadLstProyectos(int cantidadLstProyectos) {
+        this.cantidadLstProyectos = cantidadLstProyectos;
+    }
+
+    public int getCantidadLstEvaluaciones() {
+        return cantidadLstEvaluaciones;
+    }
+
+    public void setCantidadLstEvaluaciones(int cantidadLstEvaluaciones) {
+        this.cantidadLstEvaluaciones = cantidadLstEvaluaciones;
+    }
+
+    public int getCantidadLstRedes() {
+        return cantidadLstRedes;
+    }
+
+    public void setCantidadLstRedes(int cantidadLstRedes) {
+        this.cantidadLstRedes = cantidadLstRedes;
+    }
+
+    public ProyectoInfo getProyectoSeleccionado() {
+        return proyectoSeleccionado;
+    }
+
+    public void setProyectoSeleccionado(ProyectoInfo proyectoSeleccionado) {
+        this.proyectoSeleccionado = proyectoSeleccionado;
+    }
+
+    public ProyectoInfo getRedSeleccionada() {
+        return redSeleccionada;
+    }
+
+    public void setRedSeleccionada(ProyectoInfo redSeleccionada) {
+        this.redSeleccionada = redSeleccionada;
+    }
+
+    public ProyectoInfo getEvaluacionSeleccionada() {
+        return evaluacionSeleccionada;
+    }
+
+    public void setEvaluacionSeleccionada(ProyectoInfo evaluacionSeleccionada) {
+        this.evaluacionSeleccionada = evaluacionSeleccionada;
     }
 
     public String getTxtDescripcion() {
@@ -206,98 +233,76 @@ public class ListasPrincipalView extends BaseView implements Serializable {
         this.txtFechaEjecucionFinal = txtFechaEjecucionFinal;
     }
 
-    public boolean isBlOcultos() {
+    public Boolean getBlOcultos() {
         return blOcultos;
     }
 
-    public void setBlOcultos(boolean blOcultos) {
+    public void setBlOcultos(Boolean blOcultos) {
         this.blOcultos = blOcultos;
     }
 
-    public ProyectoInfo getRedSeleccionada() {
-        return redSeleccionada;
+    public int getIntLicenciasRequeridas() {
+        return intLicenciasRequeridas;
     }
 
-    public void setRedSeleccionada(ProyectoInfo redSeleccionada) {
-        this.redSeleccionada = redSeleccionada;
+    public void setIntLicenciasRequeridas(int intLicenciasRequeridas) {
+        this.intLicenciasRequeridas = intLicenciasRequeridas;
     }
 
-    public ProyectoInfo getEvaluacionSeleccionada() {
-        return evaluacionSeleccionada;
+    public int getIntLicenciasDisponibles() {
+        return intLicenciasDisponibles;
     }
 
-    public void setEvaluacionSeleccionada(ProyectoInfo evaluacionSeleccionada) {
-        this.evaluacionSeleccionada = evaluacionSeleccionada;
+    public void setIntLicenciasDisponibles(int intLicenciasDisponibles) {
+        this.intLicenciasDisponibles = intLicenciasDisponibles;
     }
 
+    public int getIntLicenciasReservadas() {
+        return intLicenciasReservadas;
+    }
+
+    public void setIntLicenciasReservadas(int intLicenciasReservadas) {
+        this.intLicenciasReservadas = intLicenciasReservadas;
+    }
+
+    public Boolean getBlLicenciasReservadas() {
+        return blLicenciasReservadas;
+    }
+
+    public void setBlLicenciasReservadas(Boolean blLicenciasReservadas) {
+        this.blLicenciasReservadas = blLicenciasReservadas;
+    }
+
+    public Boolean getGlobalFilterOnly() {
+        return globalFilterOnly;
+    }
+
+    public void setGlobalFilterOnly(Boolean globalFilterOnly) {
+        this.globalFilterOnly = globalFilterOnly;
+    }
+
+    public List<ProyectoInfo> getFilteredProyectos() {
+        return filteredProyectos;
+    }
+
+    public void setFilteredProyectos(List<ProyectoInfo> filteredProyectos) {
+        this.filteredProyectos = filteredProyectos;
+    }
+
+    public String getFilterValue() {
+        return filterValue;
+    }
+
+    public void setFilterValue(String filterValue) {
+        this.filterValue = filterValue;
+    }
+
+    
+    
     public ListasPrincipalView() {
         this.lstProyectos = new ArrayList<>();
         this.lstRedes = new ArrayList<>();
         this.lstEvaluaciones = new ArrayList<>();
-    }
-
-    public List<ProyectoInfo> getLstProyectos() {
-        return lstProyectos;
-    }
-
-    public void setLstProyectos(List<ProyectoInfo> lstProyectos) {
-        this.lstProyectos = lstProyectos;
-    }
-
-    public int getCantidadLstProyectos() {
-        return cantidadLstProyectos;
-    }
-
-    public void setCantidadLstProyectos(int cantidadLstProyectos) {
-        this.cantidadLstProyectos = cantidadLstProyectos;
-    }
-
-    public int getCantidadLstEvaluaciones() {
-        return cantidadLstEvaluaciones;
-    }
-
-    public void setCantidadLstEvaluaciones(int cantidadLstEvaluaciones) {
-        this.cantidadLstEvaluaciones = cantidadLstEvaluaciones;
-    }
-
-    public int getCantidadLstRedes() {
-        return cantidadLstRedes;
-    }
-
-    public void setCantidadLstRedes(int cantidadLstRedes) {
-        this.cantidadLstRedes = cantidadLstRedes;
-    }
-
-    public ProyectoInfo getProyectoSeleccionado() {
-        return proyectoSeleccionado;
-    }
-
-    public void setProyectoSeleccionado(ProyectoInfo proyectoSeleccionado) {
-        this.proyectoSeleccionado = proyectoSeleccionado;
-    }
-
-    public List<ProyectoInfo> getFiltroProyectos() {
-        return filtroProyectos;
-    }
-
-    public void setFiltroProyectos(List<ProyectoInfo> filtroProyectos) {
-        this.filtroProyectos = filtroProyectos;
-    }
-
-    public List<ProyectoInfo> getLstEvaluaciones() {
-        return lstEvaluaciones;
-    }
-
-    public void setLstEvaluaciones(List<ProyectoInfo> lstEvaluaciones) {
-        this.lstEvaluaciones = lstEvaluaciones;
-    }
-
-    public List<ProyectoInfo> getLstRedes() {
-        return lstRedes;
-    }
-
-    public void setLstRedes(List<ProyectoInfo> lstRedes) {
-        this.lstRedes = lstRedes;
     }
 
     @PostConstruct
@@ -314,13 +319,10 @@ public class ListasPrincipalView extends BaseView implements Serializable {
         session.removeAttribute("proyectoInfo");
 
         //UsuarioSesion objUsuarioSesion = new UsuarioSesion();
-
         //UsuarioInfo objUsuarioInfo = Utilitarios.obtenerUsuario();
-
         buscarProyectos();
-        
-        //Utilitarios.poblarListaEvaluaciones(objUsuarioInfo, this.lstEvaluaciones);
 
+        //Utilitarios.poblarListaEvaluaciones(objUsuarioInfo, this.lstEvaluaciones);
         if (!lstProyectos.isEmpty()) {
             this.cantidadLstProyectos = this.lstProyectos.size();
         }
@@ -436,8 +438,6 @@ public class ListasPrincipalView extends BaseView implements Serializable {
 
     }
 
-    
-
     public void borrarProyecto(Integer intIdProyecto) {
 
         try {
@@ -446,11 +446,11 @@ public class ListasPrincipalView extends BaseView implements Serializable {
 
             objProyectoDAO.eliminaProyecto(intIdProyecto);
 
-            mostrarAlertaInfo("adm.project.deleted", null);
+            mostrarAlertaInfo("adm.project.deleted");
 
             buscarProyectos();
 
-        } catch (Exception ex) {
+        } catch (HibernateException ex) {
             mostrarError(log, ex);
         }
 
@@ -477,14 +477,14 @@ public class ListasPrincipalView extends BaseView implements Serializable {
 
                 objProyectoDAO.actualizaProyecto(objProyecto);
 
-                mostrarAlertaInfo("adm.project.updated", null);
+                mostrarAlertaInfo("adm.project.updated");
 
                 init();
 
             } else {
-                mostrarAlertaError("adm.least.value", null);
+                mostrarAlertaError("adm.least.value");
             }
-        } catch (Exception e) {
+        } catch (HibernateException e) {
             mostrarError(log, e);
         }
     }
@@ -501,9 +501,9 @@ public class ListasPrincipalView extends BaseView implements Serializable {
 
             objProyectoDAO.actualizaProyecto(objProyecto);
 
-            mostrarAlertaInfo("adm.archived.project", null);
+            mostrarAlertaInfo("adm.archived.project");
 
-        } catch (Exception e) {
+        } catch (HibernateException e) {
             mostrarError(log, e);
         }
     }

@@ -154,7 +154,7 @@ public class ReporteTodasRespuestas extends BaseView implements Serializable {
 
         try {
 
-            String rutaArchivo = Constantes.STR_INBOX_PRELIMINAR + File.separator + objDatosReporte.getStrID();
+            String rutaArchivo = Utilitarios.getPathTempPreliminar() + File.separator + objDatosReporte.getStrID();
             File archivoXLS = new File(rutaArchivo);
 
             archivoXLS.createNewFile();

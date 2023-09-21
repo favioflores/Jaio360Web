@@ -211,7 +211,7 @@
                                                   sizeLimit="4000000" 
                                                   invalidSizeMessage="#{msg['max.file.upload.error']}"
                                                   validateContentType="true"
-                                                  allowTypes="/(\.|\/)(xls)$/"
+                                                  allowTypes="/(\.|\/)(xlsx)$/"
                                                   label="#{msg['search']}" 
                                                   uploadLabel="#{msg['upload']}" global="false"
                                                   cancelLabel="#{msg['cancel']}"
@@ -572,8 +572,20 @@
 
 
                         <c:if test="#{evaluadosView.lstRelacionBean.size()>0}">
+
                             <div class="p-field p-col-12 p-md-5">
+                                <p:card id="cardAverageRelationship">
+                                    <h3>#{msg['available.average.relationships']}</h3>
+                                    <p:toggleSwitch  id="switchPonderado" value="#{parametrosView.blPonderacionHabilitado}">
+                                        <p:ajax listener="#{parametrosView.activarParametro(87)}" resetValues="true" update="tblResultadoRelacion, cardAverageRelationship" />
+                                    </p:toggleSwitch>   
+                                    <p:staticMessage severity="#{evaluadosView.blTotalPonderado.doubleValue()==100.00?'info':'error'}" 
+                                                     detail="#{evaluadosView.blTotalPonderado.doubleValue()==100?msg['average.relationships.total.ok']:msg['average.relationships.total.error']} #{evaluadosView.blTotalPonderado.doubleValue()}%" style="width: 100%; margin-top: 5px; margin-left: 2px; margin-right: 2px;"
+                                                     rendered="#{parametrosView.blPonderacionHabilitado}"/>
+                                </p:card>
+                                <p:divider/>
                                 <p:card>
+
                                     <p:dataTable 
                                         id="tblResultadoRelacion"
                                         widgetVar="tblResultadoRelacion"
@@ -632,6 +644,13 @@
                                             <p:colorPicker value="#{rel.strColor}"   >
                                                 <p:ajax listener="#{evaluadosView.actualizaColorDefinitivo(rel)}" process="@this" update="@form"/>
                                             </p:colorPicker>
+                                        </p:column>
+                                        <p:column style="text-align: center" headerText="#{msg['signo.porcentaje']}" rendered="#{parametrosView.blPonderacionHabilitado}">
+                                            <p:inputNumber value="#{rel.dbPonderado}" minValue="0" maxValue="100" decimalPlaces="2"  symbol="%"
+                                                           symbolPosition="s" emptyValue="zero" >
+                                                <p:ajax event="blur" update="formRed:cardAverageRelationship, formRed:growl" listener="#{evaluadosView.actualizaPonderado(rel)}" />
+                                            </p:inputNumber>
+
                                         </p:column>
 
                                     </p:dataTable>
