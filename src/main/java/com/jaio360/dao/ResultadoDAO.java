@@ -298,52 +298,54 @@ public List listaReporteUnoWeighted(Componente objComponente, Integer intEvaluad
 
             iniciaOperacion();
             Query query = sesion.createSQLQuery(
-                    " SELECT                                                                                           "
-                    + "  TABLA.RELACION,                                                                                 "
-                    + "  TABLA.MEDIDA,                                                                              "
-                    + "  TABLA.CANTIDAD                                                                             "
-                    + "  FROM                                                                                            "
-                    + " (select rel.RE_TX_ABREVIATURA AS RELACION,                                                      "
-                    + "  	ifNULL(AVG(IF(dm.DE_NU_ORDEN is null, 0, dm.DE_NU_ORDEN + 1))* rel.RE_DE_PONDERACION / 100,0) AS MEDIDA,                            "
-                    + "         ifNULL(SUM(IF(RE_ID_PARTICIPANTE_FK is null, 0, 1)),0) AS CANTIDAD                                      "
-                    + "    from proyecto po,                                                                             "
-                    + "         relacion rel,                                                                            "
-                    + "         resultado res,                                                                           "
-                    + "         detalle_metrica dm                                                                       "
-                    + "   where po.PO_ID_PROYECTO_pK = ?                                                                 "
-                    + "     and po.PO_ID_PROYECTO_PK = rel.PO_ID_PROYECTO_FK                                             "
-                    + "     and rel.RE_ID_RELACION_PK = res.RE_ID_RELACION_FK                                            "
-                    + "     and dm.DE_ID_DETALLE_ESCALA_PK = res.DE_ID_DETALLE_ESCALA_FK                                 "
-                    + "     and res.CO_ID_COMPONENTE_FK = ?                                                              "
-                    + "     and res.PA_ID_PARTICIPANTE_FK = ? GROUP BY rel.RE_TX_ABREVIATURA          "
-                    + "  UNION ALL                                                                                       "
-                    + "  select 'AUTO' AS RELACION,                                                                      "
-                    + "  	ifNULL(AVG(IF(dm.DE_NU_ORDEN is null, 0, dm.DE_NU_ORDEN + 1)),0) AS MEDIDA,                            "
-                    + "         ifNULL(SUM(IF(PA_ID_PARTICIPANTE_FK is null, 0, 1)),0) AS CANTIDAD                                      "
-                    + "    from proyecto po,                                                                             "
-                    + "         resultado res                                                                            "
-                    + "         left join detalle_metrica dm on dm.DE_ID_DETALLE_ESCALA_PK = res.DE_ID_DETALLE_ESCALA_FK "
-                    + "   where po.PO_ID_PROYECTO_pK = ?                                                                 "
-                    + "     and po.PO_ID_PROYECTO_PK = res.PO_ID_PROYECTO_FK                                             "
-                    + "     and res.CO_ID_COMPONENTE_FK = ?                                                              "
-                    + "     AND res.RE_ID_RELACION_FK is null                                                            "
-                    + "     and res.PA_ID_PARTICIPANTE_FK = ?                                                            "
-                    + "     and res.RE_ID_PARTICIPANTE_FK is null                              "
-                    + "   UNION ALL                                                            "
-                    + "  select 'PROM' AS RELACION,                                             "
-                    + "  	ifNULL(AVG(IF(dm.DE_NU_ORDEN is null, 0, dm.DE_NU_ORDEN + 1)) * rel.RE_DE_PONDERACION / 100,0) AS MEDIDA,    "
-                    + "         ifNULL(SUM(IF(RE_ID_PARTICIPANTE_FK is null, 0, 1)),0) AS CANTIDAD              "
-                    + "    from proyecto po,                                                     "
-                    + "         relacion rel,                                                    "
-                    + "         resultado res,                                                   "
-                    + "         detalle_metrica dm                                               "
-                    + "   where po.PO_ID_PROYECTO_pK = ?                                         "
-                    + "     and po.PO_ID_PROYECTO_PK = rel.PO_ID_PROYECTO_FK                     "
-                    + "     and rel.RE_ID_RELACION_PK = res.RE_ID_RELACION_FK                    "
-                    + "     and dm.DE_ID_DETALLE_ESCALA_PK = res.DE_ID_DETALLE_ESCALA_FK         "
-                    + "     and res.CO_ID_COMPONENTE_FK = ?                                      "
-                    + "     and res.PA_ID_PARTICIPANTE_FK = ?                                    "
-                    + ") TABLA                         ");
+                    " SELECT                                                                                           " +
+"  TABLA.RELACION,                                                                                 " +
+"  TABLA.MEDIDA,                                                                              " +
+"  TABLA.CANTIDAD                                                                             " +
+"  FROM                                                                                            " +
+" (select rel.RE_TX_ABREVIATURA AS RELACION,                                                      " +
+"  	     AVG(IF(dm.DE_NU_ORDEN is null, 0, dm.DE_NU_ORDEN + 1)) AS MEDIDA,                            " +
+"         ifNULL(SUM(IF(RE_ID_PARTICIPANTE_FK is null, 0, 1)),0) AS CANTIDAD                                      " +
+"    from proyecto po,                                                                             " +
+"         relacion rel,                                                                            " +
+"         resultado res,                                                                           " +
+"         detalle_metrica dm                                                                       " +
+"   where po.PO_ID_PROYECTO_pK = ?                                                                 " +
+"     and po.PO_ID_PROYECTO_PK = rel.PO_ID_PROYECTO_FK                                             " +
+"     and rel.RE_ID_RELACION_PK = res.RE_ID_RELACION_FK                                            " +
+"     and dm.DE_ID_DETALLE_ESCALA_PK = res.DE_ID_DETALLE_ESCALA_FK                                 " +
+"     and res.CO_ID_COMPONENTE_FK = ?                                                              " +
+"     and res.PA_ID_PARTICIPANTE_FK = ? GROUP BY rel.RE_TX_ABREVIATURA          " +
+"  UNION ALL                                                                                       " +
+"  select 'AUTO' AS RELACION,                                                                      " +
+"  	ifNULL(AVG(IF(dm.DE_NU_ORDEN is null, 0, dm.DE_NU_ORDEN + 1)),0) AS MEDIDA,                            " +
+"         ifNULL(SUM(IF(PA_ID_PARTICIPANTE_FK is null, 0, 1)),0) AS CANTIDAD                                      " +
+"    from proyecto po,                                                                             " +
+"         resultado res                                                                            " +
+"         left join detalle_metrica dm on dm.DE_ID_DETALLE_ESCALA_PK = res.DE_ID_DETALLE_ESCALA_FK " +
+"   where po.PO_ID_PROYECTO_pK = ?                                                                 " +
+"     and po.PO_ID_PROYECTO_PK = res.PO_ID_PROYECTO_FK                                             " +
+"     and res.CO_ID_COMPONENTE_FK = ?                                                              " +
+"     AND res.RE_ID_RELACION_FK is null                                                            " +
+"     and res.PA_ID_PARTICIPANTE_FK = ?                                                            " +
+"     and res.RE_ID_PARTICIPANTE_FK is null                              " +
+"   UNION ALL          " +
+"   SELECT 'PROM', SUM(PROM.MEDIDA * PROM.PONDERADO / 100), SUM(PROM.CANTIDAD) FROM " +
+"  (select rel.RE_ID_RELACION_PK   AS RELACION,                                             " +
+"  		 AVG(IF(dm.DE_NU_ORDEN is null, 0, dm.DE_NU_ORDEN + 1)) AS MEDIDA,    " +
+"         ifNULL(SUM(IF(RE_ID_PARTICIPANTE_FK is null, 0, 1)),0) AS CANTIDAD," +
+"         rel.RE_DE_PONDERACION AS PONDERADO" +
+"    from proyecto po,                                                     " +
+"         relacion rel,                                                    " +
+"         resultado res,                                                   " +
+"         detalle_metrica dm                                               " +
+"   where po.PO_ID_PROYECTO_pK = ?                                         " +
+"     and po.PO_ID_PROYECTO_PK = rel.PO_ID_PROYECTO_FK                     " +
+"     and rel.RE_ID_RELACION_PK = res.RE_ID_RELACION_FK                    " +
+"     and dm.DE_ID_DETALLE_ESCALA_PK = res.DE_ID_DETALLE_ESCALA_FK         " +
+"     and res.CO_ID_COMPONENTE_FK = ?                                      " +
+"     and res.PA_ID_PARTICIPANTE_FK = ? GROUP BY rel.RE_ID_RELACION_PK ) PROM                                " +
+") TABLA  ");
 
             query.setInteger(0, Utilitarios.obtenerProyecto().getIntIdProyecto());
             query.setInteger(1, objComponente.getCoIdComponentePk());
@@ -477,39 +479,39 @@ public List listaReporteUnoWeighted(Componente objComponente, Integer intEvaluad
 
             iniciaOperacion();
             Query query = sesion.createSQLQuery(
-                    " SELECT                                                                   "
-                    + "  TABLA.RELACION,                                                         "
-                    + "  TABLA.MEDIDA,                                                      "
-                    + "  TABLA.CANTIDAD                                                     "
-                    + "  FROM                                                                    "
-                    + " (select 'PROM' AS RELACION,                                             "
-                    + "  	IFNULL(AVG(IF(dm.DE_NU_ORDEN is null, 0, dm.DE_NU_ORDEN + 1)) * rel.RE_DE_PONDERACION / 100,0) AS MEDIDA,    "
-                    + "         IFNULL(SUM(IF(RE_ID_PARTICIPANTE_FK is null, 0, 1)),0) AS CANTIDAD              "
-                    + "    from proyecto po,                                                     "
-                    + "         relacion rel,                                                    "
-                    + "         resultado res,                                                   "
-                    + "         detalle_metrica dm                                               "
-                    + "   where po.PO_ID_PROYECTO_pK = ?                                         "
-                    + "     and po.PO_ID_PROYECTO_PK = rel.PO_ID_PROYECTO_FK                     "
-                    + "     and rel.RE_ID_RELACION_PK = res.RE_ID_RELACION_FK                    "
-                    + "     and res.RE_ID_RELACION_FK is not null                                "
-                    + "     and dm.DE_ID_DETALLE_ESCALA_PK = res.DE_ID_DETALLE_ESCALA_FK         "
-                    + "     and res.CO_ID_COMPONENTE_FK = ?                                      "
-                    + "     and res.PA_ID_PARTICIPANTE_FK = ?                                    "
-                    + "  UNION ALL                                                               "
-                    + "  select 'AUTO' AS RELACION,                                              "
-                    + "  	IFNULL(AVG(IF(dm.DE_NU_ORDEN is null, 0, dm.DE_NU_ORDEN + 1)),0) AS MEDIDA,    "
-                    + " 	IFNULL(SUM(IF(PA_ID_PARTICIPANTE_FK is null, 0, 1)),0) AS CANTIDAD             "
-                    + "    from proyecto po,                                                     "
-                    + "         resultado res,                                                   "
-                    + "         detalle_metrica dm                                               "
-                    + "   where po.PO_ID_PROYECTO_pK = ?                                         "
-                    + "     and po.PO_ID_PROYECTO_PK = res.PO_ID_PROYECTO_FK                     "
-                    + "     and res.CO_ID_COMPONENTE_FK = ?                                      "
-                    + "     AND res.RE_ID_RELACION_FK is null                                    "
-                    + "     and res.PA_ID_PARTICIPANTE_FK = ?                                    "
-                    + "     and dm.DE_ID_DETALLE_ESCALA_PK = res.DE_ID_DETALLE_ESCALA_FK         "
-                    + "     and res.RE_ID_PARTICIPANTE_FK is null) TABLA ");
+                    "  SELECT                                                                   " +
+"  TABLA.RELACION,                                                         " +
+"  SUM(TABLA.MEDIDA),                                                      " +
+"  SUM(TABLA.CANTIDAD)                                                     " +
+"  FROM                                                                    " +
+" (select 'PROM' AS RELACION,                                             " +
+"  	IFNULL(AVG(IF(dm.DE_NU_ORDEN is null, 0, dm.DE_NU_ORDEN + 1)) * rel.RE_DE_PONDERACION / 100,0) AS MEDIDA,    " +
+"         IFNULL(SUM(IF(RE_ID_PARTICIPANTE_FK is null, 0, 1)),0) AS CANTIDAD              " +
+"    from proyecto po,                                                     " +
+"         relacion rel,                                                    " +
+"         resultado res,                                                   " +
+"         detalle_metrica dm                                               " +
+"   where po.PO_ID_PROYECTO_pK = ?                                         " +
+"     and po.PO_ID_PROYECTO_PK = rel.PO_ID_PROYECTO_FK                     " +
+"     and rel.RE_ID_RELACION_PK = res.RE_ID_RELACION_FK                    " +
+"     and res.RE_ID_RELACION_FK is not null                                " +
+"     and dm.DE_ID_DETALLE_ESCALA_PK = res.DE_ID_DETALLE_ESCALA_FK         " +
+"     and res.CO_ID_COMPONENTE_FK = ?                                      " +
+"     and res.PA_ID_PARTICIPANTE_FK = ? GROUP BY rel.RE_ID_RELACION_PK                                    " +
+"  UNION ALL                                                               " +
+"  select 'AUTO' AS RELACION,                                              " +
+"  	IFNULL(AVG(IF(dm.DE_NU_ORDEN is null, 0, dm.DE_NU_ORDEN + 1)),0) AS MEDIDA,    " +
+" 	IFNULL(SUM(IF(PA_ID_PARTICIPANTE_FK is null, 0, 1)),0) AS CANTIDAD             " +
+"    from proyecto po,                                                     " +
+"         resultado res,                                                   " +
+"         detalle_metrica dm                                               " +
+"   where po.PO_ID_PROYECTO_pK = ?                                         " +
+"     and po.PO_ID_PROYECTO_PK = res.PO_ID_PROYECTO_FK                     " +
+"     and res.CO_ID_COMPONENTE_FK = ?                                      " +
+"     AND res.RE_ID_RELACION_FK is null                                    " +
+"     and res.PA_ID_PARTICIPANTE_FK = ?                                    " +
+"     and dm.DE_ID_DETALLE_ESCALA_PK = res.DE_ID_DETALLE_ESCALA_FK         " +
+"     and res.RE_ID_PARTICIPANTE_FK is null) TABLA GROUP BY TABLA.RELACION ");
 
             query.setInteger(0, Utilitarios.obtenerProyecto().getIntIdProyecto());
             query.setInteger(1, objComponente.getCoIdComponentePk());
@@ -638,16 +640,15 @@ public List listaReporteUnoWeighted(Componente objComponente, Integer intEvaluad
 
             iniciaOperacion();
             Query query = sesion.createSQLQuery(
-" select 'PROM', SUM(PONDERADO) / 100, CANTIDAD from ( " +
-" SELECT RELACION, MEDIDA * re.RE_DE_PONDERACION as PONDERADO, CANTIDAD from ( " +
+"  select 'PROM', SUM(PONDERADO) / 100, SUM(CANTIDAD) from ( " +
+" SELECT INFO.RELACION, INFO.MEDIDA * re.RE_DE_PONDERACION as PONDERADO, INFO.CANTIDAD from ( " +
 " SELECT TABLA.RELACION as RELACION,                                                                          " +
 "        AVG(TABLA.MEDIDA) as MEDIDA,                                                                       " +
-"        COUNT(DISTINCT TABLA.EVALUADOR) as CANTIDAD                                                         " +
+"        COUNT(distinct TABLA.EVALUADOR) as CANTIDAD                                                         " +
 "        FROM                                                                                     " +
 "       (select res.RE_ID_RELACION_FK AS RELACION,                                                               " +
-"               ifnull(res.RE_ID_PARTICIPANTE_FK,res.PA_ID_PARTICIPANTE_FK||'EVA') AS EVALUADOR,  " +
-"               dm.DE_NU_ORDEN + 1 AS MEDIDA,                                                     " +
-"               ifnull(RE_ID_PARTICIPANTE_FK,res.PA_ID_PARTICIPANTE_FK||'EVA') AS CANTIDAD        " +
+"               res.RE_ID_PARTICIPANTE_FK AS EVALUADOR,  " +
+"               dm.DE_NU_ORDEN + 1 AS MEDIDA" +
 "          from proyecto po,                                                                      " +
 "               resultado res,                                                                    " +
 "               detalle_metrica dm,                                                               " +
@@ -684,26 +685,31 @@ public List listaReporteUnoWeighted(Componente objComponente, Integer intEvaluad
 
             iniciaOperacion();
             Query query = sesion.createSQLQuery(
-                    " select coc.CU_ID_CUESTIONARIO_FK,                                                 "
-                    + "        coc.CO_TX_DESCRIPCION as cuestionario,                                     "
-                    + "        cop.CO_TX_DESCRIPCION as pregunta,                                         "
-                    + "        IFNULL(AVG(dm.DE_NU_ORDEN + 1) * rel.RE_DE_PONDERACION / 100,0)                                                    "
-                    + "   from proyecto po,                                                               "
-                    + "        resultado res,                                                             "
-                    + "        detalle_metrica dm,                                                        "
-                    + "        componente cop,                                                            "
-                    + "        componente coc,                                                             "
-                    + "        relacion rel                                                             "
-                    + "  where po.PO_ID_PROYECTO_PK = ?                                                   "
-                    + "    and res.PO_ID_PROYECTO_FK = po.PO_ID_PROYECTO_PK                               "
-                    + "    and res.PA_ID_PARTICIPANTE_FK = ?                                              "
-                    + "    and dm.DE_ID_DETALLE_ESCALA_PK = res.DE_ID_DETALLE_ESCALA_FK                   "
-                    + "    and res.CO_ID_COMPONENTE_FK = cop.CO_ID_COMPONENTE_PK                          "
-                    + "    and coc.CO_ID_COMPONENTE_PK = cop.CO_ID_COMPONENTE_REF_FK                      "
-                    + "    and rel.RE_ID_RELACION_PK = res.RE_ID_RELACION_FK                                         "
-                    + "    and res.RE_ID_RELACION_FK is not null                                          "
-                    + "  GROUP BY coc.CU_ID_CUESTIONARIO_FK ,coc.CO_TX_DESCRIPCION, cop.CO_TX_DESCRIPCION "
-                    + "  ORDER BY 4 desc ");
+                    " SELECT CUE, CUESTIONARIO, PREGUNTA, SUM(MEDIDA) FROM (" +
+" select coc.CU_ID_CUESTIONARIO_FK AS CUE,                                                 " +
+"        coc.CO_TX_DESCRIPCION as CUESTIONARIO,                                     " +
+"        cop.CO_TX_DESCRIPCION as PREGUNTA,    " +
+"        rel.RE_ID_RELACION_PK," +
+"        ifNULL(AVG(dm.DE_NU_ORDEN + 1) * rel.RE_DE_PONDERACION / 100,0) AS MEDIDA                                         " +
+"   from proyecto po,                                                               " +
+"        resultado res,                                                             " +
+"        detalle_metrica dm,                                                        " +
+"        componente cop,                                                            " +
+"        componente coc,                                                             " +
+"        relacion rel                                                             " +
+"  where po.PO_ID_PROYECTO_PK = ?                                                   " +
+"    and res.PO_ID_PROYECTO_FK = po.PO_ID_PROYECTO_PK                               " +
+"    and res.PA_ID_PARTICIPANTE_FK = ?                                              " +
+"    and dm.DE_ID_DETALLE_ESCALA_PK = res.DE_ID_DETALLE_ESCALA_FK                   " +
+"    and res.CO_ID_COMPONENTE_FK = cop.CO_ID_COMPONENTE_PK                          " +
+"    and coc.CO_ID_COMPONENTE_PK = cop.CO_ID_COMPONENTE_REF_FK                      " +
+"    and rel.RE_ID_RELACION_PK = res.RE_ID_RELACION_FK                                         " +
+"    and res.RE_ID_RELACION_FK is not null                " +
+"    GROUP BY coc.CU_ID_CUESTIONARIO_FK,                                                 " +
+"        coc.CO_TX_DESCRIPCION ,                                     " +
+"        cop.CO_TX_DESCRIPCION ,    " +
+"        rel.RE_ID_RELACION_PK" +
+"  ) DATA GROUP BY CUE, CUESTIONARIO, PREGUNTA ORDER BY 4 desc ");
 
             query.setInteger(0, Utilitarios.obtenerProyecto().getIntIdProyecto());
             query.setInteger(1, intEvaluadoPk);
@@ -892,26 +898,31 @@ public List listaReporteUnoWeighted(Componente objComponente, Integer intEvaluad
 
             iniciaOperacion();
             Query query = sesion.createSQLQuery(
-                    " select coc.CU_ID_CUESTIONARIO_FK,                                                 "
-                    + "        coc.CO_TX_DESCRIPCION as cuestionario,                                     "
-                    + "        cop.CO_TX_DESCRIPCION as pregunta,                                         "
-                    + "        IFNULL(AVG(dm.DE_NU_ORDEN + 1) * rel.RE_DE_PONDERACION / 100,0)                                                    "
-                    + "   from proyecto po,                                                               "
-                    + "        resultado res,                                                             "
-                    + "        detalle_metrica dm,                                                        "
-                    + "        componente cop,                                                            "
-                    + "        componente coc                                                             "
-                    + "        ,relacion rel "
-                    + "  where po.PO_ID_PROYECTO_PK = ?                                                   "
-                    + "    and res.PO_ID_PROYECTO_FK = po.PO_ID_PROYECTO_PK                               "
-                    + "    and res.PA_ID_PARTICIPANTE_FK = ?                                              "
-                    + "    and dm.DE_ID_DETALLE_ESCALA_PK = res.DE_ID_DETALLE_ESCALA_FK                   "
-                    + "    and rel.RE_ID_RELACION_PK = res.RE_ID_RELACION_FK"
-                    + "    and res.CO_ID_COMPONENTE_FK = cop.CO_ID_COMPONENTE_PK                          "
-                    + "    and coc.CO_ID_COMPONENTE_PK = cop.CO_ID_COMPONENTE_REF_FK                      "
-                    + "    and res.RE_ID_RELACION_FK is not null                                          "
-                    + "  GROUP BY coc.CU_ID_CUESTIONARIO_FK ,coc.CO_TX_DESCRIPCION, cop.CO_TX_DESCRIPCION "
-                    + "  ORDER BY 4 asc ");
+                    " SELECT CUE, CUESTIONARIO, PREGUNTA, SUM(MEDIDA) FROM (" +
+" select coc.CU_ID_CUESTIONARIO_FK AS CUE,                                                 " +
+"        coc.CO_TX_DESCRIPCION as CUESTIONARIO,                                     " +
+"        cop.CO_TX_DESCRIPCION as PREGUNTA,    " +
+"        rel.RE_ID_RELACION_PK," +
+"        ifNULL(AVG(dm.DE_NU_ORDEN + 1) * rel.RE_DE_PONDERACION / 100,0) AS MEDIDA                                         " +
+"   from proyecto po,                                                               " +
+"        resultado res,                                                             " +
+"        detalle_metrica dm,                                                        " +
+"        componente cop,                                                            " +
+"        componente coc,                                                             " +
+"        relacion rel                                                             " +
+"  where po.PO_ID_PROYECTO_PK = ?                                                   " +
+"    and res.PO_ID_PROYECTO_FK = po.PO_ID_PROYECTO_PK                               " +
+"    and res.PA_ID_PARTICIPANTE_FK = ?                                              " +
+"    and dm.DE_ID_DETALLE_ESCALA_PK = res.DE_ID_DETALLE_ESCALA_FK                   " +
+"    and res.CO_ID_COMPONENTE_FK = cop.CO_ID_COMPONENTE_PK                          " +
+"    and coc.CO_ID_COMPONENTE_PK = cop.CO_ID_COMPONENTE_REF_FK                      " +
+"    and rel.RE_ID_RELACION_PK = res.RE_ID_RELACION_FK                                         " +
+"    and res.RE_ID_RELACION_FK is not null                " +
+"    GROUP BY coc.CU_ID_CUESTIONARIO_FK,                                                 " +
+"        coc.CO_TX_DESCRIPCION ,                                     " +
+"        cop.CO_TX_DESCRIPCION ,    " +
+"        rel.RE_ID_RELACION_PK" +
+"  ) DATA GROUP BY CUE, CUESTIONARIO, PREGUNTA ORDER BY 4 asc ");
 
             query.setInteger(0, Utilitarios.obtenerProyecto().getIntIdProyecto());
             query.setInteger(1, intEvaluadoPk);
@@ -1037,43 +1048,45 @@ public List listaReporteSumarioMismoWeighted(Componente objComponente, Integer i
 
             iniciaOperacion();
             Query query = sesion.createSQLQuery(
-                    " SELECT TABLA.RELACION,                                                          "
-                    + "        TABLA.MEDIDA,                                                       "
-                    + "        TABLA.CANTIDAD                                          "
-                    + "        FROM                                                                     "
-                    + "       (select 'PROM' as RELACION, PROMEDIO.MEDIDA * rel.RE_DE_PONDERACION / 100 as MEDIDA, PROMEDIO.CANTIDAD as CANTIDAD " 
-                    + "          from (select res.RE_ID_RELACION_FK AS RELACION,                                               "
-                    + "               AVG(dm.DE_NU_ORDEN + 1) AS MEDIDA,                                     "
-                    + "               COUNT(DISTINCT RE_ID_PARTICIPANTE_FK) AS CANTIDAD                                 "
-                    + "          from proyecto po,                                                      "
-                    + "               resultado res,                                                    "
-                    + "               detalle_metrica dm,                                               "
-                    + "               componente cop                                                    "
-                    + "         where po.PO_ID_PROYECTO_pK = ?                                          "
-                    + "           and po.PO_ID_PROYECTO_PK = res.PO_ID_PROYECTO_FK                       "
-                    + "           and dm.DE_ID_DETALLE_ESCALA_PK = res.DE_ID_DETALLE_ESCALA_FK          "
-                    + "           and cop.CO_ID_COMPONENTE_PK = res.CO_ID_COMPONENTE_FK                 "
-                    + "           and cop.CO_ID_COMPONENTE_REF_FK = ?                                   "
-                    + "           and res.PA_ID_PARTICIPANTE_FK = ?                                     "
-                    + "           and res.RE_ID_RELACION_FK is not null "
-                            + "  ) PROMEDIO, relacion rel"
-                    + "         where rel.RE_ID_RELACION_PK = PROMEDIO.RELACION                              "
-                    + "         UNION ALL                                                               "
-                    + "        select 'AUTO' AS RELACION,                                               "
-                    + "               AVG(dm.DE_NU_ORDEN + 1) AS MEDIDA,                                     "
-                    + "               COUNT(DISTINCT PA_ID_PARTICIPANTE_FK) AS CANTIDAD                                 "
-                    + "          from proyecto po,                                                      "
-                    + "               resultado res,                                                    "
-                    + "               detalle_metrica dm,                                               "
-                    + "               componente cop                                                    "
-                    + "         where po.PO_ID_PROYECTO_pK = ?                                          "
-                    + "           and po.PO_ID_PROYECTO_PK = res.PO_ID_PROYECTO_FK                      "
-                    + "           and cop.CO_ID_COMPONENTE_PK = res.CO_ID_COMPONENTE_FK                 "
-                    + "           and cop.CO_ID_COMPONENTE_REF_FK = ?                                   "
-                    + "           and res.RE_ID_RELACION_FK is null                                     "
-                    + "           and res.PA_ID_PARTICIPANTE_FK = ?                                     "
-                    + "           and dm.DE_ID_DETALLE_ESCALA_PK = res.DE_ID_DETALLE_ESCALA_FK          "
-                    + "           and res.RE_ID_PARTICIPANTE_FK is null) TABLA GROUP BY TABLA.RELACION  ");
+                    " SELECT TABLA.RELACION,                                                          " +
+"        TABLA.MEDIDA,                                                       " +
+"        TABLA.CANTIDAD                                          " +
+"        FROM                                                                     " +
+"       (select 'PROM' as RELACION, " +
+"       			sum(PROMEDIO.MEDIDA * rel.RE_DE_PONDERACION / 100)  as MEDIDA, " +
+"   				sum(PROMEDIO.CANTIDAD) as CANTIDAD " +
+"          from (select res.RE_ID_RELACION_FK AS RELACION,                                               " +
+"               AVG(dm.DE_NU_ORDEN + 1) AS MEDIDA,                                     " +
+"               COUNT(DISTINCT RE_ID_PARTICIPANTE_FK) AS CANTIDAD                                 " +
+"          from proyecto po,                                                      " +
+"               resultado res,                                                    " +
+"               detalle_metrica dm,                                               " +
+"               componente cop                                                    " +
+"         where po.PO_ID_PROYECTO_pK = ?                                          " +
+"           and po.PO_ID_PROYECTO_PK = res.PO_ID_PROYECTO_FK                       " +
+"           and dm.DE_ID_DETALLE_ESCALA_PK = res.DE_ID_DETALLE_ESCALA_FK          " +
+"           and cop.CO_ID_COMPONENTE_PK = res.CO_ID_COMPONENTE_FK                 " +
+"           and cop.CO_ID_COMPONENTE_REF_FK = ?                                   " +
+"           and res.PA_ID_PARTICIPANTE_FK = ?                                     " +
+"           and res.RE_ID_RELACION_FK is not null group by res.RE_ID_RELACION_FK" +
+"  		) PROMEDIO, relacion rel" +
+"         where rel.RE_ID_RELACION_PK = PROMEDIO.RELACION                              " +
+"         UNION ALL                                                               " +
+"        select 'AUTO' AS RELACION,                                               " +
+"               AVG(dm.DE_NU_ORDEN + 1) AS MEDIDA,                                     " +
+"               COUNT(DISTINCT PA_ID_PARTICIPANTE_FK) AS CANTIDAD                                 " +
+"          from proyecto po,                                                      " +
+"               resultado res,                                                    " +
+"               detalle_metrica dm,                                               " +
+"               componente cop                                                    " +
+"         where po.PO_ID_PROYECTO_pK = ?                                          " +
+"           and po.PO_ID_PROYECTO_PK = res.PO_ID_PROYECTO_FK                      " +
+"           and cop.CO_ID_COMPONENTE_PK = res.CO_ID_COMPONENTE_FK                 " +
+"           and cop.CO_ID_COMPONENTE_REF_FK = ?                                   " +
+"           and res.RE_ID_RELACION_FK is null                                     " +
+"           and res.PA_ID_PARTICIPANTE_FK = ?                                     " +
+"           and dm.DE_ID_DETALLE_ESCALA_PK = res.DE_ID_DETALLE_ESCALA_FK          " +
+"           and res.RE_ID_PARTICIPANTE_FK is null) TABLA GROUP BY TABLA.RELACION    ");
 
             query.setInteger(0, Utilitarios.obtenerProyecto().getIntIdProyecto());
             query.setInteger(1, objComponente.getCoIdComponentePk());
@@ -1187,25 +1200,28 @@ public List listaReporteSumarioMismoWeighted(Componente objComponente, Integer i
 "        TABLA.MEDIDA,                                                        " +
 "        TABLA.CANTIDAD                                           " +
 "        FROM                                                                      " +
-"       (select 'PROM' as RELACION, PROMEDIO.MEDIDA * rel.RE_DE_PONDERACION / 100 as MEDIDA, PROMEDIO.CANTIDAD as CANTIDAD  " +
+"       (select 'PROM' as RELACION, " +
+"       			sum(PROMEDIO.MEDIDA ) as MEDIDA, " +
+"       			sum(PROMEDIO.CANTIDAD) as CANTIDAD  " +
 "          from ( " +
 "        select res.RE_ID_RELACION_FK AS RELACION,                                                            " +
-"               AVG(dm.DE_NU_ORDEN + 1) AS MEDIDA,                                      " +
+"               AVG(dm.DE_NU_ORDEN + 1) * rel.RE_DE_PONDERACION / 100 AS MEDIDA,                                      " +
 "               COUNT(distinct RE_ID_PARTICIPANTE_FK) AS CANTIDAD                                  " +
 "          from proyecto po,                                                       " +
 "               resultado res,                                                     " +
 "               detalle_metrica dm,                                                " +
-"               componente cop                                                     " +
+"               componente cop," +
+"               relacion rel " +
 "         where po.PO_ID_PROYECTO_pK = ?                                           " +
 "           and po.PO_ID_PROYECTO_PK = res.PO_ID_PROYECTO_FK                       " +
-"           and dm.DE_ID_DETALLE_ESCALA_PK = res.DE_ID_DETALLE_ESCALA_FK           " +
+"           and dm.DE_ID_DETALLE_ESCALA_PK = res.DE_ID_DETALLE_ESCALA_FK " +
+"		   and rel.RE_ID_RELACION_PK = res.RE_ID_RELACION_FK" +
 "           and cop.CO_ID_COMPONENTE_PK = res.CO_ID_COMPONENTE_FK                  " +
 "           and cop.CO_ID_COMPONENTE_REF_FK = ?                                    " +
 "           and res.PA_ID_PARTICIPANTE_FK = ?                                      " +
 "           and res.RE_ID_RELACION_FK is not null " +
 "		  group by res.RE_ID_RELACION_FK  " +
-"           ) PROMEDIO, relacion rel " +
-"           where rel.RE_ID_RELACION_PK = PROMEDIO.RELACION  " +
+"           ) PROMEDIO" +
 "         UNION ALL                                                                " +
 "       select rel.RE_TX_ABREVIATURA AS RELACION,                                  " +
 "               AVG(dm.DE_NU_ORDEN + 1) AS MEDIDA,                                 " +
@@ -1238,7 +1254,7 @@ public List listaReporteSumarioMismoWeighted(Componente objComponente, Integer i
 "           and res.RE_ID_RELACION_FK is null                                      " +
 "           and res.PA_ID_PARTICIPANTE_FK = ?                                      " +
 "           and dm.DE_ID_DETALLE_ESCALA_PK = res.DE_ID_DETALLE_ESCALA_FK           " +
-"           and res.RE_ID_PARTICIPANTE_FK is null) TABLA ");
+"           and res.RE_ID_PARTICIPANTE_FK is null) TABLA  ");
 
             query.setInteger(0, Utilitarios.obtenerProyecto().getIntIdProyecto());
             query.setInteger(1, objComponente.getCoIdComponentePk());
