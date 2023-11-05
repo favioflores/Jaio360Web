@@ -104,45 +104,41 @@ public class MailSender extends Thread implements Serializable {
             String mensaje = Utilitarios.decodeUTF8(bdata);
             String subject = objNotificacion.getNoTxAsunto();
 
-            MimeMessage message = new MimeMessage(session);
-
-            message.setSubject(subject, "UTF-8");
-
-            message.setFrom(new InternetAddress(objElementoFrom.getElTxValor1(), objElementoFrom.getElTxDescripcion()));
-
             objNotificacion.getDestinatarioses().size();
-
             Set<Destinatarios> objDestinatarios = objNotificacion.getDestinatarioses();
-            
+
+            MimeMessage message = new MimeMessage(session);
+            message.setSubject(subject, "UTF-8");
+            message.setFrom(new InternetAddress(objElementoFrom.getElTxValor1(), objElementoFrom.getElTxDescripcion()));           
             for (Destinatarios objDestinatario : objDestinatarios) {
                 message.addRecipient(Message.RecipientType.TO, new InternetAddress(objDestinatario.getDeTxMail()));
-
                 if (Utilitarios.noEsNuloOVacio(objDestinatario.getDeTxMailCc())) {
                     message.addRecipient(Message.RecipientType.CC, new InternetAddress(objDestinatario.getDeTxMailCc()));
                 }
             }
 
             // COVER WRAP
-            MimeBodyPart wrap = new MimeBodyPart();
+            //MimeBodyPart wrap = new MimeBodyPart();
 
             // ALTERNATIVE TEXT/HTML CONTENT
-            MimeMultipart cover = new MimeMultipart("alternative");
+            
+            //MimeMultipart cover = new MimeMultipart("alternative");
+            //MimeBodyPart htmlContent = new MimeBodyPart();
 
-            MimeBodyPart html = new MimeBodyPart();
+            //htmlContent.setHeader("Content-Type", "text/plain; charset=\"utf-8\"");
+            //htmlContent.setHeader("Content-Transfer-Encoding", "quoted-printable");
+            //htmlContent.setContent(mensaje, "text/html; charset=utf-8");
 
-            html.setHeader("Content-Type", "text/plain; charset=\"utf-8\"");
-            html.setHeader("Content-Transfer-Encoding", "quoted-printable");
-            html.setContent(mensaje, "text/html; charset=utf-8");
+            //over.addBodyPart(htmlContent);
 
-            cover.addBodyPart(html);
+            //wrap.setHeader("Content-Type", "text/plain; charset=\"utf-8\"");
+            //wrap.setHeader("Content-Transfer-Encoding", "quoted-printable");
+            //wrap.setContent(cover, "text/plain; charset=utf-8");
+            
 
-            wrap.setHeader("Content-Type", "text/plain; charset=\"utf-8\"");
-            wrap.setHeader("Content-Transfer-Encoding", "quoted-printable");
-            wrap.setContent(cover, "text/plain; charset=utf-8");
-
-            MimeMultipart content = new MimeMultipart("related");
-            message.setContent(content, "UTF-8");
-            content.addBodyPart(wrap);
+            //MimeMultipart content = new MimeMultipart("related");
+            message.setContent(mensaje, "text/html; charset=utf-8");
+            //content.addBodyPart(wrap);
 
             // SEND THE MESSAGE
             message.setSentDate(new Date());

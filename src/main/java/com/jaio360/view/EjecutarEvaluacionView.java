@@ -25,15 +25,15 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
-
+import javax.annotation.PostConstruct;
 
 import javax.faces.context.FacesContext;
 import javax.faces.bean.ViewScoped;
 import javax.faces.bean.ManagedBean;
 import javax.servlet.http.HttpSession;
-
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
@@ -353,8 +353,6 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
     public void setIntNroTotalPreguntasRespondidas(Integer intNroTotalPreguntasRespondidas) {
         this.intNroTotalPreguntasRespondidas = intNroTotalPreguntasRespondidas;
     }
-    
-    
 
     public void siguientePregunta() {
 
@@ -391,13 +389,9 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
             grabarRespuestaAbiertaActual();
         }
 
-        if (this.intNroPreguntasActual < lstPreguntasCerradas.size() - 1) {
-            isPreguntaCerradaActual = true;
-        } else {
-            isPreguntaCerradaActual = false;
-        }
+        isPreguntaCerradaActual = this.intNroPreguntasActual < lstPreguntasCerradas.size() - 1;
 
-        guardarResultado();
+        guardarResultadoFinal();
 
     }
 
@@ -492,6 +486,8 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
             for (EvaluacionesXEjecutar objEvaluacionesXEjecutar : lstEvaluacionesXEjecutar) {
 
                 if (Utilitarios.noEsNuloOVacio(objEvaluacionesXEjecutar.getIntRptaSeleccionada())) {
+                    
+                    log.error("User: " + Utilitarios.obtenerUsuario().getStrEmail() + " grabarRespuestaCerradaActual() " + objEvaluacionesXEjecutar.getIntRptaSeleccionada());
 
                     PreguntaCerradaBean objPreguntaCerradaBean = objEvaluacionesXEjecutar.getLstPreguntasCerradas().get(this.intNroPreguntasActual);
 
@@ -508,6 +504,9 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
                      */
                     objEvaluacionesXEjecutar.setIntRptaSeleccionada(null);
                 } else {
+                    
+                    log.error("User: " + Utilitarios.obtenerUsuario().getStrEmail() + " grabarRespuestaCerradaActual() null");
+                    
                     PreguntaCerradaBean objPreguntaCerradaBean = objEvaluacionesXEjecutar.getLstPreguntasCerradas().get(this.intNroPreguntasActual);
 
                     //BeanUtils.copyProperties(objPreguntaCerradaBean, lstPreguntasCerradas.get(this.intNroPreguntasActual));
@@ -551,7 +550,6 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
         try {
             for (EvaluacionesXEjecutar objEvaluacionesXEjecutar : lstEvaluacionesXEjecutar) {
 
-                //if (Utilitarios.noEsNuloOVacio(objEvaluacionesXEjecutar.getStrRptaPreguntaAbierta())) {
                 PreguntaAbiertaBean objPreguntaAbiertaBean = new PreguntaAbiertaBean();
 
                 BeanUtils.copyProperties(objPreguntaAbiertaBean, lstPreguntasAbiertas.get(this.intNroPreguntasActual - this.lstPreguntasCerradas.size()));
@@ -564,7 +562,7 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
                 }
                 objEvaluacionesXEjecutar.getLstPreguntasAbiertas().add(this.intNroPreguntasActual - this.lstPreguntasCerradas.size(), objPreguntaAbiertaBean);
                 objEvaluacionesXEjecutar.setStrRptaPreguntaAbierta(null);
-                //}
+
             }
         } catch (Exception e) {
             mostrarError(log, e);
@@ -572,12 +570,10 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
 
     }
 
-    public EjecutarEvaluacionView() {
+    @PostConstruct
+    public void init() {
 
         try {
-
-            /* SE HACE EVALUADO POR EVALUADO */
-            blVisualGroup = false;
 
             /* SE HACE 5 A MAS EVALUADOS A LA VEZ*/
             blVisualGroup = true;
@@ -712,7 +708,7 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
             if (Utilitarios.obtenerEvaluacion() == null) {
                 UsuarioInfo objUsuarioInfo = Utilitarios.obtenerUsuario();
                 try {
-                    if (objUsuarioInfo.getManagingDirector()|| objUsuarioInfo.getCountryManager()|| objUsuarioInfo.getProjectManager()) {
+                    if (objUsuarioInfo.getManagingDirector() || objUsuarioInfo.getCountryManager() || objUsuarioInfo.getProjectManager()) {
                         FacesContext.getCurrentInstance().getExternalContext().redirect("stepFive.jsf");
                     } else {
                         FacesContext.getCurrentInstance().getExternalContext().redirect("welcome.jsf");
@@ -725,19 +721,19 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
 
     }
 
-    public void guardarResultado() {
+    public void guardarResultadoFinal() {
 
         try {
+            log.debug("guardarResultadoFinal()");
+
             ProyectoInfo objProyectoInfo = Utilitarios.obtenerEvaluacion();
 
             HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
 
-            Integer idProyecto = Utilitarios.obtenerEvaluacion().getIntIdProyecto();
-
             UsuarioInfo objUsuarioInfo = Utilitarios.obtenerUsuario();
 
             if (session.getAttribute("evalInfo") == null) {
-                if (objUsuarioInfo.getManagingDirector()|| objUsuarioInfo.getCountryManager()|| objUsuarioInfo.getProjectManager()) {
+                if (objUsuarioInfo.getManagingDirector() || objUsuarioInfo.getCountryManager() || objUsuarioInfo.getProjectManager()) {
                     if (objProyectoInfo.getBoDefineArtificio()) {
                         FacesContext.getCurrentInstance().getExternalContext().redirect("stepFive.jsf");
                     } else {
@@ -748,50 +744,25 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
                 }
             } else {
 
-                for (EvaluacionesXEjecutar objEvaluacionesXEjecutar : this.lstEvaluacionesXEjecutar) {
+                log.debug("Evaluaciones por grabar: " + this.lstEvaluacionesXEjecutar.size());
 
-                    /* GUARDA RESPUESTAS PREGUNTAS CERRADAS */
-                    for (PreguntaCerradaBean objPreguntaCerradaBean : objEvaluacionesXEjecutar.getLstPreguntasCerradas()) {
-                        if (objPreguntaCerradaBean.getBlRespondido()) {
-                            guardarResultadoEval(objPreguntaCerradaBean.getId().toString(), objPreguntaCerradaBean.getIdRespuesta().toString(), null, idProyecto, objEvaluacionesXEjecutar, null);
-                        }
+                List<EvaluacionesXEjecutar> lstPreGrabado = new ArrayList<>(this.lstEvaluacionesXEjecutar);
 
-                        for (ComentarioBean objComentarioBean : objPreguntaCerradaBean.getLstComentarios()) {
-                            if (Utilitarios.noEsNuloOVacio(objComentarioBean.getStrRespuesta())) {
-                                guardarResultadoEval(objComentarioBean.getId().toString(), null, objComentarioBean.getStrRespuesta(), idProyecto, objEvaluacionesXEjecutar, objPreguntaCerradaBean.getId().toString());
-                            }
-                        }
-                    }
+                this.lstEvaluacionesXEjecutar.clear();
 
-                    /* GUARDA RESPUESTAS PREGUNTAS ABIERTAS */
-                    for (PreguntaAbiertaBean objPreguntaAbiertaBean : objEvaluacionesXEjecutar.getLstPreguntasAbiertas()) {
-                        if (Utilitarios.noEsNuloOVacio(objPreguntaAbiertaBean.getStrRespuesta())) {
-                            this.guardarResultadoEval(objPreguntaAbiertaBean.getId().toString(), null, objPreguntaAbiertaBean.getStrRespuesta(), idProyecto, objEvaluacionesXEjecutar, null);
-                        }
-                    }
+                ResultadoDAO objResultadoDAO = new ResultadoDAO();
 
-                    /* ACTUALIZA EVALUACIÓN A TERMINADO */
-                    if (objEvaluacionesXEjecutar.getRelacionParticipanteId() != null) {
+                blTerminado = objResultadoDAO.guardarResultadoFinal(lstPreGrabado, objProyectoInfo.getIntIdProyecto(), new Date());
 
-                        RelacionParticipanteDAO objRelacionParticipanteDAO = new RelacionParticipanteDAO();
-                        RelacionParticipante objRelacionParticipante = objRelacionParticipanteDAO.obtenRelacionParticipante(objEvaluacionesXEjecutar.getRelacionParticipanteId());
-                        objRelacionParticipante.setRpIdEstado(Constantes.INT_ET_ESTADO_RELACION_EDO_EDOR_TERMINADO);
-                        objRelacionParticipanteDAO.actualizaRelacionParticipante(objRelacionParticipante);
-
-                    } else {
-
-                        ParticipanteDAO objParticipanteDAO = new ParticipanteDAO();
-                        Participante objParticipante = objParticipanteDAO.obtenParticipante(objEvaluacionesXEjecutar.getIdParticipante());
-                        objParticipante.setPaIdEstado(Constantes.INT_ET_ESTADO_EVALUADO_TERMINADO);
-                        objParticipanteDAO.actualizaParticipante(objParticipante);
-                    }
-
+                if(blTerminado){
+                    salir();
+                }else{
+                    mostrarAlertaError("error.was.occurred");
                 }
 
-                blTerminado = true;
-
             }
-        } catch (IOException ex) {
+
+        } catch (Exception ex) {
             mostrarError(log, ex);
         }
     }
@@ -801,7 +772,7 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
             UsuarioInfo objUsuarioInfo = Utilitarios.obtenerUsuario();
             ProyectoInfo objProyectoInfo = Utilitarios.obtenerEvaluacion();
 
-            if (objUsuarioInfo.getManagingDirector()|| objUsuarioInfo.getCountryManager()|| objUsuarioInfo.getProjectManager()) {
+            if (objUsuarioInfo.getManagingDirector() || objUsuarioInfo.getCountryManager() || objUsuarioInfo.getProjectManager()) {
                 if (objProyectoInfo.getBoDefineArtificio()) {
                     FacesContext.getCurrentInstance().getExternalContext().redirect("stepFive.jsf");
                 } else {
@@ -814,51 +785,9 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
             HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
             session.removeAttribute("evalInfo");
 
-        } catch (IOException ex) {
-            log.debug(ex);
+        } catch (Exception ex) {
+            mostrarError(log, ex);
         }
-    }
-
-    public void guardarResultadoEval(String idComponentePk, String idDetalleMetrica, String txtComentario, Integer idProyecto, EvaluacionesXEjecutar objEvaluacionesXEjecutar, String idComponentePreguntaPk) {
-        Resultado resultado = new Resultado();
-        ResultadoDAO resultadoDAO = new ResultadoDAO();
-
-        Componente componente = new Componente();
-        componente.setCoIdComponentePk(Integer.parseInt(idComponentePk));
-
-        DetalleMetrica detalleMetrica = new DetalleMetrica();
-        if (Utilitarios.noEsNuloOVacio(idDetalleMetrica)) {
-            detalleMetrica.setDeIdDetalleEscalaPk(Integer.parseInt(idDetalleMetrica));
-            resultado.setDetalleMetrica(detalleMetrica);
-        }
-
-        resultado.setComponente(componente);
-        if (Utilitarios.noEsNuloOVacio(txtComentario)) {
-            resultado.setReTxComentario(txtComentario);
-        }
-
-        if (Utilitarios.noEsNuloOVacio(idComponentePreguntaPk)) {
-            resultado.setCoIdComponenteRefFk(Integer.parseInt(idComponentePreguntaPk));
-        }
-
-        if (objEvaluacionesXEjecutar.getRelacionParticipanteId() != null) {
-            resultado.setPaIdParticipanteFk(objEvaluacionesXEjecutar.getRelacionParticipanteId().getPaIdParticipanteFk());
-            resultado.setReIdParticipanteFk(objEvaluacionesXEjecutar.getRelacionParticipanteId().getReIdParticipanteFk());
-            resultado.setReIdRelacionFk(objEvaluacionesXEjecutar.getRelacionParticipanteId().getReIdRelacionFk());
-        } else {
-            resultado.setPaIdParticipanteFk(objEvaluacionesXEjecutar.getIdParticipante());
-        }
-
-        Proyecto objProyecto = new Proyecto();
-        objProyecto.setPoIdProyectoPk(idProyecto);
-
-        resultado.setProyecto(objProyecto);
-
-        //RelacionParticipante relacionParticipante = new RelacionParticipante();
-        //relacionParticipante.setId(this.relacionParticipanteId);
-        //resultado.setRelacionParticipante(relacionParticipante);
-        resultadoDAO.guardaResultado(resultado);
-
     }
 
     public void pressButtonRadio(Integer idPresionado) {

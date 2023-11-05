@@ -102,7 +102,7 @@ public class AuthFilter implements Filter {
             } catch (Exception e) {
             }
 
-            res.sendRedirect(req.getContextPath() + "/ui/sesionExpirada.jsf");  // Anonymous user. Redirect to login page
+            res.sendRedirect(req.getContextPath() + "/ui/login.jsf");  // Anonymous user. Redirect to login page
 
         } catch (IOException e) {
             log.error(e);

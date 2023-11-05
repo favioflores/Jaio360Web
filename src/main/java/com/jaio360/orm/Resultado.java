@@ -1,5 +1,7 @@
 package com.jaio360.orm;
 
+import java.util.Date;
+
 public class Resultado implements java.io.Serializable {
 
     private Integer reIdResultadoPk;
@@ -12,6 +14,8 @@ public class Resultado implements java.io.Serializable {
     private Integer reIdParticipanteFk;
     private Integer paIdParticipanteFk;
     private Integer coIdComponenteRefFk;
+    
+    private Date reDtFecAudit;
 
     public Integer getReIdResultadoPk() {
         return reIdResultadoPk;
@@ -102,5 +106,15 @@ public class Resultado implements java.io.Serializable {
         this.proyecto = proyecto;
         this.reTxComentario = reTxComentario;
     }
+
+    public Date getReDtFecAudit() {
+        return reDtFecAudit;
+    }
+
+    public void setReDtFecAudit(Date reDtFecAudit) {
+        this.reDtFecAudit = reDtFecAudit;
+    }
+    
+    
 
 }

@@ -36,5 +36,9 @@
             <column name="CO_ID_COMPONENTE_REF_FK" />
         </property>
 
+        <property name="reDtFecAudit" type="timestamp">
+            <column name="RE_DT_FEC_AUDIT" length="19" not-null="true" />
+        </property>
+        
     </class>
 </hibernate-mapping>

@@ -156,19 +156,19 @@ public class MenuPrincipalView extends BaseView implements Serializable {
                 agregarItem("", "welcome.jsf", "pi pi-fw pi-home", menuPrincipal, null);
                 //Proyectos
                 DefaultSubMenu proyectos = agregarMenu(msg("projects"), "pi pi-fw pi-briefcase", menuPrincipal);
-                agregarItem(msg("administrar.proyectos"), "admProyectos.jsf", "", proyectos);
+                //agregarItem(msg("administrar.proyectos"), "admProyectos.jsf", "", proyectos);
                 //Datos de usuarios
                 DefaultSubMenu usuarios = agregarMenu(msg("my.account"), "pi pi-user", menuPrincipal);
                 agregarItem(msg("actualizar.mis.datos"), "admProfile.jsf", "", usuarios);
                 agregarItem(msg("actualizar.todos.usuarios"), "admAllUsers.jsf", "", usuarios);
-                agregarItem(msg("balance.license"), "admBalanceClient.jsf", "", usuarios);
+                //agregarItem(msg("balance.license"), "admBalanceClient.jsf", "", usuarios);
 
-                DefaultSubMenu clients = agregarMenu(msg("clients"), "pi pi-users", menuPrincipal);
-                agregarItem(msg("manage.my.clients"), "admClients.jsf", "", clients);
-                agregarItem(msg("gestionar.licencias"), "admLicencias.jsf", "", clients);
-                agregarItem(msg("manage.licences.clients"), "admLicenceClient.jsf", "", clients);
+                //DefaultSubMenu clients = agregarMenu(msg("clients"), "pi pi-users", menuPrincipal);
+                //agregarItem(msg("manage.my.clients"), "admClients.jsf", "", clients);
+                //agregarItem(msg("gestionar.licencias"), "admLicencias.jsf", "", clients);
+                //agregarItem(msg("manage.licences.clients"), "admLicenceClient.jsf", "", clients);
                 //User guide
-                agregarItem(msg("user.guide"), "guidesForUsers.jsf", "pi pi-file-pdf", menuPrincipal, null);
+                //agregarItem(msg("user.guide"), "guidesForUsers.jsf", "pi pi-file-pdf", menuPrincipal, null);
                 //Upgrades
                 //agregarItem("", "upgrades.jsf", "pi pi-info-circle", menuPrincipal, null);
 

@@ -14,6 +14,8 @@ import com.jaio360.orm.Usuario;
 import com.jaio360.utils.Constantes;
 import com.jaio360.utils.EncryptDecrypt;
 import com.jaio360.utils.Utilitarios;
+import static com.jaio360.utils.Utilitarios.registraHistorialAcceso;
+import static com.jaio360.view.BaseView.mostrarError;
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.StringWriter;
@@ -47,7 +49,7 @@ import org.apache.velocity.exception.ResourceNotFoundException;
 public class UsuarioSesion extends BaseView implements Serializable {
 
     private static Log log = LogFactory.getLog(UsuarioSesion.class);
-    
+
     private static final long serialVersionUID = -1L;
 
     private String usuario;
@@ -123,6 +125,8 @@ public class UsuarioSesion extends BaseView implements Serializable {
     public void iniciarSesion() throws Exception {
 
         HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+
+        String strNavegador = request.getHeader("user-agent");
         String ipAddress = request.getRemoteAddr();
 
         try {
@@ -288,8 +292,38 @@ public class UsuarioSesion extends BaseView implements Serializable {
 
     public void timeout() throws IOException {
 
-        cerrarSistema();
+        try {
 
+            HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
+
+            UsuarioInfo objUsuarioProxy = Utilitarios.obtenerUsuarioProxy();
+
+            if (objUsuarioProxy != null) {
+                objUsuarioProxy = (UsuarioInfo) session.getAttribute("usuarioInfoProxy");
+                registraHistorialAcceso(objUsuarioProxy, objUsuarioProxy.getIntUsuarioPk(), true, null, new Date(), objUsuarioProxy.getIntHistorialPk());
+            } else {
+                usuarioInfo = (UsuarioInfo) session.getAttribute("usuarioInfo");
+                registraHistorialAcceso(usuarioInfo, usuarioInfo.getIntUsuarioPk(), true, null, new Date(), usuarioInfo.getIntHistorialPk());
+            }
+
+            session.invalidate();
+
+            FacesContext.getCurrentInstance().getExternalContext().redirect("sesionExpirada.jsf");
+
+        } catch (IOException ex) {
+            if (usuarioInfo == null) {
+                try {
+                    FacesContext.getCurrentInstance().getExternalContext().redirect("login.jsf");
+                } catch (IOException exx) {
+                    mostrarError(log, exx);
+                }
+            } else {
+                mostrarError(log, ex);
+            }
+
+        }
+        
+                
     }
 
     public void test() {

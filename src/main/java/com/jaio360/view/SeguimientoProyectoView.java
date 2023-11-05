@@ -54,6 +54,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -81,6 +82,7 @@ import org.primefaces.event.UnselectEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.model.charts.radar.RadarChartModel;
+import org.primefaces.util.LangUtils;
 
 @ManagedBean(name = "seguimientoProyectoView")
 @ViewScoped
@@ -125,7 +127,9 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
 
     private Integer intPorcentajeGeneral;
     private List<Evaluado> lstParticipantesIniciados;
+    private List<Evaluado> lstParticipantesIniciadosFiltrado;
     private List<RelacionEvaluadoEvaluador> lstRelacionEvaluadoEvaluador;
+    private List<RelacionEvaluadoEvaluador> lstRelacionEvaluadoEvaluadorFiltrado;
 
     private StreamedContent fileIndividual;
     private StreamedContent fileIndividualFisico;
@@ -155,6 +159,22 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
 
     public Integer getIntCantPartEjecucion() {
         return intCantPartEjecucion;
+    }
+
+    public List<Evaluado> getLstParticipantesIniciadosFiltrado() {
+        return lstParticipantesIniciadosFiltrado;
+    }
+
+    public List<RelacionEvaluadoEvaluador> getLstRelacionEvaluadoEvaluadorFiltrado() {
+        return lstRelacionEvaluadoEvaluadorFiltrado;
+    }
+
+    public void setLstRelacionEvaluadoEvaluadorFiltrado(List<RelacionEvaluadoEvaluador> lstRelacionEvaluadoEvaluadorFiltrado) {
+        this.lstRelacionEvaluadoEvaluadorFiltrado = lstRelacionEvaluadoEvaluadorFiltrado;
+    }
+
+    public void setLstParticipantesIniciadosFiltrado(List<Evaluado> lstParticipantesIniciadosFiltrado) {
+        this.lstParticipantesIniciadosFiltrado = lstParticipantesIniciadosFiltrado;
     }
 
     public void setIntCantPartEjecucion(Integer intCantPartEjecucion) {
@@ -1568,4 +1588,25 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
         }
     }
 
+    public boolean globalFilterFunction(Object value, Object filter, Locale locale) {
+        String filterText = (filter == null) ? null : filter.toString().trim().toLowerCase();
+        if (LangUtils.isBlank(filterText)) {
+            return true;
+        }
+        Evaluado objEvaluado = (Evaluado) value;
+
+        return objEvaluado.getPaTxDescripcion().toLowerCase().contains(filterText);
+    }
+
+    public boolean globalFilterFunctionRed(Object value, Object filter, Locale locale) {
+        String filterText = (filter == null) ? null : filter.toString().trim().toLowerCase();
+        if (LangUtils.isBlank(filterText)) {
+            return true;
+        }
+        RelacionEvaluadoEvaluador objRelacionEvaluadoEvaluador = (RelacionEvaluadoEvaluador) value;
+
+        return objRelacionEvaluadoEvaluador.getStrDescEvaluador().toLowerCase().contains(filterText) ||
+                objRelacionEvaluadoEvaluador.getStrDescRelacion().toLowerCase().contains(filterText) ||
+                objRelacionEvaluadoEvaluador.getStrDescEvaluado().toLowerCase().contains(filterText) ;
+    }
 }

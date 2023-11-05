@@ -82,13 +82,13 @@
                                                                              update="dlgComments"
                                                                              icon="pi pi-book" styleClass="ui-button-outlined "
                                                                              rendered="#{ejecutarEvaluacionView.lstCompComentario.size()>0}" />
-<!--
-                                                            <c:forEach var="countComment" begin="0" end="#{ejecutarEvaluacionView.lstCompComentario.size()-1}">
-                                                                <h:panelGrid columns="1" cellpadding="0" border="0" style="width: 100%; text-align: left;" >
-                                                                    <p:outputLabel value="#{ejecutarEvaluacionView.lstEvaluacionesXEjecutar.get(ejecutarEvaluacionView.indexTocomment).lstPreguntasCerradas.get(ejecutarEvaluacionView.intNroPreguntasActual).lstComentarios.get(countComment).strRespuesta}" style="font-style: normal; font-weight: normal; font-size: 10px !important; text-align: left;" />
-                                                                </h:panelGrid>
-                                                            </c:forEach>
--->
+                                                            <!--
+                                                                                                                        <c:forEach var="countComment" begin="0" end="#{ejecutarEvaluacionView.lstCompComentario.size()-1}">
+                                                                                                                            <h:panelGrid columns="1" cellpadding="0" border="0" style="width: 100%; text-align: left;" >
+                                                                                                                                <p:outputLabel value="#{ejecutarEvaluacionView.lstEvaluacionesXEjecutar.get(ejecutarEvaluacionView.indexTocomment).lstPreguntasCerradas.get(ejecutarEvaluacionView.intNroPreguntasActual).lstComentarios.get(countComment).strRespuesta}" style="font-style: normal; font-weight: normal; font-size: 10px !important; text-align: left;" />
+                                                                                                                            </h:panelGrid>
+                                                                                                                        </c:forEach>
+                                                            -->
                                                         </h:panelGrid>
 
                                                     </c:forEach>
@@ -149,7 +149,7 @@
                                                         <p:progressBar value="#{(ejecutarEvaluacionView.intNroPreguntasActual +1) / (ejecutarEvaluacionView.intNroTotalPreguntas)*100}" labelTemplate="{value}%" displayOnly="true" style="font-style: normal; font-weight: normal; font-size: 14px !important; width: 100%;" />
                                                     </h:panelGrid>
                                                     <h:panelGrid columns="1" cellpadding="5" border="0" style="width: 100%;" >
-                                                        <p:outputLabel value="#{ejecutarEvaluacionView.strDescripcionPreguntaCerradaActual}" style="font-style: normal; font-weight: bold; font-size: 14px !important;"  />
+                                                        <p:outputLabel value="#{ejecutarEvaluacionView.strDescripcionPreguntaCerradaActual}" style="font-style: normal; font-weight: bold; font-size: 16px !important;"  />
                                                         <p:outputLabel value="#{msg['please.select.answer']}" style="font-style: normal; font-weight: normal; font-size: 14px !important;" />
                                                     </h:panelGrid>
                                                     <h:panelGrid columns="#{ejecutarEvaluacionView.lstDetalleMetrica.size()}" cellpadding="5" border="0" style="width: 100%; text-align: center;" >
@@ -170,11 +170,11 @@
                                     <p:toolbar id="tb" style="width: 100%;">
                                         <p:toolbarGroup style="width: 100%" >
                                             <h:panelGrid columns="1" cellpadding="5" border="0" style="width: 100%;" >
-                                                <p:outputLabel value="#{msg['question']} #{ejecutarEvaluacionView.intNroPreguntasActual +1}/#{ejecutarEvaluacionView.intNroTotalPreguntas}" style="font-style: normal; font-weight: bold; font-size: 14px !important;" />
+                                                <p:outputLabel value="#{msg['question']} #{ejecutarEvaluacionView.intNroPreguntasActual +1}/#{ejecutarEvaluacionView.intNroTotalPreguntas}" style="font-style: normal; font-weight: bold; font-size: 18px !important;" />
                                                 <p:progressBar value="#{(ejecutarEvaluacionView.intNroPreguntasActual +1) / (ejecutarEvaluacionView.intNroTotalPreguntas)*100}" labelTemplate="{value}%" displayOnly="true" style="font-style: normal; font-weight: normal; font-size: 14px !important; width: 100%;" />
                                             </h:panelGrid>
                                             <h:panelGrid columns="1" cellpadding="5" border="0" style="width: 100%;" >
-                                                <p:outputLabel value="#{ejecutarEvaluacionView.strDescripcionPreguntaAbiertaActual}" style="font-style: normal; font-weight: bold; font-size: 14px !important;"  />
+                                                <p:outputLabel value="#{ejecutarEvaluacionView.strDescripcionPreguntaAbiertaActual}" style="font-style: normal; font-weight: bold; font-size: 16px !important;"  />
                                                 <p:outputLabel value="#{msg['please.answer.next.questions']}" style="font-style: normal; font-weight: normal; font-size: 14px !important;" />
                                             </h:panelGrid>
                                         </p:toolbarGroup>
@@ -200,13 +200,23 @@
                                                      actionListener="#{ejecutarEvaluacionView.siguientePregunta()}" oncomplete="topFunction()"
                                                      rendered="#{ejecutarEvaluacionView.intNroPreguntasActual.intValue()==ejecutarEvaluacionView.intNroTotalPreguntas.intValue()-1?false:true}"
                                                      />
-                                    <p:commandButton icon="pi pi-save" value="#{msg['save.answers']}" update="@form,dlgComments" style="width: 150px;" 
+                                    <!--p:commandButton icon="pi pi-save" value="#{msg['save.answers']}" update="@form,dlgComments" style="width: 150px;" 
                                                      actionListener="#{ejecutarEvaluacionView.ultimaPregunta()}" styleClass="ui-button-warning"
                                                      rendered="#{ejecutarEvaluacionView.intNroPreguntasActual.intValue()==ejecutarEvaluacionView.intNroTotalPreguntas.intValue()-1?true:false}"
                                                      oncomplete="PF('dlgAgradecimiento').show();"
                                                      >
-                                        <!--p:confirm header="Confirmación" message="¿Deseas finalizar la evaluación?" icon="pi pi-info-circle" /-->
+                                        <p:confirm header="#{msg['cabecera.logout.confirmacion.title']}" message="#{msg['are.you.sure.to.save.answers']}" icon="pi pi-info-circle" />
+                                    </p:commandButton-->
+                                    <p:commandButton icon="pi pi-save" value="#{msg['save.answers']}" update="@form,dlgComments" style="width: 150px;" 
+                                                     actionListener="#{ejecutarEvaluacionView.ultimaPregunta()}" styleClass="ui-button-warning" 
+                                                     rendered="#{ejecutarEvaluacionView.intNroPreguntasActual.intValue()==ejecutarEvaluacionView.intNroTotalPreguntas.intValue()-1?true:false}"
+                                                     >
+                                        <p:confirm header="#{msg['cabecera.logout.confirmacion.title']}" message="#{msg['are.you.sure.to.save.answers']}" icon="pi pi-info-circle" />
                                     </p:commandButton>
+                                    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" responsive="true" width="400"  >
+                                        <p:commandButton value="#{msg['no']}" type="button" styleClass="ui-confirmdialog-no ui-button-flat"/>
+                                        <p:commandButton value="#{msg['yes']}" type="button" styleClass="ui-confirmdialog-yes" />
+                                    </p:confirmDialog>
                                     <!--</c:if>-->
                                 </div>
                             </div>

@@ -275,15 +275,6 @@
                                     </p:commandButton>
                                 </div>
 
-                                <p:divider/>
-
-                                <h4>#{msg['step5.general.progress']}</h4>
-                                <div class="p-field">
-                                    <p:progressBar value="#{seguimientoProyectoView.intPorcentajeGeneral}" labelTemplate="#{seguimientoProyectoView.intPorcentajeGeneral}%" id="IdPorcentajeGeneral" />
-                                </div>
-
-
-
                                 <p:divider/>                            
 
                                 <h4>#{msg['evaluated']}</h4>
@@ -297,7 +288,7 @@
                                         value="#{seguimientoProyectoView.lstParticipantesIniciados}" 
                                         rows="10"
                                         rowsPerPageTemplate="5,10,{ShowAll|'All'}"
-                                        paginatorPosition="bottom"
+                                        paginatorPosition="top bottom"
                                         stripedRows="true"
                                         paginator="true" 
                                         selectionMode="single"
@@ -306,8 +297,16 @@
                                         emptyMessage="#{msg['no.items']}"
                                         rowKey="#{reg.paIdParticipantePk}"
                                         rowIndexVar="index"
+                                        filteredValue="#{seguimientoProyectoView.lstParticipantesIniciadosFiltrado}"
+                                        globalFilterFunction="#{seguimientoProyectoView.globalFilterFunction}"
                                         >
 
+                                        <f:facet name="header">
+                                            <div class="flex justify-content-end">
+                                                <p:inputText id="globalFilter" onkeyup="PF('tbEva').filter()" style="width:300px"
+                                                             placeholder="#{msg['adm.search.filter.global']}" />
+                                            </div>
+                                        </f:facet>
                                         <c:if test="#{seguimientoProyectoView.lstParticipantesIniciados.size()>0?true:false}" >
                                             <f:facet name="footer">
                                                 #{msg['step5.number.evaluators']} #{seguimientoProyectoView.lstParticipantesIniciados.size()}
@@ -325,13 +324,13 @@
                                                 value="#{index + 1}" />
                                         </p:column> 
 
-                                        <p:column headerText="#{msg['photo']}" width="70" style="width: 80px !important;" >
+                                        <!--p:column headerText="#{msg['photo']}" width="70" style="width: 80px !important;" >
                                             <p:graphicImage url="#{reg.paTxImgUrl}" height="75" width="75" class="classimg" rendered="#{reg.paTxImgUrl!=null}" />
                                             <p:graphicImage value="/images/no-picture.png" height="75" width="75"  class="classimg" rendered="#{reg.paTxImgUrl==null}" />
-                                        </p:column>
+                                        </p:column-->
 
                                         <p:column headerText="#{msg['individual']}" sortBy="#{reg.paTxDescripcion}">
-                                            <h:outputText value="#{reg.paTxDescripcion}" />
+                                            <p:outputLabel value="#{reg.paTxDescripcion}" />
                                             <!--<
                                                 <p:panelGrid styleClass="ui-panelgrid-blank ui-fluid" style="padding: 0px;" >
                                                     <p:row>
@@ -348,6 +347,7 @@
                                             -->
                                             <!--<br/><br/>
                                             <p:progressBar value="#{reg.bdPorcentajeAvance}" labelTemplate="#{reg.bdPorcentajeAvance}%" />-->
+
                                         </p:column>                           
                                         <!--
                                         <p:column headerText="Correo" sortBy="#{reg.paTxCorreo}"> 
@@ -369,8 +369,6 @@
                                             <p:progressBar value="#{reg.bdPorcentajeAvance}" displayOnly="true" labelTemplate="#{reg.bdPorcentajeAvance}%" />
                                         </p:column>
 
-
-
                                     </p:dataTable>
 
                                 </div>
@@ -382,6 +380,14 @@
                         <div class="p-field p-col-12 p-md-8">
                             <p:card>
 
+                                <h4>#{msg['step5.general.progress']}</h4>
+
+                                <div class="p-field">
+                                    <p:progressBar value="#{seguimientoProyectoView.intPorcentajeGeneral}" labelTemplate="#{seguimientoProyectoView.intPorcentajeGeneral}%" id="IdPorcentajeGeneral" />
+                                </div>
+
+                                <p:divider/>
+
                                 <p:dataTable 
                                     id="tblRed"
                                     var="red"
@@ -389,12 +395,22 @@
                                     value="#{seguimientoProyectoView.lstRelacionEvaluadoEvaluador}" 
                                     rows="30"
                                     rowsPerPageTemplate="5,10,30,{ShowAll|'All'}"
-                                    paginatorPosition="bottom"
+                                    paginatorPosition="top bottom"
                                     paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                     stripedRows="true"
                                     paginator="true"  
                                     emptyMessage="#{msg['no.items']}"
-                                    rowIndexVar="index">
+                                    rowIndexVar="index"
+                                    filteredValue="#{seguimientoProyectoView.lstRelacionEvaluadoEvaluadorFiltrado}"
+                                    globalFilterFunction="#{seguimientoProyectoView.globalFilterFunctionRed}"
+                                    >
+
+                                    <f:facet name="header">
+                                        <div class="flex justify-content-end">
+                                            <p:inputText id="globalFilter" onkeyup="PF('tblRed').filter()" style="width:300px"
+                                                         placeholder="#{msg['adm.search.filter.global']}" />
+                                        </div>
+                                    </f:facet>
 
                                     <c:if test="#{seguimientoProyectoView.lstRelacionEvaluadoEvaluador.size()>0?true:false}" >
                                         <f:facet name="footer">
@@ -403,9 +419,10 @@
                                     </c:if>
 
 
-                                    <p:column headerText="#{msg['evaluated']}" sortBy="#{red.strDescEvaluado}" sortPriority="1" groupRow="true" >
-                                        <h:outputText value="#{red.strDescEvaluado}" />
+                                    <p:column headerText="#{msg['evaluator']}" sortBy="#{red.strDescEvaluador}" sortPriority="1" groupRow="true" sortOrder="asc">
+                                        <h:outputText value="#{red.strDescEvaluador}" />
                                     </p:column>   
+
                                     <p:column style="width: 40px;">
                                         <f:facet name="header">
                                             <h:outputText value="#" />
@@ -423,9 +440,10 @@
                                         <h:outputText value="#{red.strCorreoEvaluador}" />
                                     </p:column>  
                                     -->
-                                    <p:column headerText="#{msg['evaluator']}" sortBy="#{red.strDescEvaluador}" groupRow="true" sortOrder="asc">
-                                        <h:outputText value="#{red.strDescEvaluador}" />
+                                    <p:column headerText="#{msg['evaluated']}" sortBy="#{red.strDescEvaluado}" sortPriority="2" groupRow="true" >
+                                        <h:outputText value="#{red.strDescEvaluado}" />
                                     </p:column>   
+
 
 
                                     <p:column headerText="#{msg['status']}" sortBy="#{red.blEvaluacionTerminada}">
@@ -433,7 +451,7 @@
                                                 severity="#{red.blEvaluacionTerminada==true?'success':''}" />
                                     </p:column> 
 
-                                    <p:column headerText="#{msg['evaluation.manual']}" style="text-align:center" >
+                                    <!--p:column headerText="#{msg['evaluation.manual']}" style="text-align:center" >
                                         <p:commandButton actionListener="#{seguimientoProyectoView.realizaEvaluacion(red)}" icon="pi pi-cloud-upload" styleClass="rounded-button ui-button-outlined" disabled="#{red.blEvaluacionTerminada==true or seguimientoProyectoView.intIdEstadoProyecto==37}" update="@form" >
                                             <p:confirm header="#{msg['confirmation']}" message="#{msg['step5.sure.take.quiz.manual']}" icon="ui-icon-alert" />
                                         </p:commandButton>
@@ -443,8 +461,17 @@
                                         <p:commandButton actionListener="#{seguimientoProyectoView.enviarRecordatorioPersonal(red)}" icon="pi pi-send" styleClass="rounded-button ui-button-outlined" disabled="#{red.blEvaluacionTerminada==true or seguimientoProyectoView.intIdEstadoProyecto==37}" update="@form" >
                                             <p:confirm header="#{msg['confirmation']}" message="#{msg['step5.sure.send.reminder']}" icon="ui-icon-alert" />
                                         </p:commandButton>
-                                    </p:column>
+                                    </p:column-->
 
+                                    <p:column headerText="#{msg['actions']}" style="text-align:center" >
+                                        <p:commandLink value="#{msg['evaluation.manual']}" actionListener="#{seguimientoProyectoView.realizaEvaluacion(red)}" disabled="#{red.blEvaluacionTerminada==true or seguimientoProyectoView.intIdEstadoProyecto==37}" update="@form" >
+                                            <p:confirm header="#{msg['confirmation']}" message="#{msg['step5.sure.take.quiz.manual']}" icon="ui-icon-alert" />
+                                        </p:commandLink>
+                                        /
+                                        <p:commandLink value="#{msg['step5.send.reminder.individual']}" actionListener="#{seguimientoProyectoView.enviarRecordatorioPersonal(red)}" disabled="#{red.blEvaluacionTerminada==true or seguimientoProyectoView.intIdEstadoProyecto==37}" update="@form" >
+                                            <p:confirm header="#{msg['confirmation']}" message="#{msg['step5.sure.send.reminder']}" icon="ui-icon-alert" />
+                                        </p:commandLink>
+                                    </p:column>
                                 </p:dataTable>
 
                             </p:card>
@@ -657,11 +684,6 @@
                             </div>
                         </div>
                     </div>
-
-                    <br/>
-                    <center>
-                        <p:graphicImage value="../images/logoJaio360.jpg" width="130" height="50" />
-                    </center>
                 </p:panel>
             </h:form>
         </p:dialog>   
