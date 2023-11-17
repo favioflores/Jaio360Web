@@ -31,7 +31,7 @@
             </h:form>
 
             <h:form prependId="false">
-                <p:idleMonitor timeout="60000" ><!--60000 3600000-->
+                <p:idleMonitor timeout="3600000" ><!--60000 3600000-->
                     <p:ajax event="idle" listener="#{usuarioSesion.timeout()}" oncomplete="PF('timeoutDlg').show();"/>
                 </p:idleMonitor>
 
