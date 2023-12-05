@@ -27,7 +27,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.servlet.http.HttpSession;
-import org.apache.commons.logging.Log;
+import org.apache.log4j.Logger;
 import org.apache.commons.logging.LogFactory;
 import org.primefaces.event.RowEditEvent;
 
@@ -71,7 +71,7 @@ public class crearCuestionarioView extends BaseView implements Serializable {
 
     private String[] strRptaDesc = new String[10];
 
-    private static final Log log = LogFactory.getLog(crearCuestionarioView.class);
+    private static final Logger log = Logger.getLogger(crearCuestionarioView.class);
 
     public String[] getStrRptaDesc() {
         return strRptaDesc;
@@ -613,7 +613,7 @@ public class crearCuestionarioView extends BaseView implements Serializable {
 
     public void guardarEscala() {
         try {
-            if (objProyectoInfo.getIntIdMetodologia().equals(Constantes.INT_ET_ESTADO_TIPO_PROYECTO_ESCALA)) {
+            if (objProyectoInfo.getIntIdMetodologia().equals(0)) {
                 if (metricaCorrecta()) {
 
                     Proyecto proyecto = this.proyectoDAO.obtenProyecto(Utilitarios.obtenerProyecto().getIntIdProyecto());
@@ -652,7 +652,7 @@ public class crearCuestionarioView extends BaseView implements Serializable {
 
         objProyectoInfo = Utilitarios.obtenerProyecto();
 
-        if (objProyectoInfo.getIntIdMetodologia().equals(Constantes.INT_ET_ESTADO_TIPO_PROYECTO_ESCALA)) {
+        if (objProyectoInfo.getIntIdMetodologia().equals(0)) {
 
             if (this.intRangos > this.intRangoMax || this.intRangos < this.intRangoMin) {
                 return false;
@@ -684,7 +684,7 @@ public class crearCuestionarioView extends BaseView implements Serializable {
 
     public boolean guardarFormulario() {
 
-        if (objProyectoInfo.getIntIdMetodologia().equals(Constantes.INT_ET_ESTADO_TIPO_PROYECTO_ELECCION)) {
+        if (objProyectoInfo.getIntIdMetodologia().equals(0)) {
             for (Componente objComponente : lstCategoria) {
                 if (objComponente.getStrcomponentes().size() != intRangos) {
 

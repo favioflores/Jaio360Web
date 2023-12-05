@@ -16,7 +16,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.bean.ManagedBean;
 
 
-import org.apache.commons.logging.Log;
+import org.apache.log4j.Logger;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.HibernateException;
 import org.primefaces.PrimeFaces;
@@ -28,7 +28,7 @@ import org.primefaces.PrimeFaces;
 public class GuardarNotificacionView extends BaseView implements Serializable {
     private static final long serialVersionUID = -1L;
     
-    private static Log log = LogFactory.getLog(GuardarNotificacionView.class);
+    private static Logger log = Logger.getLogger(GuardarNotificacionView.class);
     
     private String strIdNotificacion;
     private String strRecordatorio;

@@ -28,12 +28,12 @@ import net.sf.dynamicreports.report.builder.component.MultiPageListBuilder;
 import net.sf.dynamicreports.report.builder.component.VerticalListBuilder;
 import net.sf.dynamicreports.report.constant.LineStyle;
 import net.sf.dynamicreports.report.exception.DRException;
-import org.apache.commons.logging.Log;
+import org.apache.log4j.Logger;
 import org.apache.commons.logging.LogFactory;
 
 public class CuestionarioFisico implements Serializable {
 
-    private static Log log = LogFactory.getLog(CuestionarioFisico.class);
+    private static Logger log = Logger.getLogger(CuestionarioFisico.class);
 
     public String build(Evaluado objEvaluado) throws IOException {
 
@@ -53,7 +53,7 @@ public class CuestionarioFisico implements Serializable {
         try {
 
             CuestionarioDAO objCuestionarioDAO = new CuestionarioDAO();
-            Cuestionario objCuestionario = objCuestionarioDAO.obtenCuestionarioXEvaluado(objEvaluado.getPaIdParticipantePk());
+            Cuestionario objCuestionario = objCuestionarioDAO.obtenCuestionarioXEvaluado(objEvaluado.getPaIdParticipantePk(), Utilitarios.obtenerProyecto().getIntIdProyecto());
 
             if (objCuestionario != null) {
                 report().setTemplate(ModeloCaratula.reportTemplateManual)

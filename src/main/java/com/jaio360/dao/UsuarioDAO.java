@@ -13,7 +13,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.logging.Log;
+import org.apache.log4j.Logger;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
@@ -27,7 +27,7 @@ public class UsuarioDAO implements Serializable {
     private Session sesion;
     private Transaction tx;
 
-    private static Log log = LogFactory.getLog(UsuarioDAO.class);
+    private static Logger log = Logger.getLogger(UsuarioDAO.class);
 
     public Integer guardaUsuario(Usuario usuario) throws HibernateException {
         Integer id = 0;

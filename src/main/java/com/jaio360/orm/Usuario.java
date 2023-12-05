@@ -24,6 +24,7 @@ public class Usuario implements java.io.Serializable {
     private Set proyectos = new HashSet(0);
     private Set movimientos = new HashSet(0);
     private Set manageUserRelations = new HashSet(0);
+    private Set reporteGenerados = new HashSet(0);
 
     public Usuario() {
     }
@@ -162,6 +163,14 @@ public class Usuario implements java.io.Serializable {
 
     public void setUsFeRegistro(Date usFeRegistro) {
         this.usFeRegistro = usFeRegistro;
+    }
+
+    public Set getReporteGenerados() {
+        return reporteGenerados;
+    }
+
+    public void setReporteGenerados(Set reporteGenerados) {
+        this.reporteGenerados = reporteGenerados;
     }
 
     public Set getContratos() {

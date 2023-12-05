@@ -6,6 +6,7 @@ import com.jaio360.domain.DatosReporte;
 import com.jaio360.model.ModeloGeneral;
 import com.jaio360.orm.Componente;
 import com.jaio360.orm.Relacion;
+import com.jaio360.orm.ReporteGenerado;
 import com.jaio360.utils.Constantes;
 import com.jaio360.utils.Utilitarios;
 import java.awt.Color;
@@ -13,8 +14,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -22,8 +21,6 @@ import java.util.List;
 import java.util.Map;
 import static net.sf.dynamicreports.report.builder.DynamicReports.*;
 import net.sf.dynamicreports.jasper.builder.export.JasperPdfExporterBuilder;
-import net.sf.dynamicreports.report.base.chart.plot.DRSpiderPlot;
-import net.sf.dynamicreports.report.builder.chart.CategoryChartSerieBuilder;
 import net.sf.dynamicreports.report.builder.chart.SpiderChartBuilder;
 import net.sf.dynamicreports.report.builder.column.TextColumnBuilder;
 import net.sf.dynamicreports.report.builder.component.MultiPageListBuilder;
@@ -32,26 +29,18 @@ import net.sf.dynamicreports.report.definition.ReportParameters;
 import net.sf.dynamicreports.report.definition.chart.DRIChartCustomizer;
 import net.sf.dynamicreports.report.exception.DRException;
 import net.sf.jasperreports.engine.JRDataSource;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.CategoryAxis;
-import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.axis.ValueAxis;
-import org.jfree.chart.plot.CategoryPlot;
-import org.jfree.chart.plot.Plot;
-import org.jfree.chart.renderer.category.BarRenderer;
-import org.jfree.ui.RectangleInsets;
 
 public class ReporteIndividualSumarioCategoriaRelacion implements Serializable {
 
-    private static final Log log = LogFactory.getLog(ReporteIndividualSumarioCategoriaRelacion.class);
+    private static final Logger log = Logger.getLogger(ReporteIndividualSumarioCategoriaRelacion.class);
 
     ComponenteDAO componenteDao = new ComponenteDAO();
     ResultadoDAO resultadoDAO = new ResultadoDAO();
     DatosReporte objDatosReporte;
 
-    public String build(DatosReporte objDatosReporte, Map map, Integer intEvaluadoPk, String strNameFile) throws IOException {
+    public String build(DatosReporte objDatosReporte, Map map, Integer intEvaluadoPk, String strNameFile, ReporteGenerado objReporteGenerado) throws IOException {
 
         this.objDatosReporte = objDatosReporte;
 
@@ -61,12 +50,12 @@ public class ReporteIndividualSumarioCategoriaRelacion implements Serializable {
 
         try {
 
-                    TextColumnBuilder<String> categorias = col.column("Categorias", "categoria", type.stringType());
-                    
+            TextColumnBuilder<String> categorias = col.column("Categorias", "categoria", type.stringType());
+
             report().setTemplate(ModeloGeneral.reportTemplate)
                     .setSummaryWithPageHeaderAndFooter(Boolean.TRUE)
                     .pageHeader(ModeloGeneral.generaCabeceraSinMetricas(map, this.objDatosReporte))
-                    .summary(generaContenido(intEvaluadoPk, categorias))
+                    .summary(generaContenido(intEvaluadoPk, categorias, objReporteGenerado))
                     .pageFooter(ModeloGeneral.generaPie(map))
                     .toPdf(pdfExporter);
 
@@ -76,16 +65,16 @@ public class ReporteIndividualSumarioCategoriaRelacion implements Serializable {
         return strNombreReporte;
     }
 
-    private MultiPageListBuilder generaContenido(Integer intEvaluadoPk, TextColumnBuilder<String> categorias) {
+    private MultiPageListBuilder generaContenido(Integer intEvaluadoPk, TextColumnBuilder<String> categorias, ReporteGenerado objReporteGenerado) {
 
         MultiPageListBuilder multiPageList = cmp.multiPageList();
 
-        List lstItems = resultadoDAO.listaItemsBajaPromedioMismo(intEvaluadoPk);
+        List lstItems = resultadoDAO.listaItemsBajaPromedioMismo(intEvaluadoPk, objReporteGenerado.getProyectoInfo().getIntIdProyecto());
 
         SpiderChartBuilder spider = cht.spiderChart()
                 .setCategory(categorias)
                 //.addCustomizer(new ReporteIndividualSumarioCategoriaRelacion.ChartCustomizer())
-                .setDataSource(createDataSource(intEvaluadoPk)
+                .setDataSource(createDataSource(intEvaluadoPk, objReporteGenerado)
                 );
 
         /* RELACIONES */
@@ -108,9 +97,9 @@ public class ReporteIndividualSumarioCategoriaRelacion implements Serializable {
 
     }
 
-    private JRDataSource createDataSource(Integer intEvaluadoPk) {
+    private JRDataSource createDataSource(Integer intEvaluadoPk, ReporteGenerado objReporteGenerado) {
 
-        List<Componente> lstResultadoXCategoria = componenteDao.listaComponenteProyectoTipo(Utilitarios.obtenerProyecto().getIntIdProyecto(), objDatosReporte.getIntIdCuestionario(), Constantes.INT_ET_TIPO_COMPONENTE_CATEGORIA, null);
+        List<Componente> lstResultadoXCategoria = componenteDao.listaComponenteProyectoTipo(objReporteGenerado.getProyectoInfo().getIntIdProyecto(), objDatosReporte.getIntIdCuestionario(), Constantes.INT_ET_TIPO_COMPONENTE_CATEGORIA, null);
 
         ArrayList<String> columns = new ArrayList<>();
         columns.add("categoria");
@@ -132,7 +121,7 @@ public class ReporteIndividualSumarioCategoriaRelacion implements Serializable {
 
         for (Componente objComponente : lstResultadoXCategoria) {
 
-            List lstResultadoFinal = this.resultadoDAO.listaReporteSumarioMismo(objComponente, intEvaluadoPk);
+            List lstResultadoFinal = this.resultadoDAO.listaReporteSumarioMismo(objComponente, intEvaluadoPk, objReporteGenerado.getProyectoInfo().getIntIdProyecto());
 
             itMapRelaciones = objDatosReporte.getMapRelaciones().entrySet().iterator();
 

@@ -4,6 +4,7 @@ import com.jaio360.dao.ComponenteDAO;
 import com.jaio360.dao.ResultadoDAO;
 import com.jaio360.domain.DatosReporte;
 import com.jaio360.orm.Componente;
+import com.jaio360.orm.ReporteGenerado;
 import com.jaio360.utils.Constantes;
 import com.jaio360.utils.Utilitarios;
 import com.jaio360.view.BaseView;
@@ -15,41 +16,50 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFFont;
-import org.apache.poi.hssf.usermodel.HSSFRichTextString;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import java.util.ResourceBundle;
+import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.xssf.usermodel.XSSFRichTextString;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class ReporteTodasRespuestas extends BaseView implements Serializable {
 
-    private static final Log log = LogFactory.getLog(ReporteTodasRespuestas.class);
+    private static final Logger log = Logger.getLogger(ReporteTodasRespuestas.class);
     ResultadoDAO resultadoDAO = new ResultadoDAO();
+    ResourceBundle rb = ResourceBundle.getBundle("etiquetas");
 
-    public String build(DatosReporte objDatosReporte, Map map, Integer idCuestionario, String strNameFile) throws IOException {
+    public String build(DatosReporte objDatosReporte, Map map, Integer idCuestionario, String strNameFile, ReporteGenerado objReporteGenerado) throws IOException {
+        try {
 
-        List lstRptas = this.resultadoDAO.obtieneListaTodasLasRespuestas(idCuestionario);
+            List lstRptas = this.resultadoDAO.obtieneListaTodasLasRespuestas(idCuestionario, objReporteGenerado);
 
-        String strNombreReporte = strNameFile + Constantes.STR_EXTENSION_XLS;
-        objDatosReporte.setStrID(strNombreReporte);
+            String strNombreReporte = strNameFile + Constantes.STR_EXTENSION_XLSX;
+            objDatosReporte.setStrID(strNombreReporte);
 
-        generaExcelRespuesta(strNombreReporte, lstRptas, objDatosReporte);
+            generaExcelRespuesta(strNombreReporte, lstRptas, objDatosReporte, objReporteGenerado);
 
-        return strNombreReporte;
+            return strNombreReporte;
+
+        } catch (Exception e) {
+            log.error(e.getLocalizedMessage());
+        }
+
+        return null;
+
     }
 
-    public void generaExcelRespuesta(String strNombreReporte, List lstRptas, DatosReporte objDatosReporte) {
+    public void generaExcelRespuesta(String strNombreReporte, List lstRptas, DatosReporte objDatosReporte, ReporteGenerado objReporteGenerado) {
 
         ComponenteDAO objComponenteDAO = new ComponenteDAO();
-        List<Componente> lstComponente = objComponenteDAO.listaComponenteProyectoTipo(Utilitarios.obtenerProyecto().getIntIdProyecto(), objDatosReporte.getIntIdCuestionario(), Constantes.INT_ET_TIPO_COMPONENTE_PREGUNTA_CERRADA, null);
+        List<Componente> lstComponente = objComponenteDAO.listaComponenteProyectoTipo(objReporteGenerado.getProyectoInfo().getIntIdProyecto(), objDatosReporte.getIntIdCuestionario(), Constantes.INT_ET_TIPO_COMPONENTE_PREGUNTA_CERRADA, null);
 
-        HSSFWorkbook xlsRespuestas = new HSSFWorkbook();
-        HSSFSheet hoja = xlsRespuestas.createSheet(msg("answers"));
+        XSSFWorkbook xlsRespuestas = new XSSFWorkbook();
+        XSSFSheet hoja = xlsRespuestas.createSheet(rb.getString("answers"));
 
         Map mapColumnas = creaCabecera(lstComponente, hoja, xlsRespuestas);
 
@@ -59,7 +69,7 @@ public class ReporteTodasRespuestas extends BaseView implements Serializable {
 
         String strKey = Constantes.strVacio;
 
-        HSSFRow nextrow = null;
+        XSSFRow nextrow = null;
 
         while (itLstRptas.hasNext()) {
 
@@ -166,87 +176,87 @@ public class ReporteTodasRespuestas extends BaseView implements Serializable {
             archivo.flush();
             archivo.close();
 
-        } catch (IOException ex) {
-            mostrarError(log, ex);
+        } catch (Exception ex) {
+            log.error(ex.getLocalizedMessage());
         }
 
     }
 
-    private Map creaCabecera(List<Componente> lstComponente, HSSFSheet hoja, HSSFWorkbook xlsRespuestas) {
+    private Map creaCabecera(List<Componente> lstComponente, XSSFSheet hoja, XSSFWorkbook xlsRespuestas) {
 
         Map mapColumnas = new HashMap();
 
-        HSSFRow row = hoja.createRow(0);
-        HSSFFont hSSFFont = xlsRespuestas.createFont();
-        //hSSFFont.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD); 
+        XSSFRow row = hoja.createRow(0);
+        XSSFFont hSSFFont = xlsRespuestas.createFont();
+        //hSSFFont.setBoldweight(XSSFFont.BOLDWEIGHT_BOLD); 
         hSSFFont.setBold(true);
-        HSSFCellStyle myStyle = xlsRespuestas.createCellStyle();
+        XSSFCellStyle myStyle = xlsRespuestas.createCellStyle();
         myStyle.setFont(hSSFFont);
 
         int i = 0;
 
-        HSSFCell cell0 = row.createCell(i++);
-        HSSFRichTextString texto0 = new HSSFRichTextString(msg("evaluated"));
+        XSSFCell cell0 = row.createCell(i++);
+        XSSFRichTextString texto0 = new XSSFRichTextString(rb.getString("evaluated"));
         cell0.setCellValue(texto0);
         cell0.setCellStyle(myStyle);
 
-        HSSFCell cell1 = row.createCell(i++);
-        HSSFRichTextString texto1 = new HSSFRichTextString(msg("sex") + " (" + msg("evaluated") + ")");
+        XSSFCell cell1 = row.createCell(i++);
+        XSSFRichTextString texto1 = new XSSFRichTextString(rb.getString("sex") + " (" + rb.getString("evaluated") + ")");
         cell1.setCellValue(texto1);
         cell1.setCellStyle(myStyle);
 
-        HSSFCell cell2 = row.createCell(i++);
-        HSSFRichTextString texto2 = new HSSFRichTextString(msg("age") + " (" + msg("evaluated") + ")");
+        XSSFCell cell2 = row.createCell(i++);
+        XSSFRichTextString texto2 = new XSSFRichTextString(rb.getString("age") + " (" + rb.getString("evaluated") + ")");
         cell2.setCellValue(texto2);
         cell2.setCellStyle(myStyle);
 
-        HSSFCell cell3 = row.createCell(i++);
-        HSSFRichTextString texto3 = new HSSFRichTextString(msg("hiring.time") + " (" + msg("evaluated") + ")");
+        XSSFCell cell3 = row.createCell(i++);
+        XSSFRichTextString texto3 = new XSSFRichTextString(rb.getString("hiring.time") + " (" + rb.getString("evaluated") + ")");
         cell3.setCellValue(texto3);
         cell3.setCellStyle(myStyle);
 
-        HSSFCell cell4 = row.createCell(i++);
-        HSSFRichTextString texto4 = new HSSFRichTextString(msg("work.range") + " (" + msg("evaluated") + ")");
+        XSSFCell cell4 = row.createCell(i++);
+        XSSFRichTextString texto4 = new XSSFRichTextString(rb.getString("work.range") + " (" + rb.getString("evaluated") + ")");
         cell4.setCellValue(texto4);
         cell4.setCellStyle(myStyle);
 
-        HSSFCell cell5 = row.createCell(i++);
-        HSSFRichTextString texto5 = new HSSFRichTextString(msg("working.area") + " (" + msg("evaluated") + ")");
+        XSSFCell cell5 = row.createCell(i++);
+        XSSFRichTextString texto5 = new XSSFRichTextString(rb.getString("working.area") + " (" + rb.getString("evaluated") + ")");
         cell5.setCellValue(texto5);
         cell5.setCellStyle(myStyle);
 
-        HSSFCell cell6 = row.createCell(i++);
-        HSSFRichTextString texto6 = new HSSFRichTextString(msg("relationship"));
+        XSSFCell cell6 = row.createCell(i++);
+        XSSFRichTextString texto6 = new XSSFRichTextString(rb.getString("relationship"));
         cell6.setCellValue(texto6);
         cell6.setCellStyle(myStyle);
 
-        HSSFCell cell7 = row.createCell(i++);
-        HSSFRichTextString texto7 = new HSSFRichTextString(msg("evaluator"));
+        XSSFCell cell7 = row.createCell(i++);
+        XSSFRichTextString texto7 = new XSSFRichTextString(rb.getString("evaluator"));
         cell7.setCellValue(texto7);
         cell7.setCellStyle(myStyle);
 
-        HSSFCell cell8 = row.createCell(i++);
-        HSSFRichTextString texto8 = new HSSFRichTextString(msg("sex") + " (" + msg("evaluator") + ")");
+        XSSFCell cell8 = row.createCell(i++);
+        XSSFRichTextString texto8 = new XSSFRichTextString(rb.getString("sex") + " (" + rb.getString("evaluator") + ")");
         cell8.setCellValue(texto8);
         cell8.setCellStyle(myStyle);
 
-        HSSFCell cell9 = row.createCell(i++);
-        HSSFRichTextString texto9 = new HSSFRichTextString(msg("age") + " (" + msg("evaluator") + ")");
+        XSSFCell cell9 = row.createCell(i++);
+        XSSFRichTextString texto9 = new XSSFRichTextString(rb.getString("age") + " (" + rb.getString("evaluator") + ")");
         cell9.setCellValue(texto9);
         cell9.setCellStyle(myStyle);
 
-        HSSFCell cell10 = row.createCell(i++);
-        HSSFRichTextString texto10 = new HSSFRichTextString(msg("hiring.time") + " (" + msg("evaluator") + ")");
+        XSSFCell cell10 = row.createCell(i++);
+        XSSFRichTextString texto10 = new XSSFRichTextString(rb.getString("hiring.time") + " (" + rb.getString("evaluator") + ")");
         cell10.setCellValue(texto10);
         cell10.setCellStyle(myStyle);
 
-        HSSFCell cell11 = row.createCell(i++);
-        HSSFRichTextString texto11 = new HSSFRichTextString(msg("work.range") + " (" + msg("evaluator") + ")");
+        XSSFCell cell11 = row.createCell(i++);
+        XSSFRichTextString texto11 = new XSSFRichTextString(rb.getString("work.range") + " (" + rb.getString("evaluator") + ")");
         cell11.setCellValue(texto11);
         cell11.setCellStyle(myStyle);
 
-        HSSFCell cell12 = row.createCell(i++);
-        HSSFRichTextString texto12 = new HSSFRichTextString(msg("working.area") + " (" + msg("evaluator") + ")");
+        XSSFCell cell12 = row.createCell(i++);
+        XSSFRichTextString texto12 = new XSSFRichTextString(rb.getString("working.area") + " (" + rb.getString("evaluator") + ")");
         cell12.setCellValue(texto12);
         cell12.setCellStyle(myStyle);
 
@@ -263,8 +273,8 @@ public class ReporteTodasRespuestas extends BaseView implements Serializable {
                 pkCategoriaAnt = objComponente.getComponente().getCoIdComponentePk();
             }
 
-            HSSFCell cell = row.createCell(i++);
-            HSSFRichTextString texto = new HSSFRichTextString(c + "." + p++);
+            XSSFCell cell = row.createCell(i++);
+            XSSFRichTextString texto = new XSSFRichTextString(c + "." + p++);
             cell.setCellValue(texto);
             cell.setCellStyle(myStyle);
 

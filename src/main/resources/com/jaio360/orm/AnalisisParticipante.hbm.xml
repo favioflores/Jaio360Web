@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 21/10/2014 08:38:38 PM by Hibernate Tools 3.2.1.GA -->
+<hibernate-mapping>
+    <class name="com.jaio360.orm.AnalisisParticipante" table="analisis_participante" catalog="jaio">
+        <id name="apIdAnalisisPk" type="java.lang.Integer">
+            <column name="AP_ID_ANALISIS_PK" />
+            <generator class="identity" />
+        </id>
+        <property name="paIdParticipanteFk" type="int">
+            <column name="PA_ID_PARTICIPANTE_FK" />
+        </property>
+        <property name="apArchivo" type="binary">
+            <column name="AP_ARCHIVO" not-null="true" />
+        </property>
+        <property name="apFilename" type="string">
+            <column name="AP_FILENAME" length="1000" not-null="true" />
+        </property>
+        <many-to-one name="reporteGenerado" class="com.jaio360.orm.ReporteGenerado" fetch="select">
+            <column name="RG_REPORTE_FK" not-null="true" />
+        </many-to-one>
+    </class>
+</hibernate-mapping>

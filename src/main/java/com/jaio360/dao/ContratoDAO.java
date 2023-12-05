@@ -5,7 +5,7 @@ import com.jaio360.orm.HibernateUtil;
 import com.jaio360.utils.Constantes;
 import java.io.Serializable;
 import java.util.List;
-import org.apache.commons.logging.Log;
+import org.apache.log4j.Logger;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -16,7 +16,7 @@ public class ContratoDAO implements Serializable {
 
     private Session sesion;
     private Transaction tx;
-    private Log log = LogFactory.getLog(ContratoDAO.class);
+    private Logger log = Logger.getLogger(ContratoDAO.class);
 
     public ContratoDAO() {
         this.sesion = HibernateUtil.getSessionFactory().openSession();

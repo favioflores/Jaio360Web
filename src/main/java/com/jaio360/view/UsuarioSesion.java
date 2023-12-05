@@ -35,8 +35,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.CharEncoding;
-import org.apache.commons.logging.Log;
+import org.apache.log4j.Logger;
 import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
@@ -48,7 +49,7 @@ import org.apache.velocity.exception.ResourceNotFoundException;
 @ViewScoped
 public class UsuarioSesion extends BaseView implements Serializable {
 
-    private static Log log = LogFactory.getLog(UsuarioSesion.class);
+    private static Logger log = Logger.getLogger(UsuarioSesion.class);
 
     private static final long serialVersionUID = -1L;
 
@@ -118,8 +119,6 @@ public class UsuarioSesion extends BaseView implements Serializable {
     @PostConstruct
     public void init() {
 
-        timeServer = new Date();
-
     }
 
     public void iniciarSesion() throws Exception {
@@ -172,7 +171,7 @@ public class UsuarioSesion extends BaseView implements Serializable {
 
                     session.setAttribute("usuarioInfo", usuarioInfo);
 
-                    System.out.println("La sesión se abrió automaticamente a las " + new Date());
+                    //System.out.println("La sesión se abrió automaticamente a las " + new Date());
 
                     FacesContext.getCurrentInstance().getExternalContext().redirect("welcome.jsf");
 
@@ -188,7 +187,7 @@ public class UsuarioSesion extends BaseView implements Serializable {
     @PreDestroy
     private void sesionCerrada() {
 
-        System.out.println("La sesión se cerro automaticamente a las " + new Date());
+        //System.out.println("La sesión se cerro automaticamente a las " + new Date());
 
     }
 

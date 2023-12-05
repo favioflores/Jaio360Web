@@ -14,7 +14,6 @@ import com.jaio360.utils.Utilitarios;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -23,12 +22,9 @@ import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 
 /**
@@ -37,7 +33,7 @@ import org.hibernate.HibernateException;
  */
 public class MailSender extends Thread implements Serializable {
 
-    private Log log = LogFactory.getLog(MailSender.class);
+    private Logger log = Logger.getLogger(MailSender.class);
 
     private NotificacionesDAO objNotificacionesDAO;
     private Integer idProyecto;

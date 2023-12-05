@@ -19,7 +19,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.logging.Log;
+import org.apache.log4j.Logger;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -28,7 +28,7 @@ import org.hibernate.Transaction;
 
 public class NotificacionesDAO implements Serializable {
 
-    private static Log log = LogFactory.getLog(NotificacionesDAO.class);
+    private static Logger log = Logger.getLogger(NotificacionesDAO.class);
     private Session sesion;
     private Transaction tx;
 

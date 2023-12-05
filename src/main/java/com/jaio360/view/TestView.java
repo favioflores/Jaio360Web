@@ -12,7 +12,7 @@ import javax.faces.bean.ManagedBean;
 import javax.servlet.http.HttpSession;
 
 
-import org.apache.commons.logging.Log;
+import org.apache.log4j.Logger;
 import org.apache.commons.logging.LogFactory;
 
 @ManagedBean(name = "TestView")
@@ -21,7 +21,7 @@ import org.apache.commons.logging.LogFactory;
 
 public class TestView extends BaseView implements Serializable {
 
-    private static Log log = LogFactory.getLog(TestView.class);
+    private static Logger log = Logger.getLogger(TestView.class);
 
     private static final long serialVersionUID = -1L;
 

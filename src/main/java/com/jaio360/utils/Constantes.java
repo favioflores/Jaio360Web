@@ -11,7 +11,6 @@ public class Constantes {
     //public static String STR_INBOX_DEFINITIVO = File.separator + "var" + File.separator + "tmp" + File.separator + "InboxDefinitivo";
     //public static String STR_INBOX_PRELIMINAR = File.separator + "D://InboxPreliminar";
     //public static String STR_INBOX_DEFINITIVO = File.separator + "D://InboxDefinitivo";
-
     public static char CH_RANDOM_Z = 'Z';
     public static char CH_RANDOM_A = 'A';
     public static String UNDERLINE_COMMENT = "______________________________________________________________________________________________________________________________________________________________________________________________";
@@ -64,7 +63,7 @@ public class Constantes {
     public static Integer INT_ET_ESTADO_USUARIO_CONFIRMADO = 13;
     public static Integer INT_ET_ESTADO_USUARIO_BLOQUEADO = 14;
     public static Integer INT_ET_ESTADO_USUARIO_ELIMINADO = 214;
-    
+
     public static Integer INT_ET_PATH_TEMP_PRELIMINAR = 215;
     public static Integer INT_ET_PATH_TEMP_DEFINITIVO = 216;
 
@@ -122,8 +121,10 @@ public class Constantes {
     public static Integer INT_ET_ESTADO_TARIFA_CONFIRMADO = 26;
     public static Integer INT_ET_ESTADO_TARIFA_EXPIRADO = 27;
 
-    public static Integer INT_ET_ESTADO_TIPO_PROYECTO_ESCALA = 30;
-    public static Integer INT_ET_ESTADO_TIPO_PROYECTO_ELECCION = 31;
+    public static Integer INT_ET_ESTADO_REPORTE_GENERADO_REGISTRADO = 217;
+    public static Integer INT_ET_ESTADO_REPORTE_GENERADO_ENPROCESO = 218;
+    public static Integer INT_ET_ESTADO_REPORTE_GENERADO_TERMINADO = 219;
+    public static Integer INT_ET_ESTADO_REPORTE_GENERADO_FALLIDO = 220;
 
     public static Integer INT_ET_TIPO_TARIFA_INDIVIDUAL = 202;
     public static Integer INT_ET_TIPO_TARIFA_MASIVO = 203;
@@ -178,6 +179,7 @@ public class Constantes {
     public static String STR_EXTENSION_PNG = ".png";
     public static String STR_EXTENSION_ZIP = ".zip";
     public static String STR_EXTENSION_XLS = ".xls";
+    public static String STR_EXTENSION_XLSX = ".xlsx";
 
     public static String PASO_0 = "0";
     public static String PASO_1 = "1";
@@ -207,11 +209,16 @@ public class Constantes {
     /**
      * *********
      */
+
+    public static Integer INT_REPORTE_GRUPAL = 0;
+    public static Integer INT_REPORTE_INDIVIDUAL = 1;
+
     public static Integer INT_REPORTE_GRUPAL_CARATULA = 0;
 
     public static Integer INT_REPORTE_GRUPAL_SUMARIO_X_CATEGORIA = 100;
     public static Integer INT_REPORTE_GRUPAL_NIVEL_DE_PARTICIPACION = 101;
     public static Integer INT_REPORTE_GRUPAL_RESPUESTAS = 102;
+    public static Integer INT_REPORTE_GRUPAL_SUMARIO_X_CATEGORIA_WEIGHTED = 103;
 
     //public static Integer INT_REPORTE_GRUPAL_PROMEDIO_GENERAL_POR_COMPETENCIA = 11;
     //public static Integer INT_REPORTE_GRUPAL_PROMEDIO_GENERAL_POR_PREGUNTA = 12;
@@ -221,29 +228,28 @@ public class Constantes {
     //public static Integer INT_REPORTE_GRUPAL_RESUMEN_DE_PROMEDIO = 16;
     //public static Integer INT_REPORTE_GRUPAL_RESUMEN_DE_EVALUADOS_POR_RELACIONES = 22;
     public static Integer INT_REPORTE_INDIVIDUAL_CARATULA = 0;
-    
+
     public static Integer INT_REPORTE_INDIVIDUAL_SUMARIO_X_CATEGORIA = 1;
     public static Integer INT_REPORTE_INDIVIDUAL_SUMARIO_X_CATEGORIA_WEIGHTED = 11;
-    
+
     public static Integer INT_REPORTE_INDIVIDUAL_SUMARIO_X_CATEGORIA_MISMO = 2;
     public static Integer INT_REPORTE_INDIVIDUAL_SUMARIO_X_CATEGORIA_MISMO_WEIGHTED = 12;
-    
+
     public static Integer INT_REPORTE_INDIVIDUAL_SUMARIO_X_CATEGORIA_MISMO_RELACION = 3;
     public static Integer INT_REPORTE_INDIVIDUAL_SUMARIO_X_CATEGORIA_MISMO_RELACION_WEIGHTED = 13;
-    
+
     public static Integer INT_REPORTE_INDIVIDUAL_CALIFICACION_X_ITEM_CATEGORIA = 4;
-    public static Integer INT_REPORTE_INDIVIDUAL_CALIFICACION_X_ITEM_CATEGORIA_WEIGHTED = 14; 
-    
+    public static Integer INT_REPORTE_INDIVIDUAL_CALIFICACION_X_ITEM_CATEGORIA_WEIGHTED = 14;
+
     public static Integer INT_REPORTE_INDIVIDUAL_CALIFICACION_X_ITEM_PROMEDIO = 5;
     public static Integer INT_REPORTE_INDIVIDUAL_CALIFICACION_X_ITEM_PROMEDIO_WEIGHTED = 15;
-    
+
     public static Integer INT_REPORTE_INDIVIDUAL_ITEM_ALTA_CALIFICACION_OTROS = 6;
     public static Integer INT_REPORTE_INDIVIDUAL_ITEM_ALTA_CALIFICACION_OTROS_WEIGHTED = 16;
-    
+
     public static Integer INT_REPORTE_INDIVIDUAL_ITEM_BAJA_CALIFICACION_OTROS = 7;
     public static Integer INT_REPORTE_INDIVIDUAL_ITEM_BAJA_CALIFICACION_OTROS_WEIGHTED = 17;
-    
-    
+
     public static Integer INT_REPORTE_INDIVIDUAL_ITEM_ALTA_CALIFICACION_MISMO = 8;
     public static Integer INT_REPORTE_INDIVIDUAL_ITEM_BAJA_CALIFICACION_MISMO = 9;
     public static Integer INT_REPORTE_INDIVIDUAL_GENERAL_X_CATEGORIA_RELACION = 11;

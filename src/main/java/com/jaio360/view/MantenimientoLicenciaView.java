@@ -31,7 +31,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.bean.ManagedBean;
 
 
-import org.apache.commons.logging.Log;
+import org.apache.log4j.Logger;
 import org.apache.commons.logging.LogFactory;
 
 @ManagedBean(name = "mantenimientoLicenciaView")
@@ -40,7 +40,7 @@ import org.apache.commons.logging.LogFactory;
 
 public class MantenimientoLicenciaView extends BaseView implements Serializable {
 
-    private static Log log = LogFactory.getLog(MantenimientoLicenciaView.class);
+    private static Logger log = Logger.getLogger(MantenimientoLicenciaView.class);
 
     private static final long serialVersionUID = -1L;
 

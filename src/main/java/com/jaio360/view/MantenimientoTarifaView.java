@@ -22,7 +22,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.bean.ManagedBean;
 
 
-import org.apache.commons.logging.Log;
+import org.apache.log4j.Logger;
 import org.apache.commons.logging.LogFactory;
 import org.primefaces.event.RowEditEvent;
 
@@ -32,7 +32,7 @@ import org.primefaces.event.RowEditEvent;
 
 public class MantenimientoTarifaView extends BaseView implements Serializable {
 
-    private static Log log = LogFactory.getLog(MantenimientoTarifaView.class);
+    private static Logger log = Logger.getLogger(MantenimientoTarifaView.class);
 
     private String strDescripcion;
     private BigDecimal bdPrecio;

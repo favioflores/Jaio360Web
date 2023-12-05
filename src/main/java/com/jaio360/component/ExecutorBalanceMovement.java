@@ -14,7 +14,7 @@ import com.jaio360.utils.Movimientos;
 import com.jaio360.view.BaseView;
 import java.util.Date;
 import java.util.List;
-import org.apache.commons.logging.Log;
+import org.apache.log4j.Logger;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -25,7 +25,7 @@ import org.hibernate.Transaction;
  */
 public class ExecutorBalanceMovement extends BaseView {
 
-    private static final Log log = LogFactory.getLog(ExecutorBalanceMovement.class);
+    private static final Logger log = Logger.getLogger(ExecutorBalanceMovement.class);
 
     private static final Integer SUBTRACTION = -1;
 

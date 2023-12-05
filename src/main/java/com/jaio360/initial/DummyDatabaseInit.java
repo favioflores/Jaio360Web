@@ -9,7 +9,7 @@ import java.io.Serializable;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
-import org.apache.commons.logging.Log;
+import org.apache.log4j.Logger;
 import org.apache.commons.logging.LogFactory;
 
 /**
@@ -18,7 +18,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class DummyDatabaseInit extends HttpServlet implements Serializable {
     
-    private static Log log = LogFactory.getLog(DummyDatabaseInit.class);
+    private static Logger log = Logger.getLogger(DummyDatabaseInit.class);
 
     /**
      * @param config

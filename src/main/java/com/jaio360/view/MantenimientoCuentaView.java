@@ -28,7 +28,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.bean.ManagedBean;
 
 
-import org.apache.commons.logging.Log;
+import org.apache.log4j.Logger;
 import org.apache.commons.logging.LogFactory;
 import org.primefaces.PrimeFaces;
 
@@ -36,7 +36,7 @@ import org.primefaces.PrimeFaces;
 @ViewScoped
 public class MantenimientoCuentaView extends BaseView implements Serializable {
 
-    private static Log log = LogFactory.getLog(MantenimientoCuentaView.class);
+    private static Logger log = Logger.getLogger(MantenimientoCuentaView.class);
 
     private static final long serialVersionUID = -1L;
 

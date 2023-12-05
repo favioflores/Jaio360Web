@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 21/10/2014 08:38:38 PM by Hibernate Tools 3.2.1.GA -->
+<hibernate-mapping>
+    <class name="com.jaio360.orm.ReporteGenerado" table="reporte_generado" catalog="jaio">
+        <id name="rgReportePk" type="java.lang.Integer">
+            <column name="RG_REPORTE_PK" />
+            <generator class="identity" />
+        </id>
+        <property name="rgEstado" type="int">
+            <column name="RG_ESTADO" not-null="true" />
+        </property>
+        <property name="rgDtFechaRegistro" type="timestamp">
+            <column name="RG_DT_FECHA_REGISTRO" length="19" />
+        </property>
+        <property name="rgDtFechaUltMod" type="timestamp">
+            <column name="RG_DT_FECHA_ULT_MOD" length="19" />
+        </property>
+        <property name="rgDtFechaExpiracion" type="timestamp">
+            <column name="RG_DT_FECHA_EXPIRACION" length="19" />
+        </property>
+        <property name="rgTxNombreArchivo" type="string">
+            <column name="RG_TX_NOMBRE_ARCHIVO" length="3000" not-null="true" />
+        </property>
+        <property name="rgBlPorcentajeAvance" type="big_decimal">
+            <column name="RG_BL_PORCENTAJE_AVANCE" precision="15" scale="10" not-null="true" />
+        </property>
+        <many-to-one name="usuario" class="com.jaio360.orm.Usuario" fetch="select">
+            <column name="US_ID_CUENTA_FK" not-null="true" />
+        </many-to-one>
+        <many-to-one name="proyecto" class="com.jaio360.orm.Proyecto" fetch="select">
+            <column name="PO_ID_PROYECTO_FK" not-null="true" />
+        </many-to-one>
+        <set name="analisisParticipantes" inverse="true" lazy="true" >
+            <key>
+                <column name="RG_REPORTE_FK" not-null="true" />
+            </key>
+            <one-to-many class="com.jaio360.orm.AnalisisParticipante" />
+        </set>
+ 
+       
+    </class>
+</hibernate-mapping>

@@ -80,5 +80,12 @@
             </key>
             <one-to-many class="com.jaio360.orm.Mensaje" />
         </set>
+        <set name="reporteGenerados" inverse="true">
+            <key>
+                <column name="PO_ID_PROYECTO_FK" not-null="true" />
+            </key>
+            <one-to-many class="com.jaio360.orm.ReporteGenerado" />
+        </set>
+
     </class>
 </hibernate-mapping>

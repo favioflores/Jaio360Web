@@ -13,7 +13,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.logging.Log;
+import org.apache.log4j.Logger;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -25,7 +25,7 @@ public class LastUpdateDAO implements Serializable {
     private Session sesion;
     private Transaction tx;
 
-    private static Log log = LogFactory.getLog(LastUpdateDAO.class);
+    private static Logger log = Logger.getLogger(LastUpdateDAO.class);
 
     public List<LastUpdate> obtenListaLastUpdate() throws HibernateException {
         List<LastUpdate> listaLastUpdate = null;

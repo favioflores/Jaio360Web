@@ -75,5 +75,12 @@
             </key>
             <one-to-many class="com.jaio360.orm.ManageUserRelation" />
         </set>
+        
+        <set name="reporteGenerados" inverse="true" lazy="true" >
+            <key>
+                <column name="US_ID_CUENTA_FK" not-null="true" />
+            </key>
+            <one-to-many class="com.jaio360.orm.ReporteGenerado" />
+        </set>
     </class>
 </hibernate-mapping>

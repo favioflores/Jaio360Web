@@ -16,13 +16,13 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import org.apache.commons.logging.Log;
+import org.apache.log4j.Logger;
 import org.apache.commons.logging.LogFactory;
 
 @WebFilter(filterName = "AuthFilter", urlPatterns = {"*.xhtml"})
 public class AuthFilter implements Filter {
 
-    private static Log log = LogFactory.getLog(AuthFilter.class);
+    private static Logger log = Logger.getLogger(AuthFilter.class);
 
     public AuthFilter() {
     }

@@ -3,7 +3,7 @@ package com.jaio360.dao;
 import com.jaio360.orm.HibernateUtil;
 import com.jaio360.orm.TipoMovimiento;
 import java.io.Serializable;
-import org.apache.commons.logging.Log;
+import org.apache.log4j.Logger;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -14,7 +14,7 @@ public class TipoMovimientoDAO implements Serializable {
     private Session sesion;
     private Transaction tx;
 
-    private static Log log = LogFactory.getLog(TipoMovimientoDAO.class);
+    private static Logger log = Logger.getLogger(TipoMovimientoDAO.class);
 
     public long guarda(TipoMovimiento usuario) throws HibernateException {
         long id = 0;

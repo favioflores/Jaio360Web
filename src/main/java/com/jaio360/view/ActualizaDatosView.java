@@ -23,7 +23,7 @@ import javax.faces.bean.ManagedBean;
 import javax.servlet.http.HttpSession;
 
 
-import org.apache.commons.logging.Log;
+import org.apache.log4j.Logger;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.validator.constraints.Email;
 import org.primefaces.event.FileUploadEvent;
@@ -35,7 +35,7 @@ import org.primefaces.model.file.UploadedFile;
 @ViewScoped
 public class ActualizaDatosView extends BaseView implements Serializable {
 
-    private static Log log = LogFactory.getLog(ActualizaDatosView.class);
+    private static Logger log = Logger.getLogger(ActualizaDatosView.class);
 
     private String pNombre = "[A-Za-z0-9]";
     private String pCorreo = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";

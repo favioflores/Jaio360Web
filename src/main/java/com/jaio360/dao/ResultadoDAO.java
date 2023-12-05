@@ -11,13 +11,14 @@ import com.jaio360.orm.HibernateUtil;
 import com.jaio360.orm.Participante;
 import com.jaio360.orm.Proyecto;
 import com.jaio360.orm.RelacionParticipante;
+import com.jaio360.orm.ReporteGenerado;
 import com.jaio360.orm.Resultado;
 import com.jaio360.utils.Constantes;
 import com.jaio360.utils.Utilitarios;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-import org.apache.commons.logging.Log;
+import org.apache.log4j.Logger;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -29,7 +30,7 @@ public class ResultadoDAO implements Serializable {
     private Session sesion;
     private Transaction tx;
 
-    private Log log = LogFactory.getLog(ResultadoDAO.class);
+    private Logger log = Logger.getLogger(ResultadoDAO.class);
 
     public long guardaResultado(Resultado resultado) throws HibernateException {
         long id = 0;
@@ -227,7 +228,7 @@ public class ResultadoDAO implements Serializable {
         return listaResultado;
     }
 
-    public List listaReporteUno(Componente objComponente, Integer intEvaluadoPk) throws HibernateException {
+    public List listaReporteUno(Componente objComponente, Integer intEvaluadoPk, Integer idProyecto) throws HibernateException {
 
         List listaResultado = null;
 
@@ -285,13 +286,13 @@ public class ResultadoDAO implements Serializable {
                     + "     and res.PA_ID_PARTICIPANTE_FK = ?                                    "
                     + ") TABLA GROUP BY TABLA.RELACION                         ");
 
-            query.setInteger(0, Utilitarios.obtenerProyecto().getIntIdProyecto());
+            query.setInteger(0, idProyecto);
             query.setInteger(1, objComponente.getCoIdComponentePk());
             query.setInteger(2, intEvaluadoPk);
-            query.setInteger(3, Utilitarios.obtenerProyecto().getIntIdProyecto());
+            query.setInteger(3, idProyecto);
             query.setInteger(4, objComponente.getCoIdComponentePk());
             query.setInteger(5, intEvaluadoPk);
-            query.setInteger(6, Utilitarios.obtenerProyecto().getIntIdProyecto());
+            query.setInteger(6, idProyecto);
             query.setInteger(7, objComponente.getCoIdComponentePk());
             query.setInteger(8, intEvaluadoPk);
             listaResultado = query.list();
@@ -303,7 +304,7 @@ public class ResultadoDAO implements Serializable {
         return listaResultado;
     }
 
-    public List listaReporteUnoWeighted(Componente objComponente, Integer intEvaluadoPk) throws HibernateException {
+    public List listaReporteUnoWeighted(Componente objComponente, Integer intEvaluadoPk, Integer idProyecto) throws HibernateException {
 
         List listaResultado = null;
 
@@ -343,7 +344,9 @@ public class ResultadoDAO implements Serializable {
                     + "     and res.PA_ID_PARTICIPANTE_FK = ?                                                            "
                     + "     and res.RE_ID_PARTICIPANTE_FK is null                              "
                     + "   UNION ALL          "
-                    + "   SELECT 'PROM', SUM(PROM.MEDIDA * PROM.PONDERADO / 100), SUM(PROM.CANTIDAD) FROM "
+                    + "   SELECT 'PROM', "
+                    + "   ifNULL(SUM(PROM.MEDIDA * PROM.PONDERADO / 100),0), "
+                    + "   ifNULL(SUM(PROM.CANTIDAD),0) FROM "
                     + "  (select rel.RE_ID_RELACION_PK   AS RELACION,                                             "
                     + "  		 AVG(IF(dm.DE_NU_ORDEN is null, 0, dm.DE_NU_ORDEN + 1)) AS MEDIDA,    "
                     + "         ifNULL(SUM(IF(RE_ID_PARTICIPANTE_FK is null, 0, 1)),0) AS CANTIDAD,"
@@ -360,13 +363,13 @@ public class ResultadoDAO implements Serializable {
                     + "     and res.PA_ID_PARTICIPANTE_FK = ? GROUP BY rel.RE_ID_RELACION_PK ) PROM                                "
                     + ") TABLA  ");
 
-            query.setInteger(0, Utilitarios.obtenerProyecto().getIntIdProyecto());
+            query.setInteger(0, idProyecto);
             query.setInteger(1, objComponente.getCoIdComponentePk());
             query.setInteger(2, intEvaluadoPk);
-            query.setInteger(3, Utilitarios.obtenerProyecto().getIntIdProyecto());
+            query.setInteger(3, idProyecto);
             query.setInteger(4, objComponente.getCoIdComponentePk());
             query.setInteger(5, intEvaluadoPk);
-            query.setInteger(6, Utilitarios.obtenerProyecto().getIntIdProyecto());
+            query.setInteger(6, idProyecto);
             query.setInteger(7, objComponente.getCoIdComponentePk());
             query.setInteger(8, intEvaluadoPk);
             listaResultado = query.list();
@@ -484,7 +487,7 @@ public class ResultadoDAO implements Serializable {
         return listaResultado;
     }
 
-    public List listaReporteCategoriaMismoWeighted(Componente objComponente, Integer intEvaluadoPk) throws HibernateException {
+    public List listaReporteCategoriaMismoWeighted(Componente objComponente, Integer intEvaluadoPk, Integer idProyecto) throws HibernateException {
 
         List listaResultado = null;
 
@@ -526,10 +529,10 @@ public class ResultadoDAO implements Serializable {
                     + "     and dm.DE_ID_DETALLE_ESCALA_PK = res.DE_ID_DETALLE_ESCALA_FK         "
                     + "     and res.RE_ID_PARTICIPANTE_FK is null) TABLA GROUP BY TABLA.RELACION ");
 
-            query.setInteger(0, Utilitarios.obtenerProyecto().getIntIdProyecto());
+            query.setInteger(0, idProyecto);
             query.setInteger(1, objComponente.getCoIdComponentePk());
             query.setInteger(2, intEvaluadoPk);
-            query.setInteger(3, Utilitarios.obtenerProyecto().getIntIdProyecto());
+            query.setInteger(3, idProyecto);
             query.setInteger(4, objComponente.getCoIdComponentePk());
             query.setInteger(5, intEvaluadoPk);
 
@@ -542,7 +545,7 @@ public class ResultadoDAO implements Serializable {
         return listaResultado;
     }
 
-    public List listaReporteCategoriaMismo(Componente objComponente, Integer intEvaluadoPk) throws HibernateException {
+    public List listaReporteCategoriaMismo(Componente objComponente, Integer intEvaluadoPk, Integer idProyecto) throws HibernateException {
 
         List listaResultado = null;
 
@@ -586,10 +589,10 @@ public class ResultadoDAO implements Serializable {
                     + "     and dm.DE_ID_DETALLE_ESCALA_PK = res.DE_ID_DETALLE_ESCALA_FK         "
                     + "     and res.RE_ID_PARTICIPANTE_FK is null) TABLA GROUP BY TABLA.RELACION ");
 
-            query.setInteger(0, Utilitarios.obtenerProyecto().getIntIdProyecto());
+            query.setInteger(0, idProyecto);
             query.setInteger(1, objComponente.getCoIdComponentePk());
             query.setInteger(2, intEvaluadoPk);
-            query.setInteger(3, Utilitarios.obtenerProyecto().getIntIdProyecto());
+            query.setInteger(3, idProyecto);
             query.setInteger(4, objComponente.getCoIdComponentePk());
             query.setInteger(5, intEvaluadoPk);
 
@@ -602,7 +605,7 @@ public class ResultadoDAO implements Serializable {
         return listaResultado;
     }
 
-    public List listaReporteSumario(Componente objComponente, Integer intEvaluadoPk) throws HibernateException {
+    public List listaReporteSumario(Componente objComponente, Integer intEvaluadoPk, ReporteGenerado objReporteGenerado) throws HibernateException {
 
         List listaResultado = null;
 
@@ -631,7 +634,7 @@ public class ResultadoDAO implements Serializable {
                     + "           and res.PA_ID_PARTICIPANTE_FK = ?                                                    "
                     + " ) TABLA GROUP BY TABLA.RELACION  order by 2 desc                                               ");
 
-            query.setInteger(0, Utilitarios.obtenerProyecto().getIntIdProyecto());
+            query.setInteger(0, objReporteGenerado.getProyectoInfo().getIntIdProyecto());
             query.setInteger(1, objComponente.getCoIdComponentePk());
             query.setInteger(2, intEvaluadoPk);
 
@@ -644,7 +647,7 @@ public class ResultadoDAO implements Serializable {
         return listaResultado;
     }
 
-    public List listaReporteSumarioWeighted(Componente objComponente, Integer intEvaluadoPk) throws HibernateException {
+    public List listaReporteSumarioWeighted(Componente objComponente, Integer intEvaluadoPk, Integer intProyecto) throws HibernateException {
 
         List listaResultado = null;
 
@@ -674,9 +677,9 @@ public class ResultadoDAO implements Serializable {
                     + "           and res.PA_ID_PARTICIPANTE_FK = ? ) TABLA GROUP BY TABLA.RELACION "
                     + "           ) INFO, "
                     + "           relacion re "
-                    + "           where re.RE_ID_RELACION_PK = INFO.RELACION) PONDERADO ");
+                    + "           where re.RE_ID_RELACION_PK = INFO.RELACION) PONDERADO order by 1 ");
 
-            query.setInteger(0, Utilitarios.obtenerProyecto().getIntIdProyecto());
+            query.setInteger(0, intProyecto);
             query.setInteger(1, objComponente.getCoIdComponentePk());
             query.setInteger(2, intEvaluadoPk);
 
@@ -689,7 +692,7 @@ public class ResultadoDAO implements Serializable {
         return listaResultado;
     }
 
-    public List listaItemsAltoPromedioWeighted(Integer intEvaluadoPk) throws HibernateException {
+    public List listaItemsAltoPromedioWeighted(Integer intEvaluadoPk, Integer idProyecto) throws HibernateException {
 
         List listaResultado = null;
 
@@ -723,7 +726,7 @@ public class ResultadoDAO implements Serializable {
                     + "        rel.RE_ID_RELACION_PK"
                     + "  ) DATA GROUP BY CUE, CUESTIONARIO, PREGUNTA ORDER BY 4 desc ");
 
-            query.setInteger(0, Utilitarios.obtenerProyecto().getIntIdProyecto());
+            query.setInteger(0, idProyecto);
             query.setInteger(1, intEvaluadoPk);
 
             listaResultado = query.list();
@@ -735,7 +738,7 @@ public class ResultadoDAO implements Serializable {
         return listaResultado;
     }
 
-    public List listaItemsAltoPromedio(Integer intEvaluadoPk) throws HibernateException {
+    public List listaItemsAltoPromedio(Integer intEvaluadoPk, Integer idProyecto) throws HibernateException {
 
         List listaResultado = null;
 
@@ -764,7 +767,7 @@ public class ResultadoDAO implements Serializable {
                     + "  GROUP BY coc.CU_ID_CUESTIONARIO_FK ,coc.CO_TX_DESCRIPCION, cop.CO_TX_DESCRIPCION "
                     + "  ORDER BY 4 desc ");
 
-            query.setInteger(0, Utilitarios.obtenerProyecto().getIntIdProyecto());
+            query.setInteger(0, idProyecto);
             query.setInteger(1, intEvaluadoPk);
 
             listaResultado = query.list();
@@ -776,7 +779,7 @@ public class ResultadoDAO implements Serializable {
         return listaResultado;
     }
 
-    public List listaItemsAltoPromedioMismo(Integer intEvaluadoPk) throws HibernateException {
+    public List listaItemsAltoPromedioMismo(Integer intEvaluadoPk, Integer idProyecto) throws HibernateException {
 
         List listaResultado = null;
 
@@ -803,7 +806,7 @@ public class ResultadoDAO implements Serializable {
                     + "  GROUP BY coc.CU_ID_CUESTIONARIO_FK ,coc.CO_TX_DESCRIPCION, cop.CO_TX_DESCRIPCION "
                     + "  ORDER BY 4 desc ");
 
-            query.setInteger(0, Utilitarios.obtenerProyecto().getIntIdProyecto());
+            query.setInteger(0, idProyecto);
             query.setInteger(1, intEvaluadoPk);
 
             listaResultado = query.list();
@@ -815,19 +818,21 @@ public class ResultadoDAO implements Serializable {
         return listaResultado;
     }
 
-    public List listaGrupalSumarioCategoriaGeneral(DatosReporte objDatosReporte) throws HibernateException {
+    public List listaGrupalSumarioCategoriaGeneral(DatosReporte objDatosReporte, ReporteGenerado objReporteGenerado) throws HibernateException {
 
         List listaResultado = null;
 
         try {
 
             iniciaOperacion();
+
             Query query = sesion.createSQLQuery(
                     " select ca.CU_ID_CUESTIONARIO_FK,                                                                "
                     + "        ca.CO_TX_DESCRIPCION,                                                                    "
                     + "        ca.CO_ID_COMPONENTE_PK,                                                                  "
                     + "        pa.PA_TX_DESCRIPCION,                                                                    "
-                    + "        AVG(dm.DE_NU_ORDEN + 1)                                                                  "
+                    + "        IFNULL(AVG(dm.DE_NU_ORDEN + 1),0),                                                                  "
+                    + "        PA_TX_CORREO"
                     + "   from cuestionario cu,                                                                         "
                     + "        componente ca,                                                                           "
                     + "        componente cp                                                                            "
@@ -849,7 +854,7 @@ public class ResultadoDAO implements Serializable {
                     + "           ca.CO_TX_DESCRIPCION,                                                                 "
                     + "           5 desc                                                                                ");
 
-            query.setInteger(0, Utilitarios.obtenerProyecto().getIntIdProyecto());
+            query.setInteger(0, objReporteGenerado.getProyectoInfo().getIntIdProyecto());
             query.setInteger(1, objDatosReporte.getIntIdCuestionario());
             listaResultado = query.list();
 
@@ -860,7 +865,80 @@ public class ResultadoDAO implements Serializable {
         return listaResultado;
     }
 
-    public List listaItemsBajaPromedio(Integer intEvaluadoPk) throws HibernateException {
+        public List listaGrupalSumarioCategoriaGeneralWeighted(DatosReporte objDatosReporte, ReporteGenerado objReporteGenerado) throws HibernateException {
+
+        List listaResultado = null;
+
+        try {
+
+            iniciaOperacion();
+
+            Query query = sesion.createSQLQuery(
+                    " select total.CU_ID_CUESTIONARIO_FK,                                                             \n" +
+"           total.CO_ID_COMPONENTE_PK,                                                               \n" +
+"           total.CO_TX_DESCRIPCION,                                                                 \n" +
+"           total.PA_TX_DESCRIPCION,\n" +
+"           sum(total.ponderado),\n" +
+"           total.PA_TX_CORREO from (\n" +
+"select datos.CU_ID_CUESTIONARIO_FK,                                                             \n" +
+"           datos.CO_ID_COMPONENTE_PK,                                                               \n" +
+"           datos.CO_TX_DESCRIPCION,                                                                 \n" +
+"           datos.PA_TX_DESCRIPCION,\n" +
+"           datos.medida * datos.RE_DE_PONDERACION / 100 as ponderado,\n" +
+"           datos.PA_TX_CORREO\n" +
+"           from (\n" +
+" select ca.CU_ID_CUESTIONARIO_FK,                                                                \n" +
+"        ca.CO_TX_DESCRIPCION,                                                                    \n" +
+"        ca.CO_ID_COMPONENTE_PK,                                                                  \n" +
+"        pa.PA_TX_DESCRIPCION,                                                                    \n" +
+"		AVG(dm.DE_NU_ORDEN + 1) as medida,                                                                  \n" +
+" 		PA_TX_CORREO,\n" +
+" 		rel.RE_DE_PONDERACION,\n" +
+" 		rel.RE_ID_RELACION_PK\n" +
+"   from cuestionario cu,                                                                         \n" +
+"        componente ca,                                                                           \n" +
+"        componente cp                                                                            \n" +
+"        left join resultado re on re.CO_ID_COMPONENTE_FK = cp.CO_ID_COMPONENTE_PK                \n" +
+"        join detalle_metrica dm on dm.DE_ID_DETALLE_ESCALA_PK = re.DE_ID_DETALLE_ESCALA_FK  \n" +
+"        left join participante pa on pa.PA_ID_PARTICIPANTE_PK = re.PA_ID_PARTICIPANTE_FK \n" +
+"        join relacion_participante rp on rp.PA_ID_PARTICIPANTE_FK = pa.PA_ID_PARTICIPANTE_PK \n" +
+"        								and rp.RE_ID_PARTICIPANTE_FK = re.RE_ID_PARTICIPANTE_FK\n" +
+"        join relacion rel on rel.RE_ID_RELACION_pK = rp.RE_ID_RELACION_FK\n" +
+"  where cu.PO_ID_PROYECTO_FK = ?                                                                 \n" +
+"    and cu.CU_ID_CUESTIONARIO_PK = ? \n" +
+"    and ca.CU_ID_CUESTIONARIO_FK = cu.CU_ID_CUESTIONARIO_PK                                      \n" +
+"    and ca.CO_ID_TIPO_COMPONENTE = 45                                                            \n" +
+"    and cp.CO_ID_COMPONENTE_REF_FK = ca.CO_ID_COMPONENTE_PK                                      \n" +
+"    and cp.CO_ID_TIPO_COMPONENTE = 46                   \n" +
+"    and re.RE_ID_PARTICIPANTE_FK is not null\n" +
+"    group by ca.CU_ID_CUESTIONARIO_FK,                                                                \n" +
+"        ca.CO_TX_DESCRIPCION,                                                                    \n" +
+"        ca.CO_ID_COMPONENTE_PK,                                                                  \n" +
+"        pa.PA_TX_DESCRIPCION,                                                                  \n" +
+" 		PA_TX_CORREO,\n" +
+" 		rel.RE_DE_PONDERACION,\n" +
+" 		rel.RE_ID_RELACION_PK\n" +
+"    ) datos \n" +
+"           ) total \n" +
+"           group by total.CU_ID_CUESTIONARIO_FK,                                                             \n" +
+"           total.CO_ID_COMPONENTE_PK,                                                               \n" +
+"           total.CO_TX_DESCRIPCION,                                                                 \n" +
+"           total.PA_TX_DESCRIPCION,\n" +
+"           total.PA_TX_CORREO \n" +
+"  order by total.PA_TX_CORREO,5 desc        ");
+
+            query.setInteger(0, objReporteGenerado.getProyectoInfo().getIntIdProyecto());
+            query.setInteger(1, objDatosReporte.getIntIdCuestionario());
+            listaResultado = query.list();
+
+        } finally {
+            sesion.close();
+        }
+
+        return listaResultado;
+    }
+        
+    public List listaItemsBajaPromedio(Integer intEvaluadoPk, Integer idProyecto) throws HibernateException {
 
         List listaResultado = null;
 
@@ -887,7 +965,7 @@ public class ResultadoDAO implements Serializable {
                     + "  GROUP BY coc.CU_ID_CUESTIONARIO_FK ,coc.CO_TX_DESCRIPCION, cop.CO_TX_DESCRIPCION "
                     + "  ORDER BY 4 asc ");
 
-            query.setInteger(0, Utilitarios.obtenerProyecto().getIntIdProyecto());
+            query.setInteger(0, idProyecto);
             query.setInteger(1, intEvaluadoPk);
 
             listaResultado = query.list();
@@ -900,7 +978,7 @@ public class ResultadoDAO implements Serializable {
 
     }
 
-    public List listaItemsBajaPromedioWeighted(Integer intEvaluadoPk) throws HibernateException {
+    public List listaItemsBajaPromedioWeighted(Integer intEvaluadoPk, Integer idProyecto) throws HibernateException {
 
         List listaResultado = null;
 
@@ -934,7 +1012,7 @@ public class ResultadoDAO implements Serializable {
                     + "        rel.RE_ID_RELACION_PK"
                     + "  ) DATA GROUP BY CUE, CUESTIONARIO, PREGUNTA ORDER BY 4 asc ");
 
-            query.setInteger(0, Utilitarios.obtenerProyecto().getIntIdProyecto());
+            query.setInteger(0, idProyecto);
             query.setInteger(1, intEvaluadoPk);
 
             listaResultado = query.list();
@@ -947,7 +1025,7 @@ public class ResultadoDAO implements Serializable {
 
     }
 
-    public List listaItemsBajaPromedioMismo(Integer intEvaluadoPk) throws HibernateException {
+    public List listaItemsBajaPromedioMismo(Integer intEvaluadoPk, Integer idProyecto) throws HibernateException {
 
         List listaResultado = null;
 
@@ -974,7 +1052,7 @@ public class ResultadoDAO implements Serializable {
                     + "  GROUP BY coc.CU_ID_CUESTIONARIO_FK ,coc.CO_TX_DESCRIPCION, cop.CO_TX_DESCRIPCION "
                     + "  ORDER BY 4 asc ");
 
-            query.setInteger(0, Utilitarios.obtenerProyecto().getIntIdProyecto());
+            query.setInteger(0, idProyecto);
             query.setInteger(1, intEvaluadoPk);
 
             listaResultado = query.list();
@@ -987,7 +1065,7 @@ public class ResultadoDAO implements Serializable {
 
     }
 
-    public List listaReporteSumarioMismo(Componente objComponente, Integer intEvaluadoPk) throws HibernateException {
+    public List listaReporteSumarioMismo(Componente objComponente, Integer intEvaluadoPk, Integer idProyecto) throws HibernateException {
 
         List listaResultado = null;
 
@@ -1034,10 +1112,10 @@ public class ResultadoDAO implements Serializable {
                     + "           and dm.DE_ID_DETALLE_ESCALA_PK = res.DE_ID_DETALLE_ESCALA_FK          "
                     + "           and res.RE_ID_PARTICIPANTE_FK is null) TABLA GROUP BY TABLA.RELACION  ");
 
-            query.setInteger(0, Utilitarios.obtenerProyecto().getIntIdProyecto());
+            query.setInteger(0, idProyecto);
             query.setInteger(1, objComponente.getCoIdComponentePk());
             query.setInteger(2, intEvaluadoPk);
-            query.setInteger(3, Utilitarios.obtenerProyecto().getIntIdProyecto());
+            query.setInteger(3, idProyecto);
             query.setInteger(4, objComponente.getCoIdComponentePk());
             query.setInteger(5, intEvaluadoPk);
 
@@ -1050,7 +1128,7 @@ public class ResultadoDAO implements Serializable {
         return listaResultado;
     }
 
-    public List listaReporteSumarioMismoWeighted(Componente objComponente, Integer intEvaluadoPk) throws HibernateException {
+    public List listaReporteSumarioMismoWeighted(Componente objComponente, Integer intEvaluadoPk, Integer idProyecto) throws HibernateException {
 
         List listaResultado = null;
 
@@ -1059,8 +1137,8 @@ public class ResultadoDAO implements Serializable {
             iniciaOperacion();
             Query query = sesion.createSQLQuery(
                     " SELECT TABLA.RELACION,                                                          "
-                    + "        TABLA.MEDIDA,                                                       "
-                    + "        TABLA.CANTIDAD                                          "
+                    + "        IFNULL(TABLA.MEDIDA,0),                                                       "
+                    + "        IFNULL(TABLA.CANTIDAD,0)                                          "
                     + "        FROM                                                                     "
                     + "       (select 'PROM' as RELACION, "
                     + "       			sum(PROMEDIO.MEDIDA * rel.RE_DE_PONDERACION / 100)  as MEDIDA, "
@@ -1098,10 +1176,10 @@ public class ResultadoDAO implements Serializable {
                     + "           and dm.DE_ID_DETALLE_ESCALA_PK = res.DE_ID_DETALLE_ESCALA_FK          "
                     + "           and res.RE_ID_PARTICIPANTE_FK is null) TABLA GROUP BY TABLA.RELACION    ");
 
-            query.setInteger(0, Utilitarios.obtenerProyecto().getIntIdProyecto());
+            query.setInteger(0, idProyecto);
             query.setInteger(1, objComponente.getCoIdComponentePk());
             query.setInteger(2, intEvaluadoPk);
-            query.setInteger(3, Utilitarios.obtenerProyecto().getIntIdProyecto());
+            query.setInteger(3, idProyecto);
             query.setInteger(4, objComponente.getCoIdComponentePk());
             query.setInteger(5, intEvaluadoPk);
 
@@ -1114,7 +1192,7 @@ public class ResultadoDAO implements Serializable {
         return listaResultado;
     }
 
-    public List listaReporteSumarioMismoRelacion(Componente objComponente, Integer intEvaluadoPk) throws HibernateException {
+    public List listaReporteSumarioMismoRelacion(Componente objComponente, Integer intEvaluadoPk, Integer idProyecto) throws HibernateException {
 
         List listaResultado = null;
 
@@ -1179,13 +1257,13 @@ public class ResultadoDAO implements Serializable {
                     + "           and dm.DE_ID_DETALLE_ESCALA_PK = res.DE_ID_DETALLE_ESCALA_FK          "
                     + "           and res.RE_ID_PARTICIPANTE_FK is null) TABLA GROUP BY TABLA.RELACION  ");
 
-            query.setInteger(0, Utilitarios.obtenerProyecto().getIntIdProyecto());
+            query.setInteger(0, idProyecto);
             query.setInteger(1, objComponente.getCoIdComponentePk());
             query.setInteger(2, intEvaluadoPk);
-            query.setInteger(3, Utilitarios.obtenerProyecto().getIntIdProyecto());
+            query.setInteger(3, idProyecto);
             query.setInteger(4, objComponente.getCoIdComponentePk());
             query.setInteger(5, intEvaluadoPk);
-            query.setInteger(6, Utilitarios.obtenerProyecto().getIntIdProyecto());
+            query.setInteger(6, idProyecto);
             query.setInteger(7, objComponente.getCoIdComponentePk());
             query.setInteger(8, intEvaluadoPk);
 
@@ -1198,7 +1276,7 @@ public class ResultadoDAO implements Serializable {
         return listaResultado;
     }
 
-    public List listaReporteSumarioMismoRelacionWeighted(Componente objComponente, Integer intEvaluadoPk) throws HibernateException {
+    public List listaReporteSumarioMismoRelacionWeighted(Componente objComponente, Integer intEvaluadoPk, Integer idProyecto) throws HibernateException {
 
         List listaResultado = null;
 
@@ -1207,8 +1285,8 @@ public class ResultadoDAO implements Serializable {
             iniciaOperacion();
             Query query = sesion.createSQLQuery(
                     " SELECT TABLA.RELACION,                                                           "
-                    + "        TABLA.MEDIDA,                                                        "
-                    + "        TABLA.CANTIDAD                                           "
+                    + "        IFNULL(TABLA.MEDIDA,0),                                                        "
+                    + "        IFNULL(TABLA.CANTIDAD,0)                                           "
                     + "        FROM                                                                      "
                     + "       (select 'PROM' as RELACION, "
                     + "       			sum(PROMEDIO.MEDIDA ) as MEDIDA, "
@@ -1266,13 +1344,13 @@ public class ResultadoDAO implements Serializable {
                     + "           and dm.DE_ID_DETALLE_ESCALA_PK = res.DE_ID_DETALLE_ESCALA_FK           "
                     + "           and res.RE_ID_PARTICIPANTE_FK is null) TABLA  ");
 
-            query.setInteger(0, Utilitarios.obtenerProyecto().getIntIdProyecto());
+            query.setInteger(0, idProyecto);
             query.setInteger(1, objComponente.getCoIdComponentePk());
             query.setInteger(2, intEvaluadoPk);
-            query.setInteger(3, Utilitarios.obtenerProyecto().getIntIdProyecto());
+            query.setInteger(3, idProyecto);
             query.setInteger(4, objComponente.getCoIdComponentePk());
             query.setInteger(5, intEvaluadoPk);
-            query.setInteger(6, Utilitarios.obtenerProyecto().getIntIdProyecto());
+            query.setInteger(6, idProyecto);
             query.setInteger(7, objComponente.getCoIdComponentePk());
             query.setInteger(8, intEvaluadoPk);
 
@@ -1343,7 +1421,7 @@ public class ResultadoDAO implements Serializable {
         return listaResultado;
     }
 
-    public List obtieneListaResultadoPreguntasAbiertas(Integer indIdEvaluado) throws HibernateException {
+    public List obtieneListaResultadoPreguntasAbiertas(Integer indIdEvaluado, Integer idProyecto) throws HibernateException {
 
         List listaResultado = null;
 
@@ -1359,7 +1437,7 @@ public class ResultadoDAO implements Serializable {
                     + "    and re.PA_ID_PARTICIPANTE_FK = ? "
                     + "  order by co.CO_TX_DESCRIPCION ");
 
-            query.setInteger(0, Utilitarios.obtenerProyecto().getIntIdProyecto());
+            query.setInteger(0, idProyecto);
             query.setInteger(1, Constantes.INT_ET_TIPO_COMPONENTE_PREGUNTA_ABIERTA);
             query.setInteger(2, indIdEvaluado);
 
@@ -1372,7 +1450,7 @@ public class ResultadoDAO implements Serializable {
         return listaResultado;
     }
 
-    public List obtieneListaResultadoComentarios(Integer indIdEvaluado) throws HibernateException {
+    public List obtieneListaResultadoComentarios(Integer indIdEvaluado, ReporteGenerado objReporteGenerado) throws HibernateException {
 
         List listaResultado = null;
 
@@ -1388,7 +1466,7 @@ public class ResultadoDAO implements Serializable {
                     + "    and re.PA_ID_PARTICIPANTE_FK = ? "
                     + "  order by co.CO_TX_DESCRIPCION ");
 
-            query.setInteger(0, Utilitarios.obtenerProyecto().getIntIdProyecto());
+            query.setInteger(0, objReporteGenerado.getProyectoInfo().getIntIdProyecto());
             query.setInteger(1, Constantes.INT_ET_TIPO_COMPONENTE_COMENTARIO);
             query.setInteger(2, indIdEvaluado);
 
@@ -1515,7 +1593,7 @@ public class ResultadoDAO implements Serializable {
 
     }
 
-    public List obtieneListaTodasLasRespuestas(Integer idCuestionario) throws HibernateException {
+    public List obtieneListaTodasLasRespuestas(Integer idCuestionario, ReporteGenerado objReporteGenerado) throws HibernateException {
 
         List listaResultado = null;
 
@@ -1610,8 +1688,7 @@ public class ResultadoDAO implements Serializable {
                     + "         and temp.PA_ID_PARTICIPANTE_FK = pa.PA_ID_PARTICIPANTE_PK                  "
                     + " order by 1 , 8 , 9 , 16                                                            ");
 
-
-            query.setInteger("p_proyecto", Utilitarios.obtenerProyecto().getIntIdProyecto());
+            query.setInteger("p_proyecto", objReporteGenerado.getProyectoInfo().getIntIdProyecto());
             query.setInteger("p_tipoc", Constantes.INT_ET_TIPO_COMPONENTE_PREGUNTA_CERRADA);
             query.setInteger("p_cuestionario", idCuestionario);
 
@@ -1624,7 +1701,7 @@ public class ResultadoDAO implements Serializable {
         return listaResultado;
     }
 
-    public List listaReporteNivelParticipacion(Integer idCuestionario) throws HibernateException {
+    public List listaReporteNivelParticipacion(Integer idCuestionario, ReporteGenerado objReporteGenerado) throws HibernateException {
 
         List listaResultado = null;
 
@@ -1635,7 +1712,8 @@ public class ResultadoDAO implements Serializable {
                     " SELECT p.PA_ID_PARTICIPANTE_PK,                                           "
                     + " 	   p.PA_TX_DESCRIPCION,                                                 "
                     + "        sum(pers_total.pa_count),                                          "
-                    + "        sum(pers_res.pa_count)                                             "
+                    + "        sum(pers_res.pa_count),                                             "
+                    + " PA_TX_CORREO "
                     + "   FROM participante p,                                                    "
                     + "        cuestionario_evaluado ce,                                          "
                     + " 	   (select pa_id,                                                       "
@@ -1684,9 +1762,9 @@ public class ResultadoDAO implements Serializable {
                     + "    and pers_total.pa_id = p.PA_ID_PARTICIPANTE_PK                         "
                     + "    and ce.PA_ID_PARTICIPANTE_FK = p.PA_ID_PARTICIPANTE_PK                 "
                     + "    and ce.CU_ID_CUESTIONARIO_FK = :id_cuest                                       "
-                    + "  group by p.PA_ID_PARTICIPANTE_PK, p.PA_TX_DESCRIPCION                    ");
+                    + "  group by p.PA_TX_DESCRIPCION                    ");
 
-            query.setInteger("id_pro", Utilitarios.obtenerProyecto().getIntIdProyecto());
+            query.setInteger("id_pro", objReporteGenerado.getProyectoInfo().getIntIdProyecto());
             query.setInteger("est_par_eje", Constantes.INT_ET_ESTADO_EVALUADO_EN_EJECUCION);
             query.setInteger("est_par_ter", Constantes.INT_ET_ESTADO_EVALUADO_TERMINADO);
             query.setInteger("est_red_eje", Constantes.INT_ET_ESTADO_EVALUADOR_EN_EJECUCION);

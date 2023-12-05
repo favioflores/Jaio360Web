@@ -20,7 +20,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import org.apache.commons.logging.Log;
+import org.apache.log4j.Logger;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -32,7 +32,7 @@ public class CuestionarioDAO implements Serializable
     private Session sesion; 
     private Transaction tx;  
 
-    private Log log = LogFactory.getLog(CuestionarioDAO.class);
+    private Logger log = Logger.getLogger(CuestionarioDAO.class);
     
     public long guardaCuestionario(Cuestionario cuestionario) throws HibernateException 
     { 
@@ -454,7 +454,7 @@ public class CuestionarioDAO implements Serializable
         return correcto;
     }  
     
-    public Cuestionario obtenCuestionarioXEvaluado(Integer intIdEvaluado) throws HibernateException{ 
+    public Cuestionario obtenCuestionarioXEvaluado(Integer intIdEvaluado, Integer idProyecto) throws HibernateException{ 
         
         Cuestionario objCuestionario;
 
@@ -467,7 +467,7 @@ public class CuestionarioDAO implements Serializable
                                              "   and ce.id.paIdParticipanteFk = ? " +
                                              "   and c.cuIdCuestionarioPk = ce.id.cuIdCuestionarioFk "); 
             
-            query.setInteger(0, Utilitarios.obtenerProyecto().getIntIdProyecto());  
+            query.setInteger(0, idProyecto);  
             query.setInteger(1, intIdEvaluado);  
             
             objCuestionario = (Cuestionario) query.uniqueResult(); 

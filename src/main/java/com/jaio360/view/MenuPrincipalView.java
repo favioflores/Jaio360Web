@@ -11,7 +11,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
-import org.apache.commons.logging.Log;
+import org.apache.log4j.Logger;
 import org.apache.commons.logging.LogFactory;
 import org.primefaces.model.menu.DefaultMenuItem;
 import org.primefaces.model.menu.DefaultMenuModel;
@@ -22,7 +22,7 @@ import org.primefaces.model.menu.MenuModel;
 @ViewScoped
 public class MenuPrincipalView extends BaseView implements Serializable {
 
-    private static Log log = LogFactory.getLog(MenuPrincipalView.class);
+    private static Logger log = Logger.getLogger(MenuPrincipalView.class);
 
     private MenuModel menuPrincipal = new DefaultMenuModel();
     private UsuarioInfo usuarioInfo;
@@ -217,7 +217,7 @@ public class MenuPrincipalView extends BaseView implements Serializable {
                 DefaultSubMenu usuarios = agregarMenu(msg("my.account"), "pi pi-user", menuPrincipal);
                 agregarItem(msg("actualizar.mis.datos"), "admProfile.jsf", "", usuarios);
                 //Participant guide
-                agregarItem(msg("user.guide"), "guidesForUsers.jsf", "pi pi-file-pdf", menuPrincipal, null);
+                //agregarItem(msg("user.guide"), "guidesForUsers.jsf", "pi pi-file-pdf", menuPrincipal, null);
                 //Upgrades
                 //agregarItem("", "upgrades.jsf", "pi pi-cloud-upload", menuPrincipal);
             }

@@ -14,7 +14,7 @@ import java.util.List;
 import javax.faces.bean.ViewScoped;
 import javax.faces.bean.ManagedBean;
 
-import org.apache.commons.logging.Log;
+import org.apache.log4j.Logger;
 import org.apache.commons.logging.LogFactory;
 
 @ManagedBean(name = "parametrosView")
@@ -22,7 +22,7 @@ import org.apache.commons.logging.LogFactory;
 
 public class ParametrosView extends BaseView implements Serializable {
 
-    private static Log log = LogFactory.getLog(ParametrosView.class);
+    private static Logger log = Logger.getLogger(ParametrosView.class);
 
     private Boolean blSexo = false;
     private Boolean blRangoEdad = false;

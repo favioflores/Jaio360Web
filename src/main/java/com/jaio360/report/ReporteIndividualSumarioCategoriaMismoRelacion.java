@@ -6,6 +6,7 @@ import com.jaio360.domain.DatosReporte;
 import com.jaio360.model.ModeloGeneral;
 import com.jaio360.orm.Componente;
 import com.jaio360.orm.Relacion;
+import com.jaio360.orm.ReporteGenerado;
 import com.jaio360.orm.ResultadoInfo;
 import com.jaio360.utils.Constantes;
 import com.jaio360.utils.Utilitarios;
@@ -35,8 +36,7 @@ import net.sf.dynamicreports.report.definition.ReportParameters;
 import net.sf.dynamicreports.report.definition.chart.DRIChartCustomizer;
 import net.sf.dynamicreports.report.exception.DRException;
 import net.sf.jasperreports.engine.JRDataSource;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.axis.NumberAxis;
@@ -48,13 +48,13 @@ import org.jfree.ui.RectangleInsets;
 
 public class ReporteIndividualSumarioCategoriaMismoRelacion implements Serializable {
 
-    private static final Log log = LogFactory.getLog(ReporteIndividualSumarioCategoriaMismoRelacion.class);
+    private static final Logger log = Logger.getLogger(ReporteIndividualSumarioCategoriaMismoRelacion.class);
 
     ComponenteDAO componenteDao = new ComponenteDAO();
     ResultadoDAO resultadoDAO = new ResultadoDAO();
     DatosReporte objDatosReporte;
 
-    public String build(DatosReporte objDatosReporte, Map map, Integer intEvaluadoPk, String strNameFile) throws IOException {
+    public String build(DatosReporte objDatosReporte, Map map, Integer intEvaluadoPk, String strNameFile, ReporteGenerado objReporteGenerado) throws IOException {
 
         this.objDatosReporte = objDatosReporte;
 
@@ -69,7 +69,7 @@ public class ReporteIndividualSumarioCategoriaMismoRelacion implements Serializa
             report().setTemplate(ModeloGeneral.reportTemplate)
                     .setSummaryWithPageHeaderAndFooter(Boolean.TRUE)
                     .pageHeader(ModeloGeneral.generaCabeceraConMetricas(map, medida, this.objDatosReporte))
-                    .summary(generaContenido(intEvaluadoPk))
+                    .summary(generaContenido(intEvaluadoPk, objReporteGenerado))
                     .pageFooter(ModeloGeneral.generaPie(map))
                     .toPdf(pdfExporter);
 
@@ -82,7 +82,7 @@ public class ReporteIndividualSumarioCategoriaMismoRelacion implements Serializa
         return strNombreReporte;
     }
 
-    private MultiPageListBuilder generaContenido(Integer intEvaluadoPk) {
+    private MultiPageListBuilder generaContenido(Integer intEvaluadoPk, ReporteGenerado objReporteGenerado) {
 
         TextColumnBuilder<String> evaluacion = col.column("Evaluacion", "evaluacion", type.stringType());
         TextColumnBuilder<String> relacion = col.column("Relacion", "relacion", type.stringType());
@@ -99,7 +99,7 @@ public class ReporteIndividualSumarioCategoriaMismoRelacion implements Serializa
             seriesColors.put(objRelacion.getReTxAbreviatura(), Utilitarios.convertColorHexToRgb("#" + objRelacion.getReColor()));
         }
 
-        List<Componente> lstComponente = componenteDao.listaComponenteProyectoTipoOrdenado(Utilitarios.obtenerProyecto().getIntIdProyecto(), objDatosReporte.getIntIdCuestionario(), Constantes.INT_ET_TIPO_COMPONENTE_CATEGORIA, null, intEvaluadoPk);
+        List<Componente> lstComponente = componenteDao.listaComponenteProyectoTipoOrdenado(objReporteGenerado.getProyectoInfo().getIntIdProyecto(), objDatosReporte.getIntIdCuestionario(), Constantes.INT_ET_TIPO_COMPONENTE_CATEGORIA, null, intEvaluadoPk);
 
         MultiPageListBuilder multiPageList = cmp.multiPageList();
 
@@ -112,7 +112,7 @@ public class ReporteIndividualSumarioCategoriaMismoRelacion implements Serializa
                     cmp.horizontalList(cht.barChart().setCategory(evaluacion)
                             .seriesColorsByName(seriesColors)
                             .series(cht.serie(cantidad).setSeries(relacion))
-                            .setDataSource(createDataSourceBar(objComponente, intEvaluadoPk))
+                            .setDataSource(createDataSourceBar(objComponente, intEvaluadoPk, objReporteGenerado))
                             .setOrientation(Orientation.HORIZONTAL)
                             .setLegendPosition(Position.RIGHT)
                             .setShowLegend(Boolean.FALSE)
@@ -123,9 +123,9 @@ public class ReporteIndividualSumarioCategoriaMismoRelacion implements Serializa
                             .setWidth(350)
                             .setShowTickMarks(Boolean.FALSE)
                             .addCustomizer(new ReporteIndividualSumarioCategoriaMismoRelacion.ChartCustomizerBar()),
-                            crearDatosDelGrafico(objComponente, intEvaluadoPk)
+                            crearDatosDelGrafico(objComponente, intEvaluadoPk, objReporteGenerado)
                     ))), cmp.verticalGap(15));
-            
+
             i++;
 
         }
@@ -136,11 +136,11 @@ public class ReporteIndividualSumarioCategoriaMismoRelacion implements Serializa
 
     }
 
-    private ComponentBuilder<?, ?> crearDatosDelGrafico(Componente objComponente, Integer intEvaluadoPk) {
+    private ComponentBuilder<?, ?> crearDatosDelGrafico(Componente objComponente, Integer intEvaluadoPk, ReporteGenerado objReporteGenerado) {
 
         VerticalListBuilder datos = cmp.verticalList();
 
-        List lstResultadoFinal = this.resultadoDAO.listaReporteSumarioMismoRelacion(objComponente, intEvaluadoPk);
+        List lstResultadoFinal = this.resultadoDAO.listaReporteSumarioMismoRelacion(objComponente, intEvaluadoPk, objReporteGenerado.getProyectoInfo().getIntIdProyecto());
 
         Iterator it = objDatosReporte.getMapRelaciones().entrySet().iterator();
 
@@ -226,13 +226,13 @@ public class ReporteIndividualSumarioCategoriaMismoRelacion implements Serializa
         }
     }
 
-    private JRDataSource createDataSourceBar(Componente objComponente, Integer intEvaluadoPk) {
+    private JRDataSource createDataSourceBar(Componente objComponente, Integer intEvaluadoPk, ReporteGenerado objReporteGenerado) {
 
         DRDataSource dataSource = new DRDataSource("evaluacion", "relacion", "cantidad");
 
         List<ResultadoInfo> lstResultadoInfo = new ArrayList<>();
 
-        List lstResultadoFinal = this.resultadoDAO.listaReporteSumarioMismoRelacion(objComponente, intEvaluadoPk);
+        List lstResultadoFinal = this.resultadoDAO.listaReporteSumarioMismoRelacion(objComponente, intEvaluadoPk, objReporteGenerado.getProyectoInfo().getIntIdProyecto());
 
         Iterator it = objDatosReporte.getMapRelaciones().entrySet().iterator();
 

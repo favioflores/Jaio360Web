@@ -36,7 +36,7 @@ import javax.faces.bean.ManagedBean;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.logging.Log;
+import org.apache.log4j.Logger;
 import org.apache.commons.logging.LogFactory;
 
 /**
@@ -47,7 +47,7 @@ import org.apache.commons.logging.LogFactory;
 @ViewScoped
 public class EjecutarEvaluacionView extends BaseView implements Serializable {
 
-    private static Log log = LogFactory.getLog(EjecutarEvaluacionView.class);
+    private static Logger log = Logger.getLogger(EjecutarEvaluacionView.class);
 
     private String strDescCuestionario;
     private String strDescEvaluado;

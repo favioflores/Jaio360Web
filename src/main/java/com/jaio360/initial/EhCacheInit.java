@@ -15,7 +15,7 @@ import javax.faces.context.FacesContext;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
-import org.apache.commons.logging.Log;
+import org.apache.log4j.Logger;
 import org.apache.commons.logging.LogFactory;
 
 /**
@@ -24,7 +24,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class EhCacheInit extends HttpServlet implements Serializable {
 
-    private static Log log = LogFactory.getLog(EhCacheInit.class);
+    private static Logger log = Logger.getLogger(EhCacheInit.class);
     private EHCacheManager objEHCacheManager;
 
     /**

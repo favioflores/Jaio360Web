@@ -33,7 +33,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.bean.ManagedBean;
 
 
-import org.apache.commons.logging.Log;
+import org.apache.log4j.Logger;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.HibernateException;
 
@@ -43,7 +43,7 @@ import org.hibernate.HibernateException;
 
 public class MantenimientoLicenciaAccountView extends BaseView implements Serializable {
 
-    private static Log log = LogFactory.getLog(MantenimientoLicenciaAccountView.class);
+    private static Logger log = Logger.getLogger(MantenimientoLicenciaAccountView.class);
 
     private static final long serialVersionUID = -1L;
 

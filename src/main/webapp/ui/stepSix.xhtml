@@ -11,6 +11,25 @@
             .ui-progressbar .ui-widget-header {
                 background: #cbeccc !important;
             }
+            #grad {
+                height: 100%;
+                width: 100%;
+                position: fixed;
+                background-color: #005EA6;/* For browsers that do not support gradients */
+                background-image: linear-gradient(to right, #005EA6 , #006CBE);
+            }
+            #formIndividual\:captcha > div {
+                margin: 0 auto;
+            }
+            .text-center {
+                text-align: center !important;
+            }
+            .g-recaptcha {
+                display: inline-block;
+            }
+            img {
+                border-radius: 100%;
+            }
         </style>
     </ui:define>
 
@@ -81,23 +100,31 @@
                                                  value="#{generaReportesView.lstEvaluados}" 
                                                  selection="#{generaReportesView.lstEvaluadosSeleccionados}" 
                                                  rowKey="#{evaluado.paIdParticipantePk}" 
-                                                 rows="5"
+                                                 rows="10"
                                                  size="small"
                                                  paginator="true"
                                                  stripedRows="true"
                                                  paginatorPosition="bottom"
                                                  paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                                 rowsPerPageTemplate="5,10,15"
+                                                 rowsPerPageTemplate="10,25,50,200"
                                                  rowIndexVar="index"
+                                                 filteredValue="#{generaReportesView.lstEvaluadosFiltrado}"
+                                                 globalFilterFunction="#{generaReportesView.globalFilterFunction}"
                                                  emptyMessage="#{msg['no.items']}">
 
                                         <f:facet name="header">
-                                            <div>
-                                                <p:commandButton id="toggler" type="button" value="Columns" style="width: 120px;" icon="pi pi-align-justify"/>
-                                                <p:columnToggler datasource="checkboxDT3" trigger="toggler">
-                                                    <p:ajax />
-                                                </p:columnToggler>
+
+                                            <div class="flex justify-content-between align-items-center">
+                                                <div>
+                                                    <p:commandButton id="toggler" type="button" value="Columns" style="width: 120px;" icon="pi pi-align-justify"/>
+                                                    <p:columnToggler datasource="checkboxDT3" trigger="toggler">
+                                                        <p:ajax />
+                                                    </p:columnToggler>
+                                                    <p:inputText id="globalFilter" onkeyup="PF('checkboxDT3').filter()" style="width:300px"
+                                                                 placeholder="#{msg['adm.search.filter.global']}" />
+                                                </div>
                                             </div>
+
                                         </f:facet>
                                         <p:column style="width: 40px; text-align: center;">
                                             <f:facet name="header">
@@ -114,15 +141,15 @@
                                             <p:graphicImage value="/images/no-picture.png" height="75" width="75"  class="classimg" rendered="#{evaluado.paTxImgUrl==null}" />
                                         </p:column>
 
-                                        <p:column headerText="#{msg['description']}" >
+                                        <p:column headerText="#{msg['description']}" sortBy="#{evaluado.paTxDescripcion}" >
                                             <h:outputText value="#{evaluado.paTxDescripcion}" />
                                         </p:column>
 
-                                        <p:column headerText="#{msg['role']}" >
+                                        <p:column headerText="#{msg['role']}" sortBy="#{evaluado.paTxNombreCargo}" >
                                             <h:outputText value="#{evaluado.paTxNombreCargo}" />
                                         </p:column>
 
-                                        <p:column headerText="#{msg['email']}" >
+                                        <p:column headerText="#{msg['email']}" sortBy="#{evaluado.paTxCorreo}"  >
                                             <h:outputText value="#{evaluado.paTxCorreo}" />
                                         </p:column>
 
@@ -165,19 +192,30 @@
                                         <div class="p-field p-col-12 p-md-12">
                                             <h4 class="mt-0">#{msg['step6.indi.stp4']}</h4>
                                             <p:commandButton id="btnGenerar" value="#{msg['step6.button.generate.individual']}" 
-                                                             ajax="true" 
                                                              update="tab:formIndividual,formDLGIndividual" 
                                                              actionListener="#{generaReportesView.generarReporteIndividual()}" 
                                                              icon="pi pi-file" />
+                                            <p:spacer/>
+                                            <div class="text-center">
+                                                <p:captcha id="captcha" size="normal" label="Captcha" language="#{msg['iniciar.captcha.lenguaje']}" /> 
+                                            </div>
                                         </div>
 
                                         <div class="p-field p-col-12 p-md-12">
                                             <h4 class="mt-0">#{msg['step6.indi.stp5']}</h4>
-                                            <p:commandButton id="btnDownload" value="#{msg['step6.button.download.individual']}" ajax="false" 
+                                            <!--p:commandButton id="btnDownload" value="#{msg['step6.button.download.individual']}" ajax="false" 
+                                                             onclick="PF('sidebarReportsProcess').show()"
                                                              disabled="#{generaReportesView.fileIndividual==null?true:false}" 
                                                              update="@this" 
                                                              icon="pi pi-download" >
                                                 <p:fileDownload value="#{generaReportesView.fileIndividual}" />
+                                            </p:commandButton-->
+                                            <p:commandButton id="btnDownload" value="#{msg['view.generated.reports']}" 
+                                                             oncomplete="PF('sidebarReportsProcess').show()"
+                                                             update="frmSidebarReportsProcess"
+                                                             immediate="true"
+                                                             actionListener="#{generaReportesView.cargarAnalisisEnviados()}"
+                                                             icon="pi pi-download" >
                                             </p:commandButton>
                                         </div>
                                         <div class="p-field p-col-12 p-md-12">
@@ -200,6 +238,7 @@
                 <p:tab title="#{msg['step6.title2']}">
 
                     <h:form>
+                        <p:growl life="4000" showSummary="true" />
                             <!--<h3>#{msg['step6.title2']}</h3>
 
                             <div class="ui-fluid p-formgrid p-grid">
@@ -254,25 +293,42 @@
                             <div class="p-field p-col-12 p-md-4">
 
                                 <p:card>
-                                    <div class="p-field p-col-12 p-md-12">
-                                        <h4 class="mt-0">#{msg['step6.gru.stp2']}</h4>
-                                        <p:selectCheckboxMenu id="idCheckMasivo" value="#{generaReportesView.lstSeleccionadosGrupal}" 
-                                                              filter="true" 
-                                                              label="#{msg['please.select.reports']}"
-                                                              filterMatchMode="contains" required="true" 
-                                                              panelStyle="width: 30rem" >
-                                            <f:selectItems value="#{generaReportesView.lstContenidoGrupal}"/>
-                                        </p:selectCheckboxMenu>
-                                    </div>
-                                    <div class="p-field p-col-12 p-md-12">
-                                        <h4 class="mt-0">#{msg['step6.gru.stp3']}</h4>
-                                        <p:commandButton value="#{msg['step6.button.generate.individual']}" ajax="true" update="@form" actionListener="#{generaReportesView.generarReporteGrupal}" icon="pi pi-file" />
-                                    </div>
-                                    <div class="p-field p-col-12 p-md-12">
-                                        <h4 class="mt-0">#{msg['step6.gru.stp4']}</h4>
-                                        <p:commandButton value="#{msg['step6.button.download.individual']}" ajax="false" disabled="#{generaReportesView.fileGrupal==null?true:false}" update="@this" icon="pi pi-download" >
-                                            <p:fileDownload value="#{generaReportesView.fileGrupal}" />
-                                        </p:commandButton>
+                                    <div class="ui-fluid p-formgrid p-grid">
+                                        <div class="p-field p-col-12 p-md-12">
+                                            <h4 class="mt-0">#{msg['step6.gru.stp2']}</h4>
+
+
+                                            <p:selectOneRadio id="lineGrupal" value="#{generaReportesView.intTypeReportsGrupal}" layout="pageDirection">
+                                                <p:ajax event="valueChange" listener="#{generaReportesView.habilitarReportesGrupal()}" update="idCheckMasivo" />
+                                                <f:selectItem itemLabel="#{msg['step6.report.standar']}" itemValue="0"  />
+                                                <f:selectItem itemLabel="#{msg['step6.report.weighted']}" itemValue="1" noSelectionOption="true" itemDisabled="#{!generaReportesView.blWeightedAvailable}" />
+                                            </p:selectOneRadio>
+                                            <h4 class="mt-0">#{msg['step6.gru.stp3']}</h4>
+                                            <p:selectCheckboxMenu id="idCheckMasivo" value="#{generaReportesView.lstSeleccionadosGrupal}" 
+                                                                  filter="true" 
+                                                                  label="#{msg['please.select.reports']}"
+                                                                  filterMatchMode="contains" required="true" 
+                                                                  panelStyle="width: 30rem" >
+                                                <f:selectItems value="#{generaReportesView.lstContenidoGrupal}"/>
+                                            </p:selectCheckboxMenu>
+                                        </div>
+                                        <div class="p-field p-col-12 p-md-12">
+                                            <h4 class="mt-0">#{msg['step6.gru.stp4']}</h4>
+                                            <p:commandButton value="#{msg['step6.button.generate.individual']}" update="@form" actionListener="#{generaReportesView.generarReporteGrupal}" icon="pi pi-file" />
+                                            <p:spacer/>
+                                            <div class="text-center">
+                                                <p:captcha id="captcha" size="normal" label="Captcha" language="#{msg['iniciar.captcha.lenguaje']}" /> 
+                                            </div>
+                                        </div>
+                                        <div class="p-field p-col-12 p-md-12">
+                                            <h4 class="mt-0">#{msg['step6.gru.stp5']}</h4>
+                                            <p:commandButton  value="#{msg['view.generated.reports']}" 
+                                                              update="frmSidebarReportsProcess" 
+                                                              oncomplete="PF('sidebarReportsProcess').show()"
+                                                              immediate="true"
+                                                              actionListener="#{generaReportesView.cargarAnalisisEnviados()}"
+                                                              icon="pi pi-download" />
+                                        </div>
                                     </div>
                                 </p:card>
                             </div>
@@ -363,7 +419,73 @@
 
         </p:dialog>       
 
+        <p:sidebar widgetVar="sidebarReportsProcess" visible="false" 
+                   fullScreen="true"  blockScroll="true"
+                   onShow="PF('poll').start();" onHide="PF('poll').stop();" >
+            <p:poll widgetVar="poll" autoStart="false" interval="5" immediate="true" update="frmSidebarReportsProcess" form="frmSidebarReportsProcess" listener="#{generaReportesView.cargarAnalisisEnviados()}" />
+            <h:form id="frmSidebarReportsProcess" >
 
+                <p:dataTable id="dtDownloads"
+                             widgetVar="dtDownloads"
+                             var="downloadsObject" 
+                             value="#{generaReportesView.lstReporteGenerado}" 
+                             paginator="true"
+                             size="small"
+                             stripedRows="false"
+                             rows="5"
+                             paginatorPosition="both"
+                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             emptyMessage="#{msg['no.items']}"
+                             rowIndexVar="index" >
+                    <f:facet name="header">
+                        <div class="flex justify-content-end">
+                            <h3>#{msg['header.analisis']}</h3>
+                        </div>
+                        #{msg['auto.update.reports']}
+
+                    </f:facet>
+                    <p:column style="width: 40px; text-align: center;">
+                        <f:facet name="header">
+                            <h:outputText value="#" />
+                        </f:facet>
+                        <p:outputLabel
+                            value="#{index + 1}" />
+                    </p:column> 
+
+                    <p:column headerText="#{msg['filename']}" >
+                        <p:outputLabel value="#{downloadsObject.rgTxNombreArchivo}"/>
+                    </p:column>
+
+                    <p:column headerText="#{msg['elapsed.time']}" >
+                        <p:outputLabel value="#{downloadsObject.rgTxTimeElapsed}"/>
+                    </p:column>
+
+                    <p:column headerText="#{msg['available.time']}" >
+                        <p:outputLabel value="#{downloadsObject.rgTxFechaEliminacion}"/>
+                    </p:column>
+
+
+                    <p:column style="width: 150px;" >
+                        <p:progressBar value="#{downloadsObject.rgBlPorcentajeAvance}" displayOnly="true"
+                                       labelTemplate="#{downloadsObject.rgBlPorcentajeAvance.intValue()}%"  
+                                       rendered="#{(downloadsObject.rgEstado == 218) or (downloadsObject.rgEstado == 217)}" />
+                        <p:commandButton icon="#{(downloadsObject.rgEstado == 219?'pi pi-download':'')}"
+                                         ajax="false" 
+                                         immediate="true"
+                                         process="@this"
+                                         value="#{downloadsObject.rgStrEstado}"
+                                         styleClass="#{downloadsObject.rgEstado==219?'ui-button-success':downloadsObject.rgEstado==220?'ui-button-danger':'ui-button-warning'}"
+                                         update="@this" 
+                                         style="width: 100%;"
+                                         actionListener="#{generaReportesView.descargarContenido(downloadsObject)}"
+                                         rendered="#{(downloadsObject.rgEstado == 219) or (downloadsObject.rgEstado == 220)}"
+                                         disabled="#{!(downloadsObject.rgEstado == 219)}" >
+                            <p:fileDownload value="#{generaReportesView.fileIndividual}" />
+                        </p:commandButton>
+                    </p:column>
+                </p:dataTable>
+            </h:form>
+        </p:sidebar>
 
     </ui:define>
 </ui:composition>

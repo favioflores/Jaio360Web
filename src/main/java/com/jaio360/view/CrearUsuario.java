@@ -26,7 +26,7 @@ import javax.faces.bean.ManagedBean;
 import javax.servlet.http.HttpSession;
 
 
-import org.apache.commons.logging.Log;
+import org.apache.log4j.Logger;
 import org.apache.commons.logging.LogFactory;
 
 /**
@@ -37,7 +37,7 @@ import org.apache.commons.logging.LogFactory;
 @ViewScoped
 public class CrearUsuario extends BaseView implements Serializable {
 
-    private static final Log log = LogFactory.getLog(CrearUsuario.class);
+    private static final Logger log = Logger.getLogger(CrearUsuario.class);
 
     private static final long serialVersionUID = -1L;
 

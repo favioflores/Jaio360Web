@@ -6,6 +6,7 @@ import com.jaio360.domain.DatosReporte;
 import com.jaio360.model.ModeloGeneral;
 import com.jaio360.orm.Componente;
 import com.jaio360.orm.Relacion;
+import com.jaio360.orm.ReporteGenerado;
 import com.jaio360.orm.ResultadoInfo;
 import com.jaio360.utils.Constantes;
 import com.jaio360.utils.Utilitarios;
@@ -36,7 +37,7 @@ import net.sf.dynamicreports.report.definition.chart.DRIChartCustomizer;
 
 import net.sf.dynamicreports.report.exception.DRException;
 import net.sf.jasperreports.engine.JRDataSource;
-import org.apache.commons.logging.Log;
+import org.apache.log4j.Logger;
 import org.apache.commons.logging.LogFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.CategoryAxis;
@@ -49,14 +50,14 @@ import org.jfree.ui.RectangleInsets;
 
 public class ReporteIndividualCalificacionXCategoria implements Serializable {
 
-    private static final Log log = LogFactory.getLog(ReporteIndividualCalificacionXCategoria.class);
+    private static final Logger log = Logger.getLogger(ReporteIndividualCalificacionXCategoria.class);
 
     ComponenteDAO componenteDao = new ComponenteDAO();
     ResultadoDAO resultadoDAO = new ResultadoDAO();
     DatosReporte objDatosReporte;
     List lstRel = new ArrayList();
 
-    public String build(DatosReporte objDatosReporte, Map map, Integer intEvaluadoPk, String strNameFile) throws IOException {
+    public String build(DatosReporte objDatosReporte, Map map, Integer intEvaluadoPk, String strNameFile, ReporteGenerado objReporteGenerado) throws IOException {
 
         this.objDatosReporte = objDatosReporte;
 
@@ -64,7 +65,7 @@ public class ReporteIndividualCalificacionXCategoria implements Serializable {
 
         try {
 
-            List<Componente> lstCategorias = componenteDao.listaComponenteProyectoTipo(Utilitarios.obtenerProyecto().getIntIdProyecto(), objDatosReporte.getIntIdCuestionario(), Constantes.INT_ET_TIPO_COMPONENTE_CATEGORIA, null);
+            List<Componente> lstCategorias = componenteDao.listaComponenteProyectoTipo(objReporteGenerado.getProyectoInfo().getIntIdProyecto(), objDatosReporte.getIntIdCuestionario(), Constantes.INT_ET_TIPO_COMPONENTE_CATEGORIA, null);
 
             List<String> lstArchivos = new ArrayList();
 
@@ -79,7 +80,7 @@ public class ReporteIndividualCalificacionXCategoria implements Serializable {
                 report().setTemplate(ModeloGeneral.reportTemplate)
                         .setSummaryWithPageHeaderAndFooter(Boolean.TRUE)
                         .pageHeader(ModeloGeneral.generaCabeceraConMetricasConComponentes(map, objComponente, medida, this.objDatosReporte))
-                        .summary(generaContenido(intEvaluadoPk, objComponente))
+                        .summary(generaContenido(intEvaluadoPk, objComponente, objReporteGenerado))
                         .pageFooter(ModeloGeneral.generaPie(map))
                         .toPdf(pdfExporterC);
 
@@ -99,7 +100,7 @@ public class ReporteIndividualCalificacionXCategoria implements Serializable {
         return strNombreReporte;
     }
 
-    private MultiPageListBuilder generaContenido(Integer intEvaluadoPk, Componente objCategoria) {
+    private MultiPageListBuilder generaContenido(Integer intEvaluadoPk, Componente objCategoria, ReporteGenerado objReporteGenerado) {
 
         TextColumnBuilder<String> evaluacion = col.column("Evaluacion", "evaluacion", type.stringType());
         TextColumnBuilder<String> relacion = col.column("Relacion", "relacion", type.stringType());
@@ -129,8 +130,8 @@ public class ReporteIndividualCalificacionXCategoria implements Serializable {
             }
         }
 
-        List<Componente> lstComponente = componenteDao.listaComponenteProyectoTipo(Utilitarios.obtenerProyecto().getIntIdProyecto(), objDatosReporte.getIntIdCuestionario(), Constantes.INT_ET_TIPO_COMPONENTE_PREGUNTA_CERRADA, objCategoria);
-        List lstComentarios = this.resultadoDAO.obtieneListaResultadoComentarios(intEvaluadoPk);
+        List<Componente> lstComponente = componenteDao.listaComponenteProyectoTipo(objReporteGenerado.getProyectoInfo().getIntIdProyecto(), objDatosReporte.getIntIdCuestionario(), Constantes.INT_ET_TIPO_COMPONENTE_PREGUNTA_CERRADA, objCategoria);
+        List lstComentarios = this.resultadoDAO.obtieneListaResultadoComentarios(intEvaluadoPk, objReporteGenerado);
 
         MultiPageListBuilder multiPageList = cmp.multiPageList();
 
@@ -173,7 +174,7 @@ public class ReporteIndividualCalificacionXCategoria implements Serializable {
                                             cht.barChart().setCategory(evaluacion)
                                                     .seriesColorsByName(seriesColors)
                                                     .series(cht.serie(cantidad).setSeries(relacion))
-                                                    .setDataSource(createDataSourceBar(objComponente, intEvaluadoPk))
+                                                    .setDataSource(createDataSourceBar(objComponente, intEvaluadoPk, objReporteGenerado))
                                                     .setOrientation(Orientation.HORIZONTAL)
                                                     .setLegendPosition(Position.RIGHT)
                                                     .setShowLegend(Boolean.FALSE)
@@ -184,7 +185,7 @@ public class ReporteIndividualCalificacionXCategoria implements Serializable {
                                                     .setWidth(350)
                                                     .setShowTickMarks(Boolean.FALSE)
                                                     .addCustomizer(new ReporteIndividualCalificacionXCategoria.ChartCustomizerBar()),
-                                            crearDatosDelGrafico(objComponente, intEvaluadoPk)
+                                            crearDatosDelGrafico(objComponente, intEvaluadoPk, objReporteGenerado)
                                     ))), vComentarios);
 
             i++;
@@ -197,11 +198,11 @@ public class ReporteIndividualCalificacionXCategoria implements Serializable {
 
     }
 
-    private ComponentBuilder<?, ?> crearDatosDelGrafico(Componente objComponente, Integer intEvaluadoPk) {
+    private ComponentBuilder<?, ?> crearDatosDelGrafico(Componente objComponente, Integer intEvaluadoPk, ReporteGenerado objReporteGenerado) {
 
         VerticalListBuilder datos = cmp.verticalList();
 
-        List lstResultadoFinal = this.resultadoDAO.listaReporteUno(objComponente, intEvaluadoPk);
+        List lstResultadoFinal = this.resultadoDAO.listaReporteUno(objComponente, intEvaluadoPk, objReporteGenerado.getProyectoInfo().getIntIdProyecto());
 
         //Iterator it = objDatosReporte.getMapRelaciones().entrySet().iterator();
         Iterator it = lstRel.iterator();
@@ -290,13 +291,13 @@ public class ReporteIndividualCalificacionXCategoria implements Serializable {
         }
     }
 
-    private JRDataSource createDataSourceBar(Componente objComponente, Integer intEvaluadoPk) {
+    private JRDataSource createDataSourceBar(Componente objComponente, Integer intEvaluadoPk, ReporteGenerado objReporteGenerado) {
 
         DRDataSource dataSource = new DRDataSource("evaluacion", "relacion", "cantidad");
 
         List<ResultadoInfo> lstResultadoInfo = new ArrayList<>();
 
-        List lstResultadoFinal = this.resultadoDAO.listaReporteUno(objComponente, intEvaluadoPk);
+        List lstResultadoFinal = this.resultadoDAO.listaReporteUno(objComponente, intEvaluadoPk, objReporteGenerado.getProyectoInfo().getIntIdProyecto());
 
         //Iterator it = objDatosReporte.getMapRelaciones().entrySet().iterator();
         Iterator it = lstRel.iterator();

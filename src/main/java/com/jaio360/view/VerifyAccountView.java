@@ -26,7 +26,7 @@ import javax.faces.bean.ManagedBean;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.CharEncoding;
-import org.apache.commons.logging.Log;
+import org.apache.log4j.Logger;
 import org.apache.commons.logging.LogFactory;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
@@ -41,7 +41,7 @@ import org.hibernate.HibernateException;
 
 public class VerifyAccountView extends BaseView implements Serializable {
 
-    private static Log log = LogFactory.getLog(VerifyAccountView.class);
+    private static Logger log = Logger.getLogger(VerifyAccountView.class);
 
     private static final long serialVersionUID = -1L;
 

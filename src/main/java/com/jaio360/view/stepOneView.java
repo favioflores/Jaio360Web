@@ -11,7 +11,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.bean.ViewScoped;
 import javax.faces.bean.ManagedBean;
 
-import org.apache.commons.logging.Log;
+import org.apache.log4j.Logger;
 import org.apache.commons.logging.LogFactory;
 
 @ManagedBean(name = "stepOneView")
@@ -19,7 +19,7 @@ import org.apache.commons.logging.LogFactory;
 
 public class stepOneView extends BaseView implements Serializable {
 
-    private static Log log = LogFactory.getLog(stepOneView.class);
+    private static Logger log = Logger.getLogger(stepOneView.class);
 
     private static final long serialVersionUID = -1L;
 

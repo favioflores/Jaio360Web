@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.logging.Log;
+import org.apache.log4j.Logger;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -30,7 +30,7 @@ public class CargaAvanzadaDAO implements Serializable {
     private Session sesion;
     private Transaction tx;
 
-    private Log log = LogFactory.getLog(CargaAvanzadaDAO.class);
+    private Logger log = Logger.getLogger(CargaAvanzadaDAO.class);
 
     public CargaAvanzadaDAO() {
         this.sesion = HibernateUtil.getSessionFactory().openSession();

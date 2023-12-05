@@ -10,8 +10,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.application.FacesMessage.Severity;
 import javax.faces.context.FacesContext;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 import org.apache.velocity.tools.view.VelocityViewServlet;
 
 public abstract class BaseView extends VelocityViewServlet implements Serializable {
@@ -21,7 +20,7 @@ public abstract class BaseView extends VelocityViewServlet implements Serializab
      */
     private static final long serialVersionUID = 1L;
 
-    private static final Log logBase = LogFactory.getLog(BaseView.class);
+    private static final Logger logBase = Logger.getLogger(BaseView.class);
 
     public static final Severity ERROR = FacesMessage.SEVERITY_ERROR;
     public static final Severity INFO = FacesMessage.SEVERITY_INFO;
@@ -63,7 +62,7 @@ public abstract class BaseView extends VelocityViewServlet implements Serializab
         return true;
     }
 
-    public void mostrarAlerta(Severity severity, String key, Log log, Exception e, Object... params) {
+    public void mostrarAlerta(Severity severity, String key, Logger log, Exception e, Object... params) {
         try {
             if (existeMsg(key)) {
                 FacesMessage message = new FacesMessage(severity, msg(key, params), null);
@@ -219,7 +218,7 @@ public abstract class BaseView extends VelocityViewServlet implements Serializab
         }
     }
 
-    public static void mostrarError(Log log, Exception e) {
+    public static void mostrarError(Logger log, Exception e) {
         try {
             FacesMessage message = new FacesMessage(FATAL, msg("error.was.occurred", (Object) null), null);
             FacesContext.getCurrentInstance().addMessage(null, message);

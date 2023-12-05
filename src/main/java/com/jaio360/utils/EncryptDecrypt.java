@@ -15,7 +15,7 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESedeKeySpec;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.logging.Log;
+import org.apache.log4j.Logger;
 import org.apache.commons.logging.LogFactory;
 
 public class EncryptDecrypt {
@@ -30,7 +30,7 @@ public class EncryptDecrypt {
     static String myEncryptionScheme;
     static SecretKey key;
     
-    private static final Log log = LogFactory.getLog(EncryptDecrypt.class);
+    private static final Logger log = Logger.getLogger(EncryptDecrypt.class);
 
     public EncryptDecrypt() throws Exception {
         

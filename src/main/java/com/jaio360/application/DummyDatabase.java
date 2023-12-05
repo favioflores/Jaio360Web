@@ -2,12 +2,12 @@ package com.jaio360.application;
 
 import com.jaio360.dao.ElementoDAO;
 import java.io.Serializable;
-import org.apache.commons.logging.Log;
+import org.apache.log4j.Logger;
 import org.apache.commons.logging.LogFactory;
 
 public class DummyDatabase extends Thread implements Serializable {
 
-    private Log log = LogFactory.getLog(DummyDatabase.class);
+    private Logger log = Logger.getLogger(DummyDatabase.class);
 
     private static ElementoDAO objElementoDAO;
 

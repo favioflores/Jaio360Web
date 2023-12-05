@@ -3,6 +3,7 @@ package com.jaio360.report;
 import com.jaio360.dao.ResultadoDAO;
 import com.jaio360.domain.DatosReporte;
 import com.jaio360.model.ModeloGeneral;
+import com.jaio360.orm.ReporteGenerado;
 import com.jaio360.utils.Constantes;
 import com.jaio360.utils.Utilitarios;
 import java.io.File;
@@ -12,7 +13,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import static net.sf.dynamicreports.report.builder.DynamicReports.*;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.sf.dynamicreports.jasper.builder.export.JasperPdfExporterBuilder;
@@ -26,10 +26,10 @@ public class ReporteIndividualPreguntasAbiertas implements Serializable {
     ResultadoDAO resultadoDAO = new ResultadoDAO();
     DatosReporte objDatosReporte;
 
-    public String build(DatosReporte objDatosReporte, Map map, Integer intIdEvaluado, String strNameFile) throws IOException {
+    public String build(DatosReporte objDatosReporte, Map map, Integer intIdEvaluado, String strNameFile, ReporteGenerado objReporteGenerado) throws IOException {
 
         this.objDatosReporte = objDatosReporte;
-        List lstRptaAbiertas = this.resultadoDAO.obtieneListaResultadoPreguntasAbiertas(intIdEvaluado);
+        List lstRptaAbiertas = this.resultadoDAO.obtieneListaResultadoPreguntasAbiertas(intIdEvaluado, objReporteGenerado.getProyectoInfo().getIntIdProyecto());
 
         String strNombreReporte = strNameFile + Constantes.STR_EXTENSION_PDF;
         objDatosReporte.setStrID(strNombreReporte);

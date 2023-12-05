@@ -24,8 +24,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 
@@ -33,10 +31,8 @@ import javax.faces.context.FacesContext;
 import javax.faces.bean.ViewScoped;
 import javax.faces.bean.ManagedBean;
 import javax.servlet.http.HttpSession;
+import org.apache.log4j.Logger;
 
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.hibernate.HibernateException;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
@@ -48,7 +44,7 @@ import org.primefaces.model.StreamedContent;
 
 public class SeguimientoRedView extends BaseView implements Serializable {
 
-    private static Log log = LogFactory.getLog(SeguimientoRedView.class);
+    private static final Logger log = Logger.getLogger(SeguimientoRedView.class);
 
     private static final long serialVersionUID = -1L;
     
@@ -469,9 +465,9 @@ public class SeguimientoRedView extends BaseView implements Serializable {
 
             //message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Envio de correo", "La notificación se envió exitosamente");
         } catch (HibernateException ex) {
-            Logger.getLogger(SeguimientoRedView.class.getName()).log(Level.SEVERE, null, ex);
+            mostrarError(log, ex);
         } catch (Exception ex) {
-            Logger.getLogger(SeguimientoRedView.class.getName()).log(Level.SEVERE, null, ex);
+            mostrarError(log, ex);
         }
 
     }

@@ -12,7 +12,7 @@ import com.jaio360.orm.RelacionParticipanteId;
 import com.jaio360.utils.Constantes;
 import java.io.Serializable;
 import java.util.List;
-import org.apache.commons.logging.Log;
+import org.apache.log4j.Logger;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -23,7 +23,7 @@ public class RedEvaluacionDAO implements Serializable
 {  
     private Session sesion; 
     private Transaction tx;  
-    private static Log log = LogFactory.getLog(RedEvaluacion.class);
+    private static Logger log = Logger.getLogger(RedEvaluacion.class);
    
 
     public RedEvaluacionDAO() {

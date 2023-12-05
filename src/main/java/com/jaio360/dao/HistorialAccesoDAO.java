@@ -5,7 +5,7 @@ import com.jaio360.orm.HistorialAcceso;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-import org.apache.commons.logging.Log;
+import org.apache.log4j.Logger;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -17,7 +17,7 @@ public class HistorialAccesoDAO implements Serializable
     private Session sesion; 
     private Transaction tx;  
 
-    private static Log log = LogFactory.getLog(HistorialAcceso.class);
+    private static Logger log = Logger.getLogger(HistorialAcceso.class);
 
     public HistorialAccesoDAO() {
         this.sesion = HibernateUtil.getSessionFactory().openSession();

@@ -67,7 +67,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.bean.ManagedBean;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.logging.Log;
+import org.apache.log4j.Logger;
 import org.apache.commons.logging.LogFactory;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
@@ -89,7 +89,7 @@ import org.primefaces.util.LangUtils;
 
 public class SeguimientoProyectoView extends BaseView implements Serializable {
 
-    private static Log log = LogFactory.getLog(SeguimientoProyectoView.class);
+    private static Logger log = Logger.getLogger(SeguimientoProyectoView.class);
 
     private Integer intCantPartTodos;
     private Integer intCantPartRegistrados;
@@ -716,7 +716,7 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
 
                         strDescEvaluador = objParticipante.getPaTxDescripcion();
 
-                        objCuestionario = objCuestionarioDAO.obtenCuestionarioXEvaluado(objParticipante.getPaIdParticipantePk());
+                        objCuestionario = objCuestionarioDAO.obtenCuestionarioXEvaluado(objParticipante.getPaIdParticipantePk(), Utilitarios.obtenerProyecto().getIntIdProyecto());
 
                         apto = true;
                         break;
@@ -796,7 +796,7 @@ public class SeguimientoProyectoView extends BaseView implements Serializable {
                     objRelacionEvaluadoEvaluador.setStrDescRelacion(msg("autoevaluate.cap"));
 
                     CuestionarioDAO objCuestionarioDAO = new CuestionarioDAO();
-                    Cuestionario objCuestionario = objCuestionarioDAO.obtenCuestionarioXEvaluado(objParticipante.getPaIdParticipantePk());
+                    Cuestionario objCuestionario = objCuestionarioDAO.obtenCuestionarioXEvaluado(objParticipante.getPaIdParticipantePk(), Utilitarios.obtenerProyecto().getIntIdProyecto());
 
                     if (objCuestionario != null) {
                         objRelacionEvaluadoEvaluador.setIntIdCuestionario(objCuestionario.getCuIdCuestionarioPk());

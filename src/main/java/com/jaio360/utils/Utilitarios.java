@@ -65,7 +65,7 @@ import java.util.zip.ZipOutputStream;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpSession;
-import org.apache.commons.logging.Log;
+import org.apache.log4j.Logger;
 import org.apache.commons.logging.LogFactory;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
@@ -76,7 +76,7 @@ import org.apache.poi.ss.usermodel.Row;
  */
 public class Utilitarios extends BaseView implements Serializable {
 
-    private static Log log = LogFactory.getLog(Utilitarios.class);
+    private static Logger log = Logger.getLogger(Utilitarios.class);
 
     public static Date obtenerFechaHoraSistema() {
         return new Date();
@@ -625,9 +625,12 @@ public class Utilitarios extends BaseView implements Serializable {
     }
 
     public static String obtieneFechaSistema(int type) {
-        FacesContext context = FacesContext.getCurrentInstance();
-        ResourceBundle bundle = context.getApplication().getResourceBundle(context, "msg");
-        DateFormat dfDateFull = DateFormat.getDateInstance(type, bundle.getLocale());
+
+        ResourceBundle rb = ResourceBundle.getBundle("etiquetas");
+
+        //FacesContext context = FacesContext.getCurrentInstance();
+        //ResourceBundle bundle = context.getApplication().getResourceBundle(context, "msg");
+        DateFormat dfDateFull = DateFormat.getDateInstance(type, rb.getLocale());
         Date fecha = new Date();
         return dfDateFull.format(fecha);
     }
@@ -713,6 +716,8 @@ public class Utilitarios extends BaseView implements Serializable {
 
     public static boolean zipArchivos(List<DatosReporte> lstReportes, FileOutputStream outPut) {
 
+        log.info("zipArchivos");
+
         boolean blSave;
 
         try {
@@ -726,6 +731,8 @@ public class Utilitarios extends BaseView implements Serializable {
                 File fl = new File(Utilitarios.getPathTempPreliminar() + File.separator + objDatosReporte.getStrID());
 
                 if (objDatosReporte.getBlDefinitivo()) {
+
+                    log.info("Agrega reporte terminado a ZIP");
 
                     FileInputStream fi = new FileInputStream(fl);
 
@@ -744,6 +751,7 @@ public class Utilitarios extends BaseView implements Serializable {
                 }
 
                 try {
+                    log.info("Files.delete");
                     Files.delete(fl.toPath());
                 } catch (NoSuchFileException x) {
                     mostrarError(log, x);
@@ -760,10 +768,12 @@ public class Utilitarios extends BaseView implements Serializable {
             out.close();
             blSave = true;
 
+            log.info("Termina de crear ZIP");
+
         } catch (Exception e) {
 
             blSave = false;
-            mostrarError(log, e);
+            log.error(e.getLocalizedMessage());
 
         }
 
@@ -773,8 +783,6 @@ public class Utilitarios extends BaseView implements Serializable {
     public static boolean zipArchivosCualquiera(List<String> lstArchivos, FileOutputStream outPut) {
 
         boolean blSave = false;
-
-        log.debug("Inicia zipArchivos");
 
         try {
 
@@ -802,13 +810,8 @@ public class Utilitarios extends BaseView implements Serializable {
 
                 try {
                     Files.delete(fl.toPath());
-                } catch (NoSuchFileException x) {
-                    log.error("%s: no such" + " file or directory%n");
-                } catch (DirectoryNotEmptyException x) {
-                    log.error("%s not empty%n");
-                } catch (IOException x) {
-                    // File permission problems are caught here.
-                    log.error(x);
+                } catch (Exception x) {
+                    log.error(x.getLocalizedMessage());
                 }
 
             }
@@ -820,11 +823,9 @@ public class Utilitarios extends BaseView implements Serializable {
         } catch (Exception e) {
 
             blSave = false;
-            log.error(e);
+            log.error(e.getLocalizedMessage());
 
         }
-
-        log.debug("Termina zipArchivos");
 
         return blSave;
     }
@@ -1201,7 +1202,7 @@ public class Utilitarios extends BaseView implements Serializable {
 
     }
 
-    public Date calculateExpiryDate(int expiryTimeInMinutes) {
+    public static Date calculateExpiryDate(int expiryTimeInMinutes) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Timestamp(cal.getTime().getTime()));
         cal.add(Calendar.MINUTE, expiryTimeInMinutes);
@@ -1404,6 +1405,30 @@ public class Utilitarios extends BaseView implements Serializable {
 
         }
 
+    }
+
+    public static String calcularDiferenciaDeFechas(Date fechaInicial, Date fechaFinal){
+ 
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd H:m:s");
+  
+        int diferencia=(int) ((fechaFinal.getTime()-fechaInicial.getTime())/1000);
+ 
+        int dias=0;
+        int horas=0;
+        int minutos=0;
+        if(diferencia>86400) {
+            dias=(int)Math.floor(diferencia/86400);
+            diferencia=diferencia-(dias*86400);
+        }
+        if(diferencia>3600) {
+            horas=(int)Math.floor(diferencia/3600);
+            diferencia=diferencia-(horas*3600);
+        }
+        if(diferencia>60) {
+            minutos=(int)Math.floor(diferencia/60);
+            diferencia=diferencia-(minutos*60);
+        }
+        return dias+" dias, "+horas+" horas, "+minutos+" minutos";
     }
 
 }

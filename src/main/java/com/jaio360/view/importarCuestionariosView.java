@@ -33,7 +33,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.bean.ManagedBean;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
-import org.apache.commons.logging.Log;
+import org.apache.log4j.Logger;
 import org.apache.commons.logging.LogFactory;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -48,7 +48,7 @@ import org.primefaces.model.file.UploadedFile;
 @ViewScoped
 public class importarCuestionariosView extends BaseView implements Serializable {
 
-    private static Log log = LogFactory.getLog(importarCuestionariosView.class);
+    private static Logger log = Logger.getLogger(importarCuestionariosView.class);
 
     private Integer idCuestionario;
     private String strCuestionario;

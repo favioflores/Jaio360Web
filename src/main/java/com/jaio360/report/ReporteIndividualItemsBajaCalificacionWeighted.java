@@ -3,6 +3,7 @@ package com.jaio360.report;
 import com.jaio360.dao.ResultadoDAO;
 import com.jaio360.domain.DatosReporte;
 import com.jaio360.model.ModeloGeneral;
+import com.jaio360.orm.ReporteGenerado;
 import com.jaio360.utils.Constantes;
 import com.jaio360.utils.Utilitarios;
 import java.io.File;
@@ -18,21 +19,20 @@ import static net.sf.dynamicreports.report.builder.DynamicReports.*;
 import net.sf.dynamicreports.jasper.builder.export.JasperPdfExporterBuilder;
 import net.sf.dynamicreports.report.builder.component.MultiPageListBuilder;
 import net.sf.dynamicreports.report.exception.DRException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 
 public class ReporteIndividualItemsBajaCalificacionWeighted implements Serializable {
 
-    private static final Log log = LogFactory.getLog(ReporteIndividualItemsBajaCalificacionWeighted.class);
+    private static final Logger log = Logger.getLogger(ReporteIndividualItemsBajaCalificacionWeighted.class);
 
     ResultadoDAO resultadoDAO = new ResultadoDAO();
     DatosReporte objDatosReporte;
 
-    public String build(DatosReporte objDatosReporte, Map map, Integer intEvaluadoPk, String strNameFIle) throws IOException {
+    public String build(DatosReporte objDatosReporte, Map map, Integer intEvaluadoPk, String strNameFile, ReporteGenerado objReporteGenerado) throws IOException {
 
         this.objDatosReporte = objDatosReporte;
 
-        String strNombreReporte = strNameFIle + Constantes.STR_EXTENSION_PDF;
+        String strNombreReporte = strNameFile + Constantes.STR_EXTENSION_PDF;
         JasperPdfExporterBuilder pdfExporter = export.pdfExporter(Utilitarios.getPathTempPreliminar() + File.separator + strNombreReporte)
                 .setEncrypted(Boolean.FALSE);
 
@@ -41,7 +41,7 @@ public class ReporteIndividualItemsBajaCalificacionWeighted implements Serializa
             report().setTemplate(ModeloGeneral.reportTemplate)
                     .setSummaryWithPageHeaderAndFooter(Boolean.TRUE)
                     .pageHeader(ModeloGeneral.generaCabeceraSinMetricas(map, this.objDatosReporte))
-                    .summary(generaContenido(intEvaluadoPk))
+                    .summary(generaContenido(intEvaluadoPk, objReporteGenerado))
                     .pageFooter(ModeloGeneral.generaPie(map))
                     .toPdf(pdfExporter);
 
@@ -51,9 +51,9 @@ public class ReporteIndividualItemsBajaCalificacionWeighted implements Serializa
         return strNombreReporte;
     }
 
-    private MultiPageListBuilder generaContenido(Integer intEvaluadoPk) {
+    private MultiPageListBuilder generaContenido(Integer intEvaluadoPk, ReporteGenerado objReporteGenerado) {
 
-        List lstItems = resultadoDAO.listaItemsBajaPromedioWeighted(intEvaluadoPk);
+        List lstItems = resultadoDAO.listaItemsBajaPromedioWeighted(intEvaluadoPk, objReporteGenerado.getProyectoInfo().getIntIdProyecto());
 
         MultiPageListBuilder multiPageList = cmp.multiPageList();
 

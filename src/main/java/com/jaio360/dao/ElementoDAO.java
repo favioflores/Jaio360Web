@@ -7,7 +7,7 @@ import com.jaio360.utils.Utilitarios;
 import com.jaio360.view.BaseView;
 import java.io.Serializable;
 import java.util.List;
-import org.apache.commons.logging.Log;
+import org.apache.log4j.Logger;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -19,7 +19,7 @@ public class ElementoDAO extends BaseView implements Serializable {
     private Session sesion;
     private Transaction tx;
 
-    private Log log = LogFactory.getLog(ElementoDAO.class);
+    private Logger log = Logger.getLogger(ElementoDAO.class);
 
     public ElementoDAO() {
         this.sesion = HibernateUtil.getSessionFactory().openSession();

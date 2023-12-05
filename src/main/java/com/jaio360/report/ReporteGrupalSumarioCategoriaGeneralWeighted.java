@@ -49,9 +49,9 @@ import org.jfree.chart.plot.Plot;
 import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.ui.RectangleInsets;
 
-public class ReporteGrupalSumarioCategoriaGeneral extends BaseView implements Serializable {
+public class ReporteGrupalSumarioCategoriaGeneralWeighted extends BaseView implements Serializable {
 
-    private static final Logger log = Logger.getLogger(ReporteGrupalSumarioCategoriaGeneral.class);
+    private static final Logger log = Logger.getLogger(ReporteGrupalSumarioCategoriaGeneralWeighted.class);
 
     ResultadoDAO resultadoDAO = new ResultadoDAO();
     DatosReporte objDatosReporte;
@@ -67,7 +67,7 @@ public class ReporteGrupalSumarioCategoriaGeneral extends BaseView implements Se
 
             objDatosReporte.setStrID(strNombreReporte);
 
-            List lstDatos = resultadoDAO.listaGrupalSumarioCategoriaGeneral(objDatosReporte, objReporteGenerado);
+            List lstDatos = resultadoDAO.listaGrupalSumarioCategoriaGeneralWeighted(objDatosReporte, objReporteGenerado);
 
             generaExcelRespuesta(strNombreReporte, lstDatos, objDatosReporte);
 
@@ -149,21 +149,20 @@ public class ReporteGrupalSumarioCategoriaGeneral extends BaseView implements Se
                     strDesc = rb.getString("empty.desc");
                 }
 
-                multiPageList.add(cmp.horizontalList(
-                        cht.barChart().setCategory(evaluacion)
-                                .seriesColorsByName(seriesColors)
-                                .series(cht.serie(cantidad).setSeries(relacion))
-                                .setDataSource(createDataSourceBar(bdProm))
-                                .setOrientation(Orientation.HORIZONTAL)
-                                .setLegendPosition(Position.RIGHT)
-                                .setShowLegend(Boolean.FALSE)
-                                .setShowLabels(Boolean.FALSE)
-                                .setShowValues(Boolean.FALSE)
-                                .setShowTickLabels(Boolean.FALSE)
-                                .setHeight(10)/* es util, en relacion de 10 por 1 categoria*/
-                                .setWidth(115)
-                                .setShowTickMarks(Boolean.FALSE)
-                                .addCustomizer(new ReporteGrupalSumarioCategoriaGeneral.ChartCustomizerBar()),
+                multiPageList.add(cmp.horizontalList(cht.barChart().setCategory(evaluacion)
+                        .seriesColorsByName(seriesColors)
+                        .series(cht.serie(cantidad).setSeries(relacion))
+                        .setDataSource(createDataSourceBar(bdProm))
+                        .setOrientation(Orientation.HORIZONTAL)
+                        .setLegendPosition(Position.RIGHT)
+                        .setShowLegend(Boolean.FALSE)
+                        .setShowLabels(Boolean.FALSE)
+                        .setShowValues(Boolean.FALSE)
+                        .setShowTickLabels(Boolean.FALSE)
+                        .setHeight(10)/* es util, en relacion de 10 por 1 categoria*/
+                        .setWidth(115)
+                        .setShowTickMarks(Boolean.FALSE)
+                        .addCustomizer(new ReporteGrupalSumarioCategoriaGeneralWeighted.ChartCustomizerBar()),
                         cmp.horizontalGap(20),
                         cmp.horizontalList(
                                 cmp.text(Utilitarios.truncateTheDecimal(bdProm, 2)).setStyle(ModeloGeneral.styleContenidoDatos)
@@ -272,7 +271,7 @@ public class ReporteGrupalSumarioCategoriaGeneral extends BaseView implements Se
                 nextrow = hoja.createRow(i);
 
                 if (Utilitarios.noEsNuloOVacio(obj[1])) {
-                    nextrow.createCell(0).setCellValue(obj[1].toString());
+                    nextrow.createCell(0).setCellValue(obj[2].toString());
                 }
                 if (Utilitarios.noEsNuloOVacio(obj[2])) {
                     nextrow.createCell(1).setCellValue(obj[3].toString());
@@ -344,7 +343,7 @@ public class ReporteGrupalSumarioCategoriaGeneral extends BaseView implements Se
             cell2.setCellStyle(myStyle);
 
             XSSFCell cell3 = row.createCell(i++);
-            XSSFRichTextString texto3 = new XSSFRichTextString(rb.getString("prom"));
+            XSSFRichTextString texto3 = new XSSFRichTextString(rb.getString("prom.weighted"));
             cell3.setCellValue(texto3);
             cell3.setCellStyle(myStyle);
 

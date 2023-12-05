@@ -24,7 +24,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.bean.ManagedBean;
 
 import org.apache.commons.lang.CharEncoding;
-import org.apache.commons.logging.Log;
+import org.apache.log4j.Logger;
 import org.apache.commons.logging.LogFactory;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.Template;
@@ -40,7 +40,7 @@ public class RedactarMensajesView extends BaseView implements Serializable {
 
     private static final long serialVersionUID = -1L;
 
-    private static Log log = LogFactory.getLog(RedactarMensajesView.class);
+    private static Logger log = Logger.getLogger(RedactarMensajesView.class);
 
     private Boolean blConvocatoria = false;
     private Boolean blBienvenida = false;

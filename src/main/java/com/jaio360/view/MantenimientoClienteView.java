@@ -41,7 +41,7 @@ import javax.servlet.http.HttpSession;
 
 
 import org.apache.commons.lang.CharEncoding;
-import org.apache.commons.logging.Log;
+import org.apache.log4j.Logger;
 import org.apache.commons.logging.LogFactory;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
@@ -55,7 +55,7 @@ import org.hibernate.HibernateException;
 @ViewScoped
 public class MantenimientoClienteView extends BaseView implements Serializable {
 
-    private static Log log = LogFactory.getLog(MantenimientoClienteView.class);
+    private static Logger log = Logger.getLogger(MantenimientoClienteView.class);
 
     private static final long serialVersionUID = -1L;
 

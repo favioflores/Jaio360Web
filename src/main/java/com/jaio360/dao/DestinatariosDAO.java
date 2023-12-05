@@ -4,7 +4,7 @@ import com.jaio360.orm.Destinatarios;
 import com.jaio360.orm.HibernateUtil;
 import java.io.Serializable;
 import java.util.List;
-import org.apache.commons.logging.Log;
+import org.apache.log4j.Logger;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -13,7 +13,7 @@ import org.hibernate.Transaction;
 
 public class DestinatariosDAO implements Serializable{  
     
-    private static Log log = LogFactory.getLog(DestinatariosDAO.class);
+    private static Logger log = Logger.getLogger(DestinatariosDAO.class);
     private Session sesion; 
     private Transaction tx;  
 

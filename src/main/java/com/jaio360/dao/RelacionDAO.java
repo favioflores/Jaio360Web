@@ -7,7 +7,7 @@ import com.jaio360.orm.Relacion;
 import com.jaio360.utils.Constantes;
 import java.io.Serializable;
 import java.util.List;
-import org.apache.commons.logging.Log;
+import org.apache.log4j.Logger;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -19,7 +19,7 @@ public class RelacionDAO implements Serializable
     private Session sesion; 
     private Transaction tx;  
 
-    private static Log log = LogFactory.getLog(RelacionDAO.class);
+    private static Logger log = Logger.getLogger(RelacionDAO.class);
 
     public RelacionDAO() {
         this.sesion = HibernateUtil.getSessionFactory().openSession();

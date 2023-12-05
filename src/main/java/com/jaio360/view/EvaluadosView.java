@@ -43,7 +43,7 @@ import javax.faces.model.SelectItem;
 import javax.faces.bean.ViewScoped;
 import javax.faces.bean.ManagedBean;
 
-import org.apache.commons.logging.Log;
+import org.apache.log4j.Logger;
 import org.apache.commons.logging.LogFactory;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
@@ -65,7 +65,7 @@ import org.primefaces.model.file.UploadedFile;
 @ViewScoped
 public class EvaluadosView extends BaseView implements Serializable {
 
-    private static Log log = LogFactory.getLog(EvaluadosView.class);
+    private static Logger log = Logger.getLogger(EvaluadosView.class);
 
     private ParametroDAO objParametroDAO = new ParametroDAO();
     private ProyectoDAO objProyectoDAO = new ProyectoDAO();

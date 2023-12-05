@@ -23,6 +23,7 @@ public class Proyecto implements java.io.Serializable {
     private Set resultados = new HashSet(0);
     private Set participantes = new HashSet(0);
     private Set mensajes = new HashSet(0);
+    private Set reporteGenerados = new HashSet(0);
 
     public Integer getPoIdProyectoPk() {
         return poIdProyectoPk;
@@ -186,6 +187,14 @@ public class Proyecto implements java.io.Serializable {
         this.resultados = resultados;
         this.participantes = participantes;
         this.mensajes = mensajes;
+    }
+
+    public Set getReporteGenerados() {
+        return reporteGenerados;
+    }
+
+    public void setReporteGenerados(Set reporteGenerados) {
+        this.reporteGenerados = reporteGenerados;
     }
 
 }

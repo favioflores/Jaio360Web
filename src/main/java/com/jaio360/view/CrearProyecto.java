@@ -24,7 +24,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.bean.ManagedBean;
 
 
-import org.apache.commons.logging.Log;
+import org.apache.log4j.Logger;
 import org.apache.commons.logging.LogFactory;
 
 /**
@@ -35,7 +35,7 @@ import org.apache.commons.logging.LogFactory;
 @ViewScoped
 public class CrearProyecto extends BaseView implements Serializable {
 
-    private static final Log log = LogFactory.getLog(CrearProyecto.class);
+    private static final Logger log = Logger.getLogger(CrearProyecto.class);
 
     private String strNombre;
     private String strDescripcion;

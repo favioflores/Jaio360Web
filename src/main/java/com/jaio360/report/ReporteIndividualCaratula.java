@@ -6,19 +6,18 @@ import com.jaio360.domain.DatosReporte;
 import com.jaio360.model.ModeloCaratula;
 import com.jaio360.orm.Parametro;
 import com.jaio360.orm.Relacion;
+import com.jaio360.orm.ReporteGenerado;
 import com.jaio360.utils.Constantes;
 import com.jaio360.utils.Utilitarios;
 import com.jaio360.view.BaseView;
-import static com.jaio360.view.BaseView.msg;
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.faces.model.SelectItem;
 import net.sf.dynamicreports.jasper.builder.export.JasperPdfExporterBuilder;
 import static net.sf.dynamicreports.report.builder.DynamicReports.cmp;
 import static net.sf.dynamicreports.report.builder.DynamicReports.export;
@@ -31,7 +30,7 @@ import net.sf.dynamicreports.report.exception.DRException;
 
 public class ReporteIndividualCaratula extends BaseView implements Serializable {
 
-    public String build(DatosReporte objDatosReporte, String strNameFile) throws IOException {
+    public String build(DatosReporte objDatosReporte, String strNameFile, ReporteGenerado objReporteGenerado) throws IOException {
 
         String strNombreReporte = strNameFile + Constantes.STR_EXTENSION_PDF;
 
@@ -43,7 +42,7 @@ public class ReporteIndividualCaratula extends BaseView implements Serializable 
             //ReportStyleBuilder background = stl.style().setBackgroundColor(Color.white);
 
             report().setTemplate(ModeloCaratula.reportTemplate)
-                    .summary(creaCaratula(objDatosReporte))
+                    .summary(creaCaratula(objDatosReporte, objReporteGenerado))
                     .toPdf(pdfExporter);
 
         } catch (DRException ex) {
@@ -53,7 +52,7 @@ public class ReporteIndividualCaratula extends BaseView implements Serializable 
         return strNombreReporte;
     }
 
-    private ComponentBuilder<?, ?> creaCaratula(DatosReporte objDatosReporte) {
+    private ComponentBuilder<?, ?> creaCaratula(DatosReporte objDatosReporte, ReporteGenerado objReporteGenerado) {
 
         String strLogo = "https://www.jaio360-app.com/images/logoJaio360.jpg";
 
@@ -89,18 +88,21 @@ public class ReporteIndividualCaratula extends BaseView implements Serializable 
         ));
 
         if (objDatosReporte.getBlWeighted()) {
+            
+            ResourceBundle rb = ResourceBundle.getBundle("etiquetas");
+            
             ParametroDAO objParametroDAO = new ParametroDAO();
 
-            Parametro objParametro = objParametroDAO.obtenParametro(Utilitarios.obtenerProyecto().getIntIdProyecto(), Constantes.INT_ET_TIPO_PARAMETRO_PONDERACION_RELACIONES);
+            Parametro objParametro = objParametroDAO.obtenParametro(objReporteGenerado.getProyectoInfo().getIntIdProyecto(), Constantes.INT_ET_TIPO_PARAMETRO_PONDERACION_RELACIONES);
 
             multiPageList.newPage();
 
             RelacionDAO objRelacionDAO = new RelacionDAO();
 
-            List<Relacion> lstRelaciones = objRelacionDAO.obtenListaRelacionPorEvaluado(Utilitarios.obtenerProyecto().getIntIdProyecto(), objDatosReporte.getIntEvaluado());
+            List<Relacion> lstRelaciones = objRelacionDAO.obtenListaRelacionPorEvaluado(objReporteGenerado.getProyectoInfo().getIntIdProyecto(), objDatosReporte.getIntEvaluado());
 
             multiPageList.add(cmp.verticalList(
-                    cmp.text(msg("instr.1"))
+                    cmp.text(rb.getString("instr.1"))
             ));
             
             multiPageList.add(cmp.verticalList(

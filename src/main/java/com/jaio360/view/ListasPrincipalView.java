@@ -25,7 +25,7 @@ import javax.faces.bean.ManagedBean;
 import javax.servlet.http.HttpSession;
 
 
-import org.apache.commons.logging.Log;
+import org.apache.log4j.Logger;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.HibernateException;
 import org.primefaces.event.CellEditEvent;
@@ -40,7 +40,7 @@ import org.primefaces.event.CellEditEvent;
 
 public class ListasPrincipalView extends BaseView implements Serializable {
 
-    private static Log log = LogFactory.getLog(ListasPrincipalView.class);
+    private static Logger log = Logger.getLogger(ListasPrincipalView.class);
 
     private static final long serialVersionUID = -1L;
 
