@@ -99,7 +99,7 @@ public class ReporteIndividualSumarioCategoriaMismoVsOtrosPromWeighted implement
 
             Relacion objRelacion = (Relacion) entry.getValue();
             if (objRelacion.getReTxAbreviatura().equals("AUTO") || objRelacion.getReTxAbreviatura().equals("PROM")) {
-                seriesColors.put(objRelacion.getReTxAbreviatura(), Utilitarios.convertColorHexToRgb("#" + objRelacion.getReColor()));
+                seriesColors.put(objRelacion.getReTxAbreviatura(), Utilitarios.convertColorHexToRgb(objRelacion.getReColor()));
             }
         }
 

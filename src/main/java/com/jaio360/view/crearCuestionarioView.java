@@ -478,12 +478,12 @@ public class crearCuestionarioView extends BaseView implements Serializable {
             });
 
             this.intRangos = metrica.getMeNuRango();
-            this.intRangoMin = 2;
+            this.intRangoMin = 3;
 
         } else {
             this.metrica = new Metrica();
             this.intRangos = 5;
-            this.intRangoMin = 2;
+            this.intRangoMin = 3;
             guardarRango();
         }
     }
@@ -1251,7 +1251,7 @@ public class crearCuestionarioView extends BaseView implements Serializable {
 
         cuestionarioDAO.actualizaCuestionario(objCuestionario);
 
-        FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Cambio de nombre", "Se acutalizo el nombre correctamente");
+        FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Cambio de nombre", "Se actualizo el nombre correctamente");
         FacesContext.getCurrentInstance().addMessage(null, msg);
 
     }

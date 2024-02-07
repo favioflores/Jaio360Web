@@ -15,6 +15,25 @@ public class RelacionEvaluadoEvaluador implements Serializable {
     private Boolean blEvaluacionTerminada;
     private Boolean blEnvioCorreo;
     private String strColorRelacion;
+    private String strLastLogin;
+
+    public RelacionEvaluadoEvaluador(Integer intIdEvaluado, String strDescEvaluado, Integer intIdEvaluador, Integer intIdCuestionario, String strDescEvaluador, String strCorreoEvaluador, Integer intIdRelacion, String strDescRelacion, Boolean blEvaluacionTerminada, Boolean blEnvioCorreo, String strColorRelacion, String strLastLogin) {
+        this.intIdEvaluado = intIdEvaluado;
+        this.strDescEvaluado = strDescEvaluado;
+        this.intIdEvaluador = intIdEvaluador;
+        this.intIdCuestionario = intIdCuestionario;
+        this.strDescEvaluador = strDescEvaluador;
+        this.strCorreoEvaluador = strCorreoEvaluador;
+        this.intIdRelacion = intIdRelacion;
+        this.strDescRelacion = strDescRelacion;
+        this.blEvaluacionTerminada = blEvaluacionTerminada;
+        this.blEnvioCorreo = blEnvioCorreo;
+        this.strColorRelacion = strColorRelacion;
+        this.strLastLogin = strLastLogin;
+    }
+
+    public RelacionEvaluadoEvaluador() {
+    }
 
     public Integer getIntIdEvaluado() {
         return intIdEvaluado;
@@ -102,6 +121,14 @@ public class RelacionEvaluadoEvaluador implements Serializable {
 
     public void setStrColorRelacion(String strColorRelacion) {
         this.strColorRelacion = strColorRelacion;
+    }
+
+    public String getStrLastLogin() {
+        return strLastLogin;
+    }
+
+    public void setStrLastLogin(String strLastLogin) {
+        this.strLastLogin = strLastLogin;
     }
 
 }

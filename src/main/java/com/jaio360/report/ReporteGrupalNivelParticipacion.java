@@ -152,13 +152,13 @@ public class ReporteGrupalNivelParticipacion implements Serializable {
                 if (Utilitarios.noEsNuloOVacio(obj[1])) {
                     nextrow.createCell(0).setCellValue(obj[1].toString());
                 }
-                if (Utilitarios.noEsNuloOVacio(obj[2])) {
+                if (Utilitarios.noEsNuloOVacio(obj[4])) {
                     nextrow.createCell(1).setCellValue(obj[4].toString());
                 }
-                if (Utilitarios.noEsNuloOVacio(obj[3])) {
+                if (Utilitarios.noEsNuloOVacio(obj[2])) {
                     nextrow.createCell(2).setCellValue(obj[2].toString());
                 }
-                if (Utilitarios.noEsNuloOVacio(obj[4])) {
+                if (Utilitarios.noEsNuloOVacio(obj[3])) {
                     nextrow.createCell(3).setCellValue(obj[3].toString());
                 }
 

@@ -381,6 +381,108 @@ public class ResultadoDAO implements Serializable {
         return listaResultado;
     }
 
+    public List getResultRelacionByCategoria(Integer idCategoria, Integer idParticipant) throws HibernateException {
+
+        List listaResultado = null;
+
+        try {
+
+            iniciaOperacion();
+            Query query = sesion.createSQLQuery(
+                    "select "
+                    + "	TABLA.RELACION, "
+                    + "	AVG(TABLA.MEDIDA), "
+                    + "	SUM(TABLA.CANTIDAD) "
+                    + "from "
+                    + "	( "
+                    + "	select "
+                    + "		rel.RE_TX_ABREVIATURA as RELACION, "
+                    + "		res.RE_ID_PARTICIPANTE_FK as EVALUADOR, "
+                    + "		if(dm.DE_NU_ORDEN is null, "
+                    + "		0, "
+                    + "		dm.DE_NU_ORDEN + 1) as MEDIDA, "
+                    + "		if(RE_ID_PARTICIPANTE_FK is null, "
+                    + "		0, "
+                    + "		1) as CANTIDAD "
+                    + "	from "
+                    + "		proyecto po, "
+                    + "		relacion rel, "
+                    + "		resultado res, "
+                    + "		detalle_metrica dm, "
+                    + "		componente c "
+                    + "	where "
+                    + "		po.PO_ID_PROYECTO_pK = :idProyecto "
+                    + "		and po.PO_ID_PROYECTO_PK = rel.PO_ID_PROYECTO_FK "
+                    + "		and rel.RE_ID_RELACION_PK = res.RE_ID_RELACION_FK "
+                    + "		and c.CO_ID_COMPONENTE_PK = res.CO_ID_COMPONENTE_FK "
+                    + "		and dm.DE_ID_DETALLE_ESCALA_PK = res.DE_ID_DETALLE_ESCALA_FK "
+                    + "		and c.CO_ID_COMPONENTE_REF_FK = :idCategoria "
+                    + "		and res.PA_ID_PARTICIPANTE_FK = :idParticipant "
+                    + "union all "
+                    + "	select "
+                    + "		'AUTO' as RELACION, "
+                    + "		res.PA_ID_PARTICIPANTE_FK as EVALUADOR, "
+                    + "		if(dm.DE_NU_ORDEN is null, "
+                    + "		0, "
+                    + "		dm.DE_NU_ORDEN + 1) as MEDIDA, "
+                    + "		if(PA_ID_PARTICIPANTE_FK is null, "
+                    + "		0, "
+                    + "		1) as CANTIDAD "
+                    + "	from "
+                    + "		proyecto po, "
+                    + "		componente c, "
+                    + "		resultado res "
+                    + "	left join detalle_metrica dm on "
+                    + "		dm.DE_ID_DETALLE_ESCALA_PK = res.DE_ID_DETALLE_ESCALA_FK "
+                    + "	where "
+                    + "		po.PO_ID_PROYECTO_pK = :idProyecto "
+                    + "		and po.PO_ID_PROYECTO_PK = res.PO_ID_PROYECTO_FK "
+                    + "		and c.CO_ID_COMPONENTE_PK = res.CO_ID_COMPONENTE_FK "
+                    + "		and c.CO_ID_COMPONENTE_REF_FK = :idCategoria "
+                    + "		and res.RE_ID_RELACION_FK is null "
+                    + "		and res.RE_ID_PARTICIPANTE_FK is null "
+                    + "		and res.PA_ID_PARTICIPANTE_FK = :idParticipant "
+                    + " union all "
+                    + "	select "
+                    + "		'PROM' as RELACION, "
+                    + "		res.RE_ID_PARTICIPANTE_FK as EVALUADOR, "
+                    + "		if(dm.DE_NU_ORDEN is null, "
+                    + "		0, "
+                    + "		dm.DE_NU_ORDEN + 1) as MEDIDA, "
+                    + "		if(RE_ID_PARTICIPANTE_FK is null, "
+                    + "		0, "
+                    + "		1) as CANTIDAD "
+                    + "	from "
+                    + "		proyecto po, "
+                    + "		relacion rel, "
+                    + "		resultado res, "
+                    + "		detalle_metrica dm, "
+                    + "		componente c "
+                    + "	where "
+                    + "		po.PO_ID_PROYECTO_pK = :idProyecto "
+                    + "		and po.PO_ID_PROYECTO_PK = rel.PO_ID_PROYECTO_FK "
+                    + "		and rel.RE_ID_RELACION_PK = res.RE_ID_RELACION_FK "
+                    + "		and c.CO_ID_COMPONENTE_PK = res.CO_ID_COMPONENTE_FK "
+                    + "		and dm.DE_ID_DETALLE_ESCALA_PK = res.DE_ID_DETALLE_ESCALA_FK "
+                    + "		and c.CO_ID_COMPONENTE_REF_FK = :idCategoria "
+                    + "		and res.PA_ID_PARTICIPANTE_FK = :idParticipant "
+                    + "                    ) TABLA "
+                    + "group by "
+                    + "	TABLA.RELACION ");
+
+            query.setInteger("idProyecto", Utilitarios.obtenerProyecto().getIntIdProyecto());
+            query.setInteger("idCategoria", idCategoria);
+            query.setInteger("idParticipant", idParticipant);
+
+            listaResultado = query.list();
+
+        } finally {
+            sesion.close();
+        }
+
+        return listaResultado;
+    }
+    
     public List obtenerResultadoXCategoria(Integer idCategoria) throws HibernateException {
 
         List listaResultado = null;
@@ -438,7 +540,7 @@ public class ResultadoDAO implements Serializable {
         return listaResultado;
     }
 
-    public List resultadoPorRelacionYCategoriaNoAutoevaluacionNoProm(Integer intEvaluadoPk, Integer intRelacionPk) throws HibernateException {
+    public List resultadoPorRelacionYCategoria(Integer intEvaluadoPk) throws HibernateException {
 
         List listaResultado = null;
 
@@ -446,37 +548,101 @@ public class ResultadoDAO implements Serializable {
 
             iniciaOperacion();
             Query query = sesion.createSQLQuery(
-                    " SELECT                                                                                           "
-                    + "  TABLA.RELACION,                                                                                 "
-                    + "  TABLA.CATEGORIA,                                                                                 "
-                    + "  AVG(TABLA.MEDIDA),                                                                              "
-                    + "  SUM(TABLA.CANTIDAD)                                                                             "
-                    + "  FROM                                                                                            "
-                    + "  (select rel.RE_TX_ABREVIATURA AS RELACION,                                                      "
-                    + "             cat.CO_ID_COMPONENTE_PK AS CATEGORIA,                                                      "
-                    + "  	   res.RE_ID_PARTICIPANTE_FK AS EVALUADOR,                                                 "
-                    + "  	   IF(dm.DE_NU_ORDEN is null, 0, dm.DE_NU_ORDEN + 1) AS MEDIDA,                            "
-                    + "         IF(RE_ID_PARTICIPANTE_FK is null, 0, 1) AS CANTIDAD                                      "
-                    + "    from proyecto po,                                                                             "
-                    + "         relacion rel,                                                                            "
-                    + "         resultado res,                                                                           "
-                    + "         detalle_metrica dm,                                                                       "
-                    + "         componente cp,                                                                       "
-                    + "         componente cat                                                                       "
-                    + "   where po.PO_ID_PROYECTO_pK = ?                                                                 "
-                    + "     and po.PO_ID_PROYECTO_PK = rel.PO_ID_PROYECTO_FK                                             "
-                    + "     and rel.RE_ID_RELACION_PK = res.RE_ID_RELACION_FK                                            "
-                    + "     and rel.RE_ID_RELACION_PK = ?                                            "
-                    + "     and cp.CO_ID_COMPONENTE_PK = res.CO_ID_COMPONENTE_FK                                            "
-                    + "     and cat.CO_ID_COMPONENTE_PK = cp.CO_ID_COMPONENTE_REF_FK                                           "
-                    + "     and cat.CO_ID_TIPO_COMPONENTE = 45                                           "
-                    + "     and dm.DE_ID_DETALLE_ESCALA_PK = res.DE_ID_DETALLE_ESCALA_FK                                 "
-                    + "     and res.PA_ID_PARTICIPANTE_FK = ?                                                            "
-                    + ") TABLA GROUP BY TABLA.RELACION, TABLA.CATEGORIA ORDER BY TABLA.CATEGORIA                        ");
+                    "select "
+                    + "	TABLA.RELACION, "
+                    + "	TABLA.CATEGORIA, "
+                    + "	AVG(TABLA.MEDIDA), "
+                    + "	SUM(TABLA.CANTIDAD) "
+                    + "from "
+                    + "	( "
+                    + "	select "
+                    + "		rel.RE_TX_ABREVIATURA as RELACION, "
+                    + "		cat.CO_ID_COMPONENTE_PK as CATEGORIA, "
+                    + "		res.RE_ID_PARTICIPANTE_FK as EVALUADOR, "
+                    + "		if(dm.DE_NU_ORDEN is null, "
+                    + "		0, "
+                    + "		dm.DE_NU_ORDEN + 1) as MEDIDA, "
+                    + "		if(RE_ID_PARTICIPANTE_FK is null, "
+                    + "		0, "
+                    + "		1) as CANTIDAD "
+                    + "	from "
+                    + "		proyecto po, "
+                    + "		relacion rel, "
+                    + "		resultado res, "
+                    + "		detalle_metrica dm, "
+                    + "		componente cp, "
+                    + "		componente cat "
+                    + "	where "
+                    + "		po.PO_ID_PROYECTO_pK = :idProyecto "
+                    + "		and po.PO_ID_PROYECTO_PK = rel.PO_ID_PROYECTO_FK "
+                    + "		and rel.RE_ID_RELACION_PK = res.RE_ID_RELACION_FK "
+                    + "		and cp.CO_ID_COMPONENTE_PK = res.CO_ID_COMPONENTE_FK "
+                    + "		and cat.CO_ID_COMPONENTE_PK = cp.CO_ID_COMPONENTE_REF_FK "
+                    + "		and cat.CO_ID_TIPO_COMPONENTE = 45 "
+                    + "		and dm.DE_ID_DETALLE_ESCALA_PK = res.DE_ID_DETALLE_ESCALA_FK "
+                    + "		and res.PA_ID_PARTICIPANTE_FK = :idEvaluado "
+                    + "union all "
+                    + "	select "
+                    + "		'PROM' as RELACION, "
+                    + "		cat.CO_ID_COMPONENTE_PK as CATEGORIA, "
+                    + "		res.RE_ID_PARTICIPANTE_FK as EVALUADOR, "
+                    + "		if(dm.DE_NU_ORDEN is null, "
+                    + "		0, "
+                    + "		dm.DE_NU_ORDEN + 1) as MEDIDA, "
+                    + "		if(RE_ID_PARTICIPANTE_FK is null, "
+                    + "		0, "
+                    + "		1) as CANTIDAD "
+                    + "	from "
+                    + "		proyecto po, "
+                    + "		relacion rel, "
+                    + "		resultado res, "
+                    + "		detalle_metrica dm, "
+                    + "		componente cp, "
+                    + "		componente cat "
+                    + "	where "
+                    + "		po.PO_ID_PROYECTO_pK = :idProyecto "
+                    + "		and po.PO_ID_PROYECTO_PK = rel.PO_ID_PROYECTO_FK "
+                    + "		and rel.RE_ID_RELACION_PK = res.RE_ID_RELACION_FK "
+                    + "		and cp.CO_ID_COMPONENTE_PK = res.CO_ID_COMPONENTE_FK "
+                    + "		and cat.CO_ID_COMPONENTE_PK = cp.CO_ID_COMPONENTE_REF_FK "
+                    + "		and cat.CO_ID_TIPO_COMPONENTE = 45 "
+                    + "		and dm.DE_ID_DETALLE_ESCALA_PK = res.DE_ID_DETALLE_ESCALA_FK "
+                    + "		and res.PA_ID_PARTICIPANTE_FK = :idEvaluado "
+                    + "union all "
+                    + "	select "
+                    + "		'AUTO' as RELACION, "
+                    + "		cat.CO_ID_COMPONENTE_PK as CATEGORIA, "
+                    + "		null as EVALUADOR, "
+                    + "		AVG(dm.DE_NU_ORDEN + 1) as MEDIDA, "
+                    + "		1 as CANTIDAD "
+                    + "	from "
+                    + "		proyecto po, "
+                    + "		resultado res, "
+                    + "		detalle_metrica dm, "
+                    + "		componente cp, "
+                    + "		componente cat "
+                    + "	where "
+                    + "		po.PO_ID_PROYECTO_pK = :idProyecto "
+                    + "		and res.RE_ID_RELACION_FK is null "
+                    + "		and res.RE_ID_PARTICIPANTE_FK is null "
+                    + "		and cp.CO_ID_COMPONENTE_PK = res.CO_ID_COMPONENTE_FK "
+                    + "		and cat.CO_ID_COMPONENTE_PK = cp.CO_ID_COMPONENTE_REF_FK "
+                    + "		and cat.CO_ID_TIPO_COMPONENTE = 45 "
+                    + "		and dm.DE_ID_DETALLE_ESCALA_PK = res.DE_ID_DETALLE_ESCALA_FK "
+                    + "		and res.PA_ID_PARTICIPANTE_FK = :idEvaluado "
+                    + "	group by 		 "
+                    + "		cat.CO_ID_COMPONENTE_PK "
+                    + "		 "
+                    + "		 "
+                    + "                    ) TABLA "
+                    + "group by "
+                    + "	TABLA.RELACION, "
+                    + "	TABLA.CATEGORIA "
+                    + "order by "
+                    + "	TABLA.CATEGORIA ");
 
-            query.setInteger(0, Utilitarios.obtenerProyecto().getIntIdProyecto());
-            query.setInteger(1, intRelacionPk);
-            query.setInteger(2, intEvaluadoPk);
+            query.setInteger("idProyecto", Utilitarios.obtenerProyecto().getIntIdProyecto());
+            query.setInteger("idEvaluado", intEvaluadoPk);
 
             listaResultado = query.list();
 
@@ -865,7 +1031,7 @@ public class ResultadoDAO implements Serializable {
         return listaResultado;
     }
 
-        public List listaGrupalSumarioCategoriaGeneralWeighted(DatosReporte objDatosReporte, ReporteGenerado objReporteGenerado) throws HibernateException {
+    public List listaGrupalSumarioCategoriaGeneralWeighted(DatosReporte objDatosReporte, ReporteGenerado objReporteGenerado) throws HibernateException {
 
         List listaResultado = null;
 
@@ -874,58 +1040,58 @@ public class ResultadoDAO implements Serializable {
             iniciaOperacion();
 
             Query query = sesion.createSQLQuery(
-                    " select total.CU_ID_CUESTIONARIO_FK,                                                             \n" +
-"           total.CO_ID_COMPONENTE_PK,                                                               \n" +
-"           total.CO_TX_DESCRIPCION,                                                                 \n" +
-"           total.PA_TX_DESCRIPCION,\n" +
-"           sum(total.ponderado),\n" +
-"           total.PA_TX_CORREO from (\n" +
-"select datos.CU_ID_CUESTIONARIO_FK,                                                             \n" +
-"           datos.CO_ID_COMPONENTE_PK,                                                               \n" +
-"           datos.CO_TX_DESCRIPCION,                                                                 \n" +
-"           datos.PA_TX_DESCRIPCION,\n" +
-"           datos.medida * datos.RE_DE_PONDERACION / 100 as ponderado,\n" +
-"           datos.PA_TX_CORREO\n" +
-"           from (\n" +
-" select ca.CU_ID_CUESTIONARIO_FK,                                                                \n" +
-"        ca.CO_TX_DESCRIPCION,                                                                    \n" +
-"        ca.CO_ID_COMPONENTE_PK,                                                                  \n" +
-"        pa.PA_TX_DESCRIPCION,                                                                    \n" +
-"		AVG(dm.DE_NU_ORDEN + 1) as medida,                                                                  \n" +
-" 		PA_TX_CORREO,\n" +
-" 		rel.RE_DE_PONDERACION,\n" +
-" 		rel.RE_ID_RELACION_PK\n" +
-"   from cuestionario cu,                                                                         \n" +
-"        componente ca,                                                                           \n" +
-"        componente cp                                                                            \n" +
-"        left join resultado re on re.CO_ID_COMPONENTE_FK = cp.CO_ID_COMPONENTE_PK                \n" +
-"        join detalle_metrica dm on dm.DE_ID_DETALLE_ESCALA_PK = re.DE_ID_DETALLE_ESCALA_FK  \n" +
-"        left join participante pa on pa.PA_ID_PARTICIPANTE_PK = re.PA_ID_PARTICIPANTE_FK \n" +
-"        join relacion_participante rp on rp.PA_ID_PARTICIPANTE_FK = pa.PA_ID_PARTICIPANTE_PK \n" +
-"        								and rp.RE_ID_PARTICIPANTE_FK = re.RE_ID_PARTICIPANTE_FK\n" +
-"        join relacion rel on rel.RE_ID_RELACION_pK = rp.RE_ID_RELACION_FK\n" +
-"  where cu.PO_ID_PROYECTO_FK = ?                                                                 \n" +
-"    and cu.CU_ID_CUESTIONARIO_PK = ? \n" +
-"    and ca.CU_ID_CUESTIONARIO_FK = cu.CU_ID_CUESTIONARIO_PK                                      \n" +
-"    and ca.CO_ID_TIPO_COMPONENTE = 45                                                            \n" +
-"    and cp.CO_ID_COMPONENTE_REF_FK = ca.CO_ID_COMPONENTE_PK                                      \n" +
-"    and cp.CO_ID_TIPO_COMPONENTE = 46                   \n" +
-"    and re.RE_ID_PARTICIPANTE_FK is not null\n" +
-"    group by ca.CU_ID_CUESTIONARIO_FK,                                                                \n" +
-"        ca.CO_TX_DESCRIPCION,                                                                    \n" +
-"        ca.CO_ID_COMPONENTE_PK,                                                                  \n" +
-"        pa.PA_TX_DESCRIPCION,                                                                  \n" +
-" 		PA_TX_CORREO,\n" +
-" 		rel.RE_DE_PONDERACION,\n" +
-" 		rel.RE_ID_RELACION_PK\n" +
-"    ) datos \n" +
-"           ) total \n" +
-"           group by total.CU_ID_CUESTIONARIO_FK,                                                             \n" +
-"           total.CO_ID_COMPONENTE_PK,                                                               \n" +
-"           total.CO_TX_DESCRIPCION,                                                                 \n" +
-"           total.PA_TX_DESCRIPCION,\n" +
-"           total.PA_TX_CORREO \n" +
-"  order by total.PA_TX_CORREO,5 desc        ");
+                    " select total.CU_ID_CUESTIONARIO_FK,                                                              "
+                    + "           total.CO_ID_COMPONENTE_PK,                                                                "
+                    + "           total.CO_TX_DESCRIPCION,                                                                  "
+                    + "           total.PA_TX_DESCRIPCION, "
+                    + "           sum(total.ponderado), "
+                    + "           total.PA_TX_CORREO from ( "
+                    + "select datos.CU_ID_CUESTIONARIO_FK,                                                              "
+                    + "           datos.CO_ID_COMPONENTE_PK,                                                                "
+                    + "           datos.CO_TX_DESCRIPCION,                                                                  "
+                    + "           datos.PA_TX_DESCRIPCION, "
+                    + "           datos.medida * datos.RE_DE_PONDERACION / 100 as ponderado, "
+                    + "           datos.PA_TX_CORREO "
+                    + "           from ( "
+                    + " select ca.CU_ID_CUESTIONARIO_FK,                                                                 "
+                    + "        ca.CO_TX_DESCRIPCION,                                                                     "
+                    + "        ca.CO_ID_COMPONENTE_PK,                                                                   "
+                    + "        pa.PA_TX_DESCRIPCION,                                                                     "
+                    + "		AVG(dm.DE_NU_ORDEN + 1) as medida,                                                                   "
+                    + " 		PA_TX_CORREO, "
+                    + " 		rel.RE_DE_PONDERACION, "
+                    + " 		rel.RE_ID_RELACION_PK "
+                    + "   from cuestionario cu,                                                                          "
+                    + "        componente ca,                                                                            "
+                    + "        componente cp                                                                             "
+                    + "        left join resultado re on re.CO_ID_COMPONENTE_FK = cp.CO_ID_COMPONENTE_PK                 "
+                    + "        join detalle_metrica dm on dm.DE_ID_DETALLE_ESCALA_PK = re.DE_ID_DETALLE_ESCALA_FK   "
+                    + "        left join participante pa on pa.PA_ID_PARTICIPANTE_PK = re.PA_ID_PARTICIPANTE_FK  "
+                    + "        join relacion_participante rp on rp.PA_ID_PARTICIPANTE_FK = pa.PA_ID_PARTICIPANTE_PK  "
+                    + "        								and rp.RE_ID_PARTICIPANTE_FK = re.RE_ID_PARTICIPANTE_FK "
+                    + "        join relacion rel on rel.RE_ID_RELACION_pK = rp.RE_ID_RELACION_FK "
+                    + "  where cu.PO_ID_PROYECTO_FK = ?                                                                  "
+                    + "    and cu.CU_ID_CUESTIONARIO_PK = ?  "
+                    + "    and ca.CU_ID_CUESTIONARIO_FK = cu.CU_ID_CUESTIONARIO_PK                                       "
+                    + "    and ca.CO_ID_TIPO_COMPONENTE = 45                                                             "
+                    + "    and cp.CO_ID_COMPONENTE_REF_FK = ca.CO_ID_COMPONENTE_PK                                       "
+                    + "    and cp.CO_ID_TIPO_COMPONENTE = 46                    "
+                    + "    and re.RE_ID_PARTICIPANTE_FK is not null "
+                    + "    group by ca.CU_ID_CUESTIONARIO_FK,                                                                 "
+                    + "        ca.CO_TX_DESCRIPCION,                                                                     "
+                    + "        ca.CO_ID_COMPONENTE_PK,                                                                   "
+                    + "        pa.PA_TX_DESCRIPCION,                                                                   "
+                    + " 		PA_TX_CORREO, "
+                    + " 		rel.RE_DE_PONDERACION, "
+                    + " 		rel.RE_ID_RELACION_PK "
+                    + "    ) datos  "
+                    + "           ) total  "
+                    + "           group by total.CU_ID_CUESTIONARIO_FK,                                                              "
+                    + "           total.CO_ID_COMPONENTE_PK,                                                                "
+                    + "           total.CO_TX_DESCRIPCION,                                                                  "
+                    + "           total.PA_TX_DESCRIPCION, "
+                    + "           total.PA_TX_CORREO  "
+                    + "  order by 2,total.PA_TX_CORREO,5 desc        ");
 
             query.setInteger(0, objReporteGenerado.getProyectoInfo().getIntIdProyecto());
             query.setInteger(1, objDatosReporte.getIntIdCuestionario());
@@ -937,7 +1103,7 @@ public class ResultadoDAO implements Serializable {
 
         return listaResultado;
     }
-        
+
     public List listaItemsBajaPromedio(Integer intEvaluadoPk, Integer idProyecto) throws HibernateException {
 
         List listaResultado = null;
@@ -1488,9 +1654,6 @@ public class ResultadoDAO implements Serializable {
             iniciaOperacion();
 
             for (EvaluacionesXEjecutar objEvaluacionesXEjecutar : lstPreGrabado) {
-
-                log.debug("Correo evaluado : " + objEvaluacionesXEjecutar.getStrCorreoEvaluado());
-                log.debug("Correo evaluador : " + objEvaluacionesXEjecutar.getStrCorreoEvaluador());
 
                 /* GUARDA RESPUESTAS PREGUNTAS CERRADAS */
                 for (PreguntaCerradaBean objPreguntaCerradaBean : objEvaluacionesXEjecutar.getLstPreguntasCerradas()) {

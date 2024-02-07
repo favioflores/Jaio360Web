@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <f:facet name="first">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+            <meta name="apple-mobile-web-app-capable" content="yes" />
+        </f:facet>
+        <title>JAIO 360</title>
+        <link rel="shortcut icon" type="image/png" href="#{request.contextPath}/images/favicon.png" />
+        <script>
+            window.onload = function () {
+                getParam();
+            };
+
+            function getParam() {
+                var search = window.location.search;
+                var params = new URLSearchParams(search);
+                //console.log(params);
+                var valueEmail = params.get('email');
+                //console.log(valueEmail);
+                if (valueEmail !== null) {
+                    document.getElementById('verifyForm:inputEmail').value = valueEmail;
+                } else {
+                    //redirect();
+                    //rc();
+                }
+            }
+
+            function redirect() {
+                parent.window.location.href = '#{request.contextPath}' + '/login.jsf';
+            }
+        </script>
+
+        <h:outputScript name="js/layout.js" library="omega-layout"/>
+        <h:outputScript name="js/prism.js" library="omega-layout"/>
+        <h:outputStylesheet name="css/primeicons.css" library="omega-layout"/>
+        <h:outputStylesheet name="css/primeflex.min.css" library="omega-layout"/>
+        <h:outputStylesheet name="css/layout-#{guestPreferences.layout}.css" library="omega-layout"/>
+        <h:outputStylesheet name="css/demo.css" library="demo"/>
+    </h:head>
+
+    <h:body styleClass="login-body">
+        <h:form id="loginForm">
+            <div id="login-wrapper">
+
+                <div id="login-container">
+                    <span class="title"></span>
+
+                    <p:graphicImage value="/images/logoJaio360.png" width="150"  />
+                    <p:growl id="growl" sticky="false" life="4000" />
+                    <div class="grid ui-fluid">
+
+                        <div class="field">
+                        </div>
+                        <div class="field">
+                            <p:outputLabel value="#{msg['verify.text.1']}" class="p-m-2" />
+                        </div>
+                        <div class="col-12">
+                            <label for="inputEmail">#{msg['verify.account.input.email']}</label>
+                            <p:inputText id="inputEmail" type="text" value="#{verifyAccountView.strEmail}" readonly="true" maxlength="50" >                                    
+                                <f:validator validatorId="validarCorreo" /> 
+                            </p:inputText>
+                        </div>
+                        <div class="col-12">
+                            <label>#{msg['verify.account.input.token']}</label>
+                            <div class="field formgrid grid">
+                                
+                                <div class="col">
+                                    <p:inputText maxlength="1" size="1" value="#{verifyAccountView.intOne}" required="true" requiredMessage="#{msg['error.empty.token.1']}" style="text-align: center;" >
+                                        <f:validateLength minimum="1"/>
+                                    </p:inputText>
+                                </div>
+                                <div class="col">
+                                    <p:inputText maxlength="1" size="1" value="#{verifyAccountView.intTwo}" required="true" requiredMessage="#{msg['error.empty.token.2']}" style="text-align: center;" >
+                                        <f:validateLength minimum="1"/>
+                                    </p:inputText>
+                                </div>
+                                <div class="col">
+                                    <p:inputText maxlength="1" size="1" value="#{verifyAccountView.intThree}" required="true" requiredMessage="#{msg['error.empty.token.3']}" style="text-align: center;">
+                                        <f:validateLength minimum="1"/>
+                                    </p:inputText>
+                                </div>
+                                <div class="col">
+                                    <p:inputText maxlength="1" size="1" value="#{verifyAccountView.intFour}" required="true" requiredMessage="#{msg['error.empty.token.4']}" style="text-align: center;">
+                                        <f:validateLength minimum="1"/>
+                                    </p:inputText>
+                                </div>
+                                <div class="col">
+                                    <p:inputText maxlength="1" size="1" value="#{verifyAccountView.intFive}" required="true" requiredMessage="#{msg['error.empty.token.5']}" style="text-align: center;">
+                                        <f:validateLength minimum="1"/>
+                                    </p:inputText>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-field text-center">
+                            <!--p:captcha id="captcha" label="Captcha" language="#{msg['iniciar.captcha.lenguaje']}" class="g-recaptcha" /--> 
+                        </div>
+                        <div class="col" >
+                            <p:commandButton id="btnVerify" update="datosLogin" value="#{msg['verify.account.button.verify']}" 
+                                             ajax="false" actionListener="#{verifyAccountView.verifyAccount}" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="login-footer">Copyright 2024 JAIO360</div>
+            </div>
+
+        </h:form>
+
+    </h:body>
+
+</html>

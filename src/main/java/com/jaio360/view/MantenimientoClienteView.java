@@ -359,6 +359,7 @@ public class MantenimientoClienteView extends BaseView implements Serializable {
         poblarTipoDocumento();
         obtenerListaUsuarios();
 
+        isEdit = false;
         tipoUsuario = new String[3];
         tipoUsuario[0] = msg(Constantes.INT_ET_TIPO_USUARIO_MANAGING_DIRECTOR.toString());
         tipoUsuario[1] = msg(Constantes.INT_ET_TIPO_USUARIO_EVALUATED_EVALUATOR.toString());

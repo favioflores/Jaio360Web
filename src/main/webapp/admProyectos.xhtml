@@ -1,0 +1,180 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                template="/WEB-INF/template.xhtml">    
+
+    <ui:define name="head"> 
+    </ui:define>
+    <ui:define name="title">#{msg['administrar.proyectos']}</ui:define>
+
+    <ui:define name="cabecera">
+        <!--ui:include src="cabecera.xhtml" /-->
+    </ui:define>
+    <ui:define name="content">
+
+        <div class="grid">
+
+            <div class="col-12 md:col-12">
+                <h:form id="crearProyecto">
+                    <div class="card ui-fluid">
+                        <h5>#{msg['adm.proyecto']}</h5>
+
+
+                        <p:growl life="4000" showSummary="true" />
+                        <div class="field">
+                            <p:outputLabel for="strNombre" value="#{msg['adm.nombre']}" />
+                            <p:inputText type="text" id="strNombre" 
+                                         value="#{crearProyecto.strNombre}"  required="true" 
+                                         counter="displaya" counterTemplate="{0} #{msg['remaining.characters']}" 
+                                         requiredMessage="#{msg['adm.falta.nombre']}" maxlength="50" 
+                                         placeholder="#{msg['adm.text1']}">
+                                <f:validator validatorId="validaTextoIngresado" />
+                            </p:inputText>
+                            <p:outputLabel id="displaya" class="block" />
+                        </div>
+
+                        <div class="field">
+                            <p:outputLabel for="strDescripcion" value="#{msg['adm.descripcion']}" />
+
+                            <p:inputTextarea id="strDescripcion" value="#{crearProyecto.strDescripcion}" 
+                                             placeholder="#{msg['adm.text2']}"
+                                             counter="display" counterTemplate="{0} #{msg['remaining.characters']}"  required="true" maxlength="100" autoResize="true" requiredMessage="#{msg['adm.falta.description']}"  >
+                                <f:validator validatorId="validaTextoIngresado" />
+                            </p:inputTextarea>
+                            <p:outputLabel id="display" class="block" />
+
+                        </div>
+
+                        <div class="field grid align-items-center">
+                            <div class="col">
+                                <p:commandButton value="#{msg['create']}" update="crearProyecto,:frmListados:idProyectos:" actionListener="#{crearProyecto.guardarProyecto}"  icon="pi pi-check">
+                                    <p:ajax oncomplete="#{listasPrincipalView.buscarProyectos()}" update=":frmListados:idProyectos:"  />
+                                </p:commandButton>
+                            </div>
+                            <div class="col">
+
+                                <p:commandButton value="#{msg['clean']}" resetValues="true"  styleClass="ui-button-secondary" icon="pi pi-times" >
+                                    <p:ajax update="@form" resetValues="true"/>
+                                </p:commandButton>
+                            </div>
+                        </div>
+                    </div>
+                </h:form>
+            </div>
+
+            <div class="col-12 md:col-12">
+
+                <h:form id="frmListados">
+                    <p:growl id="growlLstProyectos" life="4000" showSummary="true" />
+
+
+                    <div class="card ui-fluid">
+                        <h5>#{msg['adm.list.projects']}</h5>
+
+                        <p:dataTable
+                            id="idProyectos"
+                            widgetVar="proyectosTabla"
+                            var="pro"
+                            value="#{listasPrincipalView.lstProyectos}" 
+                            rows="5"
+                            paginator="true" 
+                            editable="true"
+                            editMode="cell"
+                            reflow="true"
+                            stripedRows="true"
+                            editInitEvent="dblclick" 
+                            paginatorPosition="both"
+                            paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                            rowsPerPageTemplate="5,10,{ShowAll|'All'}"
+                            emptyMessage="#{msg['no.items']}"
+                            style="height: 100%;"
+                            filteredValue="#{listasPrincipalView.filteredProyectos}"
+                            globalFilterFunction="#{listasPrincipalView.globalFilterFunction}"
+                            rowIndexVar="index"
+                            size="small"
+                            >    
+
+                            <p:ajax event="cellEdit" listener="#{listasPrincipalView.actualizarProyecto}" update="frmListados:idProyectos,frmListados:growlLstProyectos"/>
+
+                            <f:facet name="header">
+                                <p:inputText id="globalFilter" value="#{listasPrincipalView.filterValue}" onkeyup="PF('proyectosTabla').filter()"
+                                             placeholder="#{msg['adm.search.filter.global']}" />
+                            </f:facet>
+
+                            <!--p:column style="width: 15px;" > 
+                                <f:facet name="header">
+                                    <h:outputText value="#" />
+                                </f:facet>
+                                <h:outputText 
+                                    value="#{index + 1}" />
+                            </p:column-->
+
+                            <p:column headerText="#{msg['adm.nombre']}" sortBy="#{pro.strDescNombre}" filterable="true" >
+
+                                <p:cellEditor>
+                                    <f:facet name="output">
+                                        <h:outputText value="#{pro.strDescNombre}"  />
+                                    </f:facet>
+                                    <f:facet name="input">
+                                        <p:inputText value="#{pro.strDescNombre}" style="width: 100%;" />
+                                    </f:facet>
+                                </p:cellEditor>
+
+                            </p:column>
+
+                            <p:column headerText="#{msg['description']}" sortBy="#{pro.strMotivo}" filterable="true" responsivePriority="3" >
+
+                                <p:cellEditor>
+                                    <f:facet name="output">
+                                        <h:outputText value="#{pro.strMotivo}"  />
+                                    </f:facet>
+                                    <f:facet name="input">
+                                        <p:inputText value="#{pro.strMotivo}" style="width: 100%;" />
+                                    </f:facet>
+                                </p:cellEditor>
+
+                            </p:column>
+
+                            <!--p:column  headerText="#{msg['adm.fecha']}"  sortBy="#{pro.dtFechaCreacion}" filterable="true" >        
+                                <h:outputText value="#{pro.dtFechaCreacion}"  />
+                            </p:column-->
+
+                            <p:column headerText="#{msg['status']}" sortBy="#{pro.strDescEstado}" filterable="true" responsivePriority="2" >
+                                <p:tag value="#{pro.strDescEstado}" ></p:tag>
+                            </p:column>
+
+
+                            <p:column headerText="#{msg['actions']}" responsivePriority="1">
+                                <p:commandLink actionListener="#{listasPrincipalView.cargarProyecto(pro)}" 
+                                               title="#{msg['configurar']}" immediate="true" value="#{msg['configurar']}" />
+                                / 
+                                <p:commandLink update="@form" 
+                                               value="#{msg['borrar']}"
+                                               immediate="true" 
+                                               process="@this"
+                                               actionListener="#{listasPrincipalView.borrarProyecto(pro.intIdProyecto)}" 
+                                               disabled="#{pro.intIdEstado==34 or pro.intIdEstado==37?true:false}" >
+                                    <p:confirm header="#{msg['confirmation']}" message="#{msg['adm.prev.delete']}" icon="pi pi-info-circle"  />
+                                </p:commandLink>
+                                /
+                                <p:commandLink                                                actionListener="#{listasPrincipalView.ocultarProyecto(pro)}"
+                                                                                              value="#{msg['archivar']}"
+                                                                                              update=":frmListados:" title="#{msg['archivar']}"
+                                                                                              disabled="#{!(pro.intIdEstado==201 or pro.intIdEstado==37)?true:false}" />
+                            </p:column>
+
+                        </p:dataTable>
+                    </div>
+                </h:form>
+            </div>    
+
+        </div>
+
+
+
+
+    </ui:define>
+</ui:composition>

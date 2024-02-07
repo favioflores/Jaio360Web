@@ -43,4 +43,18 @@ body {
     .ui-widget-overlay {
         background: $maskBg;
     }
+
+    .ui-resizable-handle {
+        position: absolute;
+    }
+
+}
+
+.ui-resizable {
+    display: flex;
+    flex-direction: column;
+
+    .ui-widget-content {
+        flex-grow: 1;
+    }
 }

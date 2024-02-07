@@ -421,11 +421,11 @@
             <artifactId>commons-codec</artifactId>
             <version>1.7</version>
         </dependency>
-        <dependency>
+        <!--dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
             <version>3.2.7.RELEASE</version>
-        </dependency>
+        </dependency-->
         <dependency>
             <groupId>com.sun.mail</groupId>
             <artifactId>javax.mail</artifactId>
@@ -464,7 +464,7 @@
         <dependency>
             <groupId>net.sourceforge.dynamicreports</groupId>
             <artifactId>dynamicreports-core</artifactId>
-            <version>5.1.0</version>
+            <version>6.12.1</version>
         </dependency>
         <!--dependency>
             <groupId>net.sourceforge.dynamicreports</groupId>
@@ -474,7 +474,7 @@
         <dependency>
             <groupId>net.sourceforge.dynamicreports</groupId>
             <artifactId>dynamicreports-googlecharts</artifactId>
-            <version>5.1.0</version> 
+            <version>6.12.1</version> 
         </dependency>
         <dependency>
             <groupId>com.itextpdf</groupId>
@@ -522,7 +522,7 @@
         <dependency>
             <groupId>org.primefaces</groupId>
             <artifactId>primefaces</artifactId>
-            <version>12.0.0</version>
+            <version>13.0.3</version>
         </dependency>
         <dependency>
             <groupId>org.glassfish</groupId>

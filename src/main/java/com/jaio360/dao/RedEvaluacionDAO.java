@@ -11,6 +11,7 @@ import com.jaio360.orm.RelacionParticipante;
 import com.jaio360.orm.RelacionParticipanteId;
 import com.jaio360.utils.Constantes;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import org.apache.log4j.Logger;
 import org.apache.commons.logging.LogFactory;
@@ -19,61 +20,56 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
-public class RedEvaluacionDAO implements Serializable
-{  
-    private Session sesion; 
-    private Transaction tx;  
+public class RedEvaluacionDAO implements Serializable {
+
+    private Session sesion;
+    private Transaction tx;
     private static Logger log = Logger.getLogger(RedEvaluacion.class);
-   
 
     public RedEvaluacionDAO() {
         this.sesion = HibernateUtil.getSessionFactory().openSession();
     }
-    
-    public Integer guardaRedEvaluacion(RedEvaluacion redEvaluacion) throws HibernateException 
-    { 
-        Integer id = 0;  
 
-        try 
-        { 
-            iniciaOperacion(); 
-            id = (Integer)sesion.save(redEvaluacion); 
-            tx.commit(); 
-        } catch (HibernateException he) 
-        { 
-            manejaExcepcion(he); 
-            throw he; 
-        } finally 
-        { 
-            sesion.close(); 
-        }  
+    public Integer guardaRedEvaluacion(RedEvaluacion redEvaluacion) throws HibernateException {
+        Integer id = 0;
 
-        return id; 
-    }  
-    
-    public boolean guardaRedEvaluacion(List<Evaluador> lstEvaluados, Integer intIdProyecto) throws HibernateException { 
-        
+        try {
+            iniciaOperacion();
+            id = (Integer) sesion.save(redEvaluacion);
+            tx.commit();
+        } catch (HibernateException he) {
+            manejaExcepcion(he);
+            throw he;
+        } finally {
+            sesion.close();
+        }
+
+        return id;
+    }
+
+    public boolean guardaRedEvaluacion(List<Evaluador> lstEvaluados, Integer intIdProyecto) throws HibernateException {
+
         boolean correcto = true;
-                
-        try { 
-            
-            iniciaOperacion(); 
-            
+
+        try {
+
+            iniciaOperacion();
+
             /* BORRA LOS PARTICIPANTES EN ESTADO REGISTRADO Y SUS RELACIONES */
             Query query = sesion.createQuery("delete from RedEvaluacion r where r.proyecto.poIdProyectoPk = ? and r.reIdEstado = ? ");
             query.setInteger(0, intIdProyecto);
             query.setInteger(1, Constantes.INT_ET_ESTADO_EVALUADOR_REGISTRADO);
             query.executeUpdate();
-            
+
             Proyecto objProyecto = new Proyecto();
             objProyecto.setPoIdProyectoPk(intIdProyecto);
 
             RedEvaluacion objRedEvaluacion;
-            
-            for (Evaluador obj : lstEvaluados){  
-                
-                if(obj.getReIdEstado().equals(Constantes.INT_ET_ESTADO_EVALUADOR_REGISTRADO)){
-                    
+
+            for (Evaluador obj : lstEvaluados) {
+
+                if (obj.getReIdEstado().equals(Constantes.INT_ET_ESTADO_EVALUADOR_REGISTRADO)) {
+
                     objRedEvaluacion = new RedEvaluacion();
 
                     objRedEvaluacion.setReIdTipoParticipante(Constantes.INT_ET_TIPO_PARTICIPANTE_EVALUADO);
@@ -88,202 +84,237 @@ public class RedEvaluacionDAO implements Serializable
                     objRedEvaluacion.setProyecto(objProyecto);
 
                     sesion.save(objRedEvaluacion);
-                    
+
                 }
-                
+
             }
 
-            tx.commit(); 
-            
-        } catch (HibernateException he) { 
-            manejaExcepcion(he); 
+            tx.commit();
+
+        } catch (HibernateException he) {
+            manejaExcepcion(he);
             log.error(he);
             correcto = false;
-        } finally { 
-            sesion.close(); 
-        }  
+        } finally {
+            sesion.close();
+        }
 
-        return correcto; 
-    }  
+        return correcto;
+    }
 
-    public void actualizaRedEvaluacion(RedEvaluacion redEvaluacion) throws HibernateException 
-    { 
-        try 
-        { 
-            iniciaOperacion(); 
-            sesion.update(redEvaluacion); 
-            tx.commit(); 
-        } catch (HibernateException he) 
-        { 
-            manejaExcepcion(he); 
-            throw he; 
-        } finally 
-        { 
-            sesion.close(); 
-        } 
-    }  
+    public void actualizaRedEvaluacion(RedEvaluacion redEvaluacion) throws HibernateException {
+        try {
+            iniciaOperacion();
+            sesion.update(redEvaluacion);
+            tx.commit();
+        } catch (HibernateException he) {
+            manejaExcepcion(he);
+            throw he;
+        } finally {
+            sesion.close();
+        }
+    }
 
-    public void eliminaRedEvaluacion(RedEvaluacion redEvaluacion) throws HibernateException 
-    { 
-        try 
-        { 
-            iniciaOperacion(); 
-            sesion.delete(redEvaluacion); 
-            tx.commit(); 
-        } catch (HibernateException he) 
-        { 
-            manejaExcepcion(he); 
-            throw he; 
-        } finally 
-        { 
-            sesion.close(); 
-        } 
-    }  
+    public void eliminaRedEvaluacion(RedEvaluacion redEvaluacion) throws HibernateException {
+        try {
+            iniciaOperacion();
+            sesion.delete(redEvaluacion);
+            tx.commit();
+        } catch (HibernateException he) {
+            manejaExcepcion(he);
+            throw he;
+        } finally {
+            sesion.close();
+        }
+    }
 
-    public RedEvaluacion obtenRedEvaluacion(long idRedEvaluacion) throws HibernateException 
-    { 
-        RedEvaluacion redEvaluacion = null;  
-        try 
-        { 
-            iniciaOperacion(); 
-            redEvaluacion = (RedEvaluacion) sesion.get(RedEvaluacion.class, (int)idRedEvaluacion); 
-        } finally 
-        { 
-            sesion.close(); 
-        }  
+    public RedEvaluacion obtenRedEvaluacion(long idRedEvaluacion) throws HibernateException {
+        RedEvaluacion redEvaluacion = null;
+        try {
+            iniciaOperacion();
+            redEvaluacion = (RedEvaluacion) sesion.get(RedEvaluacion.class, (int) idRedEvaluacion);
+        } finally {
+            sesion.close();
+        }
 
-        return redEvaluacion; 
-    }  
+        return redEvaluacion;
+    }
 
-    public List<RedEvaluacion> obtenListaRedEvaluacion(Integer intProyectoPk) throws HibernateException 
-    { 
-        List<RedEvaluacion> listaRedEvaluacion = null;  
+    public List<RedEvaluacion> obtenListaRedEvaluacion(Integer intProyectoPk) throws HibernateException {
+        List<RedEvaluacion> listaRedEvaluacion = null;
 
-        try 
-        { 
-            iniciaOperacion(); 
-            Query query = sesion.createQuery("from RedEvaluacion r where r.proyecto.poIdProyectoPk = ? "); 
-            
+        try {
+            iniciaOperacion();
+            Query query = sesion.createQuery("from RedEvaluacion r where r.proyecto.poIdProyectoPk = ? ");
+
             query.setInteger(0, intProyectoPk);
             //query.setBoolean(1, true);
             //query.setBoolean(2, true);
-            
+
             listaRedEvaluacion = query.list();
-            
-        } finally 
-        { 
-            sesion.close(); 
-        }  
 
-        return listaRedEvaluacion; 
-    }  
+        } finally {
+            sesion.close();
+        }
 
-    public List<RedEvaluacion> obtenListaRedEvaluacionConfirmados(Integer intProyectoPk) throws HibernateException { 
-        
-        List<RedEvaluacion> listaRedEvaluacion = null;  
+        return listaRedEvaluacion;
+    }
 
-        try { 
-            iniciaOperacion(); 
-            Query query = sesion.createQuery("from RedEvaluacion r where r.proyecto.poIdProyectoPk = ? and r.reIdEstado = ? "); 
-            
+    public List<Object> getListByProject(Integer intProyectoPk) throws HibernateException {
+
+        List<Object> lstRedCompleta = new ArrayList<>();
+
+        try {
+            iniciaOperacion();
+            Query query = sesion.createQuery(
+                    "select pa, rp, ce, re, red, cu from "
+                    + "Participante pa join "
+                    + "pa.relacionParticipantes rp join "
+                    + "pa.cuestionarioEvaluados ce join "
+                    + "rp.relacion re join "
+                    + "rp.redEvaluacion red join "
+                    + "ce.cuestionario cu "
+                    + "where pa.proyecto.poIdProyectoPk = ? order by pa.paTxDescripcion ");
+
+            query.setInteger(0, intProyectoPk);
+
+            lstRedCompleta = query.list();
+
+        } finally {
+            sesion.close();
+        }
+
+        return lstRedCompleta;
+    }
+
+    public List<Object> getListByProjectAutoevaluations(Integer intProyectoPk) throws HibernateException {
+
+        List<Object> lstRedCompleta = new ArrayList<>();
+
+        try {
+            iniciaOperacion();
+            Query query = sesion.createQuery(
+                    "select pa, ce, cu from "
+                    + "Participante pa join "
+                    + "pa.cuestionarioEvaluados ce join "
+                    + "ce.cuestionario cu "
+                    + "where pa.proyecto.poIdProyectoPk = ? "
+                    + "and pa.paInAutoevaluar = ? "
+                    + "order by pa.paTxDescripcion ");
+
+            query.setInteger(0, intProyectoPk);
+            query.setBoolean(1, true);
+
+            lstRedCompleta = query.list();
+
+        } finally {
+            sesion.close();
+        }
+
+        return lstRedCompleta;
+    }
+
+    public List<RedEvaluacion> obtenListaRedEvaluacionConfirmados(Integer intProyectoPk) throws HibernateException {
+
+        List<RedEvaluacion> listaRedEvaluacion = null;
+
+        try {
+            iniciaOperacion();
+            Query query = sesion.createQuery("from RedEvaluacion r where r.proyecto.poIdProyectoPk = ? and r.reIdEstado = ? ");
+
             query.setInteger(0, intProyectoPk);
             query.setInteger(1, Constantes.INT_ET_ESTADO_EVALUADOR_EN_EJECUCION);
-            
+
             listaRedEvaluacion = query.list();
-            
-        } finally { 
-            sesion.close(); 
-        }  
 
-        return listaRedEvaluacion; 
-    }  
-    
-    private void iniciaOperacion() throws HibernateException 
-    { 
-        sesion = HibernateUtil.getSessionFactory().openSession(); 
-        tx = sesion.beginTransaction(); 
-    }  
+        } finally {
+            sesion.close();
+        }
 
-    private void manejaExcepcion(HibernateException he) throws HibernateException 
-    { 
-        tx.rollback(); 
-        throw new HibernateException("Ocurrió un error en la capa de acceso a datos", he); 
-    } 
-    
-    
-    public List<RedEvaluacion> obtenerListaEvaluadores(Integer intProyectoPk) throws HibernateException {
-        
-        List<RedEvaluacion> listaRedEvaluacion = null;  
-
-        try{
-            
-            iniciaOperacion(); 
-            Query query = sesion.createQuery("from RedEvaluacion r where r.proyecto.poIdProyectoPk = ? order by r.reIdParticipantePk "); 
-            
-            query.setInteger(0, intProyectoPk);
-            
-            listaRedEvaluacion = query.list();
-            
-        }catch (Exception e){
-            log.error(e);
-        }finally { 
-            sesion.close(); 
-        }  
-
-        return listaRedEvaluacion; 
+        return listaRedEvaluacion;
     }
-    
-    public List obtenerRelacionParticipanteAnterior(Integer intProyectoPk, String strCorreoUsuario) throws HibernateException {
-        
-        List lista = null;  
 
-        try{
-            
-            iniciaOperacion(); 
-            Query query = sesion.createQuery("select rp.redEvaluacion.reIdParticipantePk, rp.relacion.reIdRelacionPk " +
-                                             "  from RelacionParticipante rp " +
-                                             " where rp.participante.paTxCorreo = ? " +
-                                             "   and rp.participante.proyecto.poIdProyectoPk = ? "); 
-            
+    private void iniciaOperacion() throws HibernateException {
+        sesion = HibernateUtil.getSessionFactory().openSession();
+        tx = sesion.beginTransaction();
+    }
+
+    private void manejaExcepcion(HibernateException he) throws HibernateException {
+        tx.rollback();
+        throw new HibernateException("Ocurrió un error en la capa de acceso a datos", he);
+    }
+
+    public List<RedEvaluacion> obtenerListaEvaluadores(Integer intProyectoPk) throws HibernateException {
+
+        List<RedEvaluacion> listaRedEvaluacion = null;
+
+        try {
+
+            iniciaOperacion();
+            Query query = sesion.createQuery("from RedEvaluacion r where r.proyecto.poIdProyectoPk = ? order by r.reIdParticipantePk ");
+
+            query.setInteger(0, intProyectoPk);
+
+            listaRedEvaluacion = query.list();
+
+        } catch (Exception e) {
+            log.error(e);
+        } finally {
+            sesion.close();
+        }
+
+        return listaRedEvaluacion;
+    }
+
+    public List obtenerRelacionParticipanteAnterior(Integer intProyectoPk, String strCorreoUsuario) throws HibernateException {
+
+        List lista = null;
+
+        try {
+
+            iniciaOperacion();
+            Query query = sesion.createQuery("select rp.redEvaluacion.reIdParticipantePk, rp.relacion.reIdRelacionPk "
+                    + "  from RelacionParticipante rp "
+                    + " where rp.participante.paTxCorreo = ? "
+                    + "   and rp.participante.proyecto.poIdProyectoPk = ? ");
+
             query.setString(0, strCorreoUsuario);
             query.setInteger(1, intProyectoPk);
-            
-            lista = query.list();
-            
-        }catch (Exception e){
-            log.error(e);
-        }finally { 
-            sesion.close(); 
-        }  
 
-        return lista; 
+            lista = query.list();
+
+        } catch (Exception e) {
+            log.error(e);
+        } finally {
+            sesion.close();
+        }
+
+        return lista;
     }
-    
-    public boolean guardaRelacionParticipanteEvaluado(List<EvaluadorRelacion> lstRed, Participante objParticipante) throws HibernateException{ 
+
+    public boolean guardaRelacionParticipanteEvaluado(List<EvaluadorRelacion> lstRed, Participante objParticipante) throws HibernateException {
 
         boolean flag = true;
-        try{ 
-            
-            iniciaOperacion(); 
-            
+        try {
+
+            iniciaOperacion();
+
             /* Borramos datos anteriores */
-            
             Query query = sesion.createQuery("delete from RelacionParticipante r where r.participante.paIdParticipantePk = ? ");
             query.setInteger(0, objParticipante.getPaIdParticipantePk());
             query.executeUpdate();
-            
+
             /* Insertamos los datos nuevos */
-            
             RelacionParticipante objRelacionParticipante;
             RedEvaluacion objRedEvaluacion;
             Relacion objRelacion;
             RelacionParticipanteId objRelacionParticipanteId;
-            
-            for (EvaluadorRelacion objEvaluadorRelacion:lstRed){
-                
-                if(objEvaluadorRelacion.getIntIdRelacion()!=null && 
-                   objEvaluadorRelacion.getIntIdRelacion()!=0){
-                
+
+            for (EvaluadorRelacion objEvaluadorRelacion : lstRed) {
+
+                if (objEvaluadorRelacion.getIntIdRelacion() != null
+                        && objEvaluadorRelacion.getIntIdRelacion() != 0) {
+
                     objRedEvaluacion = new RedEvaluacion();
                     objRedEvaluacion.setReIdParticipantePk(objEvaluadorRelacion.getIntIdEvaluador());
 
@@ -306,66 +337,64 @@ public class RedEvaluacionDAO implements Serializable
                 }
             }
 
-            tx.commit(); 
-            
-        } catch (HibernateException he){ 
+            tx.commit();
+
+        } catch (HibernateException he) {
             log.error(he);
-            manejaExcepcion(he); 
+            manejaExcepcion(he);
             flag = false;
-        } finally { 
-            sesion.close(); 
-        }  
+        } finally {
+            sesion.close();
+        }
 
-        return flag; 
-    } 
+        return flag;
+    }
 
-    
     public List<RedEvaluacion> obtenListaRedEvaluacionXEstado(Integer intIdProyecto, Integer intEstadoEvaluador) {
 
-        List<RedEvaluacion> listaRedEvaluacion = null;  
+        List<RedEvaluacion> listaRedEvaluacion = null;
 
-        try { 
-            iniciaOperacion(); 
-            Query query = sesion.createQuery("from RedEvaluacion r where r.proyecto.poIdProyectoPk = ? and r.reIdEstado = ? "); 
-            
+        try {
+            iniciaOperacion();
+            Query query = sesion.createQuery("from RedEvaluacion r where r.proyecto.poIdProyectoPk = ? and r.reIdEstado = ? ");
+
             query.setInteger(0, intIdProyecto);
             query.setInteger(1, intEstadoEvaluador);
-            
+
             listaRedEvaluacion = query.list();
-            
-        } finally { 
-            sesion.close(); 
-        }  
 
-        return listaRedEvaluacion; 
-    }  
+        } finally {
+            sesion.close();
+        }
 
-        
+        return listaRedEvaluacion;
+    }
+
     public boolean actualizarRedEvaluacionRegistrados(Integer intIdProyecto, List<RedEvaluacion> lstRedEvaluacion) {
-        
-        boolean correcto = true;
-        
-        try{ 
 
-            iniciaOperacion(); 
-            
-            for (RedEvaluacion objRedEvaluacion : lstRedEvaluacion){
-            
+        boolean correcto = true;
+
+        try {
+
+            iniciaOperacion();
+
+            for (RedEvaluacion objRedEvaluacion : lstRedEvaluacion) {
+
                 objRedEvaluacion.setReIdEstado(Constantes.INT_ET_ESTADO_EVALUADOR_EN_PARAMETRIZACION);
                 sesion.update(objRedEvaluacion);
-            
+
             }
-            
-            tx.commit();  
-            
-        } catch (HibernateException he){ 
-            manejaExcepcion(he); 
+
+            tx.commit();
+
+        } catch (HibernateException he) {
+            manejaExcepcion(he);
             correcto = false;
-        } finally { 
-            sesion.close(); 
-        } 
-        
+        } finally {
+            sesion.close();
+        }
+
         return correcto;
     }
-    
+
 }

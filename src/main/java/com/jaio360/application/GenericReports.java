@@ -40,7 +40,7 @@ import com.jaio360.report.ReporteIndividualSumarioCategoriaMismoRelacion;
 import com.jaio360.report.ReporteIndividualSumarioCategoriaMismoRelacionWeighted;
 import com.jaio360.report.ReporteIndividualSumarioCategoriaMismoVsOtrosProm;
 import com.jaio360.report.ReporteIndividualSumarioCategoriaMismoVsOtrosPromWeighted;
-import com.jaio360.report.ReporteIndividualSumarioCategoriaRelacion;
+import com.jaio360.report.ReporteIndividualSumarioCategoriaMismoVsOtrosPromRequired;
 import com.jaio360.report.ReporteIndividualSumarioCategoriaWeighted;
 import com.jaio360.report.ReporteTodasRespuestas;
 import com.jaio360.utils.Constantes;
@@ -469,7 +469,7 @@ public class GenericReports extends Thread implements Serializable {
                             objDatosReporte.setIntMaxRango(objDatosReportePrincipal.getIntMaxRango());
                             objDatosReporte.setStrDescripcion(objDatosReportePrincipal.getStrDescripcion().toUpperCase());
 
-                            ReporteIndividualSumarioCategoriaRelacion objReporteR = new ReporteIndividualSumarioCategoriaRelacion();
+                            ReporteIndividualSumarioCategoriaMismoVsOtrosPromRequired objReporteR = new ReporteIndividualSumarioCategoriaMismoVsOtrosPromRequired();
                             objDatosReporte.setStrID(objReporteR.build(objDatosReporte, map, objParticipante.getPaIdParticipantePk(), strNameFile, objReporteGenerado));
 
                             lstTemporalesPDFxCombinar.add(objDatosReporte);

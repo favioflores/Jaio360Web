@@ -1025,23 +1025,23 @@ public class Utilitarios extends BaseView implements Serializable {
         for (int i = 0; i < 6; i++) {
             code += letters[(int) Math.round(Math.random() * 15)];
         }
-        return code;
+        return "#" + code;
     }
 
     public static String generaColorHtmlPreferencial(int i) {
 
-        String[] colors = {"046BBB",
-            "DDE4EB",
-            "F3C305",
-            "545454",
-            "57D9DE",
-            "A490BE",
-            "5A89C9",
-            "1F9EE4",
-            "2C76BC",
-            "47586D",
-            "36A4CD",
-            "366494"};
+        String[] colors = {"#1141A8",
+            "#D6D6D6",
+            "#FBC02D",
+            "#D90368",
+            "#AB3428",
+            "#FE6847",
+            "#FF3F00",
+            "#CB429F",
+            "#7E6551",
+            "#7D1D3F",
+            "#499167",
+            "#1A936F"};
 
         if (colors.length > i) {
             return colors[i];
@@ -1407,28 +1407,36 @@ public class Utilitarios extends BaseView implements Serializable {
 
     }
 
-    public static String calcularDiferenciaDeFechas(Date fechaInicial, Date fechaFinal){
- 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd H:m:s");
-  
-        int diferencia=(int) ((fechaFinal.getTime()-fechaInicial.getTime())/1000);
- 
-        int dias=0;
-        int horas=0;
-        int minutos=0;
-        if(diferencia>86400) {
-            dias=(int)Math.floor(diferencia/86400);
-            diferencia=diferencia-(dias*86400);
+    public static String calcularDiferenciaDeFechas(Date fechaInicial, Date fechaFinal) {
+
+        int dias = 0;
+        int horas = 0;
+        int minutos = 0;
+
+        try {
+
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd H:m:s");
+
+            int diferencia = (int) ((fechaFinal.getTime() - fechaInicial.getTime()) / 1000);
+
+            if (diferencia > 86400) {
+                dias = (int) Math.floor(diferencia / 86400);
+                diferencia = diferencia - (dias * 86400);
+            }
+            if (diferencia > 3600) {
+                horas = (int) Math.floor(diferencia / 3600);
+                diferencia = diferencia - (horas * 3600);
+            }
+            if (diferencia > 60) {
+                minutos = (int) Math.floor(diferencia / 60);
+                diferencia = diferencia - (minutos * 60);
+            }
+
+        } catch (Exception e) {
+
         }
-        if(diferencia>3600) {
-            horas=(int)Math.floor(diferencia/3600);
-            diferencia=diferencia-(horas*3600);
-        }
-        if(diferencia>60) {
-            minutos=(int)Math.floor(diferencia/60);
-            diferencia=diferencia-(minutos*60);
-        }
-        return dias+" dias, "+horas+" horas, "+minutos+" minutos";
+
+        return dias + " " + msg("day") + ", " + horas + " " + msg("hour") + ", " + minutos + " " + msg("minute");
     }
 
 }

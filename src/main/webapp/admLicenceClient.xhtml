@@ -1,0 +1,191 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui" 
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                template="/WEB-INF/template.xhtml" >
+
+    <ui:define name="head"> 
+    </ui:define>
+
+    <ui:define name="title">#{msg['manage.licences.clients']}</ui:define>
+
+    <!--ui:define name="cabecera">
+        <ui:include src="cabecera.xhtml" />
+    </ui:define-->
+
+    <ui:define name="content">     
+
+        <div class="grid list-demo">
+
+            <div class="col-12 md:col-12">
+                <h:form id="form">
+                    <div class="card ui-fluid">
+                        <h5>#{msg['client.list']}</h5>
+                        <p:growl id="growl" showDetail="false" life="4000" />
+                        <div class="field">
+                            <p:selectOneMenu id="idUsuario" value="#{mantenimientoLicenciaClienteView.idUsuario}" required="true" filter="true" filterMatchMode="contains" >
+                                <f:selectItem itemLabel="#{msg['please.select']}" itemValue="" />
+                                <f:selectItems value="#{mantenimientoLicenciaClienteView.lstUsuarios}" var="usu" />
+                                <p:ajax event="change" update="formContratos, formHistorial" listener="#{mantenimientoLicenciaClienteView.verLicenciasAsignadas()}" />
+                            </p:selectOneMenu>
+                        </div>
+                    </div>
+                </h:form>
+            </div>
+
+            <!--div class="col-12 md:col-4">
+                <h:form id="formAgregarLicencia">
+                    <div class="card ui-fluid">
+                        <h5>#{msg['licencia.x.cliente']}</h5>
+                        <p:growl id="growl" showDetail="false" life="4000" />
+                        <div class="field">
+                            <p:outputLabel for="@next" value="#{msg['tarifa.label']}" />
+                            <p:selectOneMenu id="idTarifa" value="#{mantenimientoLicenciaClienteView.idTarifa}" required="true" >
+                                <f:selectItem itemLabel="#{msg['please.select']}" itemValue="" />
+                                <f:selectItems value="#{mantenimientoLicenciaClienteView.lstTarifas}" var="tar" itemLabel="#{tar.label}" itemValue="#{tar.value}" />
+                                <p:ajax listener="#{mantenimientoLicenciaClienteView.calcularMontoBruto()}" process="@this" update="@form"/>
+                            </p:selectOneMenu>
+                        </div>
+                        <div class="field">
+                            <p:outputLabel for="@next" value="#{msg['nro.licencias.label']}" />
+                            <p:spinner id="idNroLicencias" value="#{mantenimientoLicenciaClienteView.intCantidadLicencias}" required="true" min="1" 
+                                       max="#{mantenimientoLicenciaClienteView.intMaxQuantity}"  >
+                                <p:ajax event="change" update="@form" listener="#{mantenimientoLicenciaClienteView.calcularMontoBruto()}" />
+                            </p:spinner>
+                        </div>
+                        <div class="field">
+                            <p:outputLabel for="@next" value="#{msg['monto.label']}" />
+                            <p:inputText id="idMontoBruto" type="text" value="#{mantenimientoLicenciaClienteView.strMontoBruto}" style="text-align: right;" disabled="true" />
+                        </div>
+                        <div class="field">
+                            <p:commandButton value="#{msg['add']}" update="formAgregarLicencia,formContratos,formHistorial" process="formAgregarLicencia" icon="pi pi-plus" 
+                                             actionListener="#{mantenimientoLicenciaClienteView.asignarLicencias}" >
+                                <p:confirm header="#{msg['confirmation']}" message="#{msg['confirmacion.agregar.licencias']}" icon="pi pi-info-circle" />
+                            </p:commandButton>
+                        </div>
+                        <div class="field">
+                            <p:commandButton value="#{msg['clean']}" styleClass="ui-button-secondary" icon="pi pi-times" update="formAgregarLicencia" process="@this" actionListener="#{mantenimientoLicenciaClienteView.limpiarFormulario()}" />
+                        </div>
+                    </div>
+                </h:form>
+            </div-->
+
+            <div class="col-12 md:col-6">
+                <h:form id="formContratos">
+                    <div class="card ui-fluid">
+                        <h5>#{msg['resumen.saldos.label']}</h5>
+                        <p:growl id="growl" showDetail="false" life="4000" />
+                        <div class="field">
+                            <p:dataView
+                                id="lstUsuarioSaldo"
+                                var="usuarioSaldo"
+                                value="#{mantenimientoLicenciaClienteView.lstUsuarioSaldo}" 
+                                rows="5" layout="list"
+                                gridIcon="pi pi-th-large" listIcon="pi pi-bars"
+                                widgetVar="lstUsuarioSaldo"
+                                
+                                emptyMessage="#{msg['no.items']}"
+                                >    
+                                <p:dataViewListItem>
+                                    <div class="product-list-item">
+                                        <div class="product-list-detail">
+                                            <div class="product-name">#{msg['total']}</div>
+                                            <div class="product-description">#{msg['licencia.individual']}</div>
+                                        </div>
+                                        <div class="product-list-action">
+                                            <h:outputText value="#{usuarioSaldo.intTotalIndividual}" styleClass="product-price">
+                                            </h:outputText>
+                                            <!--p:commandButton type="button" icon="pi pi-shopping-cart" value="Add to Cart" disabled="#{product.inventoryStatus == 'OUTOFSTOCK'}"/-->
+                                            <!--span class="product-badge status-#{product.inventoryStatus.name().toLowerCase()}">#{product.inventoryStatus.text}</span-->
+                                        </div>
+                                    </div>
+                                </p:dataViewListItem>
+                                <!--
+                                <p:column headerText="#{msg['licencia.individual']}">
+
+                                    <div class="grid">
+                                        <div class="col-4 md:col-2">
+                                            <div class="card ui-fluid">
+                                                <div class="col">
+                                                    <p:outputLabel value="#{msg['total']}"/>
+                                                </div>
+                                                <div class="col">
+                                                    <h:outputText value="#{usuarioSaldo.intTotalIndividual}" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p:outputLabel value="#{msg['disponible']}"/>
+                                    <h:outputText value="#{usuarioSaldo.intDisponibleIndividual}" />
+
+                                    <p:outputLabel value="#{msg['reservado']}"/>
+                                    <h:outputText value="#{usuarioSaldo.intReservadoIndividual}" />
+
+                                    <p:outputLabel value="#{msg['utilizado']}"/>
+                                    <h:outputText value="#{usuarioSaldo.intUtilizadoIndividual}" />
+
+                                </p:column>
+                                <p:column headerText="#{msg['licencia.masiva']}">
+                                    <h:outputText value="#{usuarioSaldo.intTotalMasivo}" />
+                                    <h:outputText value="#{usuarioSaldo.intDisponibleMasivo}" />
+                                    <h:outputText value="#{usuarioSaldo.intReservadoMasivo}" />
+                                    <h:outputText value="#{usuarioSaldo.intUtilizadoMasivo}" />
+                                </p:column>
+                                -->
+                            </p:dataView>
+                        </div>
+                    </div>
+                </h:form>
+            </div>
+
+            <div class="col-12 md:col-12">
+                <h:form id="formHistorial">
+                    <div class="card ui-fluid">
+                        <h5>#{msg['historial.movimiento.label']}</h5>
+                        <p:growl id="growl" showDetail="false" life="4000" />
+                        <div class="field">
+                            <p:dataTable 
+                                id="lstContratos"
+                                var="contrato"
+                                value="#{mantenimientoLicenciaClienteView.lstMovimientos}" 
+                                rows="5"
+                                size="small"
+                                paginator="true" 
+                                paginatorPosition="both"
+                                paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                rowsPerPageTemplate="5,10,15"                                 
+                                widgetVar="lstContratos"
+                                emptyMessage="#{msg['no.items']}"
+                                rowIndexVar="index"
+                                >    
+
+                                <p:column style="width: 40px;">
+                                    <f:facet name="header">
+                                        <h:outputText value="#" />
+                                    </f:facet>
+                                    <h:outputText 
+                                        value="#{index + 1}" />
+                                </p:column> 
+
+                                <p:column  headerText="#{msg['fecha.movimiento.label']}">
+                                    <h:outputText value="#{contrato.dtCreacion}" />
+                                </p:column>
+                                <p:column  headerText="#{msg['movimiento.label']}">
+                                    <h:outputText value="#{contrato.strDescMovimiento}" />
+                                </p:column>
+                                <p:column  headerText="#{msg['cantidad']}">
+                                    <h:outputText value="#{contrato.intCantidad}" />
+                                </p:column>
+
+                            </p:dataTable>
+                        </div>
+                    </div>
+                </h:form>
+            </div>
+        </div>
+
+    </ui:define>
+
+</ui:composition>

@@ -1,0 +1,641 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                template="/WEB-INF/template.xhtml">    
+
+    <ui:define name="head"> 
+
+        <script type="text/javascript">
+            function skinRadarChart() {
+                Chart.defaults.startAngle = 36;
+                Chart.defaults.plugins.tooltip.cornerRadius = 3;
+                Chart.defaults.plugins.tooltip.enabled = true;
+                Chart.defaults.plugins.tooltip.mode = 'point';
+                Chart.defaults.plugins.tooltip.position = 'nearest';
+            }
+        </script>
+        <style>
+            .ui-progressbar .ui-widget-header {
+                background: #d6d6d6 !important;
+            }
+        </style>
+        <script>
+            //<![CDATA[
+            function dateTemplateFunc(date) {
+                return '<span style="background-color:' + ((date.day < 21 && date.day > 10) ? '#81C784' : 'inherit') + ';border-radius:50%;width: 2.5rem;height: 2.5rem;line-height: 2.5rem;display: flex;align-items: center;justify-content: center;">' + date.day + '</span>';
+            }
+
+            //]]>
+        </script>
+
+        <style>
+            .value {
+                font-weight: bold;
+            }
+        </style>
+
+    </ui:define>
+
+    <ui:define name="title">
+        <h:outputLabel value="#{msg['label.proxy.mode.client']} #{stepOneView.objUsuarioInfoProxy.strEmail}" rendered="#{stepOneView.objUsuarioInfoProxy!=null}" />
+        <h:outputLabel value="#{msg['project.info']} #{stepOneView.objProyectoInfo.strDescNombre}" />
+    </ui:define>
+
+    <!--ui:define name="cabecera">
+        <ui:include src="cabecera.xhtml" />
+        <p:staticMessage severity="warn" summary="#{msg['label.proxy.mode.client']}" detail="#{stepOneView.objUsuarioInfoProxy.strEmail}" rendered="#{stepOneView.objUsuarioInfoProxy!=null}" style="width: 100%; margin-top: 5px; margin-left: 2px; margin-right: 2px;"/>
+        <p:staticMessage severity="info" summary="#{msg['info']}" detail="#{msg['project.info']} #{stepOneView.objProyectoInfo.strDescNombre}" style="width: 100%; margin-top: 5px; margin-left: 2px; margin-right: 2px;"/>
+    </ui:define-->
+
+    <ui:define name="helpSteps">
+
+        <h:form id="formPrincipalProyecto" enctype="multipart/form-data" >
+            <p:steps readonly="false" activeIndex="#{stepFiveView.activeIndex}" >
+                <p:menuitem value="#{msg['step.1']}" actionListener="#{stepOneView.goToStep(1)}"/>
+                <p:menuitem value="#{msg['step.2']}" actionListener="#{stepOneView.goToStep(2)}"/>
+                <p:menuitem value="#{msg['step.3']}" actionListener="#{stepOneView.goToStep(3)}"/>
+                <p:menuitem value="#{msg['step.4']}" actionListener="#{stepOneView.goToStep(4)}"/>
+                <p:menuitem value="#{msg['step.5']}" actionListener="#{stepOneView.goToStep(5)}"/>
+                <p:menuitem value="#{msg['step.6']}" actionListener="#{stepOneView.goToStep(6)}"/>
+            </p:steps>
+            <p:spacer/>
+            <center>
+                <p:commandButton value="#{msg['back']}" type="submit" actionListener="#{stepFiveView.backStep()}" update="formPrincipalProyecto" styleClass="ui-button-secondary" icon="pi pi-angle-left" />
+                <p:spacer/>
+                <p:commandButton value="#{msg['next']}" type="submit" actionListener="#{stepFiveView.nextStep()}" update="formPrincipalProyecto" styleClass="ui-button-secondary" icon="pi pi-angle-right" />                   
+            </center>
+            <p:spacer/>
+        </h:form>   
+
+    </ui:define>
+
+    <ui:define name="content">
+
+        <div class="grid">
+
+            <div class="col-12 md:col-4">
+
+                <h:form id="form">
+                    <p:growl life="4000" showSummary="true" />
+                    <div class="card ui-fluid">
+                        <h5>#{msg['actions']}</h5>
+                        <p:staticMessage severity="error" summary="#{msg['important']}" 
+                                         rendered="#{!seguimientoProyectoView.blLicenciasOK}"
+                                         detail="#{msg['step5.insufficient.licenses']}" style="width: 100%; margin-top: 5px; margin-left: 2px; margin-right: 2px;">
+
+                        </p:staticMessage>
+                        <c:if test="#{!seguimientoProyectoView.blLicenciasOK}">
+                            <p:spacer/>
+
+
+                            <div class="grid">
+                                <!--div style="text-align: center;" >
+                                    <p:link value="#{msg['how.can.i.get.licences']}"/>
+                                </div-->
+                                <c:if test="#{seguimientoProyectoView.intLicenciasIndividualesRequerido>0}">
+
+                                    <div class="col-12 md:col-12">
+                                        <div class="card ui-fluid">
+                                            <h5>#{msg['step5.number.individual.licences']}</h5>
+                                            <div class="field grid align-items-center">
+                                                <div class="col">
+                                                    <p:outputLabel value="#{msg['available']}" />
+                                                </div>
+                                                <div class="col">
+                                                    <p:outputLabel value="#{seguimientoProyectoView.intLicenciasIndividuales}" />
+                                                </div>
+                                            </div>
+
+                                            <div class="field grid align-items-center">
+                                                <div class="col">
+                                                    <p:outputLabel value="#{msg['required']}" />
+                                                </div>
+                                                <div class="col">
+                                                    <p:outputLabel value="#{seguimientoProyectoView.intLicenciasIndividualesRequerido}" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </c:if>
+                                <c:if test="#{seguimientoProyectoView.intLicenciasMasivasRequerido>0}">
+                                    <div class="col-12 md:col-12">
+                                        <div class="card ui-fluid">
+                                            <h5>#{msg['step5.number.massive.licences']}</h5>
+                                            <div class="field grid align-items-center">
+                                                <div class="col">
+                                                    <p:outputLabel value="#{msg['available']}" />
+                                                </div>
+                                                <div class="col">
+                                                    <p:outputLabel value="#{seguimientoProyectoView.intLicenciasMasivas}" />
+                                                </div>
+                                            </div>
+                                            <div class="field grid align-items-center">
+                                                <div class="col">
+                                                    <p:outputLabel value="#{msg['required']}" />
+                                                </div>
+                                                <div class="col">
+                                                    <p:outputLabel value="#{seguimientoProyectoView.intLicenciasMasivasRequerido}" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </c:if>
+                            </div>
+                        </c:if>
+
+                        <div class="field">
+                            <p:commandButton value="#{msg['step5.start.process']}" 
+                                             type="submit"
+                                             update="@form"
+                                             onclick="PF('dlgLicencias').show()"
+                                             disabled="#{seguimientoProyectoView.intCantPartCuesNoEje>0?false:true}"
+                                             icon="pi pi-play">
+
+                            </p:commandButton>
+                                                                                 <!--actionListener="#{seguimientoProyectoView.iniciarProceso}" 
+                                             <p:confirm header="Confirmacion" message="¿Estas seguro de iniciar el proceso?" icon="pi pi-info-circle" />-->
+                        </div>
+
+                        <div class="field">
+                            <p:commandButton id="btnGuardarFinalizar" 
+                                             value="#{msg['step5.finish.process']}" 
+                                             type="submit"
+                                             actionListener="#{seguimientoProyectoView.terminarProceso()}" 
+                                             disabled="#{seguimientoProyectoView.intIdEstadoProyecto==37?true:seguimientoProyectoView.boProyectoEjecutado==true?false:true}"
+                                             update="@form"
+                                             icon="pi pi-save" >
+                                <p:confirm header="#{msg['confirmation']}" message="#{msg['prev.finished']}" icon="pi pi-info-circle" />
+                            </p:commandButton>
+
+                        </div>
+                        <div class="field">
+                            <p:commandButton id="btnUnlcokUnusedLicenses" 
+                                             value="#{msg['unlock.unused.licenses']}" 
+                                             type="submit"
+                                             disabled="#{true or seguimientoProyectoView.intIdEstadoProyecto!=37}"
+                                             update="@form"
+                                             icon="pi pi-lock-open" 
+                                             styleClass="ui-button-warning">
+                                <p:confirm header="#{msg['confirmation']}" message="#{msg['prev.finished']}" icon="pi pi-info-circle" />
+                            </p:commandButton>
+
+                        </div>
+                        <!--
+                                                        <div class="p-field">
+                                                            <p:commandButton id="btnGuardarAsignacion" 
+                                                                             value="Anular proceso" 
+                                                                             type="submit"
+                                                                             update="@form"
+                                                                             disabled="#{seguimientoProyectoView.intCantPartCuesNoEje>0?true:false}"
+                                                                             icon="pi pi-times" 
+                                                                             styleClass="ui-button-danger">
+                        
+                                                            </p:commandButton>
+                        
+                                                        </div>
+                        -->
+
+                        <div class="field">
+                            <p:commandButton id="btnAddAsignado1" 
+                                             value="#{msg['step5.send.emails']}" 
+                                             type="submit"
+                                             update="@form"
+                                             disabled="#{seguimientoProyectoView.intIdEstadoProyecto==37?true:seguimientoProyectoView.boProyectoEjecutado==true?false:true}"
+                                             icon="pi pi-send"
+                                             actionListener="#{seguimientoProyectoView.programarEnvioComunicado()}"
+                                             oncomplete="PF('dlgProgramarEnvio').show()"
+                                             styleClass="ui-button-warning">
+                            </p:commandButton>
+                        </div>
+
+                        <div class="field">
+                            <p:commandButton id="btnLogMail" 
+                                             value="#{msg['step5.log.emails']}" 
+                                             type="submit"
+                                             update="@form,frmLogmail"
+                                             disabled="#{seguimientoProyectoView.intIdEstadoProyecto==37?true:seguimientoProyectoView.boProyectoEjecutado==true?false:true}"
+                                             actionListener="#{seguimientoProyectoView.verLogMail}"
+                                             icon="pi pi-search"
+                                             oncomplete="PF('dlgLogMail').show()"
+                                             styleClass="ui-button-warning">
+                            </p:commandButton>
+                        </div>
+
+                        <!--div class="field">
+                            <p:commandButton actionListener="#{seguimientoProyectoView.descargarFisico}" 
+                                             value="#{msg['step5.download.paper.evaluations']}" 
+                                             icon="pi pi-download"
+                                             ajax="false"
+                                             disabled="#{seguimientoProyectoView.intIdEstadoProyecto==37?true:seguimientoProyectoView.boProyectoEjecutado==true?false:true}"
+                                             styleClass="ui-button-secondary">
+                                <p:fileDownload value="#{seguimientoProyectoView.fileIndividualFisico}" />
+                            </p:commandButton>
+                        </div-->
+                        <div class="field">
+                            <p:commandButton value="#{msg['step5.download.progress']}" ajax="false" 
+                                             actionListener="#{seguimientoProyectoView.generaExcel}" 
+                                             disabled="#{(seguimientoProyectoView.boProyectoEjecutado==true and seguimientoProyectoView.lstParticipantesIniciados.size()>0)?false:true}"
+                                             update="@this"
+                                             icon="pi pi-download"
+                                             styleClass="ui-button-secondary">
+                                <p:fileDownload value="#{seguimientoProyectoView.fileIndividual}" />
+                            </p:commandButton>
+                        </div>
+
+
+                    </div>
+                </h:form>
+            </div>
+
+
+
+            <div class="col-12 md:col-8">
+
+                <h:form id="frmEvaluados">
+                    <p:growl life="4000" showSummary="true" />
+                    <div class="card ui-fluid">
+                        <h5>#{msg['step3.evaluated.list']}</h5>
+                        <div class="field">
+
+                            <p:dataTable 
+                                id="tbEva"
+                                var="reg"
+                                widgetVar="tbEva"
+                                value="#{seguimientoProyectoView.lstParticipantesIniciados}" 
+                                rows="10"
+                                rowsPerPageTemplate="5,10,{ShowAll|'All'}"
+                                paginatorPosition="both"
+                                stripedRows="true"
+                                paginator="true" 
+                                selectionMode="single"
+                                selection=""
+                                size="small"
+                                reflow="true"
+                                paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                emptyMessage="#{msg['no.items']}"
+                                rowKey="#{reg.paIdParticipantePk}"
+                                rowIndexVar="index"
+                                filteredValue="#{seguimientoProyectoView.lstParticipantesIniciadosFiltrado}"
+                                globalFilterFunction="#{seguimientoProyectoView.globalFilterFunction}"
+                                >
+
+                                <f:facet name="header">
+                                    <div class="flex justify-content-end">
+                                        <p:inputText id="globalFilter" onkeyup="PF('tbEva').filter()" style="width:300px"
+                                                     placeholder="#{msg['adm.search.filter.global']}" />
+                                    </div>
+                                </f:facet>
+                                <!--c:if test="#{seguimientoProyectoView.lstParticipantesIniciados.size()>0?true:false}" >
+                                    <f:facet name="footer">
+                                #{msg['step5.number.evaluators']} #{seguimientoProyectoView.lstParticipantesIniciados.size()}
+                            </f:facet>
+                        </c:if-->
+
+                                <p:ajax event="rowSelect" listener="#{seguimientoProyectoView.onRowSelect}" update="frmListaEvaluaciones"/>
+                                <p:ajax event="rowUnselect" listener="#{seguimientoProyectoView.onRowUnselect}" update="frmListaEvaluaciones"/>
+
+                                <!--p:column style="width: 15px;">
+                                    <f:facet name="header">
+                                        <h:outputText value="#" />
+                                    </f:facet>
+                                    <h:outputText 
+                                        value="#{index + 1}" />
+                                </p:column--> 
+
+                                        <!--p:column headerText="#{msg['photo']}" width="70" style="width: 80px !important;" >
+                                            <p:graphicImage url="#{reg.paTxImgUrl}" height="75" width="75" class="classimg" rendered="#{reg.paTxImgUrl!=null}" />
+                                            <p:graphicImage value="/images/no-picture.png" height="75" width="75"  class="classimg" rendered="#{reg.paTxImgUrl==null}" />
+                                        </p:column-->
+
+                                <p:column headerText="#{msg['individual']}" sortBy="#{reg.paTxDescripcion}">
+                                    <p:outputLabel value="#{reg.paTxDescripcion}" />
+                                    <!--<
+                                        <p:panelGrid styleClass="ui-panelgrid-blank ui-fluid" style="padding: 0px;" >
+                                            <p:row>
+                                                <p:column  >
+                                                    <h:outputText value="#{reg.paTxDescripcion}" />
+                                                </p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column>
+                                                    <p:outputLabel value="#{reg.paTxCorreo}" style="font-style: normal; font-weight: normal; font-size: 12px !important;" />
+                                                </p:column>
+                                            </p:row>
+                                        </p:panelGrid>
+                                    -->
+                                    <!--<br/><br/>
+                                    <p:progressBar value="#{reg.bdPorcentajeAvance}" labelTemplate="#{reg.bdPorcentajeAvance}%" />-->
+
+                                </p:column>                           
+
+                                <p:column headerText="#{msg['email']}" sortBy="#{reg.paTxCorreo}"> 
+                                    <h:outputText value="#{reg.paTxCorreo}" />
+                                </p:column>
+
+                                <!--
+                                <p:column headerText="Estado evaluado" sortBy="#{reg.paStrEstado}" style="text-align:center" >
+                                    <h:outputText value="#{reg.paStrEstado}" />
+                                </p:column>
+                                -->
+                                <!--
+                                <p:column headerText="Cuestionario" sortBy="#{reg.strDescCuestionario}" style="text-align:center" >
+                                    <h:outputText value="#{reg.strDescCuestionario}" />
+                                </p:column>
+                                -->
+
+                                <p:column headerText="#{msg['step5.percent.progress.evaluted']}" sortBy="#{reg.bdPorcentajeAvance}" >
+                                    <p:progressBar value="#{reg.bdPorcentajeAvance}" displayOnly="true" labelTemplate="#{reg.bdPorcentajeAvance}%" />
+                                </p:column>
+
+                            </p:dataTable>
+
+                        </div>
+                    </div>
+                </h:form>
+            </div>
+
+            <div class="col-12 md:col-12">
+
+                <h:form id="frmListaEvaluaciones">
+                    <p:growl life="4000" showSummary="true" />
+                    <div class="card ui-fluid">
+                        <h5>#{msg['step5.general.progress']}</h5>
+                        <div class="field">
+                            <p:progressBar value="#{seguimientoProyectoView.intPorcentajeGeneral}" labelTemplate="#{seguimientoProyectoView.intPorcentajeGeneral}%" id="IdPorcentajeGeneral" />
+                        </div>
+                        <div class="field">
+                            <p:dataTable 
+                                id="tblRed"
+                                var="red"
+                                widgetVar="tblRed"
+                                value="#{seguimientoProyectoView.lstRelacionEvaluadoEvaluador}" 
+                                rows="30"
+                                size="small"
+                                rowsPerPageTemplate="5,10,30,{ShowAll|'All'}"
+                                paginatorPosition="both"
+                                paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                stripedRows="true"
+                                paginator="true"  
+                                reflow="true"
+                                emptyMessage="#{msg['no.items']}"
+                                rowIndexVar="index"
+                                filteredValue="#{seguimientoProyectoView.lstRelacionEvaluadoEvaluadorFiltrado}"
+                                globalFilterFunction="#{seguimientoProyectoView.globalFilterFunctionRed}"
+                                >
+
+                                <f:facet name="header">
+                                    <div class="flex justify-content-end">
+                                        <p:inputText id="globalFilter" onkeyup="PF('tblRed').filter()" style="width:300px"
+                                                     placeholder="#{msg['adm.search.filter.global']}" />
+                                    </div>
+                                </f:facet>
+
+                                <!--c:if test="#{seguimientoProyectoView.lstRelacionEvaluadoEvaluador.size()>0?true:false}" >
+                                    <f:facet name="footer">
+                                #{msg['step5.total.evaluations']} #{seguimientoProyectoView.lstRelacionEvaluadoEvaluador.size()}
+                            </f:facet>
+                        </c:if-->
+
+
+                                <p:column headerText="#{msg['evaluator']}" sortBy="#{red.strDescEvaluador}" sortPriority="1" groupRow="true" sortOrder="asc">
+                                    <h:outputText value="#{red.strDescEvaluador}" />
+                                </p:column>   
+
+                                <p:column style="width: 40px;">
+                                    <f:facet name="header">
+                                        <h:outputText value="#" />
+                                    </f:facet>
+                                    <h:outputText 
+                                        value="#{index + 1}" />
+                                </p:column> 
+                                <p:column headerText="#{msg['relationship']}" sortBy="#{red.strDescRelacion}" >
+                                    <!--<h:outputText value="#{red.strDescRelacion}" />-->
+
+                                    <p:tag value="#{red.strDescRelacion}" style=" background-color: #{red.strColorRelacion};" />
+                                </p:column>
+                                <!--
+                                <p:column headerText="#{msg['email']}" sortBy="#{red.strCorreoEvaluador}">
+                                    <h:outputText value="#{red.strCorreoEvaluador}" />
+                                </p:column>  
+                                -->
+                                <p:column headerText="#{msg['evaluated']}" sortBy="#{red.strDescEvaluado}" sortPriority="2" groupRow="true" >
+                                    <h:outputText value="#{red.strDescEvaluado}" />
+                                </p:column>   
+
+                                <p:column headerText="#{msg['status']}" sortBy="#{red.blEvaluacionTerminada}" >
+                                    <p:tag  value="#{red.blEvaluacionTerminada==true?msg['complete']:msg['pending']}" 
+                                            severity="#{red.blEvaluacionTerminada==true?'success':''}" />
+                                </p:column> 
+
+                                <p:column headerText="#{msg['cabecera.ultima.conexion']}" >
+                                    <h:outputText value="#{red.strLastLogin}" />
+                                </p:column> 
+
+                                    <!--p:column headerText="#{msg['evaluation.manual']}" style="text-align:center" >
+                                        <p:commandButton actionListener="#{seguimientoProyectoView.realizaEvaluacion(red)}" icon="pi pi-cloud-upload" styleClass="rounded-button ui-button-outlined" disabled="#{red.blEvaluacionTerminada==true or seguimientoProyectoView.intIdEstadoProyecto==37}" update="@form" >
+                                            <p:confirm header="#{msg['confirmation']}" message="#{msg['step5.sure.take.quiz.manual']}" icon="ui-icon-alert" />
+                                        </p:commandButton>
+                                    </p:column>
+
+                                    <p:column headerText="#{msg['step5.send.reminder.individual']}" style="text-align:center" >
+                                        <p:commandButton actionListener="#{seguimientoProyectoView.enviarRecordatorioPersonal(red)}" icon="pi pi-send" styleClass="rounded-button ui-button-outlined" disabled="#{red.blEvaluacionTerminada==true or seguimientoProyectoView.intIdEstadoProyecto==37}" update="@form" >
+                                            <p:confirm header="#{msg['confirmation']}" message="#{msg['step5.sure.send.reminder']}" icon="ui-icon-alert" />
+                                        </p:commandButton>
+                                    </p:column-->
+
+                                <p:column headerText="#{msg['actions']}"  >
+                                    <p:commandLink value="#{msg['evaluation.manual']}" actionListener="#{seguimientoProyectoView.realizaEvaluacion(red)}" disabled="#{red.blEvaluacionTerminada==true or seguimientoProyectoView.intIdEstadoProyecto==37}" update="@form" >
+                                        <p:confirm header="#{msg['confirmation']}" message="#{msg['step5.sure.take.quiz.manual']}" icon="ui-icon-alert" />
+                                    </p:commandLink>
+                                    /
+                                    <p:commandLink value="#{msg['step5.send.reminder.individual']}" actionListener="#{seguimientoProyectoView.enviarRecordatorioPersonal(red)}" disabled="#{red.blEvaluacionTerminada==true or seguimientoProyectoView.intIdEstadoProyecto==37}" update="@form" >
+                                        <p:confirm header="#{msg['confirmation']}" message="#{msg['step5.sure.send.reminder']}" icon="ui-icon-alert" />
+                                    </p:commandLink>
+                                    /
+                                    <p:commandLink value="#{msg['log.activity']}" actionListener="#{seguimientoProyectoView.enviarRecordatorioPersonal(red)}" disabled="true" update="@form" >
+                                        <p:confirm header="#{msg['confirmation']}" message="#{msg['step5.sure.send.reminder']}" icon="ui-icon-alert" />
+                                    </p:commandLink>
+                                </p:column>
+                            </p:dataTable>
+
+                        </div>
+
+                    </div>
+                </h:form>
+            </div>
+
+        </div>
+
+        <p:dialog widgetVar="dlgLicencias" header="#{msg['step5.subtitle.manage.licenses']}" width="500"
+                  draggable="false" closable="true" hideEffect="drop" closeOnEscape="true" showEffect="drop" 
+                  modal="true" visible="false"
+                  resizable="false" >
+            <h:form>
+                <p:growl id="growlFormUduario" showDetail="false" life="4000" />
+
+                <div class="card ui-fluid">
+                    <div class="field">
+                        <p:outputLabel value="#{msg['step5.required.licenses.for.start']}"></p:outputLabel>
+                    </div>
+                    <div class="field grid align-items-center">
+                        <c:if test="#{seguimientoProyectoView.intLicenciasIndividualesRequerido > 0}">
+                            <div class="col">
+                                <p:outputLabel value="#{msg['step5.number.individual.licences']}" />
+                            </div>                                
+                            <div class="col" >
+                                <p:outputLabel value="#{seguimientoProyectoView.intLicenciasIndividualesRequerido}" />
+                            </div>
+                        </c:if>
+                        <c:if test="#{seguimientoProyectoView.intLicenciasMasivasRequerido > 0}">
+                            <div class="col" >
+                                <p:outputLabel value="#{msg['step5.number.massive.licences']}" />
+                            </div>
+                            <div class="col" >
+                                <p:outputLabel value="#{seguimientoProyectoView.intLicenciasMasivasRequerido}" />
+                            </div>
+                        </c:if>
+                    </div>
+                    <div class="field">
+                        <p:outputLabel value="#{msg['step5.reserve.licenses.for.project']}" ></p:outputLabel>
+                    </div>    
+
+                    <div class="field">
+                        <p:commandButton value="#{msg['yes']}" style="width: 100%;"  icon="pi pi-lock" update="form,frmEvaluados,frmListaEvaluaciones"
+                                         actionListener="#{seguimientoProyectoView.reservarLicencias}" oncomplete="PF('dlgLicencias').hide()" />
+                    </div>
+                    <div class="field">
+                        <p:commandButton value="#{msg['no']}" styleClass="ui-button-danger" 
+                                         style="width: 100%;"
+                                         icon="pi pi-times"  onclick="PF('dlgLicencias').hide()" />
+                    </div>
+
+                </div>
+
+                <!--center>
+                    <p:graphicImage value="../images/logoJaio360.jpg" width="130" height="50" />
+                </center-->
+            </h:form>
+        </p:dialog>        
+
+        <p:dialog widgetVar="dlgLogMail" header="#{msg['step5.search.notification.title']}" 
+                  draggable="false" closable="true" hideEffect="drop" closeOnEscape="true" showEffect="drop" 
+                  modal="true" visible="false"
+                  resizable="false" >
+            <h:form id="frmLogmail" >
+                <p:growl id="growlFormLog" showDetail="false" life="4000" />
+                <!--
+                <div class="p-field p-formgrid p-grid">
+                    <div class="p-col" >
+                        <p:outputLabel for="ini" value="#{msg['step5.search.send.ini.date']}"/>
+                        <p:datePicker id="ini" value="#{seguimientoProyectoView.ini}" required="true" readonlyInput="false"/>
+                    </div>
+                    <div class="p-col" >
+                        <p:outputLabel for="end" value="#{msg['step5.search.send.end.date']}"/>
+                        <p:datePicker id="end" value="#{seguimientoProyectoView.end}" required="true" readonlyInput="false"/>
+                    </div>
+                </div>
+                -->
+                <div class="card ui-fluid">
+                    <div class="field">
+                        <p:commandButton value="#{msg['refresh']}" icon="pi pi-refresh" update="frmLogmail"
+                                         actionListener="#{seguimientoProyectoView.buscarEmails}"/>
+                    </div>
+
+                    <div class="field">
+                        <p:dataTable 
+                            var="reg"
+                            value="#{seguimientoProyectoView.lstNotificacion}" 
+                            rows="5"
+                            paginatorPosition="bottom"
+                            stripedRows="true"
+                            paginator="true" 
+                            sortMode="multiple"
+                            size="small"
+                            paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                            emptyMessage="#{msg['no.items']}"
+                            rowKey="#{reg.noIdNotificacionPk}"
+                            rowIndexVar="index"
+                            >
+
+                            <p:column style="width: 15px;">
+                                <f:facet name="header">
+                                    <h:outputText value="#" />
+                                </f:facet>
+                                <h:outputText 
+                                    value="#{index + 1}" />
+                            </p:column> 
+                            <p:column headerText="#{msg['step5.to']}" sortBy="#{reg.lstDestinatarios.get(0)}" >
+                                <p:outputLabel value="#{reg.lstDestinatarios.get(0)}" />
+                            </p:column>
+                            <p:column headerText="#{msg['step5.register.date']}" sortBy="#{reg.noFeCreacion}">
+                                <p:outputLabel value="#{reg.noFeCreacion}" />
+                            </p:column>
+                            <p:column headerText="#{msg['step5.sended.date']}" sortBy="#{reg.noFeEnvio}">
+                                <p:outputLabel value="#{reg.noFeEnvio}" />
+                            </p:column>
+                            <p:column headerText="#{msg['step5.status']}" sortBy="#{reg.noTxEstado}">
+                                <p:outputLabel value="#{reg.noTxEstado}" title="#{reg.noTxError}" />
+                            </p:column>
+                        </p:dataTable>
+
+                    </div>      
+                </div>  
+            </h:form>
+        </p:dialog>     
+
+        <p:dialog widgetVar="dlgProgramarEnvio" header="#{msg['programar.envio']}" width="500" visible="false"
+                  closable="true" hideEffect="drop" closeOnEscape="true" showEffect="drop" 
+                  modal="true" responsive="true" resizable="true"  > 
+            <h:form>
+                <p:growl id="growlFormEmails" showDetail="false" life="4000" />
+
+                <div class="card ui-fluid">
+                    <div class="field">
+                        <p:outputLabel value="#{msg['seleccione.envio']}" for="@next" />
+                        <p:selectOneRadio id="indTypeSend" value="#{seguimientoProyectoView.inTypeMethodSend}" layout="pageDirection" required="true"  >
+                            <f:selectItem itemLabel="#{msg['inmediato']}" itemValue="0" />
+                            <f:selectItem itemLabel="#{msg['programado']}" itemValue="1" />
+                            <p:ajax update="@form" event="valueChange" listener="#{seguimientoProyectoView.changeTypeSend()}" />
+                        </p:selectOneRadio>
+                    </div>
+                    <!--
+                    <div class="p-field">
+                        <p:outputLabel value="Hora actual local, de acuerdo a su zona horaria" for="@next" />
+                        <p:clock rendered="#{seguimientoProyectoView.inTypeMethodSend==1}"  />
+                    </div>
+                    -->
+
+                    <div class="field">
+                        <p:outputLabel value="#{msg['postergar.envio']}" for="@next" />
+                    </div>
+                    <div class="field">
+                        <p:selectOneMenu value="#{seguimientoProyectoView.strHorario}"  autoWidth="true" 
+                                         requiredMessage="#{msg['must.select.an.evaluation']}" 
+                                         required="true"
+                                         disabled="#{seguimientoProyectoView.inTypeMethodSend==0}">
+                            <f:selectItem itemLabel="#{msg['please.select']}" itemValue="" noSelectionOption="true"/>
+                            <f:selectItems value="#{seguimientoProyectoView.mapItemsHorarios}" />
+                        </p:selectOneMenu>
+                    </div>
+
+                    <div class="field">
+                        <p:commandButton value="#{msg['yes']}" style="width: 100%;"  icon="pi pi-lock" update="form"
+                                         actionListener="#{seguimientoProyectoView.enviarRecordatorio()}" oncomplete="PF('dlgProgramarEnvio').hide()" >
+                            <p:confirm header="#{msg['confirmation']}" message="#{msg['step5.confirmation.pending.reminders']}" icon="pi pi-info-circle" />                 
+                        </p:commandButton>
+                    </div>
+                    <div class="field">
+                        <p:commandButton value="#{msg['no']}" styleClass="ui-button-danger" 
+                                         style="width: 100%;"
+                                         icon="pi pi-times"  onclick="PF('dlgProgramarEnvio').hide()" />
+                    </div>
+
+                </div>
+            </h:form>
+        </p:dialog>   
+
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,267 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                template="/WEB-INF/template.xhtml">    
+
+    <ui:define name="head"> 
+    </ui:define>
+
+    <ui:define name="title">
+        <h:outputLabel value="#{msg['label.proxy.mode.client']} #{stepOneView.objUsuarioInfoProxy.strEmail}" rendered="#{stepOneView.objUsuarioInfoProxy!=null}" />
+        <h:outputLabel value="#{msg['project.info']} #{stepOneView.objProyectoInfo.strDescNombre}" />
+    </ui:define>
+    <!--ui:define name="cabecera">
+        <ui:include src="cabecera.xhtml" />
+        <p:staticMessage severity="warn" summary="#{msg['label.proxy.mode.client']}" detail="#{stepOneView.objUsuarioInfoProxy.strEmail}" rendered="#{stepOneView.objUsuarioInfoProxy!=null}" style="width: 100%; margin-top: 5px; margin-left: 2px; margin-right: 2px;"/>
+        <p:staticMessage severity="info" summary="#{msg['info']}" detail="#{msg['project.info']} #{stepOneView.objProyectoInfo.strDescNombre}" style="width: 100%; margin-top: 5px; margin-left: 2px; margin-right: 2px;"/>
+    </ui:define-->
+    <ui:define name="helpSteps">
+
+        <h:form id="formPrincipalProyecto">
+
+            <p:steps readonly="false" activeIndex="#{stepFourView.activeIndex}" >
+                <p:menuitem value="#{msg['step.1']}" actionListener="#{stepOneView.goToStep(1)}"/>
+                <p:menuitem value="#{msg['step.2']}" actionListener="#{stepOneView.goToStep(2)}"/>
+                <p:menuitem value="#{msg['step.3']}" actionListener="#{stepOneView.goToStep(3)}"/>
+                <p:menuitem value="#{msg['step.4']}" actionListener="#{stepOneView.goToStep(4)}"/>
+                <p:menuitem value="#{msg['step.5']}" actionListener="#{stepOneView.goToStep(5)}"/>
+                <p:menuitem value="#{msg['step.6']}" actionListener="#{stepOneView.goToStep(6)}"/>
+            </p:steps>
+            <p:spacer/>
+            <center>
+                <p:commandButton value="#{msg['back']}" type="submit" actionListener="#{stepFourView.backStep()}" update="formPrincipalProyecto" styleClass="ui-button-secondary" icon="pi pi-angle-left" />
+                <p:spacer/>
+                <p:commandButton value="#{msg['next']}" type="submit" actionListener="#{stepFourView.nextStep()}" update="formPrincipalProyecto" styleClass="ui-button-secondary" icon="pi pi-angle-right" />                   
+            </center>
+            <p:spacer/>
+
+        </h:form>  
+
+    </ui:define>
+
+    <ui:define name="content">
+
+        <div class="grid">
+
+
+            <div class="col-12 md:col-6">
+
+
+                <div class="card ui-fluid">
+                    <h5>#{msg['announcement']}</h5>
+
+                    <h:form>
+                        <p:growl life="4000" showSummary="true" />
+
+                        <!--p:outputLabel value="#{msg['step4.announcement.desc']}" /-->
+
+                        <div class="field">
+                            <p:outputLabel for="strAsuntoConvocatoria" value="#{msg['subject']}" />
+
+                            <p:inputText id="strAsuntoConvocatoria" value="#{redactarMensajesView.strAsuntoConvocatoria}" 
+                                         required="true" maxlength="200" requiredMessage="#{msg['adm.least.value']}" 
+                                         >
+                            </p:inputText>
+                            <!--small class="p-d-block">#{msg['step4.announcement.label.1']}</small-->
+
+                        </div>
+                        <div class="field">
+                            <p:outputLabel for="strTituloConvocatoria" value="#{msg['title']}" />
+
+                            <p:inputText id="strTituloConvocatoria" value="#{redactarMensajesView.strTituloConvocatoria}" 
+                                         required="true" maxlength="200" requiredMessage="#{msg['adm.least.value']}" 
+                                         >
+                            </p:inputText>
+                            <!--small class="p-d-block">#{msg['step4.announcement.label.2']}</small-->
+
+                        </div>
+                        <div class="field">
+                            <p:outputLabel for="strURLLogoCliente" value="#{msg['url.logo.client']}" />
+                            <p:inputText id="strURLLogoCliente" value="#{redactarMensajesView.strURLLogoCliente}" 
+                                         maxlength="500">
+                                <f:validator validatorId="validaURLNotRequired" />
+                            </p:inputText>
+                            <br/><br/>
+                            <p:graphicImage url="#{redactarMensajesView.strURLLogoCliente}"
+                                            width="150" />
+                            <!--small class="p-d-block">#{msg['step4.announcement.label.4']}</small-->
+                        </div>
+                        <div class="field">
+                            <p:outputLabel for="strParrafoConvocatoria" value="#{msg['step4.announcement.content.paragraph']}" />
+                            <p:textEditor id="strParrafoConvocatoria" value="#{redactarMensajesView.strParrafoConvocatoria}" 
+                                          required="true" requiredMessage="#{msg['adm.least.value']}" 
+                                          >
+                                <f:facet name="toolbar">
+                                    <span class="ql-formats">
+                                        <button class="ql-bold"></button>
+                                        <button class="ql-italic"></button>
+                                        <button class="ql-underline"></button>
+                                        <button class="ql-strike"></button>
+                                    </span>
+                                    <span class="ql-formats">
+                                        <select class="ql-size"></select>
+                                    </span>
+                                </f:facet>
+                            </p:textEditor>
+                            <!--small class="p-d-block">#{msg['step4.announcement.label.3']}</small-->
+                        </div>
+                        <div class="field">
+                            <p:commandButton value="#{msg['save']}" styleClass="ui-button-warning" process="@form" update="@form"
+                                             icon="pi pi-eye" actionListener="#{redactarMensajesView.previewConvocatoria()}">
+                            </p:commandButton>
+                        </div>   
+                    </h:form>
+                    <h:form>
+                                            <!--h4>#{msg['step4.email.test']}</h4-->
+                        <p:growl life="4000" showSummary="true" />
+
+                        <div class="field">
+
+                            <p:outputLabel for="correoExtra" value="#{msg['email']}" />
+                            <p:inputText id="correoExtra" widgetVar="correoExtra" 
+                                         required="true" value="#{redactarMensajesView.correoExtra}" 
+                                         maxlength="150" requiredMessage="#{msg['adm.least.value']}" >
+                                <f:validator validatorId="validarCorreo" /> 
+                            </p:inputText>
+                        </div>
+                        <div class="field">
+                            <p:commandButton 
+                                actionListener="#{redactarMensajesView.enviarmeMensajeria}" 
+                                icon="pi pi-send"  process="@form"
+                                value="#{msg['send.email']}" update="@form" />
+                        </div>
+                    </h:form>
+
+                </div>
+
+
+                <!--div class="col-12 md:col-6">
+                    <div class="card ui-fluid">
+                        <h5>#{msg['preview']}</h5>
+                        <div class="field">
+                            <p:outputLabel id="outconvoper" value="#{redactarMensajesView.strPreviewConvocatoriaTemplate}" escape="false"  />
+                        </div>
+                    </div>
+                </div-->
+
+
+            </div>
+            <div class="col-12 md:col-6">
+                <h:form>
+                    <p:growl life="4000" showSummary="true" />
+                    <div class="card ui-fluid">
+                        <h5>#{msg['step4.welcome.desc']}</h5>
+                        <div class="field">
+                            <p:outputLabel for="strBienvenidaRecomendaciones" value="#{msg['step4.welcome.recomendations']}" />
+                            <p:textEditor id="strBienvenidaRecomendaciones" value="#{redactarMensajesView.strBienvenidaRecomendaciones}" 
+                                          required="true" requiredMessage="#{msg['adm.least.value']}" >
+                                <f:facet name="toolbar">
+                                    <span class="ql-formats">
+                                        <button class="ql-bold"></button>
+                                        <button class="ql-italic"></button>
+                                        <button class="ql-underline"></button>
+                                        <button class="ql-strike"></button>
+                                    </span>
+                                    <span class="ql-formats">
+                                        <select class="ql-size"></select>
+                                    </span>
+                                </f:facet>
+                            </p:textEditor>
+                            <!--small class="p-d-block">#{msg['step4.welcome.label.1']}</small-->
+                        </div>
+
+                        <div class="field">
+                            <p:outputLabel for="strBienvenidaConfidencialidad" value="#{msg['step4.welcome.confidentiality']}" />
+                            <p:textEditor id="strBienvenidaConfidencialidad" value="#{redactarMensajesView.strBienvenidaConfidencialidad}" 
+                                          required="true" requiredMessage="#{msg['adm.least.value']}" >
+                                <f:facet name="toolbar">
+                                    <span class="ql-formats">
+                                        <button class="ql-bold"></button>
+                                        <button class="ql-italic"></button>
+                                        <button class="ql-underline"></button>
+                                        <button class="ql-strike"></button>
+                                    </span>
+                                    <span class="ql-formats">
+                                        <select class="ql-size"></select>
+                                    </span>
+                                </f:facet>
+                            </p:textEditor>
+                            <!--small class="p-d-block">#{msg['step4.welcome.label.2']}</small-->
+                        </div>
+
+                        <div class="field">
+                            <p:outputLabel for="strBienvenidaAtentamente" value="#{msg['step4.welcome.end']}" />
+                            <p:textEditor id="strBienvenidaAtentamente" value="#{redactarMensajesView.strBienvenidaAgradecimiento}" 
+                                          required="true" requiredMessage="#{msg['adm.least.value']}" 
+                                          >
+                                <f:facet name="toolbar">
+                                    <span class="ql-formats">
+                                        <button class="ql-bold"></button>
+                                        <button class="ql-italic"></button>
+                                        <button class="ql-underline"></button>
+                                        <button class="ql-strike"></button>
+                                    </span>
+                                    <span class="ql-formats">
+                                        <select class="ql-size"></select>
+                                    </span>
+                                </f:facet>
+                            </p:textEditor>
+                            <!--small class="p-d-block">#{msg['step4.welcome.label.3']}</small-->
+                        </div>
+
+                        <div class="field">
+                            <p:commandButton value="#{msg['save']}" styleClass="ui-button-warning" update="@form" icon="pi pi-eye" actionListener="#{redactarMensajesView.previewBienvenida()}">
+                            </p:commandButton>
+                        </div>   
+
+                        <!--div class="field">
+                            <p:outputLabel id="outconvoper" value="#{redactarMensajesView.strPreviewBienvenidaTemplate}" escape="false" />
+                        </div-->
+                    </div>
+                </h:form>
+            </div>
+            <div class="col-12 md:col-6">
+                <h:form>
+                    <p:growl life="4000" showSummary="true" />
+                    <div class="card ui-fluid">
+                        <h5>#{msg['regards']}</h5>
+
+                        <div class="field">
+                            <p:outputLabel for="strAgradecimiento" value="#{msg['regard']}" />
+                            <p:textEditor id="strAgradecimiento" value="#{redactarMensajesView.strAgradecimiento}" 
+                                          required="true" requiredMessage="#{msg['adm.least.value']}" 
+                                          >
+                                <f:facet name="toolbar">
+                                    <span class="ql-formats">
+                                        <button class="ql-bold"></button>
+                                        <button class="ql-italic"></button>
+                                        <button class="ql-underline"></button>
+                                        <button class="ql-strike"></button>
+                                    </span>
+                                    <span class="ql-formats">
+                                        <select class="ql-size"></select>
+                                    </span>
+                                </f:facet>
+                            </p:textEditor>
+                            <!--small class="p-d-block">#{msg['step4.regards.label.1']}</small-->
+                        </div>
+
+                        <div class="field">
+                            <p:commandButton value="#{msg['save']}" styleClass="ui-button-warning" update="@form" icon="pi pi-eye" actionListener="#{redactarMensajesView.previewAgradecimiento()}">
+                            </p:commandButton>
+                        </div>   
+
+
+                        <!--div class="field">
+                            <p:outputLabel id="outconvoper" value="#{redactarMensajesView.strPreviewAgradecimientoTemplate}" escape="false" />
+                        </div-->
+                    </div>
+                </h:form>
+            </div>
+        </div>
+
+    </ui:define>
+</ui:composition>

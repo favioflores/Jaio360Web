@@ -17,14 +17,14 @@
             }
             .divTittle {
                 background-color: #ffffff;
-                color: #1480d4;
+                color: #1141A8;
                 font-weight: bold;
                 font-size: 14px;
                 text-align: center;
             }
             .divCarita {
                 background-color: #ffffff;
-                color: #1480d4;
+                color: #1141A8;
                 font-size: 15px;
                 text-align: center;
             }
@@ -49,7 +49,7 @@
             }
             .divDatosResaltado {
                 background-color: #ffffff;
-                color: #1480d4;
+                color: #1141A8;
                 font-size: 12px;
                 font-weight: bold;
                 text-align: center;
@@ -64,7 +64,7 @@
                 border-radius: 15px 15px 15px 15px;
                 -moz-border-radius: 15px 15px 15px 15px;
                 -webkit-border-radius: 15px 15px 15px 15px;
-                border: 5px solid #1480d4;
+                border: 5px solid #1141A8;
                 padding: 3px 3px 3px 3px;
                 background: #ffffff;
                 text-align: center;
@@ -73,7 +73,7 @@
                 border-radius: 15px 15px 15px 15px;
                 -moz-border-radius: 15px 15px 15px 15px;
                 -webkit-border-radius: 15px 15px 15px 15px;
-                border: 0px solid #1480d4;
+                border: 0px solid #1141A8;
                 background: #ffffff;
                 text-align: center;
             }
@@ -139,7 +139,7 @@
                                                     <td>&nbsp;</td>
                                                     <td>
                                                         <table  width="100%" align="center" >
-                                                            <td><img src="https://www.jaio360-app.com/images/logoJaio360.jpg?pfdrid_c=true" alt="" width="130"  /></td>
+                                                            <td><img src="https://www.jaio360-app.com/images/logoJaio360.png?pfdrid_c=true" alt="" width="130"  /></td>
                                                             <td><img src="$URLLOGO" alt="" width="130" /></td>
                                                         </table>
                                                     </td>
@@ -169,7 +169,7 @@
                                                     <td>
                                                         <div class="divDatos">
                                                             $TEMPLATEVERIFICACIONPARRAFO2 
-								<a href="$URL/ui/verifyAccount.jsf?email=$EMAIL">$TEMPLATEVERIFICACIONLINK</a>
+								<a href="$URL/verifyAccount.jsf?email=$EMAIL">$TEMPLATEVERIFICACIONLINK</a>
                                                         </div>
                                                     </td>
                                                     <td>&nbsp;</td>
@@ -233,7 +233,7 @@
                 </td>
             </tr>
             <tr>
-                <td height="60"><div class="divDatoEnvio">Copyright © 2022 JAIO360</div></td>
+                <td height="60"><div class="divDatoEnvio">Copyright © 2024 JAIO360</div></td>
             </tr>
         </table>
     </body>

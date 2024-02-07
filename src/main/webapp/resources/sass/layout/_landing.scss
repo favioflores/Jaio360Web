@@ -34,7 +34,7 @@
     
     .landing-header {
         height: 80px;
-        background-color: #0388e5;
+        background-color: #072e80;
         position: fixed;
         left: 0;
         width: 100%;
@@ -245,12 +245,12 @@
             .pricing-box {
                 @include border-radius(3px);
                 padding: 10px 0;
-                background-color: #e1e6e9;
+                background-color: #072e80;
                 @include transition(background-color .3s);
                 
                 .pricing-fee {
                     @include border-radius(50px);
-                    background-color: #589cf0;
+                    background-color: #072e80;
                     color: #ffffff;
                     width: 100px;
                     height: 100px;
@@ -260,7 +260,7 @@
                 }
                                 
                 &:hover {
-                    background-color: #006de5;
+                    background-color: #072e80;
                     color: #ffffff;
                     
                     p {
@@ -268,8 +268,8 @@
                     }
                     
                     .pricing-fee {
-                        background-color: #eaeeef;
-                        color: #589cf0;
+                        background-color: #072e80;
+                        color: #072e80;
                     }
                 }
             }
@@ -359,7 +359,7 @@
                             
         .landing-header {
             height: 80px;
-            background-color: #0388e5;
+            background-color: #072e80;
             
             .landing-header-content {
                 width: 100%;

@@ -24,6 +24,12 @@
         <property name="coTxDescripcion" type="string">
             <column name="CO_TX_DESCRIPCION" length="3000" not-null="true" />
         </property>
+        <property name="coNrPuntajeRequerido" type="big_decimal">
+            <column name="CO_NR_PUNTAJE_REQUERIDO" precision="16" scale="10" />
+        </property>
+        <property name="coNrPuntajeMinimoRequerido" type="big_decimal">
+            <column name="CO_NR_PUNTAJE_MINIMO_REQUERIDO" precision="16" scale="10" />
+        </property>
         <set name="componentes" inverse="true">
             <key>
                 <column name="CO_ID_COMPONENTE_REF_FK">

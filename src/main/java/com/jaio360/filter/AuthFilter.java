@@ -17,7 +17,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
-import org.apache.commons.logging.LogFactory;
 
 @WebFilter(filterName = "AuthFilter", urlPatterns = {"*.xhtml"})
 public class AuthFilter implements Filter {
@@ -102,7 +101,7 @@ public class AuthFilter implements Filter {
             } catch (Exception e) {
             }
 
-            res.sendRedirect(req.getContextPath() + "/ui/login.jsf");  // Anonymous user. Redirect to login page
+            res.sendRedirect(req.getContextPath() + "/login.jsf");  // Anonymous user. Redirect to login page
 
         } catch (IOException e) {
             log.error(e);
@@ -119,16 +118,20 @@ public class AuthFilter implements Filter {
                 || strUri.endsWith(Constantes.STR_JPG)
                 || strUri.endsWith(Constantes.STR_HTM)
                 || strUri.endsWith(Constantes.STR_JS)
-                || strUri.endsWith(Constantes.STR_SWF)
-                || strUri.contains("/ui/login.jsf")
-                || strUri.contains("/ui/accountVerified.jsf")
-                || strUri.contains("/ui/accountNotExist.jsf")
-                || strUri.contains("/ui/recoveryPassword.jsf")
-                || strUri.contains("/ui/sesionExpirada.jsf")
-                || strUri.contains("/ui/test.jsf")
-                || strUri.contains("/ui/accountVerifiedSuccess.jsf")
-                || strUri.contains("/ui/verifyAccount.jsf")
-                || strUri.contains("/ui/resourceNotFound.jsf")
+                || strUri.endsWith(Constantes.STR_MP4)
+                
+                || strUri.contains("/login.jsf")
+                || strUri.contains("/accountVerified.jsf")
+                || strUri.contains("/accountNotExist.jsf")
+                || strUri.contains("/recoveryPassword.jsf")
+                || strUri.contains("/sesionExpirada.jsf")
+                || strUri.contains("/accountVerifiedSuccess.jsf")
+                || strUri.contains("/verifyAccount.jsf")
+                || strUri.contains("/resourceNotFound.jsf")
+                || strUri.contains("/help.jsf")
+                
+                || strUri.contains("/landing.jsf")
+                
                 || strUri.contains("/public/")
                 || strUri.contains("javax.faces.resource");
     }
@@ -137,12 +140,13 @@ public class AuthFilter implements Filter {
 
         String strUri = req.getServletPath();
 
-        return strUri.contains("/ui/stepOne.jsf")
-                || strUri.contains("/ui/stepTwo.jsf")
-                || strUri.contains("/ui/stepThree.jsf")
-                || strUri.contains("/ui/stepFour.jsf")
-                || strUri.contains("/ui/stepFive.jsf")
-                || strUri.contains("/ui/stepSix.jsf")
-                || strUri.contains("/ui/dashboard.jsf");
+        return strUri.contains("/stepOne.jsf")
+                || strUri.contains("/stepTwo.jsf")
+                || strUri.contains("/stepThree.jsf")
+                || strUri.contains("/stepFour.jsf")
+                || strUri.contains("/stepFive.jsf")
+                || strUri.contains("/stepSix.jsf")
+                || strUri.contains("/dashboardDetail.jsf")
+                || strUri.contains("/dashboard.jsf");
     }
 }

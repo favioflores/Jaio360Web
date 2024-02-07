@@ -26,6 +26,15 @@ public class WelcomeView extends BaseView implements Serializable {
     private Integer intEvaluationPreferenceView;
     private List<ProyectoInfo> lstEvaluaciones;
     private int cantidadLstEvaluaciones;
+    private String strFeedback;
+
+    public String getStrFeedback() {
+        return strFeedback;
+    }
+
+    public void setStrFeedback(String strFeedback) {
+        this.strFeedback = strFeedback;
+    }
 
     public Integer getIntEvaluationPreferenceView() {
         return intEvaluationPreferenceView;
@@ -99,12 +108,23 @@ public class WelcomeView extends BaseView implements Serializable {
             HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
             session.removeAttribute("evalInfo");
             session.setAttribute("evalInfo", objProyectoInfo);
-            FacesContext.getCurrentInstance().getExternalContext().redirect("ejecutarEvaluacion.jsf");
+            FacesContext.getCurrentInstance().getExternalContext().redirect("makeAssessment.jsf");
 
         } catch (IOException ex) {
             log.error(ex);
         }
 
+    }
+
+    public void sendFeedBack() {
+
+        try {
+
+            mostrarAlertaInfo("feedback.enviado");
+
+        } catch (Exception e) {
+            mostrarError(log, e);
+        }
     }
 
 }

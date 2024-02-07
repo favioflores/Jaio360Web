@@ -27,73 +27,61 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
-public class CuestionarioDAO implements Serializable
-{  
-    private Session sesion; 
-    private Transaction tx;  
+public class CuestionarioDAO implements Serializable {    
 
+    private Session sesion;    
+    private Transaction tx;    
+    
     private Logger log = Logger.getLogger(CuestionarioDAO.class);
     
-    public long guardaCuestionario(Cuestionario cuestionario) throws HibernateException 
-    { 
-        long id = 0;  
-
-        try 
-        { 
-            iniciaOperacion(); 
-            id = Long.valueOf((Integer)sesion.save(cuestionario)) ; 
-            tx.commit(); 
-        } catch (HibernateException he) 
-        { 
-            manejaExcepcion(he); 
-            throw he; 
-        } finally 
-        { 
-            sesion.close(); 
-        }  
-
-        return id; 
-    }  
-
-    public void actualizaCuestionario(Cuestionario cuestionario) throws HibernateException 
-    { 
-        try 
-        { 
-            iniciaOperacion(); 
-            sesion.update(cuestionario); 
-            tx.commit(); 
-        } catch (HibernateException he) 
-        { 
-            manejaExcepcion(he); 
-            throw he; 
-        } finally 
-        { 
-            sesion.close(); 
-        } 
-    }  
-
-    public void eliminaCuestionario(Cuestionario cuestionario) throws HibernateException 
-    { 
-        try 
-        { 
-            iniciaOperacion(); 
-            sesion.delete(cuestionario); 
-            tx.commit(); 
-        } catch (HibernateException he) 
-        { 
-            manejaExcepcion(he); 
-            throw he; 
-        } finally 
-        { 
-            sesion.close(); 
-        } 
-    }  
-    
-    public boolean eliminaCuestionarioById(Integer intIdCuestionario) throws HibernateException { 
+    public long guardaCuestionario(Cuestionario cuestionario) throws HibernateException {        
+        long id = 0;        
         
-        try { 
+        try {            
+            iniciaOperacion();            
+            id = Long.valueOf((Integer) sesion.save(cuestionario));            
+            tx.commit();            
+        } catch (HibernateException he) {            
+            manejaExcepcion(he);            
+            throw he;            
+        } finally {            
+            sesion.close();            
+        }        
+        
+        return id;        
+    }    
+    
+    public void actualizaCuestionario(Cuestionario cuestionario) throws HibernateException {        
+        try {            
+            iniciaOperacion();            
+            sesion.update(cuestionario);            
+            tx.commit();            
+        } catch (HibernateException he) {            
+            manejaExcepcion(he);            
+            throw he;            
+        } finally {            
+            sesion.close();            
+        }        
+    }    
+    
+    public void eliminaCuestionario(Cuestionario cuestionario) throws HibernateException {        
+        try {            
+            iniciaOperacion();            
+            sesion.delete(cuestionario);            
+            tx.commit();            
+        } catch (HibernateException he) {            
+            manejaExcepcion(he);            
+            throw he;            
+        } finally {            
+            sesion.close();            
+        }        
+    }    
+    
+    public boolean eliminaCuestionarioById(Integer intIdCuestionario) throws HibernateException {        
+        
+        try {            
             
-            iniciaOperacion(); 
+            iniciaOperacion();            
             
             Query query1 = sesion.createQuery("delete from Componente c where c.cuestionario.cuIdCuestionarioPk = ? ");
             Query query2 = sesion.createQuery("delete from CuestionarioEvaluado c where c.cuestionario.cuIdCuestionarioPk = ? ");
@@ -107,22 +95,23 @@ public class CuestionarioDAO implements Serializable
             query2.executeUpdate();
             query3.executeUpdate();
             
-            tx.commit(); 
+            tx.commit();            
             
-        } catch (HibernateException he) { 
-            manejaExcepcion(he); 
+        } catch (HibernateException he) {            
+            manejaExcepcion(he);            
             return false;
-        } finally { 
-            sesion.close(); 
-        } 
+        } finally {            
+            sesion.close();            
+        }        
         return true;
         
-    }  
-    public boolean eliminaCuestionarioTotal() throws HibernateException { 
+    }    
+
+    public boolean eliminaCuestionarioTotal() throws HibernateException {        
         
-        try { 
+        try {            
             
-            iniciaOperacion(); 
+            iniciaOperacion();            
             
             Query query1 = sesion.createQuery("delete from Componente c where c.cuestionario.cuIdCuestionarioPk in "
                     + "(select cu.cuIdCuestionarioPk from Cuestionario cu where cu.proyecto.poIdProyectoPk = ? ) ");
@@ -138,78 +127,73 @@ public class CuestionarioDAO implements Serializable
             query2.executeUpdate();
             query3.executeUpdate();
             
-            tx.commit(); 
+            tx.commit();            
             
-        } catch (HibernateException he) { 
-            manejaExcepcion(he); 
+        } catch (HibernateException he) {            
+            manejaExcepcion(he);            
             return false;
-        } finally { 
-            sesion.close(); 
-        } 
+        } finally {            
+            sesion.close();            
+        }        
         return true;
         
-    }  
+    }    
     
-    public Cuestionario obtenCuestionario(long idCuestionario) throws HibernateException 
-    { 
-        Cuestionario cuestionario = null;  
-        try 
-        { 
-            iniciaOperacion(); 
-            cuestionario = (Cuestionario) sesion.get(Cuestionario.class, (int)idCuestionario); 
-        } finally 
-        { 
-            sesion.close(); 
-        }  
-
-        return cuestionario; 
-    }  
-
-    private void iniciaOperacion() throws HibernateException 
-    { 
-        sesion = HibernateUtil.getSessionFactory().openSession(); 
-        tx = sesion.beginTransaction(); 
-    }  
-
-    private void manejaExcepcion(HibernateException he) throws HibernateException 
-    { 
-        tx.rollback(); 
-        throw new HibernateException("Ocurrió un error en la capa de acceso a datos", he); 
-    } 
+    public Cuestionario obtenCuestionario(long idCuestionario) throws HibernateException {        
+        Cuestionario cuestionario = null;        
+        try {            
+            iniciaOperacion();            
+            cuestionario = (Cuestionario) sesion.get(Cuestionario.class, (int) idCuestionario);            
+        } finally {            
+            sesion.close();            
+        }        
+        
+        return cuestionario;        
+    }    
     
-    public List obtenItemsBiblioteca(String strCorreoUsuario, String strMetodologia, String strEstadoProyecto) throws HibernateException { 
+    private void iniciaOperacion() throws HibernateException {        
+        sesion = HibernateUtil.getSessionFactory().openSession();        
+        tx = sesion.beginTransaction();        
+    }    
+    
+    private void manejaExcepcion(HibernateException he) throws HibernateException {        
+        tx.rollback();        
+        throw new HibernateException("Ocurrió un error en la capa de acceso a datos", he);        
+    }    
+    
+    public List obtenItemsBiblioteca(String strCorreoUsuario, String strMetodologia, String strEstadoProyecto) throws HibernateException {        
         
         List lstItems = new ArrayList();
-
+        
         try {
             
-            iniciaOperacion(); 
+            iniciaOperacion();            
             
-            String tempQuery = "SELECT PO.PO_ID_METODOLOGIA, " +
-                               "	PO.PO_ID_PROYECTO_PK, " +
-                               " 	PO.PO_TX_DESCRIPCION, " +
-                               " 	PO.PO_FE_REGISTRO, " +
-                               " 	CU.CU_ID_CUESTIONARIO_PK, " +
-                               " 	CU.CU_TX_DESCRIPCION, " +
-                               "	CO.CO_ID_COMPONENTE_PK, " +
-                               "  	CO.CO_ID_TIPO_COMPONENTE, " +
-                               "  	CO.CO_TX_DESCRIPCION c1 , " +
-                               "        PADRE.CO_TX_DESCRIPCION c2 " +
-                               "  FROM PROYECTO PO, " +
-                               "       USUARIO US, " +
-                               "       CUESTIONARIO CU, " +
-                               "       COMPONENTE CO LEFT JOIN COMPONENTE PADRE ON CO.CO_ID_COMPONENTE_REF_FK = PADRE.CO_ID_COMPONENTE_PK " +
-                               " WHERE PO.US_ID_CUENTA_FK = US.US_ID_CUENTA_PK " +
-                               "   AND US.US_ID_MAIL = :p_correo " +
-                               "   AND CU.PO_ID_PROYECTO_FK = PO.PO_ID_PROYECTO_PK ";
-                               if(Utilitarios.noEsNuloOVacio(strMetodologia)){
-                                tempQuery += "   AND PO.PO_ID_METODOLOGIA = :p_metodologia ";
-                               }
-                               if(Utilitarios.noEsNuloOVacio(strEstadoProyecto)){
-                                tempQuery += "   AND PO.PO_ID_ESTADO = :p_estado ";
-                               }
-                               tempQuery += "   AND CO.CU_ID_CUESTIONARIO_FK = CU.CU_ID_CUESTIONARIO_PK " +
-                               " ORDER BY 1,2,4,5,7 ";
+            String tempQuery = "SELECT PO.PO_ID_METODOLOGIA, "
+                    + "	PO.PO_ID_PROYECTO_PK, "
+                    + " 	PO.PO_TX_DESCRIPCION, "
+                    + " 	PO.PO_FE_REGISTRO, "
+                    + " 	CU.CU_ID_CUESTIONARIO_PK, "
+                    + " 	CU.CU_TX_DESCRIPCION, "
+                    + "	CO.CO_ID_COMPONENTE_PK, "
+                    + "  	CO.CO_ID_TIPO_COMPONENTE, "
+                    + "  	CO.CO_TX_DESCRIPCION c1 , "
+                    + "        PADRE.CO_TX_DESCRIPCION c2 "
+                    + "  FROM PROYECTO PO, "
+                    + "       USUARIO US, "
+                    + "       CUESTIONARIO CU, "
+                    + "       COMPONENTE CO LEFT JOIN COMPONENTE PADRE ON CO.CO_ID_COMPONENTE_REF_FK = PADRE.CO_ID_COMPONENTE_PK "
+                    + " WHERE PO.US_ID_CUENTA_FK = US.US_ID_CUENTA_PK "
+                    + "   AND US.US_ID_MAIL = :p_correo "
+                    + "   AND CU.PO_ID_PROYECTO_FK = PO.PO_ID_PROYECTO_PK ";
+            if (Utilitarios.noEsNuloOVacio(strMetodologia)) {
+                tempQuery += "   AND PO.PO_ID_METODOLOGIA = :p_metodologia ";
+            }
+            if (Utilitarios.noEsNuloOVacio(strEstadoProyecto)) {
+                tempQuery += "   AND PO.PO_ID_ESTADO = :p_estado ";
+            }
+            tempQuery += "   AND CO.CU_ID_CUESTIONARIO_FK = CU.CU_ID_CUESTIONARIO_PK "
+                    + " ORDER BY 1,2,4,5,7 ";
             
             Query query = sesion.createSQLQuery(tempQuery)
                     .addScalar("PO_ID_METODOLOGIA")
@@ -225,138 +209,136 @@ public class CuestionarioDAO implements Serializable
             
             query.setString("p_correo", strCorreoUsuario);
             
-            if(Utilitarios.noEsNuloOVacio(strMetodologia)){
+            if (Utilitarios.noEsNuloOVacio(strMetodologia)) {
                 query.setInteger("p_metodologia", Integer.parseInt(strMetodologia));
             }
-            if(Utilitarios.noEsNuloOVacio(strEstadoProyecto)){
+            if (Utilitarios.noEsNuloOVacio(strEstadoProyecto)) {
                 query.setInteger("p_estado", Integer.parseInt(strEstadoProyecto));
             }
             
             lstItems = query.list();
-                        
-        } catch (Exception e){
+            
+        } catch (Exception e) {
             log.error(e);
-        } finally { 
-            sesion.close(); 
-        }  
+        } finally {            
+            sesion.close();            
+        }        
         return lstItems;
         
     }
     
-    
-    public List<Cuestionario> obtenListaCuestionarioXEstado(Integer intIdProyecto, Integer intEstadoCuestionario) throws HibernateException{ 
+    public List<Cuestionario> obtenListaCuestionarioXEstado(Integer intIdProyecto, Integer intEstadoCuestionario) throws HibernateException {        
         
-        List<Cuestionario> listaCuestionario = null;  
-
-        try { 
+        List<Cuestionario> listaCuestionario = null;        
         
-            iniciaOperacion(); 
+        try {            
+            
+            iniciaOperacion();            
             
             Query query = sesion.createQuery("from Cuestionario c where c.proyecto.poIdProyectoPk = ? and c.cuIdEstado = ? order by c.cuTxDescripcion asc ");
             query.setInteger(0, intIdProyecto);
             query.setInteger(1, intEstadoCuestionario);
             
-            listaCuestionario = query.list(); 
+            listaCuestionario = query.list();            
+            
+        } finally {            
+            sesion.close();            
+        }        
         
-        } finally { 
-            sesion.close(); 
-        }  
-
-        return listaCuestionario; 
-    }  
+        return listaCuestionario;        
+    }    
     
-    public List<Cuestionario> obtenListaCuestionario(Integer intIdProyecto) throws HibernateException{ 
+    public List<Cuestionario> obtenListaCuestionario(Integer intIdProyecto) throws HibernateException {        
         
-        List<Cuestionario> listaCuestionario = null;  
-
-        try { 
+        List<Cuestionario> listaCuestionario = null;        
         
-            iniciaOperacion(); 
+        try {            
+            
+            iniciaOperacion();            
             
             Query query = sesion.createQuery("from Cuestionario c where c.proyecto.poIdProyectoPk = ? ");
             
-            query.setInteger(0, intIdProyecto);  
+            query.setInteger(0, intIdProyecto);            
             
-            listaCuestionario = query.list(); 
+            listaCuestionario = query.list();            
+            
+        } finally {            
+            sesion.close();            
+        }        
         
-        } finally { 
-            sesion.close(); 
-        }  
-
-        return listaCuestionario; 
-    }  
+        return listaCuestionario;        
+    }    
     
-    public List<CuestionarioEvaluado> obtenListaRelacionCuestionarioEvaluado(Integer intIdProyecto) throws HibernateException{ 
+    public List<CuestionarioEvaluado> obtenListaRelacionCuestionarioEvaluado(Integer intIdProyecto) throws HibernateException {        
         
-        List<CuestionarioEvaluado> listaCuestionario = null;  
-
-        try { 
+        List<CuestionarioEvaluado> listaCuestionario = null;        
         
-            iniciaOperacion(); 
+        try {            
+            
+            iniciaOperacion();            
             
             Query query = sesion.createQuery("select ce from CuestionarioEvaluado ce where ce.proyecto.poIdProyectoPk = ? ");
             
-            query.setInteger(0, intIdProyecto);  
+            query.setInteger(0, intIdProyecto);            
             
-            listaCuestionario = query.list(); 
+            listaCuestionario = query.list();            
+            
+        } finally {            
+            sesion.close();            
+        }        
         
-        } finally { 
-            sesion.close(); 
-        }  
-
-        return listaCuestionario; 
-    }  
-
+        return listaCuestionario;        
+    }    
+    
     public List obtenerSeleccionAnterior(Integer intIdProyecto) {
         
-        List lista = null;  
-
-        try{
+        List lista = null;        
+        
+        try {
             
-            iniciaOperacion(); 
-            Query query = sesion.createQuery(" select c.id.paIdParticipanteFk, c.id.cuIdCuestionarioFk, c.ceIdEstado " +
-                                             "   from CuestionarioEvaluado c " +
-                                             " where c.proyecto.poIdProyectoPk = ? "); 
+            iniciaOperacion();            
+            Query query = sesion.createQuery(" select c.id.paIdParticipanteFk, c.id.cuIdCuestionarioFk, c.ceIdEstado "
+                    + "   from CuestionarioEvaluado c "
+                    + " where c.proyecto.poIdProyectoPk = ? ");            
             
             query.setInteger(0, intIdProyecto);
             
             lista = query.list();
             
-        }catch (Exception e){
+        } catch (Exception e) {
             log.error(e);
-        }finally { 
-            sesion.close(); 
-        }  
-
+        } finally {            
+            sesion.close();            
+        }        
+        
         return lista;
-    
+        
     }
-
+    
     public boolean guardaSeleccion(List<EvaluadoCuestionario> lstEvaluados, Integer intIdProyecto) {
         
         boolean flag = true;
-        try{ 
+        try {            
             
-            iniciaOperacion(); 
-            
-            /* Borramos datos anteriores */ 
-            /* SOLO BORRA LAS SELECCIONES DE EVALUADOS QUE NO ESTAN EN EJECUCION */
-            /*
+            iniciaOperacion();
+
+            /* Borramos datos anteriores */
+ /* SOLO BORRA LAS SELECCIONES DE EVALUADOS QUE NO ESTAN EN EJECUCION */
+ /*
             Query query = sesion.createQuery("delete from CuestionarioEvaluado c where c.id.poIdProyectoFk = ? and c.ceIdEstado != ? ");
             query.setInteger(0, intIdProyecto);
             query.setInteger(1, Constantes.INT_ET_ESTADO_SELECCION_EN_EJECUCION);
             query.executeUpdate();
-            */
-            
-            /* Insertamos los datos nuevos */
+             */
+ /* Insertamos los datos nuevos */
             CuestionarioEvaluadoId objCuestionarioEvaluadoId;
             CuestionarioEvaluado objCuestionarioEvaluado;
-                    
-            for (EvaluadoCuestionario objEvaluadoCuestionario : lstEvaluados){
+            
+            for (EvaluadoCuestionario objEvaluadoCuestionario : lstEvaluados) {
                 
-                if(Utilitarios.noEsNuloOVacio(objEvaluadoCuestionario.getIntIdCuestionario())&&
-                   !objEvaluadoCuestionario.getIntIdEstadoSel().equals(Constantes.INT_ET_ESTADO_SELECCION_EN_EJECUCION)){
-              
+                if (Utilitarios.noEsNuloOVacio(objEvaluadoCuestionario.getIntIdCuestionario())
+                        && !objEvaluadoCuestionario.getIntIdEstadoSel().equals(Constantes.INT_ET_ESTADO_SELECCION_EN_EJECUCION)) {
+                    
                     objCuestionarioEvaluadoId = new CuestionarioEvaluadoId();
                     objCuestionarioEvaluadoId.setCuIdCuestionarioFk(objEvaluadoCuestionario.getIntIdCuestionario());
                     objCuestionarioEvaluadoId.setPaIdParticipanteFk(objEvaluadoCuestionario.getIntIdEvaluado());
@@ -365,59 +347,57 @@ public class CuestionarioDAO implements Serializable
                     objCuestionarioEvaluado = new CuestionarioEvaluado();
                     objCuestionarioEvaluado.setId(objCuestionarioEvaluadoId);
                     objCuestionarioEvaluado.setCeIdEstado(Constantes.INT_ET_ESTADO_SELECCION_REGISTRADO);
-                    objCuestionarioEvaluado.setCuestionario((Cuestionario) sesion.get(Cuestionario.class, (int)objEvaluadoCuestionario.getIntIdCuestionario()));
-                    objCuestionarioEvaluado.setParticipante((Participante) sesion.get(Participante.class, (int)objEvaluadoCuestionario.getIntIdEvaluado()));
-                    objCuestionarioEvaluado.setProyecto((Proyecto) sesion.get(Proyecto.class, (int)intIdProyecto));
+                    objCuestionarioEvaluado.setCuestionario((Cuestionario) sesion.get(Cuestionario.class, (int) objEvaluadoCuestionario.getIntIdCuestionario()));
+                    objCuestionarioEvaluado.setParticipante((Participante) sesion.get(Participante.class, (int) objEvaluadoCuestionario.getIntIdEvaluado()));
+                    objCuestionarioEvaluado.setProyecto((Proyecto) sesion.get(Proyecto.class, (int) intIdProyecto));
                     
                     sesion.save(objCuestionarioEvaluado);
                 }
             }
-
-            tx.commit(); 
             
-        } catch (HibernateException he){ 
+            tx.commit();            
+            
+        } catch (HibernateException he) {            
             log.error(he);
-            manejaExcepcion(he); 
+            manejaExcepcion(he);            
             flag = false;
-        } finally { 
-            sesion.close(); 
-        }  
-
-        return flag; 
-
+        } finally {            
+            sesion.close();            
+        }        
+        
+        return flag;        
+        
     }
     
     public boolean eliminaSeleccion(Integer IdEvaluado, Integer intIdProyecto) {
         
         boolean flag = true;
-        try{ 
+        try {            
             
-            iniciaOperacion(); 
+            iniciaOperacion();            
             
             Query query = sesion.createQuery("delete from CuestionarioEvaluado c where c.id.poIdProyectoFk = ? and c.participante.paIdParticipantePk = ? ");
             query.setInteger(0, intIdProyecto);
             query.setInteger(1, IdEvaluado);
             query.executeUpdate();
             
-            tx.commit(); 
+            tx.commit();            
             
-        } catch (HibernateException he){ 
+        } catch (HibernateException he) {            
             log.error(he);
-            manejaExcepcion(he); 
+            manejaExcepcion(he);            
             flag = false;
-        } finally { 
-            sesion.close(); 
-        }  
-
-        return flag; 
-
+        } finally {            
+            sesion.close();            
+        }        
+        
+        return flag;        
+        
     }
- 
     
-    
-    public void actualizaEstadoCuestionarioXEvaluado(Evaluado objEvaluado, Integer intIdProyecto, Integer intIdEstado) throws HibernateException { 
-        try { 
-            iniciaOperacion(); 
+    public void actualizaEstadoCuestionarioXEvaluado(Evaluado objEvaluado, Integer intIdProyecto, Integer intIdEstado) throws HibernateException {        
+        try {            
+            iniciaOperacion();            
             
             Query query = sesion.createQuery("update CuestionarioEvaluado c set c.ceIdEstado = ? where c.participante.paIdParticipantePk = ? and c.proyecto.poIdProyectoPk = ? ");
             query.setInteger(0, intIdEstado);
@@ -425,20 +405,19 @@ public class CuestionarioDAO implements Serializable
             query.setInteger(2, intIdProyecto);
             query.executeUpdate();
             
-            tx.commit(); 
-        } catch (HibernateException he) { 
-            manejaExcepcion(he); 
-            throw he; 
-        } finally 
-        { 
-            sesion.close(); 
-        } 
-    }  
+            tx.commit();            
+        } catch (HibernateException he) {            
+            manejaExcepcion(he);            
+            throw he;            
+        } finally {            
+            sesion.close();            
+        }        
+    }    
     
-    public boolean actualizaEstadoCuestionarioXEvaluado(Evaluado objEvaluado, Integer intIdProyecto, Integer intIdEstado, Session sesion) throws HibernateException { 
+    public boolean actualizaEstadoCuestionarioXEvaluado(Evaluado objEvaluado, Integer intIdProyecto, Integer intIdEstado, Session sesion) throws HibernateException {        
         
         boolean correcto = true;
-        try { 
+        try {            
             
             Query query = sesion.createQuery("update CuestionarioEvaluado c set c.ceIdEstado = ? where c.participante.paIdParticipantePk = ? and c.proyecto.poIdProyectoPk = ? ");
             query.setInteger(0, intIdEstado);
@@ -446,114 +425,118 @@ public class CuestionarioDAO implements Serializable
             query.setInteger(2, intIdProyecto);
             query.executeUpdate();
             
-        } catch (HibernateException he) { 
+        } catch (HibernateException he) {            
             log.error(he);
             correcto = false;
-        } 
+        }        
         
         return correcto;
-    }  
+    }    
     
-    public Cuestionario obtenCuestionarioXEvaluado(Integer intIdEvaluado, Integer idProyecto) throws HibernateException{ 
+    public Cuestionario obtenCuestionarioXEvaluado(Integer intIdEvaluado, Integer idProyecto) throws HibernateException {        
         
         Cuestionario objCuestionario;
-
-        try { 
         
-            iniciaOperacion(); 
+        try {            
             
-            Query query = sesion.createQuery("select c from Cuestionario c, CuestionarioEvaluado ce " +
-                                             " where c.proyecto.poIdProyectoPk = ? " +
-                                             "   and ce.id.paIdParticipanteFk = ? " +
-                                             "   and c.cuIdCuestionarioPk = ce.id.cuIdCuestionarioFk "); 
+            iniciaOperacion();            
             
-            query.setInteger(0, idProyecto);  
-            query.setInteger(1, intIdEvaluado);  
+            Query query = sesion.createQuery("select c from Cuestionario c, CuestionarioEvaluado ce "
+                    + " where c.proyecto.poIdProyectoPk = ? "
+                    + "   and ce.id.paIdParticipanteFk = ? "
+                    + "   and c.cuIdCuestionarioPk = ce.id.cuIdCuestionarioFk ");            
             
-            objCuestionario = (Cuestionario) query.uniqueResult(); 
+            query.setInteger(0, idProyecto);            
+            query.setInteger(1, intIdEvaluado);            
+            
+            objCuestionario = (Cuestionario) query.uniqueResult();            
+            
+        } finally {            
+            sesion.close();            
+        }        
         
-        } finally { 
-            sesion.close(); 
-        }  
-
         return objCuestionario;
-    }  
-
+    }    
+    
     public boolean guardaImportacionCuestionario(List<CuestionarioImportado> lstCuestionariosImportados) {
         
         boolean correcto = false;
         
-        try{
+        try {
             
-            iniciaOperacion(); 
+            iniciaOperacion();            
             
             Proyecto objProyecto = new Proyecto();
             objProyecto.setPoIdProyectoPk(Utilitarios.obtenerProyecto().getIntIdProyecto());
-
-            for(CuestionarioImportado objCuestionarioImportado : lstCuestionariosImportados){
-
+            
+            for (CuestionarioImportado objCuestionarioImportado : lstCuestionariosImportados) {
+                
                 Cuestionario objCuestionario = new Cuestionario();
-
+                
                 objCuestionario.setProyecto(objProyecto);
                 objCuestionario.setCuFeRegistro(new Date());
                 objCuestionario.setCuIdEstado(Constantes.INT_ET_ESTADO_CUESTIONARIO_CONFIRMADO);
                 objCuestionario.setCuTxDescripcion(objCuestionarioImportado.getStrDescCuestionario());
-
+                
                 objCuestionario.setCuIdCuestionarioPk((Integer) sesion.save(objCuestionario));
-
+                
                 List<Categorias> lstCategorias = objCuestionarioImportado.getLstCategorias();
-
-                for(Categorias objCategorias : lstCategorias){
+                
+                for (Categorias objCategorias : lstCategorias) {
                     Componente objComponenteCat = new Componente();
                     objComponenteCat.setCoIdTipoComponente(Constantes.INT_ET_TIPO_COMPONENTE_CATEGORIA);
                     objComponenteCat.setCoTxDescripcion(objCategorias.getStrCategoria());
                     objComponenteCat.setCuestionario(objCuestionario);
-                    objComponenteCat.setCoIdComponentePk((Integer)sesion.save(objComponenteCat));
+                    objComponenteCat.setCoNrPuntajeMinimoRequerido(objCategorias.getBdScoreMinRequired());
+                    objComponenteCat.setCoNrPuntajeRequerido(objCategorias.getBdScoreRequired());
+                    objComponenteCat.setCoIdComponentePk((Integer) sesion.save(objComponenteCat));
                     
-                    for(PreguntaCerradaBean strPreguntaC : objCategorias.getLstPreguntasCerradas()){
+                    for (PreguntaCerradaBean strPreguntaC : objCategorias.getLstPreguntasCerradas()) {
                         Componente objComponentePreC = new Componente();
                         objComponentePreC.setCoIdTipoComponente(Constantes.INT_ET_TIPO_COMPONENTE_PREGUNTA_CERRADA);
                         objComponentePreC.setCoTxDescripcion(strPreguntaC.getStrDescripcion());
+                        objComponentePreC.setCoNrPuntajeMinimoRequerido(strPreguntaC.getBdScoreMinRequired());
+                        objComponentePreC.setCoNrPuntajeRequerido(strPreguntaC.getBdScoreRequired());
                         objComponentePreC.setCuestionario(objCuestionario);
                         objComponentePreC.setComponente(objComponenteCat);
-                        objComponentePreC.setCoIdComponentePk((Integer)sesion.save(objComponentePreC));                    
+                        objComponentePreC.setCoIdComponentePk((Integer) sesion.save(objComponentePreC));                        
                     }
                     
                 }
-
+                
                 List<ComentarioBean> lstComentarios = objCuestionarioImportado.getLstComentarios();
                 
-                for(ComentarioBean strComentario : lstComentarios){
+                for (ComentarioBean strComentario : lstComentarios) {
                     Componente objComponenteCom = new Componente();
                     objComponenteCom.setCoIdTipoComponente(Constantes.INT_ET_TIPO_COMPONENTE_COMENTARIO);
                     objComponenteCom.setCoTxDescripcion(strComentario.getStrDescripcion());
                     objComponenteCom.setCuestionario(objCuestionario);
-                    objComponenteCom.setCoIdComponentePk((Integer)sesion.save(objComponenteCom));
+                    objComponenteCom.setCoIdComponentePk((Integer) sesion.save(objComponenteCom));
                 }
-                                
+                
                 List<PreguntaAbiertaBean> lstPreguntasAbiertas = objCuestionarioImportado.getLstPreguntasAbiertas();
                 
-                for(PreguntaAbiertaBean strComentario : lstPreguntasAbiertas){
+                for (PreguntaAbiertaBean strComentario : lstPreguntasAbiertas) {
                     Componente objComponentePre = new Componente();
                     objComponentePre.setCoIdTipoComponente(Constantes.INT_ET_TIPO_COMPONENTE_PREGUNTA_ABIERTA);
                     objComponentePre.setCoTxDescripcion(strComentario.getStrDescripcion());
                     objComponentePre.setCuestionario(objCuestionario);
-                    objComponentePre.setCoIdComponentePk((Integer)sesion.save(objComponentePre));
+                    objComponentePre.setCoIdComponentePk((Integer) sesion.save(objComponentePre));
                 }
                 
             }
             
-            tx.commit(); 
+            tx.commit();            
             
             correcto = true;
             
-        }catch(Exception ex){
+        } catch (Exception ex) {
             log.error(ex);
             tx.rollback();
         }
-
+        
         return correcto;
-      
+        
     }
-   
+    
 }

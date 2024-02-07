@@ -12,6 +12,14 @@ public class CuestionarioImportado implements Serializable {
     private List<ComentarioBean> lstComentarios;
     private List<PreguntaAbiertaBean> lstPreguntasAbiertas;
 
+    public CuestionarioImportado(Integer idCuestionario, String strDescCuestionario, List<Categorias> lstCategorias, List<ComentarioBean> lstComentarios, List<PreguntaAbiertaBean> lstPreguntasAbiertas) {
+        this.idCuestionario = idCuestionario;
+        this.strDescCuestionario = strDescCuestionario;
+        this.lstCategorias = lstCategorias;
+        this.lstComentarios = lstComentarios;
+        this.lstPreguntasAbiertas = lstPreguntasAbiertas;
+    }
+
     public CuestionarioImportado() {
         this.lstCategorias = new ArrayList<>();
         this.lstComentarios = new ArrayList<>();

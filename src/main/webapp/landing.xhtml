@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <f:facet name="first">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            <link rel="shortcut icon" type="image/png" href="#{request.contextPath}/images/favicon.png" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+            <meta name="apple-mobile-web-app-capable" content="yes" />
+        </f:facet>
+        <title>JAIO360</title>
+        <script type="text/javascript">
+            $(function () {
+                $('#menu-button').on('click', function (e) {
+                    $('#menu').toggleClass('overlay-menu');
+                    e.preventDefault();
+                });
+            });
+        </script>
+
+        <ui:insert name="head"/>
+    </h:head>
+
+    <h:body styleClass="landing-body">
+
+        <div class="landing-wrapper">
+            <div class="landing-header">
+                <div class="landing-header-content clearfix">
+                    <p:graphicImage value="/images/logoJaio360White.png" width="113"/>
+
+                    <a id="menu-button" href="#">
+                        <p:graphicImage name="images/landing/landing-menu-icon.svg" library="omega-layout"/>
+                    </a>
+                    <ul id="menu">
+                        <li><a href="#">Inicio</a></li>
+                        <!--li><a href="#introduction">Introduction</a></li-->
+                        <li><a href="#pricing">Evaluaciones</a></li>
+                        <li><a href="#mobile">Descubre</a></li>
+                        <li><a href="#features">A tu medida</a></li>
+                        <li><a href="#video">Nosotros</a></li>
+                        <li><a href="#contactanos">Contáctanos</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div id="introduction">
+                <div class="introduction-content">
+                    <span class="title">TRANSFORMAMOS LA FORMA DE EVALUAR EL TALENTO</span>
+                    <span class="subtitle">¡Hazlo simple, rápido y a la medida de lo que necesitas!</span>
+                    <!--p:graphicImage name="images/landing/section1_logo.png" library="omega-layout" width="200" style="opacity: 30%;" /-->
+                    <p:button outcome="login.jsf" value="Iniciar sesión" ></p:button>
+                </div>
+            </div>
+
+            <div id="pricing">
+                <div class="pricing-content">
+                    <span class="pricing-title">Evalúa lo que realmente te aporta valor</span>
+                    <p>En Jaio360 podrás configurar todo tipo de evaluaciones que requieran la retroalimentación de múltiples interlocutores en base a un conjunto de categorías, escalas y relaciones a la medida de tu organización.</p>
+
+                    <div class="grid">
+                        <div class="col-12 md:col-4">
+                            <div class="pricing-basic pricing-box">
+                                <span class="pricing-name">Individuales</span>
+                                <div class="pricing-fee">
+                                    <p:graphicImage value="/images/photos/img3.jpeg" width="100" />
+                                </div>
+
+                                <p>Evaluaciones 360°</p>
+                                <p>Evaluación de Potencial</p>
+                                <p>Evaluaciones de Liderazgo y Competencias</p>
+                                <p/>
+                            </div>
+                        </div>
+
+                        <div class="col-12 md:col-4">
+                            <div class="pricing-standard pricing-box">
+                                <span class="pricing-name">Equipos</span>
+                                <div class="pricing-fee">
+                                    <p:graphicImage value="/images/photos/img1.jpeg" width="100" />
+                                </div>
+
+                                <p>Evaluación de equipos de alto rendimiento</p>
+                                <p>Disfunciones del equipo</p>
+                                <p>Valoración interfuncional</p>
+                                <p/>
+                            </div>
+                        </div>
+
+                        <div class="col-12 md:col-4">
+                            <div class="pricing-professional pricing-box">
+                                <span class="pricing-name">Organización</span>
+                                <div class="pricing-fee">
+                                    <p:graphicImage value="/images/photos/img2.jpeg" width="100" />
+                                </div>
+
+                                <p>Clima y Engagement</p>
+                                <p>Cultura</p>
+                                <p>Overall Satisfaction</p>
+                                <p/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="mobile">
+                <div class="mobile-content">
+                    <span class="title">¡Descubre todo lo que puedes lograr!</span>
+                    <span class="subtitle">Escríbenos y agenda una sesión formativa  para desarrollar tu primera evaluación sin costo. Simplifica tus evaluaciones 360ª, maximiza el talento de tus equipos.</span>
+                    <p:graphicImage value="/images/mobile.png" width="400" />
+                    <!--p:commandButton type="button" value="Learn More"></p:commandButton-->
+                </div>
+            </div>
+
+            <div id="features">
+                <div class="features-content">
+                    <span class="feature-title">Diseña todo a tu medida</span>
+                    <p>Importa tus datos para configurar proyectos de evaluación que se ajusten a las necesidades de información de tu organización de forma rápida e intuitiva.</p>
+
+                    <div class="grid">
+                        <div class="col-12 md:col-4">
+                            <p:graphicImage value="images/iconos/oneico.png" width="70"  styleClass="feature-icon"/>
+                            <div class="feature-text">
+                                <span>Define quiénes participarán</span>
+                                <p>Carga tu base de datos y las relaciones.</p>
+                            </div>
+                        </div>
+                        <div class="col-12 md:col-4">
+                            <p:graphicImage value="images/iconos/twoico.png" width="70" styleClass="feature-icon"/>
+                            <div class="feature-text">
+                                <span>Diseña tus evaluaciones</span>
+                                <p>Importa los cuestionarios y/o competencias según las necesidades de tu organización o clientes.</p>
+                            </div>
+                        </div>
+                        <div class="col-12 md:col-4">
+                            <p:graphicImage value="images/iconos/threeico.png" width="70" styleClass="feature-icon"/>
+                            <div class="feature-text">
+                                <span>Crea tus comunicados</span>
+                                <p>Personaliza y desarrolla mensajes clave que se enviarán automáticamente por correo.</p>
+                            </div>
+                        </div>
+                        <div class="col-12 md:col-4">
+                            <p:graphicImage value="images/iconos/fourico.png" width="70" styleClass="feature-icon"/>
+                            <div class="feature-text">
+                                <span>Gestiona el proyecto</span>
+                                <p>Inicia tu evaluación y realiza de forma automatizada seguimientos a medida para asegurar el éxito de tu proceso.</p>
+                            </div>
+                        </div>
+                        <div class="col-12 md:col-4">
+                            <p:graphicImage value="images/iconos/fiveico.png" width="70" styleClass="feature-icon"/>
+                            <div class="feature-text">
+                                <span>Realiza el seguimiento</span>
+                                <p>Revisa el % de respuesta general o por evaluado y envía recordatorios a quien lo requiera.</p>
+                            </div>
+                        </div>
+                        <div class="col-12 md:col-4">
+                            <p:graphicImage value="images/iconos/sixico.png" width="70" styleClass="feature-icon"/>
+                            <div class="feature-text">
+                                <span>Genera tus reportes</span>
+                                <p>Sean por segmentos o ponderados (por relaciones) para lograr un análisis individual o grupal que garantice una lectura integral del desempeño y el talento.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+
+            <div id="video">
+                <div class="video-content">
+                    <span class="video-title">Nosotros</span>
+                    <p>Nos hemos embarcado en la emocionante misión de simplificar y potenciar los procesos de evaluación en la Gestión de Personas, Equipos y Organizaciones, asegurando el éxito de tus proyectos en cada etapa y reduciendo tanto los tiempos como los costes de tus diagnósticos.</p>
+                    <!--div class="video-container">
+                        <iframe src="https://www.youtube.com/embed/B_lYGUtCd0g" frameborder="0" width="560"></iframe>
+                    </div-->
+                    <div class="grid">
+                        <div class="col-12 md:col-4">
+                            <div class="feature-text">
+                                <span>+ 10 años</span>
+                                <p>de expericiencia</p>
+                            </div>
+                        </div>
+                        <div class="col-12 md:col-4">
+                            <div class="feature-text">
+                                <span>+ 100 Empresas</span>
+                                <p>han confiado en nosotros</p>
+                            </div>
+                        </div>
+                        <div class="col-12 md:col-4">
+                            <div class="feature-text">
+                                <span>+ 2000 procesos</span>
+                                <p>gestionados exitosamente</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="contactanos">
+                <div class="contactanos-content">
+                    <span class="feature-title">Contáctanos</span>
+                    <!--p>Comunicate con uno de nuestros asesores para mayor información.</p-->
+
+                    <h:form>
+                        <p:growl id="growl" sticky="false" life="4000" />
+                        <div class="grid ui-fluid">
+                            <div class="col-12 md:col-6">
+                                <div class="feature-text">
+                                    <span>Nombre completo</span>
+                                    <p></p>
+                                    <p:inputText value="#{landingView.strName}" required="true" label="Nombre completo" >
+                                        <f:validator validatorId="validaTextoIngresado" />
+                                    </p:inputText>
+                                </div>
+                            </div>
+                            <div class="col-12 md:col-6">
+                                <div class="feature-text">
+                                    <span>Empresa</span>
+                                    <p></p>
+                                    <p:inputText value="#{landingView.strBusinessName}" required="true" label="Empresa" >
+                                        <f:validator validatorId="validaTextoIngresado" />
+                                    </p:inputText>
+                                </div>
+                            </div>
+                            <div class="col-12 md:col-6">
+                                <div class="feature-text ui-fluid">
+                                    <span>Correo electrónico</span>
+                                    <p></p>
+                                    <p:inputText value="#{landingView.strEmail}" required="true" label="Correo electrónico" >
+                                        <f:validator validatorId="validarCorreo" />
+                                    </p:inputText>
+                                </div>
+                            </div>
+                            <div class="col-12 md:col-6">
+                                <div class="feature-text ui-fluid">
+                                    <span>Teléfono</span>
+                                    <p></p>
+                                    <p:inputMask value="#{landingView.strPhone}" mask="(999) 999-99999999" autoClear="false" validateMask="false" required="true" label="Teléfono" />
+                                </div>
+                            </div>
+                            <div class="col-12 md:col-12">
+                                <div class="feature-text ui-fluid">
+                                    <p:captcha label="Captcha"/>
+                                </div>
+                            </div>
+                            <div class="col-12 md:col-12">
+                                <div class="feature-text ui-fluid">
+                                    <p:commandButton update="@form" value="Enviar" actionListener="#{landingView.enviarCorreo()}"/>
+                                </div>
+                            </div>
+                        </div>
+                    </h:form>
+                </div>
+            </div>
+
+            <div class="landing-footer">
+                <div class="landing-footer-content">
+                    <div class="footer-top">
+                        <div class="grid">
+                            <div class="col-6">
+                                <p:graphicImage value="/images/logoJaio360White.png" width="130"/>
+                                <!--p>Empresa con años de experiencia en evaluaciones 360</p-->
+                            </div>
+                            <div class="col-6">
+                                <ul>
+                                    <li><a href="#features">A tu medida</a></li>
+                                    <li><a href="#video">Nosotros</a></li>
+                                    <li><a href="#contactanos">Contáctanos</a></li>
+                                </ul>
+                                <ul>
+                                    <li><a href="#">Inicio</a></li>
+                                    <!--li><a href="#introduction">Introduction</a></li-->
+                                    <li><a href="#pricing">Evaluaciones</a></li>
+                                    <li><a href="#mobile">Descubre</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="footer-bottom">
+                        All Rights Reserved
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h:outputStylesheet name="css/primeicons.css" library="omega-layout"/>
+        <h:outputStylesheet name="css/primeflex.min.css" library="omega-layout"/>
+        <h:outputStylesheet name="css/layout-#{guestPreferences.layout}.css" library="omega-layout"/>
+    </h:body>
+
+</html>

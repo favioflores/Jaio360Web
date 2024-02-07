@@ -120,7 +120,7 @@ public class ReporteGrupalSumarioCategoriaGeneral extends BaseView implements Se
             while (itLstDatos.hasNext()) {
 
                 seriesColors = new HashMap();
-                seriesColors.put(rb.getString("prom"), Utilitarios.convertColorHexToRgb("#" + Utilitarios.generaColorHtmlPreferencial(contador)));
+                seriesColors.put(rb.getString("prom"), Utilitarios.convertColorHexToRgb(Utilitarios.generaColorHtmlPreferencial(contador)));
                 contador++;
 
                 Object obj[] = (Object[]) itLstDatos.next();

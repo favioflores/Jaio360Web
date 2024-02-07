@@ -8,6 +8,16 @@ public class ComentarioBean implements Serializable {
     private String strDescripcion;
     private String strRespuesta;
 
+    public ComentarioBean() {
+
+    }
+
+    public ComentarioBean(Integer id, String strDescripcion, String strRespuesta) {
+        this.id = id;
+        this.strDescripcion = strDescripcion;
+        this.strRespuesta = strRespuesta;
+    }
+
     public Integer getId() {
         return id;
     }

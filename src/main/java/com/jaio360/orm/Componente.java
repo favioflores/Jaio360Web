@@ -1,5 +1,6 @@
 package com.jaio360.orm;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -16,9 +17,20 @@ public class Componente implements java.io.Serializable {
     private Set<Componente> componentes = new HashSet<>(0);
     private Set<Resultado> resultados = new HashSet<>(0);
     private String posicion;
+    private BigDecimal coNrPuntajeObtenido;
+    private BigDecimal coNrPuntajeRequerido;
+    private BigDecimal coNrPuntajeMinimoRequerido;
 
     public Integer getCoIdComponentePk() {
         return coIdComponentePk;
+    }
+
+    public BigDecimal getCoNrPuntajeObtenido() {
+        return coNrPuntajeObtenido;
+    }
+
+    public void setCoNrPuntajeObtenido(BigDecimal coNrPuntajeObtenido) {
+        this.coNrPuntajeObtenido = coNrPuntajeObtenido;
     }
 
     public void setCoIdComponentePk(Integer coIdComponentePk) {
@@ -107,6 +119,22 @@ public class Componente implements java.io.Serializable {
         this.coTxDescripcion = coTxDescripcion;
         this.componentes = componentes;
         this.resultados = resultados;
+    }
+
+    public BigDecimal getCoNrPuntajeRequerido() {
+        return coNrPuntajeRequerido;
+    }
+
+    public void setCoNrPuntajeRequerido(BigDecimal coNrPuntajeRequerido) {
+        this.coNrPuntajeRequerido = coNrPuntajeRequerido;
+    }
+
+    public BigDecimal getCoNrPuntajeMinimoRequerido() {
+        return coNrPuntajeMinimoRequerido;
+    }
+
+    public void setCoNrPuntajeMinimoRequerido(BigDecimal coNrPuntajeMinimoRequerido) {
+        this.coNrPuntajeMinimoRequerido = coNrPuntajeMinimoRequerido;
     }
 
 }

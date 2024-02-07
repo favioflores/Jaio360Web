@@ -8,6 +8,16 @@ public class PreguntaAbiertaBean implements Serializable {
     private String strDescripcion;
     private String strRespuesta;
 
+    public PreguntaAbiertaBean(){
+        
+    }
+    
+    public PreguntaAbiertaBean(Integer id, String strDescripcion, String strRespuesta) {
+        this.id = id;
+        this.strDescripcion = strDescripcion;
+        this.strRespuesta = strRespuesta;
+    }
+
     public Integer getId() {
         return id;
     }

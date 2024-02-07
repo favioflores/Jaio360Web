@@ -97,7 +97,7 @@ public class ReporteIndividualSumarioCategoriaMismoRelacionWeighted implements S
         while (it.hasNext()) {
             Map.Entry entry = (Map.Entry) it.next();
             Relacion objRelacion = (Relacion) entry.getValue();
-            seriesColors.put(objRelacion.getReTxAbreviatura(), Utilitarios.convertColorHexToRgb("#" + objRelacion.getReColor()));
+            seriesColors.put(objRelacion.getReTxAbreviatura(), Utilitarios.convertColorHexToRgb(objRelacion.getReColor()));
         }
 
         List<Componente> lstComponente = componenteDao.listaComponenteProyectoTipoOrdenado(objReporteGenerado.getProyectoInfo().getIntIdProyecto(), objDatosReporte.getIntIdCuestionario(), Constantes.INT_ET_TIPO_COMPONENTE_CATEGORIA, null, intEvaluadoPk);

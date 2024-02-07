@@ -3,6 +3,8 @@ package com.jaio360.view;
 import com.jaio360.dao.CuestionarioDAO;
 import com.jaio360.dao.ProyectoDAO;
 import com.jaio360.dao.ComponenteDAO;
+import com.jaio360.dao.DetalleMetricaDAO;
+import com.jaio360.dao.MetricaDAO;
 import com.jaio360.domain.Categorias;
 import com.jaio360.domain.ComentarioBean;
 import com.jaio360.domain.CuestionarioImportado;
@@ -13,6 +15,7 @@ import com.jaio360.domain.PreguntaAbiertaBean;
 import com.jaio360.domain.PreguntaCerradaBean;
 import com.jaio360.orm.Componente;
 import com.jaio360.orm.Cuestionario;
+import com.jaio360.orm.Metrica;
 import com.jaio360.orm.Proyecto;
 import com.jaio360.utils.Constantes;
 import com.jaio360.utils.Utilitarios;
@@ -22,6 +25,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -38,6 +42,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.primefaces.event.CellEditEvent;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.RowEditEvent;
 import org.primefaces.model.DefaultStreamedContent;
@@ -70,7 +75,7 @@ public class importarCuestionariosView extends BaseView implements Serializable 
             String fullPath = servletContext.getRealPath(File.separator + "resources" + File.separator + "other" + File.separator + "ModeloDeImportacionCuestionario.xlsx");
 
             InputStream stream = new FileInputStream(fullPath);
-            
+
             fileImport = DefaultStreamedContent.builder()
                     .name("ModeloDeImportacionCuestionario.xlsx")
                     .contentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
@@ -244,72 +249,69 @@ public class importarCuestionariosView extends BaseView implements Serializable 
 
         int contador = 0;
 
-        boolean cuestionarioEncontrado = false;
-
-        boolean primeraCategoria = false;
-
         while (rowElementos.hasNext()) {
+
             Row row = rowElementos.next();
 
-            String strTipo = Utilitarios.obtieneDatoCelda(row, 0);
+            String strTipoRegistro = Utilitarios.obtieneDatoCelda(row, 0);
             String strElemento = Utilitarios.obtieneDatoCelda(row, 1);
+            String strPuntajeMinRequerido = Utilitarios.obtieneDatoCelda(row, 2);
+            String strPuntajeRequerido = Utilitarios.obtieneDatoCelda(row, 3);
 
-            if (Utilitarios.noEsNuloOVacio(strTipo) && Utilitarios.noEsNuloOVacio(strElemento)) {
-                if (contador == 0) {
-                    cuestionarioEncontrado = true;
-                }
+            if (Utilitarios.noEsNuloOVacio(strTipoRegistro)
+                    && Utilitarios.noEsNuloOVacio(strElemento)
+                    && Utilitarios.noEsNuloOVacio(strPuntajeMinRequerido)
+                    && Utilitarios.noEsNuloOVacio(strPuntajeRequerido)) {
 
-                if (strTipo.equals(Constantes.LINEA_CUESTIONARIO)) {
-                    primeraCategoria = true;
-                }
-
-                if (primeraCategoria == true) {
-
-                    if (strTipo.equals(Constantes.LINEA_PREGUNTA_CERRADA)) {
-                        lstErrores.add(new ErrorBean((row.getRowNum() + 1), msg("step2.closed.question.not.in.category"), null, (row.getRowNum() + 1) + ""));
-                    } else {
-                        primeraCategoria = false;
-                    }
-
-                }
-
-                if (strTipo.equals(Constantes.LINEA_CUESTIONARIO)
-                        || strTipo.equals(Constantes.LINEA_CATEGORIA)
-                        || strTipo.equals(Constantes.LINEA_PREGUNTA_CERRADA)
-                        || strTipo.equals(Constantes.LINEA_COMENTARIO)
-                        || strTipo.equals(Constantes.LINEA_PREGUNTA_ABIERTA)) {
+                //VALIDAR TIPO DE REGISTRO
+                if (strTipoRegistro.equals(Constantes.LINEA_CUESTIONARIO)
+                        || strTipoRegistro.equals(Constantes.LINEA_CATEGORIA)
+                        || strTipoRegistro.equals(Constantes.LINEA_PREGUNTA_CERRADA)
+                        || strTipoRegistro.equals(Constantes.LINEA_COMENTARIO)
+                        || strTipoRegistro.equals(Constantes.LINEA_PREGUNTA_ABIERTA)) {
 
                 } else {
-
                     lstErrores.add(new ErrorBean((row.getRowNum() + 1), msg("step2.incorrect.type.line"), null, "A" + (row.getRowNum() + 1) + ""));
-
                 }
 
+                //VALIDA CONTENIDO DEL TEXTO
                 String validaDescripcion = PatterTexto.validar(strElemento);
 
                 if (!Utilitarios.esNuloOVacio(validaDescripcion)) {
                     lstErrores.add(new ErrorBean((row.getRowNum() + 1), msg("step2.invalid.text"), null, (row.getRowNum() + 1) + ""));
                 }
 
-                if (strTipo.equals(Constantes.LINEA_CATEGORIA)
-                        || strTipo.equals(Constantes.LINEA_PREGUNTA_CERRADA)
-                        || strTipo.equals(Constantes.LINEA_COMENTARIO)
-                        || strTipo.equals(Constantes.LINEA_PREGUNTA_ABIERTA)) {
-
-                    if (cuestionarioEncontrado == false) {
-                        cuestionarioEncontrado = true;
-                        lstErrores.add(new ErrorBean((row.getRowNum() + 1), msg("step2.at.least.evaluation"), null, "1"));
-                    }
+                //VALIDA CONTENIDO DEL PUNTAJE
+                if (!Utilitarios.isNumber(strPuntajeMinRequerido, false)
+                        && (strTipoRegistro.equals(Constantes.LINEA_CATEGORIA)
+                        || strTipoRegistro.equals(Constantes.LINEA_PREGUNTA_CERRADA))) {
+                    lstErrores.add(new ErrorBean((row.getRowNum() + 1), msg("step2.invalid.puntaje"), null, (row.getRowNum() + 1) + ""));
                 }
 
+                //VALIDA CONTENIDO DEL PUNTAJE
+                if (!Utilitarios.isNumber(strPuntajeRequerido, false)
+                        && (strTipoRegistro.equals(Constantes.LINEA_CATEGORIA)
+                        || strTipoRegistro.equals(Constantes.LINEA_PREGUNTA_CERRADA))) {
+                    lstErrores.add(new ErrorBean((row.getRowNum() + 1), msg("step2.invalid.puntaje"), null, (row.getRowNum() + 1) + ""));
+                }
+
+                //lstErrores.add(new ErrorBean((row.getRowNum() + 1), msg("step2.closed.question.not.in.category"), null, (row.getRowNum() + 1) + ""));
+                //lstErrores.add(new ErrorBean((row.getRowNum() + 1), msg("step2.at.least.evaluation"), null, "1"));
             } else {
 
-                if (Utilitarios.noEsNuloOVacio(strTipo) || Utilitarios.noEsNuloOVacio(strElemento)) {
+                if (Utilitarios.noEsNuloOVacio(strTipoRegistro)
+                        || Utilitarios.noEsNuloOVacio(strElemento)
+                        || Utilitarios.noEsNuloOVacio(strPuntajeMinRequerido)
+                        || Utilitarios.noEsNuloOVacio(strPuntajeRequerido)) {
 
-                    if (Utilitarios.noEsNuloOVacio(strTipo)) {
+                    if (Utilitarios.noEsNuloOVacio(strTipoRegistro)) {
                         lstErrores.add(new ErrorBean((row.getRowNum() + 1), msg("step2.not.element.unspecified.type"), null, "A" + (row.getRowNum() + 1) + ""));
-                    } else {
+                    } else if (Utilitarios.noEsNuloOVacio(strElemento)) {
                         lstErrores.add(new ErrorBean((row.getRowNum() + 1), msg("step2.not.element.unspecified.description"), null, "B" + (row.getRowNum() + 1) + ""));
+                    } else if (Utilitarios.noEsNuloOVacio(strPuntajeMinRequerido)) {
+                        lstErrores.add(new ErrorBean((row.getRowNum() + 1), msg("step2.not.element.unspecified.puntaje"), null, "C" + (row.getRowNum() + 1) + ""));
+                    } else if (Utilitarios.noEsNuloOVacio(strPuntajeRequerido)) {
+                        lstErrores.add(new ErrorBean((row.getRowNum() + 1), msg("step2.not.element.unspecified.puntaje"), null, "D" + (row.getRowNum() + 1) + ""));
                     }
 
                 }
@@ -318,6 +320,88 @@ public class importarCuestionariosView extends BaseView implements Serializable 
 
             contador++;
         }
+
+        //SI HAY ERRORES TIPOS DE DATOS SE DEVUELVE AL USUARIO PARA CORREGIR Y NO SE CONTINUA CON LAS VALIDACIONES DE FORMA
+        if (!lstErrores.isEmpty()) {
+            return lstErrores;
+        }
+
+        List<CuestionarioImportado> lstCuestionarioImportados = new ArrayList<>();
+        CuestionarioImportado objCuestionarioImportado = new CuestionarioImportado(-1, "Sin descripción", null, null, null);
+
+        boolean isNewAssessment = false;
+
+        MetricaDAO objMetricaDAO = new MetricaDAO();
+        Metrica objMetrica = objMetricaDAO.obtenMetricaProyecto(Utilitarios.obtenerProyecto().getIntIdProyecto());
+
+        while (rowElementos.hasNext()) {
+
+            Row row = rowElementos.next();
+
+            try {
+
+                String strTipoRegistro = Utilitarios.obtieneDatoCelda(row, 0);
+                String strElemento = Utilitarios.obtieneDatoCelda(row, 1);
+                String strPuntajeMinRequerido = Utilitarios.obtieneDatoCelda(row, 2);
+                String strPuntajeRequerido = Utilitarios.obtieneDatoCelda(row, 3);
+
+                if (strTipoRegistro.equals(Constantes.LINEA_CUESTIONARIO)) {
+                    if (isNewAssessment) {
+                        lstCuestionarioImportados.add(objCuestionarioImportado);
+                    }
+                    objCuestionarioImportado = new CuestionarioImportado(-1, strElemento, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+                    isNewAssessment = true;
+                }
+
+                if (strTipoRegistro.equals(Constantes.LINEA_CATEGORIA)) {
+                    Categorias objCategorias = new Categorias(strElemento, -1, new ArrayList<>(), null, null);
+                    objCuestionarioImportado.getLstCategorias().add(objCategorias);
+                }
+
+                if (strTipoRegistro.equals(Constantes.LINEA_PREGUNTA_CERRADA)) {
+                    PreguntaCerradaBean objPreguntaCerradaBean = new PreguntaCerradaBean(-1, strElemento, null, null);
+                    objCuestionarioImportado.getLstCategorias().get(objCuestionarioImportado.getLstCategorias().size() - 1).getLstPreguntasCerradas().add(objPreguntaCerradaBean);
+                }
+
+                if (strTipoRegistro.equals(Constantes.LINEA_COMENTARIO)) {
+                    ComentarioBean objComentarioBean = new ComentarioBean(-1, strElemento, null);
+                    objCuestionarioImportado.getLstComentarios().add(objComentarioBean);
+                }
+
+                if (strTipoRegistro.equals(Constantes.LINEA_PREGUNTA_ABIERTA)) {
+                    PreguntaAbiertaBean objPreguntaAbiertaBean = new PreguntaAbiertaBean(-1, strElemento, null);
+                    objCuestionarioImportado.getLstPreguntasAbiertas().add(objPreguntaAbiertaBean);
+                }
+
+                BigDecimal bdPuntajeMinRequerido = new BigDecimal(strPuntajeMinRequerido);
+                BigDecimal bdPuntajeRequerido = new BigDecimal(strPuntajeRequerido);
+
+                if (bdPuntajeMinRequerido.doubleValue() >= 1 && bdPuntajeMinRequerido.doubleValue() <= objMetrica.getMeNuRango()) {
+
+                } else {
+                    lstErrores.add(new ErrorBean((row.getRowNum() + 1), "Puntaje mínimo no puede ser menor a 1", null, "C" + (row.getRowNum() + 1) + ""));
+                }
+                if (bdPuntajeRequerido.doubleValue() >= 1 && bdPuntajeRequerido.doubleValue() <= objMetrica.getMeNuRango()) {
+
+                } else {
+                    lstErrores.add(new ErrorBean((row.getRowNum() + 1), "Puntaje requerido no puede ser mayor al número de la escala: " + objMetrica.getMeNuRango(), null, "D" + (row.getRowNum() + 1) + ""));
+                }
+
+                if (bdPuntajeMinRequerido.doubleValue() > bdPuntajeRequerido.doubleValue()) {
+                    lstErrores.add(new ErrorBean((row.getRowNum() + 1), "Puntaje mínimo requerido (Columna C) debe ser menor al puntaje requerido (Columna D)", null, "C o D" + (row.getRowNum() + 1) + ""));
+                }
+
+            } catch (NullPointerException e) {
+                lstErrores.add(new ErrorBean((row.getRowNum() + 1), "El tipo de elemento está ubicado incorrectamente. Por favor revisar el manual para la importación de cuestionario"));
+            } catch (Exception e) {
+                lstErrores.add(new ErrorBean((row.getRowNum() + 1), "Ocurrió un error debido a una confiuración errada del archivo. Por favor revisar el manual para la importación de cuestionario"));
+            }
+
+        }
+
+        //if (lstCuestionarioImportados.size() != contador) {
+        //    lstErrores.add(new ErrorBean(-1, "Hubieron registros no procesados debido a una configuración errada del archivo. Por favor revisar el manual para la importación de cuestionario"));
+        //}
         return lstErrores;
     }
 
@@ -338,6 +422,14 @@ public class importarCuestionariosView extends BaseView implements Serializable 
 
                 String strTipo = Utilitarios.obtieneDatoCelda(row, 0);
                 String strElemento = Utilitarios.obtieneDatoCelda(row, 1);
+                BigDecimal bdScoreRequired = BigDecimal.ZERO;
+                BigDecimal bdScoreMinRequired = BigDecimal.ZERO;
+
+                if (strTipo.equals(Constantes.LINEA_CATEGORIA)
+                        || strTipo.equals(Constantes.LINEA_PREGUNTA_CERRADA)) {
+                    bdScoreMinRequired = new BigDecimal(Utilitarios.obtieneDatoCelda(row, 2));
+                    bdScoreRequired = new BigDecimal(Utilitarios.obtieneDatoCelda(row, 3));
+                }
 
                 if (Utilitarios.noEsNuloOVacio(strTipo) && Utilitarios.noEsNuloOVacio(strElemento)) {
 
@@ -356,25 +448,22 @@ public class importarCuestionariosView extends BaseView implements Serializable 
                     }
 
                     if (strTipo.equals(Constantes.LINEA_COMENTARIO)) {
-                        ComentarioBean objComentarioBean = new ComentarioBean();
-                        objComentarioBean.setStrDescripcion(strElemento);
+                        ComentarioBean objComentarioBean = new ComentarioBean(-1, strElemento, null);
                         objCuestionarioImportado.getLstComentarios().add(objComentarioBean);
                     }
 
                     if (strTipo.equals(Constantes.LINEA_PREGUNTA_ABIERTA)) {
-                        PreguntaAbiertaBean objPreguntaAbiertaBean = new PreguntaAbiertaBean();
-                        objPreguntaAbiertaBean.setStrDescripcion(strElemento);
+                        PreguntaAbiertaBean objPreguntaAbiertaBean = new PreguntaAbiertaBean(-1, strElemento, null);
                         objCuestionarioImportado.getLstPreguntasAbiertas().add(objPreguntaAbiertaBean);
                     }
 
                     if (strTipo.equals(Constantes.LINEA_CATEGORIA)) {
-                        objCuestionarioImportado.getLstCategorias().add(new Categorias(strElemento, null, new ArrayList<>()));
+                        objCuestionarioImportado.getLstCategorias().add(new Categorias(strElemento, null, new ArrayList<>(), bdScoreRequired, bdScoreMinRequired));
                         objCategorias = objCuestionarioImportado.getLstCategorias().get(objCuestionarioImportado.getLstCategorias().size() - 1);
                     }
 
                     if (strTipo.equals(Constantes.LINEA_PREGUNTA_CERRADA)) {
-                        PreguntaCerradaBean objPreguntaCerradaBean = new PreguntaCerradaBean();
-                        objPreguntaCerradaBean.setStrDescripcion(strElemento);
+                        PreguntaCerradaBean objPreguntaCerradaBean = new PreguntaCerradaBean(-1, strElemento, bdScoreRequired, bdScoreMinRequired);
                         objCategorias.getLstPreguntasCerradas().add(objPreguntaCerradaBean);
                     }
 
@@ -406,19 +495,19 @@ public class importarCuestionariosView extends BaseView implements Serializable 
         try {
 
             for (Categorias objCat : objElementos.getLstCategorias()) {
-                lstElementosDelCuestionarios.add(new DosDatos(msg("category"), objCat.getStrCategoria(), null, objCat.getIntIdComponente()));
+                lstElementosDelCuestionarios.add(new DosDatos(msg("category"), objCat.getStrCategoria(), null, objCat.getIntIdComponente(), objCat.getBdScoreRequired(), objCat.getBdScoreMinRequired()));
 
                 for (PreguntaCerradaBean objPreguntaCerradaBean : objCat.getLstPreguntasCerradas()) {
-                    lstElementosDelCuestionarios.add(new DosDatos(msg("close.question"), objPreguntaCerradaBean.getStrDescripcion(), "secondary", objPreguntaCerradaBean.getId()));
+                    lstElementosDelCuestionarios.add(new DosDatos(msg("close.question"), objPreguntaCerradaBean.getStrDescripcion(), "secondary", objPreguntaCerradaBean.getId(), objPreguntaCerradaBean.getBdScoreRequired(), objPreguntaCerradaBean.getBdScoreMinRequired()));
                 }
             }
 
             for (ComentarioBean objComentarioBean : objElementos.getLstComentarios()) {
-                lstElementosDelCuestionarios.add(new DosDatos(msg("comment"), objComentarioBean.getStrDescripcion(), "warning", objComentarioBean.getId()));
+                lstElementosDelCuestionarios.add(new DosDatos(msg("comment"), objComentarioBean.getStrDescripcion(), "warning", objComentarioBean.getId(), null, null));
             }
 
             for (PreguntaAbiertaBean objPreguntaAbiertaBean : objElementos.getLstPreguntasAbiertas()) {
-                lstElementosDelCuestionarios.add(new DosDatos(msg("open.question"), objPreguntaAbiertaBean.getStrDescripcion(), "success", objPreguntaAbiertaBean.getId()));
+                lstElementosDelCuestionarios.add(new DosDatos(msg("open.question"), objPreguntaAbiertaBean.getStrDescripcion(), "success", objPreguntaAbiertaBean.getId(), null, null));
             }
 
             mostrarAlertaInfo(msg("step2.evaluation.selected") + " " + objElementos.getStrDescCuestionario());
@@ -480,25 +569,21 @@ public class importarCuestionariosView extends BaseView implements Serializable 
 
                     Categorias objCategorias = new Categorias(objComponente.getCoIdComponentePk());
                     objCategorias.setStrCategoria(objComponente.getCoTxDescripcion());
+                    objCategorias.setBdScoreMinRequired(objComponente.getCoNrPuntajeMinimoRequerido());
+                    objCategorias.setBdScoreRequired(objComponente.getCoNrPuntajeRequerido());
 
                     for (Componente objComponentePC : objComponenteDao.listaComponenteRed(objComponente)) {
-                        PreguntaCerradaBean objPreguntaCerradaBean = new PreguntaCerradaBean();
-                        objPreguntaCerradaBean.setId(objComponentePC.getCoIdComponentePk());
-                        objPreguntaCerradaBean.setStrDescripcion(objComponentePC.getCoTxDescripcion());
+                        PreguntaCerradaBean objPreguntaCerradaBean = new PreguntaCerradaBean(objComponentePC.getCoIdComponentePk(), objComponentePC.getCoTxDescripcion(), objComponentePC.getCoNrPuntajeRequerido(), objComponentePC.getCoNrPuntajeMinimoRequerido());
                         objCategorias.getLstPreguntasCerradas().add(objPreguntaCerradaBean);
                     }
 
                     objCuestionarioImportado.getLstCategorias().add(objCategorias);
 
                 } else if (objComponente.getCoIdTipoComponente().equals(Constantes.INT_ET_TIPO_COMPONENTE_COMENTARIO)) {
-                    ComentarioBean objComentarioBean = new ComentarioBean();
-                    objComentarioBean.setId(objComponente.getCoIdComponentePk());
-                    objComentarioBean.setStrDescripcion(objComponente.getCoTxDescripcion());
+                    ComentarioBean objComentarioBean = new ComentarioBean(objComponente.getCoIdComponentePk(), objComponente.getCoTxDescripcion(), null);
                     objCuestionarioImportado.getLstComentarios().add(objComentarioBean);
                 } else if (objComponente.getCoIdTipoComponente().equals(Constantes.INT_ET_TIPO_COMPONENTE_PREGUNTA_ABIERTA)) {
-                    PreguntaAbiertaBean objPreguntaAbiertaBean = new PreguntaAbiertaBean();
-                    objPreguntaAbiertaBean.setId(objComponente.getCoIdComponentePk());
-                    objPreguntaAbiertaBean.setStrDescripcion(objComponente.getCoTxDescripcion());
+                    PreguntaAbiertaBean objPreguntaAbiertaBean = new PreguntaAbiertaBean(objComponente.getCoIdComponentePk(), objComponente.getCoTxDescripcion(), null);
                     objCuestionarioImportado.getLstPreguntasAbiertas().add(objPreguntaAbiertaBean);
                 }
 
@@ -523,25 +608,30 @@ public class importarCuestionariosView extends BaseView implements Serializable 
 
     }
 
-    public void onRowEdit(RowEditEvent<DosDatos> event) {
+    public void onRowEdit(CellEditEvent event) {
 
         try {
 
-            ComponenteDAO objComponenteDao = new ComponenteDAO();
+            if (Utilitarios.noEsNuloOVacio(event.getNewValue())) {
 
-            Componente objComponente = objComponenteDao.obtenComponente(event.getObject().getIntComponente());
-            objComponente.setCoTxDescripcion(event.getObject().getStrDato2());
+                ComponenteDAO objComponenteDao = new ComponenteDAO();
 
-            ComponenteDAO objComponenteDAO = new ComponenteDAO();
-            objComponenteDAO.actualizaComponente(objComponente);
+                Componente objComponente = objComponenteDao.obtenComponente(lstElementosDelCuestionarios.get(event.getRowIndex()).getIntComponente());
+                objComponente.setCoTxDescripcion(event.getNewValue().toString());
 
-            FacesMessage msg = new FacesMessage("El cuestionario fue actualizado exitosamente", null);
-            FacesContext.getCurrentInstance().addMessage(null, msg);
+                ComponenteDAO objComponenteDAO = new ComponenteDAO();
+                objComponenteDAO.actualizaComponente(objComponente);
+
+                lstElementosDelCuestionarios.get(event.getRowIndex()).setStrDato2(event.getNewValue().toString());
+
+                mostrarAlertaInfo("profile.updated.success");
+
+            } else {
+                mostrarAlertaError(msg("adm.least.value"));
+            }
 
         } catch (Exception e) {
-            log.error(e);
-            FacesMessage msg = new FacesMessage("Ocurrió un error al actualizar el cuestionario", null);
-            FacesContext.getCurrentInstance().addMessage(null, msg);
+            mostrarError(log, e);
         }
 
     }

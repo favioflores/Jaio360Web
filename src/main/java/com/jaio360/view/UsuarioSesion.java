@@ -26,7 +26,6 @@ import java.util.TimeZone;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.faces.application.FacesMessage;
-import javax.faces.bean.ManagedBean;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.bean.ViewScoped;
@@ -35,8 +34,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.CharEncoding;
-import org.apache.log4j.Logger;
-import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Logger;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
@@ -172,6 +169,7 @@ public class UsuarioSesion extends BaseView implements Serializable {
                     session.setAttribute("usuarioInfo", usuarioInfo);
 
                     //System.out.println("La sesión se abrió automaticamente a las " + new Date());
+                    //test();
 
                     FacesContext.getCurrentInstance().getExternalContext().redirect("welcome.jsf");
 
@@ -188,7 +186,6 @@ public class UsuarioSesion extends BaseView implements Serializable {
     private void sesionCerrada() {
 
         //System.out.println("La sesión se cerro automaticamente a las " + new Date());
-
     }
 
     public void enviarClaveCorreo() {
@@ -321,41 +318,24 @@ public class UsuarioSesion extends BaseView implements Serializable {
             }
 
         }
-        
-                
+
     }
 
     public void test() {
         try {
-            this.usuario = "favito.flores@gmail.com";
-            this.contraseña = "1234";
 
             UsuarioDAO objUsuarioDAO = new UsuarioDAO();
-
-            Usuario objUsuario = objUsuarioDAO.iniciaSesion(usuario.trim());
-            usuarioInfo = new UsuarioInfo(objUsuario, null, true);
-            usuarioInfo.setTimeClient(this.timeClient);
-
-            System.out.println("GMT client: " + this.timeClient);
-
-            Date currentTime = new Date();
-
-            SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMM d, yyyy hh:mm:ss a zZ");
-
-            sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
-
-            System.out.println("GMT server: " + sdf.format(currentTime));
 
             HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
             session.removeAttribute("proyectoInfo");
             ProyectoInfo objP = new ProyectoInfo();
-            objP.setIntIdProyecto(147);
-            objP.setStrDescNombre("Prueba");
-            objP.setIntIdEstado(37);
+            objP.setIntIdProyecto(849);
+            objP.setStrDescNombre("Evaluación 360 - Papa Johns y DFSI");
+            objP.setIntIdEstado(34);
             session.setAttribute("proyectoInfo", objP);
 
-            session.setAttribute("usuarioInfo", usuarioInfo);
-            FacesContext.getCurrentInstance().getExternalContext().redirect("stepSix.jsf");
+            //session.setAttribute("usuarioInfo", usuarioInfo);
+            FacesContext.getCurrentInstance().getExternalContext().redirect("dashboard.jsf");
 
         } catch (Exception ex) {
             mostrarError(log, ex);

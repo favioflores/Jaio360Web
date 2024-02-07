@@ -1,0 +1,272 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui" 
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                template="/WEB-INF/template.xhtml" >
+
+    <ui:define name="head"> 
+    </ui:define>
+
+    <!--ui:define name="cabecera">
+        <ui:include src="cabecera.xhtml" />
+    </ui:define-->
+
+    <ui:define name="content">     
+        <p:panel >
+            <h:form id="formUsuario">
+
+                <p:card id="cardFormUsuario">
+
+                    <h3>#{msg['mant.users']}</h3>
+
+                    <p:growl id="growlFormUduario" showDetail="false" life="4000" />
+
+                    <div class="ui-fluid p-formgrid p-grid">
+
+                        <div class="p-field p-col-12 p-md-4">
+                            <div class="p-field p-grid">
+                                <div class="p-col">
+                                    <p:outputLabel for="@next" value="#{msg['email']}" />
+                                    <p:inputText id="idMail" type="text" value="#{mantenimientoCuentaView.usIdMail}" required="true" maxlength="100" disabled="#{mantenimientoCuentaView.isEdit}" >
+                                        <f:validator validatorId="validarCorreo" />
+                                    </p:inputText>
+                                    <p:message for="idMail" display="text" style="width: 100%; margin: 0 0 0 0;" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-field p-col-12 p-md-4">
+                            <div class="p-field p-grid">
+                                <div class="p-col">
+                                    <p:outputLabel for="@next" value="#{msg['name.user']}" />
+                                    <p:inputText id="strDescEmpresa" value="#{mantenimientoCuentaView.usTxDescripcionEmpresa}" required="true" maxlength="100" >
+                                        <f:validator validatorId="validaTextoIngresado" />
+                                    </p:inputText>
+                                    <p:message for="strDescEmpresa" display="text" style="width: 100%; margin: 0 0 0 0;"/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-field p-col-12 p-md-4">
+                            <div class="p-field p-grid">
+                                <div class="p-col">
+                                    <p:outputLabel for="@next" value="#{msg['company.name']}" />
+                                    <p:inputText id="strRazonSocial" type="text" value="#{mantenimientoCuentaView.usTxNombreRazonsocial}" required="true" maxlength="100" >
+                                        <f:validator validatorId="validaTextoIngresado" />
+                                    </p:inputText>
+                                    <p:message for="strRazonSocial" display="text" style="width: 100%; margin: 0 0 0 0;" />
+                                </div>
+                            </div>
+                        </div> 
+
+                        <div class="p-field p-col-12 p-md-4">
+                            <div class="p-field p-grid">
+                                <div class="p-col">
+                                    <p:outputLabel for="@next" value="#{msg['type.account']}" />
+                                    <p:selectOneMenu id="idTipoCuenta" value="#{mantenimientoCuentaView.usIdTipoCuenta}" required="true" 
+                                                        >
+                                        <f:selectItem itemLabel="#{msg['please.select']}" itemValue="" />
+                                        <f:selectItems value="#{mantenimientoCuentaView.lstTipoCuenta}" var="esta" itemLabel="#{esta.label}" itemValue="#{esta.value}" />
+                                    </p:selectOneMenu>
+                                    <p:message for="idTipoCuenta" display="text" style="width: 100%; margin: 0 0 0 0;" />
+                                </div>
+                            </div>
+                        </div>      
+
+
+                        <div class="p-field p-col-12 p-md-4">
+                            <div class="p-field p-grid">
+                                <div class="p-col">
+                                    <p:outputLabel for="@next" value="#{msg['country']}"  />
+                                    <p:selectOneMenu id="idPais" value="#{mantenimientoCuentaView.pais}" required="true" 
+                                                       >
+                                        <f:selectItem itemLabel="#{msg['please.select']}" itemValue="" />
+                                        <f:selectItems value="#{mantenimientoCuentaView.lstPaises}"  var="pais" itemLabel="#{pais.ubTxDescripcion}" itemValue="#{pais.ubIdUbigeoPk}" />
+                                        <p:ajax update="idCiudad" listener="#{mantenimientoCuentaView.poblarCiudades()}"/>
+                                    </p:selectOneMenu>
+                                    <p:message for="idPais" display="text" style="width: 100%; margin: 0 0 0 0;" />
+                                </div>
+                            </div>
+                        </div> 
+
+                        <div class="p-field p-col-12 p-md-4">
+                            <div class="p-field p-grid">
+                                <div class="p-col">
+                                    <p:outputLabel for="@next" value="#{msg['city']}"/>
+                                    <p:selectOneMenu id="idCiudad" value="#{mantenimientoCuentaView.ciudad}" label="Ciudad" required="true" disabled="#{mantenimientoCuentaView.pais==null?true:false}" >
+                                        <f:selectItem itemLabel="#{msg['please.select']}" itemValue="" />
+                                        <f:selectItems value="#{mantenimientoCuentaView.lstCiudades}"  var="ciudad" itemLabel="#{ciudad.ubTxDescripcion}" itemValue="#{ciudad.ubIdUbigeoPk}" />
+                                    </p:selectOneMenu>
+                                    <p:message for="idCiudad" display="text" style="width: 100%; margin: 0 0 0 0;" /> 
+                                </div>
+                            </div>
+                        </div> 
+
+                        <div class="p-col-12 p-col-12 p-md-12">
+                            <div class="p-field p-formgrid p-grid">
+                                <div class="p-field p-col">
+                                    <p:commandButton value="#{msg['save']}" update="formUsuario,formMntCuenta" process="formUsuario" icon="pi pi-check" actionListener="#{mantenimientoCuentaView.guardarUsuario}" />
+                                </div>
+                                <div class="p-field p-col">
+                                    <p:commandButton value="#{msg['clean']}" update="formUsuario" immediate="true" process="@this" styleClass="ui-button-secondary" icon="pi pi-times" actionListener="#{mantenimientoCuentaView.resetFormUsuario()}" />
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </p:card>
+
+            </h:form>
+
+            <p:spacer/>
+
+
+            <h:form id="formMntCuenta">
+
+                <p:card id="panel">
+
+                    <h3>#{msg['user.list']}</h3>
+
+
+                    <p:growl id="growlMntCuenta" showDetail="false" life="4000" />
+
+                    <div class="ui-fluid p-formgrid p-grid">
+
+                        <!--
+                        
+                                                    <p:commandButton value="Crear usuario nuevo" actionListener="#{mantenimientoCuentaView.abrirPanel}" > 
+                                                        <p:ajax event="dialogReturn" listener="#{mantenimientoCuentaView.usuarioCreado}" update=":formMntCuenta" />
+                                                    </p:commandButton>
+                        -->
+                    </div>
+                    <div class="p-field p-col-12 p-md-12">
+                        <p:dataTable 
+                            id="idUsuarios"
+                            var="usu"
+                            value="#{mantenimientoCuentaView.lstUsuario}" 
+                            rows="5"
+                            size="small"
+                            paginator="true" 
+                            paginatorPosition="bottom"
+                            paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                            rowsPerPageTemplate="5,10,15"                                 
+                            widgetVar="usu"
+                            emptyMessage="#{msg['no.items']}"
+                            filteredValue="#{mantenimientoCuentaView.filteredUsuarios}"
+                            globalFilterFunction="#{mantenimientoCuentaView.globalFilterFunction}"
+                            rowKey="#{usu.intUsuarioPk}"
+                            rowIndexVar="index"
+                            >    
+
+                            <!--<p:ajax event="rowSelect" listener="#{mantenimientoCuentaView.cargarContrato}" update=":formContratos:"/>-->
+
+                            <f:facet name="header">
+                                <div class="p-d-flex p-ai-center p-jc-between">
+                                    <div>
+                                        <p:inputText id="globalFilter" onkeyup="PF('usu').filter();" style="width:300px" placeholder="#{msg['search']}"/>
+                                    </div>
+                                </div>
+                            </f:facet>
+
+                            <p:column style="width: 40px;">
+                                <f:facet name="header">
+                                    <h:outputText value="#" />
+                                </f:facet>
+                                <h:outputText 
+                                    value="#{index + 1}" />
+                            </p:column> 
+
+                            <p:column headerText="#{msg['email']}" >
+                                <h:outputText value="#{usu.strEmail}" />
+                            </p:column>
+
+                            <p:column headerText="#{msg['name.user']}">
+                                <h:outputText value="#{usu.strDescripcion}" />
+                            </p:column>
+                            <p:column  headerText="#{msg['company.name']}">
+                                <h:outputText value="#{usu.strEmpresaDesc}" />
+                            </p:column>
+                            <p:column headerText="#{msg['user.created']}" style="text-align: center;">                                   
+                                <h:outputText value="#{usu.strFechaRegistro}" />
+                            </p:column>
+
+                            <p:column headerText="#{msg['type.account']}" style="text-align: center;">
+                                <h:outputText value="#{usu.strTipoUsuario}" />
+                            </p:column>
+
+                            <p:column style="width:50px;text-align: center;">
+                                <p:commandButton icon="pi pi-pencil" update="formUsuario" immediate="true" process="@this" actionListener="#{mantenimientoCuentaView.editarUsuario(usu)}" >
+                                </p:commandButton>
+                            </p:column>
+                            <p:column style="width:50px;text-align: center;">
+                                <p:commandButton icon="pi pi-lock" update="formUsuario" immediate="true" oncomplete="PF('dlgChangePassword').show()" actionListener="#{mantenimientoCuentaView.editarUsuario(usu)}"  >
+                                </p:commandButton>
+                            </p:column>
+                        </p:dataTable>
+                    </div>
+
+
+                </p:card>
+
+            </h:form>
+
+        </p:panel>
+
+        <p:dialog widgetVar="dlgChangePassword" header="#{msg['change.password']}" width="500"
+                  draggable="false" closable="true" hideEffect="drop" closeOnEscape="true" showEffect="drop" 
+                  modal="true"
+                  resizable="false" >
+            <h:form>
+                <p:growl id="dlgGrowl" showDetail="false" life="4000" />
+                <p:panel>
+
+                    <div class="ui-fluid p-formgrid p-grid">
+
+                        <div class="p-field p-col-12 p-md-12">
+                            <div class="p-field">
+                                <p:outputLabel value="#{msg['password.not.more.20.character']}"></p:outputLabel>
+                            </div>
+                            <div class="p-field">
+                                <div class="ui-fluid p-formgrid p-grid">
+                                    <div class="p-field p-col-12 p-md-12">
+                                        <p:outputLabel for="@next" value="#{msg['new.password']}"/> 
+                                        <p:password id="strPassNuevo" value="#{mantenimientoCuentaView.strContraseniaNueva}" match="strPassReNuevo"  label="#{msg['new.password']}" feedback="true" maxlength="20" required="true" requiredMessage="#{msg['cant.be.empty']}" validatorMessage="#{msg['must.be.same.password']}" redisplay="true" />
+                                        <p:message for="strPassNuevo" />
+                                    </div>
+                                    <div class="p-field p-col-12 p-md-12">
+                                        <p:outputLabel for="@next" value="#{msg['re.new.password']}"/>
+                                        <p:password id="strPassReNuevo" value="#{mantenimientoCuentaView.strContraseniaReNueva}"  label="#{msg['new.password']}" feedback="true" maxlength="20" required="true" requiredMessage="#{msg['cant.be.empty']}" redisplay="true" />
+                                        <p:message for="strPassReNuevo" />
+                                    </div>              
+                                </div>
+                            </div>
+                        </div>      
+                    </div>
+                    <div class="p-col-12 p-col-12 p-md-12">
+                        <div class="p-field p-formgrid p-grid">
+                            <div class="p-field p-col">
+                                <p:commandButton value="#{msg['change']}" style="width: 100%;"  icon="pi pi-lock" update="@form" actionListener="#{mantenimientoCuentaView.actualizaContraseña()}"
+                                                 oncomplete="PF('dlgChangePassword').hide()" />
+                            </div>
+                            <div class="p-field p-col">
+                                <p:commandButton value="#{msg['cancel']}" styleClass="ui-button-danger" 
+                                                 style="width: 100%;" actionListener="#{mantenimientoCuentaView.resetFormUsuario()}"
+                                                 icon="pi pi-times"  oncomplete="PF('dlgChangePassword').hide()"  />
+                            </div>
+                        </div>
+                    </div>
+
+                    <br/>
+                    <center>
+                        <p:graphicImage value="../images/logoJaio360.jpg" width="130" height="50" />
+                    </center>
+                </p:panel>
+            </h:form>
+        </p:dialog>      
+
+    </ui:define>
+
+</ui:composition>

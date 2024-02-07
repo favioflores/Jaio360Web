@@ -1,0 +1,147 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                template="/WEB-INF/template.xhtml">    
+
+    <ui:define name="head"> 
+        <style>
+            .ui-progressbar .ui-widget-header {
+                background: #cbeccc !important;
+            }
+            #grad {
+                height: 100%;
+                width: 100%;
+                position: fixed;
+                background-color: #005EA6;/* For browsers that do not support gradients */
+                background-image: linear-gradient(to right, #005EA6 , #006CBE);
+            }
+            #frmAnalisis\:captcha > div {
+                margin: 0 auto;
+            }
+            .text-center {
+                text-align: center !important;
+            }
+            .g-recaptcha {
+                display: inline-block;
+            }
+            img {
+                border-radius: 100%;
+            }
+        </style>
+        <script>
+            function skinRadarChart() {
+                Chart.defaults.startAngle = 36;
+                Chart.defaults.plugins.tooltip.cornerRadius = 1;
+                Chart.defaults.plugins.tooltip.enabled = true;
+                Chart.defaults.plugins.tooltip.mode = 'point';
+                Chart.defaults.plugins.tooltip.position = 'nearest';
+                Chart.defaults.elements.line.tension = 3;
+                Chart.defaults.scales.linear.min = 0;
+            }
+        </script>
+    </ui:define>
+    <ui:define name="title">
+        <h:outputLabel value="#{msg['label.proxy.mode.client']} #{stepOneView.objUsuarioInfoProxy.strEmail}" rendered="#{stepOneView.objUsuarioInfoProxy!=null}" />
+        <h:outputLabel value="#{msg['project.info']} #{stepOneView.objProyectoInfo.strDescNombre}" />
+    </ui:define>
+    <!--ui:define name="cabecera">
+        <ui:include src="cabecera.xhtml" />
+        <p:staticMessage severity="warn" summary="#{msg['label.proxy.mode.client']}" detail="#{stepOneView.objUsuarioInfoProxy.strEmail}" rendered="#{stepOneView.objUsuarioInfoProxy!=null}" style="width: 100%; margin-top: 5px; margin-left: 2px; margin-right: 2px;"/>
+        <p:staticMessage severity="info" summary="#{msg['info']}" detail="#{stepOneView.objProyectoInfo.strDescNombre}" style="width: 100%; margin-top: 5px; margin-left: 2px; margin-right: 2px;"/>
+    </ui:define-->
+    <ui:define name="helpSteps">
+
+        <h:form id="formPrincipalProyecto" enctype="multipart/form-data" >
+
+            <p:steps readonly="false" activeIndex="#{stepSixView.activeIndex}" >
+                <p:menuitem value="#{msg['step.1']}" actionListener="#{stepOneView.goToStep(1)}"/>
+                <p:menuitem value="#{msg['step.2']}" actionListener="#{stepOneView.goToStep(2)}"/>
+                <p:menuitem value="#{msg['step.3']}" actionListener="#{stepOneView.goToStep(3)}"/>
+                <p:menuitem value="#{msg['step.4']}" actionListener="#{stepOneView.goToStep(4)}"/>
+                <p:menuitem value="#{msg['step.5']}" actionListener="#{stepOneView.goToStep(5)}"/>
+                <p:menuitem value="#{msg['step.6']}" actionListener="#{stepOneView.goToStep(6)}"/>
+            </p:steps>
+            <p:spacer/>
+
+            <center>
+                <p:commandButton value="#{msg['back']}" type="submit" actionListener="#{stepSixView.backStep()}" update="formPrincipalProyecto" styleClass="ui-button-secondary" icon="pi pi-angle-left" />
+                <p:spacer/>
+                <p:commandButton value="#{msg['next']}" type="submit" actionListener="#{stepSixView.nextStep()}" update="formPrincipalProyecto" styleClass="ui-button-secondary" icon="pi pi-angle-right"  disabled="true"/>                   
+            </center>
+            <p:spacer/>
+
+        </h:form>   
+
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="frmAnalisis">
+            <div class="grid messages-demo">
+
+                <p:growl life="4000"  showDetail="false" />
+                <div class="col-12 md:col-12">
+                    <div class="card ui-fluid">
+
+                        <h5>Datos del evaluado</h5>
+                        <div class="field grid">
+                            <p:outputLabel for="@next" value="#{msg['description']}" styleClass="col-fixed" />
+                            <div class="col">
+                                <p:inputText value="#{dashboardDetailView.objParticipante.paTxDescripcion}" readonly="true"/>
+                            </div>
+                        </div>
+                        <c:if test="#{dashboardDetailView.objParticipante.paTxImgUrl!=null}">
+                            <div class="field grid">
+                                <p:outputLabel for="@next" value="#{msg['photo']}" styleClass="col-fixed" rendered="#{dashboardDetailView.objParticipante.paTxImgUrl!=null}" />
+                                <div class="col">
+                                    <p:graphicImage url="#{dashboardDetailView.objParticipante.paTxImgUrl}" height="75" width="75" class="classimg" rendered="#{dashboardDetailView.objParticipante.paTxImgUrl!=null}" />
+                                </div>
+                            </div>
+                        </c:if>
+                        <div class="field grid">
+                            <p:outputLabel for="@next" value="#{msg['email']}" styleClass="col-fixed" />
+                            <div class="col">
+                                <p:inputText value="#{dashboardDetailView.objParticipante.paTxCorreo}" readonly="true" />
+                            </div>
+                        </div>
+                        <div class="field grid">
+                            <p:outputLabel for="@next" value="#{msg['role']}" styleClass="col-fixed" />
+                            <div class="col">
+                                <p:inputText value="#{dashboardDetailView.objParticipante.paTxNombreCargo}" readonly="true"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 md:col-6">
+
+                    <div class="card ui-fluid">
+                        <h5>Resumen por categorias</h5>
+
+                        <div class="field">
+                            <p:radarChart model="#{dashboardDetailView.chartRadarPrincipal}"/>
+
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="col-12 md:col-6">
+
+                    <div class="card ui-fluid">
+                        <h5>Resumen por categorias</h5>
+
+                        <div class="field">
+                            <p:barChart model="#{dashboardDetailView.barModelPrincipal}" style="width: 100%; height: 500px;"/>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </h:form>
+
+    </ui:define>
+</ui:composition>

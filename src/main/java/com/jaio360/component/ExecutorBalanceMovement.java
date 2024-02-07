@@ -1,7 +1,6 @@
 package com.jaio360.component;
 
 import com.jaio360.dao.MovimientoDAO;
-import com.jaio360.dao.TipoMovimientoDAO;
 import com.jaio360.dao.UsuarioSaldoDAO;
 import com.jaio360.exception.ExecutorMovementException;
 import com.jaio360.orm.HibernateUtil;
@@ -12,10 +11,10 @@ import com.jaio360.orm.UsuarioSaldo;
 import com.jaio360.utils.Constantes;
 import com.jaio360.utils.Movimientos;
 import com.jaio360.view.BaseView;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import org.apache.log4j.Logger;
-import org.apache.commons.logging.LogFactory;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -23,7 +22,7 @@ import org.hibernate.Transaction;
  *
  * @author favio.flores
  */
-public class ExecutorBalanceMovement extends BaseView {
+public class ExecutorBalanceMovement extends BaseView implements Serializable{
 
     private static final Logger log = Logger.getLogger(ExecutorBalanceMovement.class);
 

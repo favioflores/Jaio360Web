@@ -125,7 +125,7 @@ public class ReporteIndividualCalificacionXCategoria implements Serializable {
             Map.Entry entry = (Map.Entry) it.next();
             Relacion objRelacion = (Relacion) entry.getValue();
             if (!objRelacion.getReTxAbreviatura().equals("PROM") && !objRelacion.getReTxAbreviatura().equals("AUTO")) {
-                seriesColors.put(objRelacion.getReTxAbreviatura(), Utilitarios.convertColorHexToRgb("#" + objRelacion.getReColor()));
+                seriesColors.put(objRelacion.getReTxAbreviatura(), Utilitarios.convertColorHexToRgb(objRelacion.getReColor()));
                 lstRel.add(objRelacion.getReTxAbreviatura());
             }
         }

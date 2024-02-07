@@ -2,7 +2,6 @@ package com.jaio360.view;
 
 import com.jaio360.dao.EjecutarEvaluacionDAO;
 import com.jaio360.dao.MensajeDAO;
-import com.jaio360.dao.ParticipanteDAO;
 import com.jaio360.dao.RelacionParticipanteDAO;
 import com.jaio360.dao.ResultadoDAO;
 import com.jaio360.domain.ComentarioBean;
@@ -14,14 +13,9 @@ import com.jaio360.domain.UsuarioInfo;
 import com.jaio360.orm.Componente;
 import com.jaio360.orm.DetalleMetrica;
 import com.jaio360.orm.Mensaje;
-import com.jaio360.orm.Participante;
-import com.jaio360.orm.Proyecto;
-import com.jaio360.orm.RelacionParticipante;
 import com.jaio360.orm.RelacionParticipanteId;
-import com.jaio360.orm.Resultado;
 import com.jaio360.utils.Constantes;
 import com.jaio360.utils.Utilitarios;
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,7 +31,6 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.log4j.Logger;
-import org.apache.commons.logging.LogFactory;
 
 /**
  *
@@ -57,9 +50,18 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
     private String strInstrucciones;
     private String strAgradecimiento;
     private Integer indexTocomment;
+    /**
+     * INSTRUCCIONES Y AGRADECIMIENTO
+     */
+    private String strMensajeRecomendaciones;
+    private String strMensajeConfidencialidad;
+    private String strMensajeAgradecimiento;
+    private String strMensajeAgradecimientoFinal;
 
     private List<EvaluacionesXEjecutar> lstEvaluacionesXEjecutar;
     private Boolean blVisualGroup;
+
+    private Boolean isTermOk;
 
     private List<Componente> lstComponenteCerrada;
     private List<Componente> lstComponenteAbierta;
@@ -83,6 +85,7 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
     private String[] strRptaComentario = new String[50];
     private LinkedHashMap<Integer, String> mapRespuestas;
     private Boolean isPreguntaCerradaActual;
+    private Boolean blInstrucciones;
 
     /**
      * ** NUEVO PREGUNTA ABIERTA ***
@@ -110,6 +113,14 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
         return strDescEvaluado;
     }
 
+    public String getStrMensajeAgradecimientoFinal() {
+        return strMensajeAgradecimientoFinal;
+    }
+
+    public void setStrMensajeAgradecimientoFinal(String strMensajeAgradecimientoFinal) {
+        this.strMensajeAgradecimientoFinal = strMensajeAgradecimientoFinal;
+    }
+
     public void setStrDescEvaluado(String strDescEvaluado) {
         this.strDescEvaluado = strDescEvaluado;
     }
@@ -122,6 +133,30 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
         this.strCargoEvaluado = strCargoEvaluado;
     }
 
+    public String getStrMensajeRecomendaciones() {
+        return strMensajeRecomendaciones;
+    }
+
+    public void setStrMensajeRecomendaciones(String strMensajeRecomendaciones) {
+        this.strMensajeRecomendaciones = strMensajeRecomendaciones;
+    }
+
+    public String getStrMensajeConfidencialidad() {
+        return strMensajeConfidencialidad;
+    }
+
+    public void setStrMensajeConfidencialidad(String strMensajeConfidencialidad) {
+        this.strMensajeConfidencialidad = strMensajeConfidencialidad;
+    }
+
+    public String getStrMensajeAgradecimiento() {
+        return strMensajeAgradecimiento;
+    }
+
+    public void setStrMensajeAgradecimiento(String strMensajeAgradecimiento) {
+        this.strMensajeAgradecimiento = strMensajeAgradecimiento;
+    }
+
     public String getStrCorreoEvaluado() {
         return strCorreoEvaluado;
     }
@@ -132,6 +167,14 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
 
     public String getStrUrlImagen() {
         return strUrlImagen;
+    }
+
+    public Boolean getBlInstrucciones() {
+        return blInstrucciones;
+    }
+
+    public void setBlInstrucciones(Boolean blInstrucciones) {
+        this.blInstrucciones = blInstrucciones;
     }
 
     public void setStrUrlImagen(String strUrlImagen) {
@@ -284,6 +327,14 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
 
     public String[] getStrRptaComentario() {
         return strRptaComentario;
+    }
+
+    public Boolean getIsTermOk() {
+        return isTermOk;
+    }
+
+    public void setIsTermOk(Boolean isTermOk) {
+        this.isTermOk = isTermOk;
     }
 
     public void setStrRptaComentario(String[] strRptaComentario) {
@@ -486,8 +537,6 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
             for (EvaluacionesXEjecutar objEvaluacionesXEjecutar : lstEvaluacionesXEjecutar) {
 
                 if (Utilitarios.noEsNuloOVacio(objEvaluacionesXEjecutar.getIntRptaSeleccionada())) {
-                    
-                    log.error("User: " + Utilitarios.obtenerUsuario().getStrEmail() + " grabarRespuestaCerradaActual() " + objEvaluacionesXEjecutar.getIntRptaSeleccionada());
 
                     PreguntaCerradaBean objPreguntaCerradaBean = objEvaluacionesXEjecutar.getLstPreguntasCerradas().get(this.intNroPreguntasActual);
 
@@ -504,9 +553,7 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
                      */
                     objEvaluacionesXEjecutar.setIntRptaSeleccionada(null);
                 } else {
-                    
-                    log.error("User: " + Utilitarios.obtenerUsuario().getStrEmail() + " grabarRespuestaCerradaActual() null");
-                    
+
                     PreguntaCerradaBean objPreguntaCerradaBean = objEvaluacionesXEjecutar.getLstPreguntasCerradas().get(this.intNroPreguntasActual);
 
                     //BeanUtils.copyProperties(objPreguntaCerradaBean, lstPreguntasCerradas.get(this.intNroPreguntasActual));
@@ -577,6 +624,8 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
 
             /* SE HACE 5 A MAS EVALUADOS A LA VEZ*/
             blVisualGroup = true;
+            blInstrucciones = true;
+            isTermOk = false;
 
             lstEvaluacionesXEjecutar = new ArrayList<>();
 
@@ -694,14 +743,14 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
             Mensaje objMensajeInstrucciones = objMensajeDAO.obtenMensaje(objProyectoInfo.getIntIdProyecto(), Constantes.INT_ET_NOTIFICACION_INSTRUCCIONES);
             Mensaje objMensajeAgradecimiento = objMensajeDAO.obtenMensaje(objProyectoInfo.getIntIdProyecto(), Constantes.INT_ET_NOTIFICACION_AGRADECIMIENTO);
 
-            byte[] bdataInstruccion = objMensajeInstrucciones.getMeTxCuerpo();
-            byte[] bdataAgradecimiento = objMensajeAgradecimiento.getMeTxCuerpo();
+            /**
+             * INSTRUCCIONES
+             */
+            this.strMensajeRecomendaciones = Utilitarios.decodeUTF8(objMensajeInstrucciones.getMeTxBienvenidaRecomendacion());
+            this.strMensajeConfidencialidad = Utilitarios.decodeUTF8(objMensajeInstrucciones.getMeTxBienvenidaConfidencialidad());
+            this.strMensajeAgradecimiento = Utilitarios.decodeUTF8(objMensajeInstrucciones.getMeTxBienvenidaAgradecimiento());
 
-            this.strInstrucciones = Utilitarios.decodeUTF8(bdataInstruccion);
-            this.strInstrucciones = this.strInstrucciones.replace("$NOMBRE", objProyectoInfo.getStrNombreEvaluador());
-
-            this.strAgradecimiento = Utilitarios.decodeUTF8(bdataAgradecimiento);
-            this.strAgradecimiento = this.strAgradecimiento.replace("$NOMBRE", objProyectoInfo.getStrNombreEvaluador());
+            this.strMensajeAgradecimientoFinal = Utilitarios.decodeUTF8(objMensajeAgradecimiento.getMeTxAgradecimiento());
 
         } catch (Exception e) {
             mostrarError(log, e);
@@ -754,9 +803,9 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
 
                 blTerminado = objResultadoDAO.guardarResultadoFinal(lstPreGrabado, objProyectoInfo.getIntIdProyecto(), new Date());
 
-                if(blTerminado){
-                    salir();
-                }else{
+                if (blTerminado) {
+                    mostrarAlertaInfo("finish.assessment");
+                } else {
                     mostrarAlertaError("error.was.occurred");
                 }
 
@@ -815,6 +864,15 @@ public class EjecutarEvaluacionView extends BaseView implements Serializable {
         } catch (Exception e) {
             mostrarError(log, e);
         }
+    }
+
+    public void comenzarEvaluación() {
+        this.blInstrucciones = false;
+        //if (this.isTermOk) {
+        //    this.blInstrucciones = false;
+        //}else{
+        //    mostrarAlertaInfo("term.not.ok.msg");
+        //}
     }
 
 }

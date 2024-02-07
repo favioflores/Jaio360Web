@@ -29,7 +29,7 @@
     </context-param>
     <context-param>
         <param-name>primefaces.THEME</param-name>
-        <param-value>omega-blue</param-value>
+        <param-value>omega-jaio</param-value>
     </context-param>
     <context-param>
         <param-name>primefaces.MOVE_SCRIPTS_TO_BOTTOM</param-name>
@@ -97,12 +97,12 @@
     <listener>
         <listener-class>com.sun.faces.config.ConfigureListener</listener-class>
     </listener>
-    <listener>
+    <!--listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
     <listener>
         <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
-    </listener>
+    </listener-->
     <listener>
         <listener-class>org.primefaces.webapp.UploadedFileCleanerListener</listener-class>
     </listener>
@@ -221,8 +221,16 @@
         <extension>pdf</extension>
         <mime-type>application/pdf</mime-type>
     </mime-mapping>
+    <mime-mapping>
+        <extension>mp4</extension>
+        <mime-type>video/mp4</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>gif</extension>
+        <mime-type>image/gif</mime-type>
+    </mime-mapping>
     <error-page>
         <error-code>404</error-code>
-        <location>/ui/resourceNotFound.jsf</location>
+        <location>/resourceNotFound.jsf</location>
     </error-page>
 </web-app>

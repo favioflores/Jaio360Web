@@ -21,13 +21,14 @@ public class validaTextoIngresado implements Validator {
         pattern = Pattern.compile(PATTERN);
     }
  
+    @Override
     public void validate(FacesContext context, UIComponent component, Object value) throws ValidatorException {
         if(Utilitarios.esNuloOVacio(value)){
-            throw new ValidatorException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error de validacion", "No debe ser vacio"));
+            throw new ValidatorException(new FacesMessage(FacesMessage.SEVERITY_ERROR, component.getAttributes().get("label") + ": " + "No debe ser vacio", null));
         }
          
         if(!pattern.matcher(value.toString()).matches()) {
-            throw new ValidatorException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error de validacion", "Tiene digitos no permitidos"));
+            throw new ValidatorException(new FacesMessage(FacesMessage.SEVERITY_ERROR, component.getAttributes().get("label") + ": " + "Tiene digitos no permitidos", null));
         }
     }
     

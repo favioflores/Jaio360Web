@@ -1,0 +1,184 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="head">
+        <!--style>
+            #grad {
+                height: 100%;
+                width: 100%;
+                position: fixed;
+                background-color: #005EA6;/* For browsers that do not support gradients */
+                background-image: linear-gradient(to right, #005EA6 , #006CBE);
+            }
+            .text-center {
+                text-align: center;
+            }
+        </style-->
+    </ui:define>
+    <ui:define name="cabecera">
+        <!--ui:include src="cabecera.xhtml" /-->
+    </ui:define>
+    <ui:define name="content">
+
+        <div class="grid">
+
+            <div class="col-12 md:col-5">
+                <h:form>
+                    <div class="card ui-fluid ">
+                        <h5>#{msg['cabecera.bienvenido']}</h5>
+
+                        <div class="field">
+                            <p:outputLabel value="#{msg['bienvenida.hola']} #{menuPrincipal.usuarioInfo.strDescripcion}" />
+                        </div>
+                        <div class="field">
+                            <p:outputLabel value="#{msg['bienvenida.text1']} #{menuPrincipal.usuarioInfo.strTipoUsuario}"/>
+                        </div>
+                        <c:if test="#{menuPrincipal.usuarioInfo.managingDirector == true or
+                                      menuPrincipal.usuarioInfo.projectManager == true }">
+                            <div class="field">
+                                <p:outputLabel value="#{msg['bienvenida.text2']}" />
+                            </div>
+                        </c:if>
+                        <c:if test="#{menuPrincipal.usuarioInfo.managingDirector == true or
+                                      menuPrincipal.usuarioInfo.projectManager == true }">
+                            <div class="field">
+                                <p:commandButton type="submit" value="#{msg['adm.proyecto']}" actionListener="#{welcomeView.ingresaSistema()}" immediate="true" process="@this" icon="pi pi-arrow-right" />
+                            </div>
+                        </c:if>
+
+
+                        <!--div class="field">
+                            <p class="m-2" style="text-align: justify" >#{msg['bienvenida.contacto']}</p>
+                        </div-->
+                        <!--div class="text-center">
+                            <p:graphicImage class="m-2" value="/images/logoJaio360.jpg" width="130" height="50" />
+                        </div-->
+
+                    </div>
+                </h:form>
+            </div>
+
+            <div class="col-12 md:col-7">
+                <h:form>
+                    <div class="card ui-fluid">
+
+                        <h5>#{msg['feedback']}</h5>
+
+                        <p:growl life="4000" showSummary="true" />
+                        <div class="field">
+                            <p:outputLabel value="#{msg['bienvenida.contacto']}" />
+                        </div>
+                        <div class="field">
+                            <p:inputTextarea required="true" requiredMessage="#{msg['cant.be.empty']}"
+                                             value="#{welcomeView.strFeedback}"
+                                             maxlength="200" counterTemplate="{0} #{msg['remaining.characters']}" counter="display" />
+                            <p:outputLabel id="display" class="block" />
+                        </div>
+                        <div class="field">
+                            <p:commandButton value="#{msg['send.email']}"  update="@form" actionListener="#{welcomeView.sendFeedBack()}"  icon="pi pi-send" />
+                        </div>
+                        <div class="field">
+                            <p:commandButton value="#{msg['clean']}" resetValues="true" update="@form" immediate="true" icon="pi pi-times" styleClass="ui-button-secondary" >
+                                <p:ajax update="@form" resetValues="true"/>
+                            </p:commandButton>
+                        </div>
+                    </div>
+                </h:form>
+            </div>
+
+
+            <c:if test="#{welcomeView.cantidadLstEvaluaciones>0}">
+                <div class="col-12 md:col-3">
+                    <h:form>
+                        <div class="card ui-fluid">
+                            <h5>Evaluaciones pendientes</h5>
+                            <c:if test="#{welcomeView.cantidadLstEvaluaciones==1}">
+                                <div class="field">
+                                    <p:outputLabel value="#{msg['actualmente.tienes']} #{welcomeView.lstEvaluaciones.size()} #{msg['bienvenida.eva.resuelta']}" />
+                                </div>
+                            </c:if>
+                            <c:if test="#{welcomeView.cantidadLstEvaluaciones>1}">
+                                <div class="field">
+                                    <p:outputLabel value="#{msg['actualmente.tienes']} #{welcomeView.lstEvaluaciones.size()} #{msg['bienvenida.eva.resueltas']}" />
+                                </div>
+                            </c:if>
+                        </div>
+                    </h:form>
+                </div>
+
+                <div class="col-12 md:col-9">
+                    <h:form>
+                        <div class="card ui-fluid">
+                            <h5>#{msg['lista.evaluaciones.pendientes']}</h5>
+
+                            <div class="field">
+
+                                <p:selectOneRadio id="indTypeSend" value="#{welcomeView.intEvaluationPreferenceView}"  layout="grid" columns="2" required="true"  >
+                                    <f:selectItem itemLabel="#{msg['individual.view']}" itemValue="0" />
+                                    <f:selectItem itemLabel="#{msg['grupal.view']}" itemValue="1" />
+                                    <p:ajax update="@form" event="valueChange" listener="#{welcomeView.changeEvaluationPreferenceView()}" />
+                                </p:selectOneRadio>
+                            </div>
+                            <div class="field">
+                                <p:dataTable var="eva" value="#{welcomeView.lstEvaluaciones}"
+                                             rows="5"
+                                             paginatorPosition="both"
+                                             stripedRows="true"
+                                             paginator="true"  
+                                             size="small"
+                                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                             emptyMessage="#{msg['no.items']}"
+                                             rowIndexVar="index"
+                                             >
+                                    <p:column style="width: 15px;">
+                                        <f:facet name="header">
+                                            <h:outputText value="#" />
+                                        </f:facet>
+                                        <h:outputText 
+                                            value="#{index + 1}" />
+                                    </p:column> 
+
+                                    <p:column headerText="#{msg['step2.evaluation.name']}" style="width: 25%;" > 
+                                        <h:outputText value="#{eva.strDescNombre}" /> 
+                                    </p:column>
+
+                                    <p:column headerText="#{msg['persona.evaluar']}" style="width: 50%;">
+                                        <p:outputPanel style="max-width: 350px"   >
+                                            <ul>
+                                                <ui:repeat var="v" value="#{eva.lstEvaluacionesXEjecutar}" >
+                                                    <li>#{v.strNombreEvaluado}</li>
+                                                </ui:repeat>
+                                            </ul>
+                                        </p:outputPanel>
+                                    </p:column>
+
+                                    <p:column style="text-align: center; width: 25%;">
+                                        <p:commandButton type="submit" 
+                                                         actionListener="#{welcomeView.irEvaluacion(eva)}" 
+                                                         value="#{msg['click.evaluar']}" />
+                                    </p:column>
+
+                                    <!--f:facet name="footer">
+                                        <p:commandButton type="submit" value="#{msg['back.to.welcome']}"
+                                                         oncomplete="PF('dlgBienvenida').show()" 
+                                                         onclick="PF('dlgEvaluaciones').hide()" 
+                                                         ajax="true" icon="pi pi-arrow-left" /> 
+                                    </f:facet-->
+                                </p:dataTable>
+                            </div>
+                        </div>
+                    </h:form>
+                </div>
+            </c:if>
+
+
+        </div>
+
+
+    </ui:define>
+</ui:composition>

@@ -98,7 +98,7 @@ public class ReporteIndividualCalificacionXCategoriaMismo implements Serializabl
 
             Relacion objRelacion = (Relacion) entry.getValue();
             if (objRelacion.getReTxAbreviatura().equals("AUTO") || objRelacion.getReTxAbreviatura().equals("PROM")) {
-                seriesColors.put(objRelacion.getReTxAbreviatura(), Utilitarios.convertColorHexToRgb("#" + objRelacion.getReColor()));
+                seriesColors.put(objRelacion.getReTxAbreviatura(), Utilitarios.convertColorHexToRgb(objRelacion.getReColor()));
             }
         }
 

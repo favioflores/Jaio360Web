@@ -14,6 +14,8 @@ import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -24,6 +26,7 @@ import static net.sf.dynamicreports.report.builder.DynamicReports.export;
 import static net.sf.dynamicreports.report.builder.DynamicReports.report;
 import static net.sf.dynamicreports.report.builder.DynamicReports.stl;
 import net.sf.dynamicreports.report.builder.component.ComponentBuilder;
+import net.sf.dynamicreports.report.builder.component.ImageBuilder;
 import net.sf.dynamicreports.report.builder.component.MultiPageListBuilder;
 import net.sf.dynamicreports.report.constant.LineStyle;
 import net.sf.dynamicreports.report.exception.DRException;
@@ -54,10 +57,18 @@ public class ReporteIndividualCaratula extends BaseView implements Serializable 
 
     private ComponentBuilder<?, ?> creaCaratula(DatosReporte objDatosReporte, ReporteGenerado objReporteGenerado) {
 
-        String strLogo = "https://www.jaio360-app.com/images/logoJaio360.jpg";
+        String strLogo = "https://www.jaio360-app.com/images/logoJaio360.png";
 
-        if (Utilitarios.esNuloOVacio(objDatosReporte.getStrURLCliente())) {
-            strLogo = objDatosReporte.getStrURLCliente();
+        if (Utilitarios.noEsNuloOVacio(objDatosReporte.getStrURLCliente())) {
+            //strLogo =  Utilitarios.decodeUTF8(objDatosReporte.getStrURLCliente().getBytes());
+        }
+
+        URL urlLogo = null;
+
+        try {
+            urlLogo = new URL(strLogo);
+        } catch (MalformedURLException ex) {
+            Logger.getLogger(ReporteIndividualCaratula.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         MultiPageListBuilder multiPageList = cmp.multiPageList();
@@ -65,8 +76,9 @@ public class ReporteIndividualCaratula extends BaseView implements Serializable 
         multiPageList.add(cmp.verticalList(
                 cmp.verticalList(
                         cmp.horizontalList(
-                                cmp.horizontalGap(345),
-                                cmp.image(strLogo).setFixedWidth(120)
+                                cmp.horizontalGap(335),
+                                cmp.image(urlLogo)
+                                //cmp.image(urlLogo).setImage(urlLogo).setFixedWidth(140)
                         )
                 ),
                 cmp.verticalGap(60),
@@ -88,9 +100,9 @@ public class ReporteIndividualCaratula extends BaseView implements Serializable 
         ));
 
         if (objDatosReporte.getBlWeighted()) {
-            
+
             ResourceBundle rb = ResourceBundle.getBundle("etiquetas");
-            
+
             ParametroDAO objParametroDAO = new ParametroDAO();
 
             Parametro objParametro = objParametroDAO.obtenParametro(objReporteGenerado.getProyectoInfo().getIntIdProyecto(), Constantes.INT_ET_TIPO_PARAMETRO_PONDERACION_RELACIONES);
@@ -104,7 +116,7 @@ public class ReporteIndividualCaratula extends BaseView implements Serializable 
             multiPageList.add(cmp.verticalList(
                     cmp.text(rb.getString("instr.1"))
             ));
-            
+
             multiPageList.add(cmp.verticalList(
                     cmp.text("")
             ));

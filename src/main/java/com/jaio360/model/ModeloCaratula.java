@@ -7,7 +7,6 @@ import java.util.Locale;
 import net.sf.dynamicreports.report.builder.MarginBuilder;
 
 import net.sf.dynamicreports.report.builder.ReportTemplateBuilder;
-import net.sf.dynamicreports.report.builder.style.ReportStyleBuilder;
 import net.sf.dynamicreports.report.builder.style.StyleBuilder;
 import net.sf.dynamicreports.report.constant.HorizontalAlignment;
 import net.sf.dynamicreports.report.constant.VerticalAlignment;

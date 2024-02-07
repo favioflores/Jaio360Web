@@ -40,7 +40,7 @@ public class ReporteGrupalCaratula implements Serializable {
 
     private ComponentBuilder<?, ?> creaCaratula(DatosReporte objDatosReporte) {
 
-        String strLogo = "https://www.jaio360-app.com/images/logoJaio360.jpg";
+        String strLogo = "https://www.jaio360-app.com/images/logoJaio360.png";
 
         if (Utilitarios.esNuloOVacio(objDatosReporte.getStrURLCliente())) {
             strLogo = objDatosReporte.getStrURLCliente();

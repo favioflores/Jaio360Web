@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <f:facet name="first">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+            <meta name="apple-mobile-web-app-capable" content="yes" />
+        </f:facet>
+        <title>JAIO 360</title>
+        <link rel="shortcut icon" type="image/png" href="#{request.contextPath}/images/favicon.png" />
+        <script>
+            function toSetAsParent() {
+                var delay = 20000;//1 seconds
+                setTimeout(function () {
+                    parent.window.location.href = '#{request.contextPath}' + '/login.jsf';
+                }, delay);
+            }
+
+        </script>
+
+        <h:outputScript name="js/layout.js" library="omega-layout"/>
+        <h:outputScript name="js/prism.js" library="omega-layout"/>
+        <h:outputStylesheet name="css/primeicons.css" library="omega-layout"/>
+        <h:outputStylesheet name="css/primeflex.min.css" library="omega-layout"/>
+        <h:outputStylesheet name="css/layout-#{guestPreferences.layout}.css" library="omega-layout"/>
+        <h:outputStylesheet name="css/demo.css" library="demo"/>
+    </h:head>
+
+    <h:body styleClass="login-body" onload="toSetAsParent();PF('timeoutDlg').show();">
+        <h:form id="loginForm">
+            <div id="login-wrapper">
+
+                <div id="login-container">
+                    <span class="title"></span>
+                    <p:graphicImage value="/images/logoJaio360.png" width="150"  />
+                    <p:growl id="growl" sticky="false" life="4000" />
+                    <div class="grid ui-fluid">
+
+                        <div class="col-12">
+                            <p:outputLabel value="#{msg['title.resource.notfound']}" class="p-m-2" />
+                        </div>
+                        <div class="col-12">
+                            <p:outputLabel value="#{msg['desc.resource.notfound']}" class="p-m-2" />
+                        </div>
+                        <div class="col-12">
+                            <script>
+                                let tiempo = 60000;
+                                const elem = document.getElementById('countdown');
+
+                                let cuentaAtras = minutos => {
+
+                                    tiempo *= minutos;
+                                    let tiempoActualizado = tiempo;
+                                    let m = 0;
+                                    let s = 0;
+
+                                    let cronometro = setInterval(() => {
+
+                                        tiempoActualizado -= 1000;
+                                        m = Math.trunc(tiempoActualizado / 60000);
+                                        s = Math.trunc(tiempoActualizado / 1000);
+                                        elem.textContent = s + ' segundos';
+
+                                        console.log(m + ' ' + s);
+
+                                        if (tiempoActualizado === 0) {
+                                            alert('¡Su tiempo ha terminado!');
+                                            clearInterval(cronometro);
+                                        }
+
+                                    }, 1000);
+
+                                };
+
+                                cuentaAtras(0.35);
+
+                            </script>
+                            <p:outputPanel  >
+                                <label id="countdown"></label>
+                            </p:outputPanel>
+                        </div>
+                        <div class="col-12">
+                            <p:button outcome="login" value="#{msg['aviso.ok']}" class="p-m-2" />         
+                        </div>
+                    </div>
+                </div>
+
+                <div class="login-footer">Copyright 2024 JAIO360</div>
+            </div>
+
+        </h:form>
+
+    </h:body>
+
+</html>

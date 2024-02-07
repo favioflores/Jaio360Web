@@ -20,12 +20,12 @@ body {
     }
 
     .ui-datepicker-next {
-      @include icon_override("\e901");
+      @include icon-override("\e901");
       right: 0;
     }
 
     .ui-datepicker-prev {
-      @include icon_override("\e900");
+      @include icon-override("\e900");
       left: 0;
     }
 
@@ -72,7 +72,15 @@ body {
         padding: $calendarCellPadding;
         text-align: center;
 
-        a {
+        > a {
+          &:hover {
+            background: $calendarCellDateHoverBg;
+            border-color: $calendarCellDateHoverBorderColor;
+          }
+        }
+
+        > a,
+        > span {
           padding: 0;
           color: $calendarCellDateTextColor;
           text-align: center;
@@ -83,11 +91,6 @@ body {
           display: inline-block;
           transition: $transition;
           border-radius: $calendarCellDateBorderRadius;
-
-          &:hover {
-            background: $calendarCellDateHoverBg;
-            border-color: $calendarCellDateHoverBorderColor;
-          }
 
           &:focus {
             @include focused();
@@ -102,16 +105,19 @@ body {
 
         &.ui-datepicker-today,
         &.ui-datepicker-current-day {
-          a {
-            background: $calendarCellDateTodayBg;
-            color: $calendarCellDateTodayTextColor;
-            font-weight: 600;
-            border: $calendarCellDateTodayBorder;
-
+          > a {
             &:hover {
               background: $calendarCellDateHoverBg;
               border-color: $calendarCellDateHoverBorderColor;
             }
+          }
+
+          > a,
+          > span {
+            background: $calendarCellDateTodayBg;
+            color: $calendarCellDateTodayTextColor;
+            font-weight: 600;
+            border: $calendarCellDateTodayBorder;
 
             &.ui-state-active {
               background: $calendarCellDateSelectedBg;
@@ -231,7 +237,7 @@ body {
       @include action-icon();
 
       .ui-icon {
-        @include icon_override("\e903");
+        @include icon-override("\e903");
       }
     }
 
@@ -239,7 +245,7 @@ body {
       @include action-icon();
 
       .ui-icon {
-        @include icon_override("\e902");
+        @include icon-override("\e902");
       }
     }
 
@@ -254,7 +260,7 @@ body {
       @include border-radius-left(0);
 
       .ui-icon-calendar {
-        @include icon_override("\e927");
+        @include icon-override("\e927");
       }
     }
 

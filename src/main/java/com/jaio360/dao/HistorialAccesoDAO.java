@@ -158,7 +158,39 @@ public class HistorialAccesoDAO implements Serializable
         return dtUltimoAcceso;
 
     }  
+
+    public Date obtenUltimoAccesoByEmail(String strEmail) throws HibernateException{ 
         
+        Date dtUltimoAcceso = null;  
+        
+        try { 
+            
+            iniciaOperacion(); 
+            
+            Query query = sesion.createQuery("select hist.haFeIngreso from HistorialAcceso hist join hist.usuario user where user.usIdMail = ? order by hist.haFeIngreso desc "); 
+            
+            query.setString(0, strEmail);
+            
+            query.setMaxResults(1);
+            
+            List lstHistorial = query.list();
+            
+            if(!lstHistorial.isEmpty()){
+                 dtUltimoAcceso = (Date) lstHistorial.get(0);
+            }
+            
+            return dtUltimoAcceso;
+        
+        } catch (Exception e){
+            log.error(e);
+        } finally { 
+            sesion.close(); 
+        }  
+        
+        return dtUltimoAcceso;
+
+    }  
+    
     public List<HistorialAcceso> obtenListaHistorialAcceso() throws HibernateException 
     { 
         List<HistorialAcceso> listaHistorialAcceso = null;  

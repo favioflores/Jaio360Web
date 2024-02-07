@@ -14,7 +14,7 @@ public class validaContraseniaLogin implements Validator {
  
     public void validate(FacesContext context, UIComponent component, Object value) throws ValidatorException {
         if(Utilitarios.esNuloOVacio(value)) {
-            throw new ValidatorException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error de validacion", "La contraseña es requerida"));
+            throw new ValidatorException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "La contraseña es requerida",null));
         }
     }
  

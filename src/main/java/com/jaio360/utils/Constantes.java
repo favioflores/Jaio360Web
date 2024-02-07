@@ -28,9 +28,9 @@ public class Constantes {
     public static String STR_JPG = ".jpg";
     public static String STR_GIF = ".gif";
     public static String STR_PNG = ".png";
-    public static String STR_JS = ".js";
+    public static String STR_JS = ".gif";
     public static String STR_HTM = ".htm";
-    public static String STR_SWF = ".swf";
+    public static String STR_MP4 = ".mp4";
 
     public static Integer INT_LONGITUD_CLAVE_DEFECTO_ACTIVO = 15;
     public static Integer INT_LONGITUD_ARCHIVOS = 20;
@@ -252,7 +252,7 @@ public class Constantes {
 
     public static Integer INT_REPORTE_INDIVIDUAL_ITEM_ALTA_CALIFICACION_MISMO = 8;
     public static Integer INT_REPORTE_INDIVIDUAL_ITEM_BAJA_CALIFICACION_MISMO = 9;
-    public static Integer INT_REPORTE_INDIVIDUAL_GENERAL_X_CATEGORIA_RELACION = 11;
+    public static Integer INT_REPORTE_INDIVIDUAL_GENERAL_X_CATEGORIA_RELACION = 18;
     public static Integer INT_REPORTE_INDIVIDUAL_PREGUNTAS_ABIERTAS = 10;
 
     public static int FORMAT_DATE_SHORT = DateFormat.SHORT;
@@ -265,6 +265,7 @@ public class Constantes {
     // Para contratos
     public static Integer INT_DT_ESTADO_CONTRATO = 7;
     public static Integer INT_DT_TIPO_CONTRATO = 8;
+    public static String STR_LINEBREAK = "\r";
 
     public static String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
     public static String URL_PATTERN = "[Hh][Tt][Tt][Pp][Ss]?:\\/\\/(?:(?:[a-zA-Z\\u00a1-\\uffff0-9]+-?)*[a-zA-Z\\u00a1-\\uffff0-9]+)(?:\\.(?:[a-zA-Z\\u00a1-\\uffff0-9]+-?)*[a-zA-Z\\u00a1-\\uffff0-9]+)*(?:\\.(?:[a-zA-Z\\u00a1-\\uffff]{2,}))(?::\\d{2,5})?(?:\\/[^\\s]*)?";

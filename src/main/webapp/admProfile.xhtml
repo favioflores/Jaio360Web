@@ -1,0 +1,183 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui" 
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                template="/WEB-INF/template.xhtml" >
+
+    <ui:define name="head"> 
+    </ui:define>
+    
+    <ui:define name="title">#{msg['actualizar.mis.datos']}</ui:define>
+
+    <ui:define name="cabecera">
+        <!--ui:include src="cabecera.xhtml" /-->
+    </ui:define>
+
+    <ui:define name="content">      
+
+        <p:growl id="growl" life="4000" sticky="false" />
+
+        <div class="grid messages-demo">
+
+            <div class="col-12 lg:col-6">
+                <h:form id="frmPersonal">
+                    <div class="card ui-fluid">
+                        <h5>#{msg['my.information']}</h5>
+
+                        <div class="field grid align-items-baseline">
+                            <p:outputLabel for="@next" value="#{msg['email']}" styleClass="col-fixed"/>
+                            <div class="col">
+                                <p:inputText id="idCorreo" value="#{actualizaDatosView.strCorreo}" label="#{msg['email']}" required="true" disabled="true" />
+                            </div>
+                        </div>
+
+                        <div class="field grid">
+                            <p:outputLabel for="@next" value="#{msg['description']}" styleClass="col-fixed"/>
+                            <div class="col">
+                                <p:inputText id="idNombre" value="#{actualizaDatosView.strNombre}" label="#{msg['description']}"  required="true" requiredMessage="#{msg['step2.invalid.text']}"  />
+                            </div>
+                        </div>
+
+                        <div class="field grid">
+                            <p:outputLabel for="@next" value="Pais" styleClass="col-fixed"/>
+                            <div class="col">
+                                <p:selectOneMenu id="idPais" value="#{actualizaDatosView.pais}" label="#{msg['country']}" required="true" requiredMessage="#{msg['valor.requerido']}" >
+                                    <f:selectItem itemLabel="#{msg['please.select']}" itemValue="" />
+                                    <f:selectItems value="#{actualizaDatosView.lstPaises}"  var="pais" itemLabel="#{pais.ubTxDescripcion}" itemValue="#{pais.ubIdUbigeoPk}" />
+                                    <p:ajax update="@form" listener="#{actualizaDatosView.cargaCiudades}"/>
+                                </p:selectOneMenu>
+                            </div>
+                        </div>
+                        <div class="field grid">
+                            <p:outputLabel for="idCiudad" value="#{msg['city']}" styleClass="col-fixed"/>
+                            <div class="col">
+                                <p:selectOneMenu id="idCiudad" value="#{actualizaDatosView.ciudad}" label="#{msg['city']}" required="true" disabled="#{actualizaDatosView.pais==null?true:false}" requiredMessage="#{msg['valor.requerido']}" >
+                                    <f:selectItem itemLabel="#{msg['please.select']}" itemValue="" />
+                                    <f:selectItems value="#{actualizaDatosView.lstCiudades}"  var="ciudad" itemLabel="#{ciudad.ubTxDescripcion}" itemValue="#{ciudad.ubIdUbigeoPk}" />
+                                </p:selectOneMenu>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <p:commandButton type="submit" update="frmPersonal,growl" actionListener="#{actualizaDatosView.actualizaPersonales}"  value="#{msg['save']}" />
+                        </div>
+
+                    </div>
+                </h:form>
+            </div>
+
+
+
+            <div class="col-12 lg:col-6">
+                <h:form id="frmContrasenia">
+                    <div class="card ui-fluid">
+                        <h5>#{msg['change.password']}</h5>
+
+                        <div class="field grid align-items-baseline">
+                            <div class="col-12">
+                                <p:outputLabel value="#{msg['password.not.more.20.character']}"  />        
+                            </div>
+                        </div>
+                        <div class="field grid">
+                            <p:outputLabel for="@next" value="#{msg['new.password']}" styleClass="col-fixed"/> 
+                            <div class="col">
+                                <p:password id="strPassNuevo" value="#{actualizaDatosView.strContraseniaNueva}" match="strPassReNuevo"  label="#{msg['new.password']}" feedback="true" maxlength="20" required="true" 
+                                            requiredMessage="#{msg['cant.be.empty.password']}"
+                                            validatorMessage="#{msg['must.be.same.password']}" />
+                            </div>
+                        </div>
+                        <div class="field grid">
+                            <p:outputLabel for="@next" value="#{msg['re.new.password']}" styleClass="col-fixed"/>
+                            <div class="col">
+                                <p:password id="strPassReNuevo" value="#{actualizaDatosView.strContraseniaReNueva}"  label="#{msg['new.password']}" feedback="true" maxlength="20" required="true" 
+                                            requiredMessage="#{msg['cant.be.empty.repassword']}" />
+                            </div>
+
+                        </div>              
+
+                        <div class="field">
+                            <p:commandButton type="submit" update="frmContrasenia,growl" actionListener="#{actualizaDatosView.actualizaContraseña}" value="#{msg['save']}" />
+                        </div>
+
+                    </div>
+                </h:form>
+            </div>
+
+            <div class="col-12 lg:col-12">
+                <h:form id="frmEmpresa">
+                    <div class="card ui-fluid">
+                        <h5>#{msg['company.information']}</h5>
+
+                        <div class="field grid align-items-baseline">
+
+                            <p:outputLabel for="@next" value="#{msg['company.name']}" styleClass="col-fixed"/>
+                            <div class="col">
+                                <p:inputText id="idRazon" value="#{actualizaDatosView.strRazonSocial}" label="#{msg['company.name']}" required="true" requiredMessage="#{msg['cant.be.empty']}" >
+                                </p:inputText>
+                            </div>
+                        </div>
+                        <div class="field grid">
+                            <p:outputLabel for="@next" value="#{msg['document.type']}" styleClass="col-fixed"/>
+                            <div class="col">
+                                <p:selectOneMenu id="idTipoDocumento" value="#{actualizaDatosView.intIdTipoDocumento}" label="#{msg['document.type']}" required="true" requiredMessage="#{msg['cant.be.empty']}" >
+                                    <f:selectItem itemLabel="#{msg['please.select']}" itemValue="" />
+                                    <f:selectItems value="#{actualizaDatosView.lstTipoDocumento}"  var="docum" itemLabel="#{docum.strDescDocumento}" itemValue="#{docum.idTipoDocumento}" />
+                                </p:selectOneMenu>
+                            </div>
+                        </div>
+                        <div class="field grid">
+                            <p:outputLabel for="@next" value="#{msg['tax.document']}" styleClass="col-fixed"/>
+                            <div class="col">
+                                <p:inputText id="idDocumento" value="#{actualizaDatosView.strDocumento}" label="#{msg['tax.document']}" maxlength="20" required="true" requiredMessage="#{msg['cant.be.empty']}" >
+                                </p:inputText>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <p:commandButton type="submit" update="frmEmpresa,growl" actionListener="#{actualizaDatosView.actualizaEmpresa}"  value="#{msg['save']}" />
+                        </div>
+                    </div>
+
+                </h:form>
+            </div>
+
+        </div>
+
+
+
+        <!--
+        <h3>Logo de la empresa</h3>
+        <h:form id="frmLogo" enctype="multipart/form-data" >  
+            <p:panel id="panel4">
+                <p:growl showDetail="true" life="4000" sticky="false" />
+                <h:panelGrid columns="1" border="0" cellpadding="5" style="width: 100%" >
+                    <p:outputLabel value="Brindanos el logo de la empresa para utilizarlo en los reportes y comunicados. Recuerda que los formatos permitidos son (GIF, JPEG y PNG) y la imagen debe tener un maximo de 3MB" />
+
+                    
+                    <p:fileUpload fileUploadListener="#{actualizaDatosView.handleFileUpload}" 
+                                  mode="advanced" 
+                                  dragDropSupport="true"
+                                  sizeLimit="3145728"  
+                                  previewWidth="80"
+                                  fileLimit="1" 
+                                  auto="false"
+                                  label="Subir"
+                                  update="frmLogo"
+                                  allowTypes="/(\.|\/)(gif|jpe?g|png)$/"/>
+                   
+                    <h:panelGrid columns="3" cellpadding="0" cellspacing="0" >
+                        <p:panelGrid columns="1">
+                            <f:facet name="header">Logo actual</f:facet>
+                            <h:graphicImage alt="Sin imagen" url="/DisplayImage?idUsuario=#{actualizaDatosView.idUsuario}" height="200" width="200" />
+                        </p:panelGrid>
+
+                    </h:panelGrid>
+
+                </h:panelGrid>
+
+            </p:panel>
+        </h:form>
+        -->
+
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,213 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                template="/WEB-INF/template.xhtml">    
+
+    <ui:define name="head"> 
+        <style>
+            .ui-progressbar .ui-widget-header {
+                background: #cbeccc !important;
+            }
+            #grad {
+                height: 100%;
+                width: 100%;
+                position: fixed;
+                background-color: #005EA6;/* For browsers that do not support gradients */
+                background-image: linear-gradient(to right, #005EA6 , #006CBE);
+            }
+            #frmAnalisis\:captcha > div {
+                margin: 0 auto;
+            }
+            .text-center {
+                text-align: center !important;
+            }
+            .g-recaptcha {
+                display: inline-block;
+            }
+            img {
+                border-radius: 100%;
+            }
+        </style>
+    </ui:define>
+    <ui:define name="title">
+        <h:outputLabel value="#{msg['label.proxy.mode.client']} #{stepOneView.objUsuarioInfoProxy.strEmail}" rendered="#{stepOneView.objUsuarioInfoProxy!=null}" />
+        <h:outputLabel value="#{msg['project.info']} #{stepOneView.objProyectoInfo.strDescNombre}" />
+    </ui:define>
+    <!--ui:define name="cabecera">
+        <ui:include src="cabecera.xhtml" />
+        <p:staticMessage severity="warn" summary="#{msg['label.proxy.mode.client']}" detail="#{stepOneView.objUsuarioInfoProxy.strEmail}" rendered="#{stepOneView.objUsuarioInfoProxy!=null}" style="width: 100%; margin-top: 5px; margin-left: 2px; margin-right: 2px;"/>
+        <p:staticMessage severity="info" summary="#{msg['info']}" detail="#{stepOneView.objProyectoInfo.strDescNombre}" style="width: 100%; margin-top: 5px; margin-left: 2px; margin-right: 2px;"/>
+    </ui:define-->
+    <ui:define name="helpSteps">
+
+        <h:form id="formPrincipalProyecto" enctype="multipart/form-data" >
+
+            <p:steps readonly="false" activeIndex="#{stepSixView.activeIndex}" >
+                <p:menuitem value="#{msg['step.1']}" actionListener="#{stepOneView.goToStep(1)}"/>
+                <p:menuitem value="#{msg['step.2']}" actionListener="#{stepOneView.goToStep(2)}"/>
+                <p:menuitem value="#{msg['step.3']}" actionListener="#{stepOneView.goToStep(3)}"/>
+                <p:menuitem value="#{msg['step.4']}" actionListener="#{stepOneView.goToStep(4)}"/>
+                <p:menuitem value="#{msg['step.5']}" actionListener="#{stepOneView.goToStep(5)}"/>
+                <p:menuitem value="#{msg['step.6']}" actionListener="#{stepOneView.goToStep(6)}"/>
+            </p:steps>
+            <p:spacer/>
+
+            <center>
+                <p:commandButton value="#{msg['back']}" type="submit" actionListener="#{stepSixView.backStep()}" update="formPrincipalProyecto" styleClass="ui-button-secondary" icon="pi pi-angle-left" />
+                <p:spacer/>
+                <p:commandButton value="#{msg['next']}" type="submit" actionListener="#{stepSixView.nextStep()}" update="formPrincipalProyecto" styleClass="ui-button-secondary" icon="pi pi-angle-right"  disabled="true"/>                   
+            </center>
+            <p:spacer/>
+
+        </h:form>   
+
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="frmAnalisis">
+            <div class="grid">
+
+                <p:growl life="4000"  showDetail="false" />
+                <div class="col-12 md:col-6">
+                    <div class="card ui-fluid">
+
+                        <h5>#{msg['step6.stp1']}</h5>
+                        <div class="field">
+                            <p:dataTable id="idCuestionarios"
+                                         var="cuestionario" 
+                                         value="#{dashboardView.lstCuestionarios}" 
+                                         rowKey="#{cuestionario.cuIdCuestionarioPk}" 
+                                         rows="5"
+                                         paginator="true"
+                                         size="small"
+                                         stripedRows="false"
+                                         paginatorPosition="bottom"
+                                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                         rowsPerPageTemplate="5,10,15"
+                                         emptyMessage="#{msg['no.items']}"
+                                         selectionMode="single"
+                                         selection="#{dashboardView.objCuestionario}" 
+                                         rowIndexVar="index" >
+
+                                <p:ajax event="rowSelect" listener="#{dashboardView.onRowSelectAssessment(event)}" update="@form"/>
+                                <p:ajax event="rowUnselect" listener="#{dashboardView.onRowUnselectAssessment(event)}" update="@form"/>
+
+                                <p:column style="width: 40px; text-align: center;">
+                                    <f:facet name="header">
+                                        <h:outputText value="#" />
+                                    </f:facet>
+                                    <h:outputText 
+                                        value="#{index + 1}" />
+                                </p:column> 
+
+                                <p:column headerText="#{msg['description']}" >
+                                    <h:outputText value="#{cuestionario.cuTxDescripcion}" />
+                                </p:column>
+
+                            </p:dataTable>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 md:col-6">
+
+                    <div class="card ui-fluid">
+                        <h5>#{msg['step6.stp1']}</h5>
+
+                        <div class="field grid">
+                            <div class="col-4">
+                                <p:commandButton value="Vista por categorias" disabled="#{!dashboardView.isCategoryViewActive}" />
+                            </div>
+                            <div class="col-4">
+                                <p:commandButton value="Vista por tiempo" disabled="true" />
+                            </div>
+                            <div class="col-4">
+                                <p:commandButton value="Vista por equipo" disabled="true" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <c:if  test="#{dashboardView.isCategoryViewActive}">
+                    <div class="col-12 md:col-12">
+                        <div class="card ui-fluid">
+
+                            <h5>#{msg['step6.stp2']}</h5>
+                            <div class="grid ui-fluid"  >
+                                <div class="field col-6">
+                                    <p:outputLabel for="@next" value="Ordenar por" />
+                                    <p:selectOneMenu value="#{dashboardView.intCategoriaOrder}">
+                                        <f:selectItems value="#{dashboardView.lstCategorias}" var="categoria" itemValue="#{categoria.coIdComponentePk}" itemLabel="#{categoria.coTxDescripcion}" />
+                                        <p:ajax update="@form" listener="#{dashboardView.updateOrder()}"/>
+                                    </p:selectOneMenu>
+                                </div>
+                                <div class="field col-6">
+                                    <p:outputLabel for="@next" value="Criterio de ordenación" />
+                                    <p:selectOneMenu value="#{dashboardView.intOrderAscDesc}">
+                                        <f:selectItem itemLabel="Ascendente" itemValue="0" />
+                                        <f:selectItem itemLabel="Descendente" itemValue="1" />
+                                        <p:ajax update="@form" listener="#{dashboardView.updateOrder()}"/>
+                                    </p:selectOneMenu>
+                                </div>
+                            </div>
+                            <div class="field col-12">
+
+                                <p:dataTable var="evaluado" 
+                                             value="#{dashboardView.lstEvaluados}" 
+                                             rowKey="#{evaluado.paIdParticipantePk}" 
+                                             rows="10"
+                                             paginator="true"
+                                             stickyHeader="true"
+                                             size="small"
+                                             stripedRows="false"
+                                             paginatorPosition="both"
+                                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                             rowsPerPageTemplate="5,10,15,{ShowAll|'All'}"
+                                             emptyMessage="#{msg['no.items']}" 
+                                             rowIndexVar="index" >
+
+                                    <p:column style="width: 15px;">
+                                        <f:facet name="header">
+                                            <h:outputText value="#" />
+                                        </f:facet>
+                                        <h:outputText 
+                                            value="#{index + 1}" />
+                                    </p:column> 
+                                    <p:column style="width:3rem;text-align: center">
+                                        <p:linkButton outcome="dashboardDetail"
+                                                         icon="pi pi-search" title="View">
+                                            <f:param name="idEvaluated" value="#{evaluado.paIdParticipantePk}"/>
+                                        </p:linkButton>
+                                    </p:column>
+                                    <p:column headerText="#{msg['evaluator']}"  >
+                                        #{evaluado.paTxDescripcion}
+                                    </p:column>
+
+                                    <p:columns  value="#{dashboardView.lstCategorias}" headerText="#{categoria.coTxDescripcion}"  var="categoria" columnIndexVar="columnIndex" >
+                                        <div style="
+
+                                             #{evaluado.lstCategoryResult.get(columnIndex).bdScoreMinRequired.doubleValue() eq evaluado.lstCategoryResult.get(columnIndex).bdScoreRequired.doubleValue()?'':
+                                               evaluado.lstCategoryResult.get(columnIndex).bdScoreResult.doubleValue()>=evaluado.lstCategoryResult.get(columnIndex).bdScoreRequired.doubleValue()?
+                                               'background: #D6FFD7;':
+                                               evaluado.lstCategoryResult.get(columnIndex).bdScoreResult.doubleValue()>=evaluado.lstCategoryResult.get(columnIndex).bdScoreMinRequired.doubleValue()?
+                                               'background: #FFFDCA;':
+                                               'background: #FCC1AA;'}
+                                             margin: 0 0 0 0; width: 100%;">
+                                            <h:outputLabel value="#{evaluado.lstCategoryResult.get(columnIndex).bdScoreResult.doubleValue()}" />
+                                        </div>
+                                    </p:columns>
+
+
+                                </p:dataTable>
+
+                            </div>
+                        </div>
+                    </div>
+                </c:if>
+            </div>
+        </h:form>
+
+    </ui:define>
+</ui:composition>

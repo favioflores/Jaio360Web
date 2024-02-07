@@ -23,11 +23,11 @@ public class validaCorreo implements Validator {
     @Override
     public void validate(FacesContext context, UIComponent component, Object value) throws ValidatorException {
         if(Utilitarios.esNuloOVacio(value)) {
-            throw new ValidatorException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Debe ingresar un correo electronico válido", null));
+            throw new ValidatorException(new FacesMessage(FacesMessage.SEVERITY_ERROR, component.getAttributes().get("label") + ": " + "Debe ingresar un correo electronico válido", null));
         }
          
         if(!pattern.matcher(value.toString().trim()).matches()) {
-            throw new ValidatorException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Debe ingresar un correo electrónico válido", null));
+            throw new ValidatorException(new FacesMessage(FacesMessage.SEVERITY_ERROR, component.getAttributes().get("label") + ": " + "Debe ingresar un correo electrónico válido", null));
         }
     }
     

@@ -2,8 +2,10 @@ package com.jaio360.domain;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Comparator;
+import java.util.List;
 
-public class Evaluado implements Serializable {
+public class Evaluado implements Serializable, Comparator {
 
     private Integer paIdParticipantePk;
     private String paTxDescripcion;
@@ -25,16 +27,15 @@ public class Evaluado implements Serializable {
     private Boolean blEnvioCorreo;
     private Boolean blAnalizado;
     private Integer inAnalizado;
-
     private String paTxSexo;
     private Integer paNrEdad;
     private Integer paNrTiempoTrabajo;
     private String paTxOcupacion;
     private String paTxAreaNegocio;
     private String paTxImgUrl;
-
     private Integer intNumberEvaluators;
     private Integer intNumberEvaluationFinished;
+    private List<Categorias> lstCategoryResult;
 
     public Integer getPaIdParticipantePk() {
         return paIdParticipantePk;
@@ -258,6 +259,19 @@ public class Evaluado implements Serializable {
 
     public void setIntNumberEvaluationFinished(Integer intNumberEvaluationFinished) {
         this.intNumberEvaluationFinished = intNumberEvaluationFinished;
+    }
+
+    public List<Categorias> getLstCategoryResult() {
+        return lstCategoryResult;
+    }
+
+    public void setLstCategoryResult(List<Categorias> lstCategoryResult) {
+        this.lstCategoryResult = lstCategoryResult;
+    }
+
+    @Override
+    public int compare(Object o1, Object o2) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
 }

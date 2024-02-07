@@ -1,0 +1,124 @@
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+    xmlns:po="http://primefaces.org/omega">
+
+    <h:form id="menuform">
+        <div class="sidebar">
+            <div class="sidebar-scroll-content">
+                <div class="logo">
+                    <p:link >
+                        <p:graphicImage value="/images/logoJaio360.png" width="130" />
+                    </p:link>
+                </div>
+
+                <div class="profile">
+                    <div class="field">
+                        <p:outputLabel value="#{menuPrincipal.usuarioInfo.strTipoUsuario}" />
+                        <br/>
+                        <p:outputLabel value="#{menuPrincipal.usuarioInfo.strEmail}" />
+                    </div>
+                    <p:graphicImage value="/images/person.jpg" width="130"  />
+                    <a id="profile-button" href="#">
+                        <span class="username">#{menuPrincipal.usuarioInfo.strDescripcion}</span>
+                        <!--i class="pi pi-fw pi-cog" /-->
+                    </a>
+                    <!--i class="pi pi-fw pi-cog"/-->
+                    <ul>
+                        <!--li><a href="#"><i class="pi pi-fw pi-sliders-h"/><span>Account</span></a></li-->
+                        <!--li><a href="#"><i class="pi pi-fw pi-bell"/><span>Notifications</span><span class="menu-badge">2</span></a></li-->
+                        <li>
+                            <p:commandLink  id="btcerrarSesion" 
+                                            widgetVar="btcerrarSesion" 
+                                            actionListener="#{usuarioSesion.cerrarSistema}"  >
+                                <i class="pi pi-fw pi-sign-out"/><span>#{msg['cabecera.cerrar.sesion']}</span>
+                                <p:confirm header="#{msg['cabecera.logout.confirmacion.title']}" icon="pi pi-info-circle" message="#{msg['cabecera.logout.confirmacion.mensaje']}" /> 
+                            </p:commandLink>
+                            <!--a href="#"></a-->
+                        </li>
+
+                    </ul>
+
+                </div>
+                <div class="menu">
+
+                    <po:menu widgetVar="OmegaMenuWidget" >
+                        <c:forEach var="counter" begin="0" end="#{menuPrincipal.objMenuBean.objLstMenuBean.size()-1}">
+
+                            <c:choose>
+                                <c:when test="#{menuPrincipal.objMenuBean.objLstMenuBean.get(counter).blMenuItem}" >
+                                    <c:if test="#{empty menuPrincipal.objMenuBean.objLstMenuBean.get(counter).actionListener}">
+                                        <p:menuitem value="#{menuPrincipal.objMenuBean.objLstMenuBean.get(counter).value}" 
+                                                    icon="#{menuPrincipal.objMenuBean.objLstMenuBean.get(counter).icon}"
+                                                    outcome="#{menuPrincipal.objMenuBean.objLstMenuBean.get(counter).url}"
+                                                    />
+                                    </c:if> 
+                                    <c:if test="#{not empty menuPrincipal.objMenuBean.objLstMenuBean.get(counter).actionListener}">
+                                        <p:menuitem value="#{menuPrincipal.objMenuBean.objLstMenuBean.get(counter).value}" 
+                                                    icon="#{menuPrincipal.objMenuBean.objLstMenuBean.get(counter).icon}"
+                                                    actionListener="#{menuPrincipal.leftModeProxy()}"
+                                                    />
+                                    </c:if>
+                                </c:when>
+                                <c:otherwise>
+                                    <p:submenu 
+                                        label="#{menuPrincipal.objMenuBean.objLstMenuBean.get(counter).value}" 
+                                        icon="#{menuPrincipal.objMenuBean.objLstMenuBean.get(counter).icon}">
+
+                                        <c:forEach var="counterSubMenu" begin="0" end="#{menuPrincipal.objMenuBean.objLstMenuBean.get(counter).objLstMenuBean.size()-1}">
+                                            <p:menuitem value="#{menuPrincipal.objMenuBean.objLstMenuBean.get(counter).objLstMenuBean.get(counterSubMenu).value}" 
+                                                        icon="#{menuPrincipal.objMenuBean.objLstMenuBean.get(counter).objLstMenuBean.get(counterSubMenu).icon}" 
+                                                        outcome="#{menuPrincipal.objMenuBean.objLstMenuBean.get(counter).objLstMenuBean.get(counterSubMenu).url}"/>
+                                        </c:forEach>
+
+                                    </p:submenu>
+                                </c:otherwise>
+                            </c:choose>
+
+                        </c:forEach>
+                    </po:menu>
+                    <!--
+                    <po:menu widgetVar="OmegaMenuWidget" >
+                        <p:menuitem id="m_dashboard" value="Dashboard" icon="pi pi-fw pi-home" />
+                        <p:submenu id="m_components" label="UI Kit" icon="pi pi-fw pi-star" badge="2">
+                            <p:menuitem id="m_formlayout" value="Form Layout" icon="pi pi-fw pi-id-card" />
+                            <p:menuitem id="m_input" value="Input" icon="pi pi-fw pi-check-square" />
+                            <p:menuitem id="m_floatlabel" value="Float Label" icon="pi pi-fw pi-bookmark" />
+                            <p:menuitem id="m_invalidstate" value="Invalid State" icon="pi pi-fw pi-exclamation-circle"
+                                        />
+                            <p:menuitem id="m_button" value="Button" icon="pi pi-fw pi-mobile" 
+                                        styleClass="rotated-icon"/>
+                            <p:menuitem id="m_table" value="Table" icon="pi pi-fw pi-table" />
+                            <p:menuitem id="m_list" value="List" icon="pi pi-fw pi-list" />
+                            <p:menuitem id="m_tree" value="Tree" icon="pi pi-fw pi-share-alt" />
+                            <p:menuitem id="m_panel" value="Panel" icon="pi pi-fw pi-tablet" />
+                            <p:menuitem id="m_overlay" value="Overlay" icon="pi pi-fw pi-clone" />
+                            
+                        </p:submenu>
+                       
+                        <p:menuitem id="m_buy" value="Buy Now" icon="pi pi-fw pi-shopping-cart" url="https://www.primefaces.org/store"/>
+                        <p:menuitem id="m_doc" value="Documentation" icon="pi pi-fw pi-info-circle"/>
+                    </po:menu>
+                    -->
+                </div>
+            </div>
+        </div>
+
+        <p:confirmDialog global="true" showEffect="drop" hideEffect="drop" responsive="true" width="400"  >
+            <p:commandButton type="button" value="#{msg['cabecera.logout.confirmacion.si']}" styleClass="ui-confirmdialog-yes" />
+            <p:commandButton type="button" value="#{msg['cabecera.logout.confirmacion.no']}" styleClass="ui-confirmdialog-no" />
+        </p:confirmDialog>
+    </h:form>
+
+
+    <p:ajaxStatus onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" />
+
+    <p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false">
+        <p:spacer/>
+        <p:progressBar  id="progressBarIndeterminate" style="width: 100px;" mode="indeterminate"/>
+    </p:dialog>
+</ui:composition>

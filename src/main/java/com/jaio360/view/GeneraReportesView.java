@@ -50,7 +50,7 @@ import com.jaio360.report.ReporteIndividualSumarioCategoriaMismoRelacion;
 import com.jaio360.report.ReporteIndividualSumarioCategoriaMismoRelacionWeighted;
 import com.jaio360.report.ReporteIndividualSumarioCategoriaMismoVsOtrosProm;
 import com.jaio360.report.ReporteIndividualSumarioCategoriaMismoVsOtrosPromWeighted;
-import com.jaio360.report.ReporteIndividualSumarioCategoriaRelacion;
+import com.jaio360.report.ReporteIndividualSumarioCategoriaMismoVsOtrosPromRequired;
 import com.jaio360.report.ReporteIndividualSumarioCategoriaWeighted;
 import com.jaio360.report.ReporteTodasRespuestas;
 import com.jaio360.utils.Constantes;
@@ -161,6 +161,7 @@ public class GeneraReportesView extends BaseView implements Serializable {
     private Integer intEvaluadoSeleccionado;
     private List<Componente> lstCategorias;
     private List<Integer> lstCategoriasSeleccionadas;
+    private Integer intType;
     private Integer intTypeReports;
     private Integer intTypeReportsGrupal;
     private Boolean blWeightedAvailable;
@@ -170,6 +171,14 @@ public class GeneraReportesView extends BaseView implements Serializable {
 
     public List<SelectItem> getLstContenidoIndividual() {
         return lstContenidoIndividual;
+    }
+
+    public Integer getIntType() {
+        return intType;
+    }
+
+    public void setIntType(Integer intType) {
+        this.intType = intType;
     }
 
     public List<Evaluado> getLstEvaluadosFiltrado() {
@@ -379,11 +388,11 @@ public class GeneraReportesView extends BaseView implements Serializable {
     public StreamedContent getPlanAccion() {
 
         ServletContext servletContext = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
-        String fullPath = servletContext.getRealPath(File.separator + "resources" + File.separator + "other" + File.separator + "PlanDeAccion.docx");
+        String fullPath = servletContext.getRealPath(File.separator + "resources" + File.separator + "other" + File.separator + "Formato Plan de Desarrollo Individual.xlsx");
         File objFile = new File(fullPath);
         planAccion = DefaultStreamedContent.builder()
-                .name("PlanDeAccion.docx")
-                .contentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+                .name("Formato Plan de Desarrollo Individual.xlsx")
+                .contentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
                 .stream(() -> FacesContext.getCurrentInstance().getExternalContext().getResourceAsStream(objFile.getAbsolutePath()))
                 .build();
 
@@ -392,9 +401,17 @@ public class GeneraReportesView extends BaseView implements Serializable {
 
     private void habilitarReportesNoPonderados() {
         lstContenidoIndividual = new ArrayList<>();
-        for (int i = 1; i <= 10; i++) {
-            lstContenidoIndividual.add(new SelectItem(i, msg("report." + i)));
-        }
+        lstContenidoIndividual.add(new SelectItem(1, msg("report." + 1)));
+        lstContenidoIndividual.add(new SelectItem(2, msg("report." + 2)));
+        lstContenidoIndividual.add(new SelectItem(3, msg("report." + 3)));
+        lstContenidoIndividual.add(new SelectItem(4, msg("report." + 4)));
+        lstContenidoIndividual.add(new SelectItem(5, msg("report." + 5)));
+        lstContenidoIndividual.add(new SelectItem(6, msg("report." + 6)));
+        lstContenidoIndividual.add(new SelectItem(7, msg("report." + 7)));
+        lstContenidoIndividual.add(new SelectItem(8, msg("report." + 8)));
+        lstContenidoIndividual.add(new SelectItem(9, msg("report." + 9)));
+        lstContenidoIndividual.add(new SelectItem(10, msg("report." + 10)));
+        //lstContenidoIndividual.add(new SelectItem(18, msg("report." + 18)));
     }
 
     private void habilitarReportesPonderados() {
@@ -453,6 +470,7 @@ public class GeneraReportesView extends BaseView implements Serializable {
         this.lstContenidoGrupal = new ArrayList<>();
         this.lstReporteGenerado = new ArrayList<>();
 
+        this.intType = 0;
         this.intTypeReports = 0;
         this.intTypeReportsGrupal = 0;
         this.blWeightedAvailable = false;
@@ -819,132 +837,6 @@ public class GeneraReportesView extends BaseView implements Serializable {
 
     }
 
-    public void cargarDashboard() {
-        crearRadar();
-        cargarBarrasSumarioXCategorias();
-    }
-
-    private void crearRadar() {
-
-        chartRadar = new RadarChartModel();
-
-        ParticipanteDAO objParticipanteDAO = new ParticipanteDAO();
-        ComponenteDAO componenteDao = new ComponenteDAO();
-        CuestionarioDAO objCuestionarioDAO = new CuestionarioDAO();
-        DetalleMetricaDAO objDetalleMetricaDAO = new DetalleMetricaDAO();
-        ResultadoDAO objResultadoDAO = new ResultadoDAO();
-
-        Participante objParticipante = objParticipanteDAO.obtenParticipante(this.intEvaluadoSeleccionado);
-
-        //this.lstCategoriasSeleccionadas;
-        LinkedHashMap mapRelaciones = cargarRelaciones(objParticipante);
-
-        Integer intMaxRango = objDetalleMetricaDAO.obtenMaxMetricaProyecto(Utilitarios.obtenerProyecto().getIntIdProyecto());
-
-        Cuestionario objCuestionario = objCuestionarioDAO.obtenCuestionarioXEvaluado(objParticipante.getPaIdParticipantePk(), Utilitarios.obtenerProyecto().getIntIdProyecto());
-
-        List<Componente> lstResultadoXCategoria = componenteDao.listaComponenteProyectoTipo(Utilitarios.obtenerProyecto().getIntIdProyecto(), objCuestionario.getCuIdCuestionarioPk(), Constantes.INT_ET_TIPO_COMPONENTE_CATEGORIA, null);
-
-        ChartData data = new ChartData();
-
-        List<List<String>> labels = new ArrayList<>();
-
-        for (Componente objComponente : lstResultadoXCategoria) {
-            labels.add(new ArrayList(Arrays.asList(objComponente.getCoTxDescripcion())));
-        }
-
-        data.setLabels(labels);
-
-        Iterator itMapRelaciones = mapRelaciones.entrySet().iterator();
-
-        while (itMapRelaciones.hasNext()) {
-
-            Map.Entry entry = (Map.Entry) itMapRelaciones.next();
-            Relacion objRelacion = (Relacion) entry.getValue();
-
-            if ("PROM".equals(objRelacion.getReTxAbreviatura()) || "AUTO".equals(objRelacion.getReTxAbreviatura())) {
-                continue;
-            }
-
-            RadarChartDataSet radarDataSet = new RadarChartDataSet();
-            radarDataSet.setLabel(objRelacion.getReTxDescripcion());
-            radarDataSet.setTension(0.1);
-            radarDataSet.setBackgroundColor(Utilitarios.convertColorHexToRgbChartPrimefacesRGBA("#" + objRelacion.getReColor()));
-            radarDataSet.setBorderColor(Utilitarios.convertColorHexToRgbChartPrimefacesRGB("#" + objRelacion.getReColor()));
-            radarDataSet.setPointBackgroundColor(Utilitarios.convertColorHexToRgbChartPrimefacesRGB("#" + objRelacion.getReColor()));
-            radarDataSet.setPointBorderColor("#fff");
-            radarDataSet.setPointHoverRadius(5);
-            radarDataSet.setPointHoverBackgroundColor("#fff");
-            radarDataSet.setPointHoverBorderColor(Utilitarios.convertColorHexToRgbChartPrimefacesRGB("#" + objRelacion.getReColor()));
-
-            List lstResultadoFinal = objResultadoDAO.resultadoPorRelacionYCategoriaNoAutoevaluacionNoProm(objParticipante.getPaIdParticipantePk(), objRelacion.getReIdRelacionPk());
-
-            Iterator itLstResultados = lstResultadoFinal.iterator();
-
-            List<Number> dataVal = new ArrayList<>();
-
-            boolean blAlMenosUno = false;
-
-            while (itLstResultados.hasNext()) {
-
-                Object[] obj = (Object[]) itLstResultados.next();
-
-                if (objRelacion.getReTxAbreviatura().equals(obj[0].toString())) {
-                    dataVal.add(new BigDecimal(obj[2].toString()));
-                    blAlMenosUno = true;
-                }
-
-            }
-
-            if (blAlMenosUno) {
-                radarDataSet.setData(dataVal);
-                data.addChartDataSet(radarDataSet);
-            }
-        }
-
-        /* Options */
-        RadarChartOptions options = new RadarChartOptions();
-        RadialScales rScales = new RadialScales();
-
-        RadialLinearAngleLines angleLines = new RadialLinearAngleLines();
-        angleLines.setDisplay(true);
-        angleLines.setLineWidth(0.5);
-        angleLines.setColor("rgba(128, 128, 128, 0.2)");
-        rScales.setAngleLines(angleLines);
-
-        RadialLinearPointLabels pointLabels = new RadialLinearPointLabels();
-        pointLabels.setFontSize(14);
-        pointLabels.setFontStyle("300");
-        pointLabels.setFontColor("rgba(204, 204, 204, 1)");
-        pointLabels.setFontFamily("Lato, sans-serif");
-
-        RadialLinearTicks ticks = new RadialLinearTicks();
-        ticks.setBeginAtZero(true);
-        ticks.setMaxTicksLimit(intMaxRango + 1);
-        ticks.setMin(0);
-        ticks.setMax(intMaxRango + 1);
-        //ticks.setStepSize(0.5); 
-        ticks.setDisplay(true);
-        ticks.setFontSize(14);
-        ticks.setFontStyle("300");
-        ticks.setFontFamily("Lato, sans-serif");
-
-        rScales.setTicks(ticks);
-        rScales.setPointLabels(pointLabels);
-
-        /*
-        Title title = new Title();
-        title.setDisplay(true);
-        title.setText("Sumario de Categoria");
-        options.setTitle(title);
-         */
-        options.setScales(rScales);
-
-        chartRadar.setOptions(options);
-        chartRadar.setData(data);
-        chartRadar.setExtender("skinRadarChart");
-    }
-
     public RadarChartModel getChartRadar() {
         return chartRadar;
     }
@@ -1031,8 +923,8 @@ public class GeneraReportesView extends BaseView implements Serializable {
             List lstResultadoXCategoria = objResultadoDAO.obtenerResultadoXCategoria(idCategoria);
             strColorPreferencial = Utilitarios.generaColorHtmlPreferencial(i);
 
-            bgColor.add(Utilitarios.convertColorHexToRgbChartPrimefacesRGBA("#" + strColorPreferencial));
-            borderColor.add(Utilitarios.convertColorHexToRgbChartPrimefacesRGB("#" + strColorPreferencial));
+            bgColor.add(Utilitarios.convertColorHexToRgbChartPrimefacesRGBA(strColorPreferencial));
+            borderColor.add(Utilitarios.convertColorHexToRgbChartPrimefacesRGB(strColorPreferencial));
 
             if (!lstResultadoXCategoria.isEmpty()) {
                 Object obj[] = (Object[]) lstResultadoXCategoria.get(0);

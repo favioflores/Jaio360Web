@@ -1,0 +1,709 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                template="/WEB-INF/template.xhtml">    
+
+    <ui:define name="head"> 
+    </ui:define>
+
+    <ui:define name="title">
+        <h:outputLabel value="#{msg['label.proxy.mode.client']} #{stepOneView.objUsuarioInfoProxy.strEmail}" rendered="#{stepOneView.objUsuarioInfoProxy!=null}" />
+        <h:outputLabel value="#{msg['project.info']} #{stepOneView.objProyectoInfo.strDescNombre}" />
+    </ui:define>
+
+    <!--ui:define name="cabecera">
+        <ui:include src="cabecera.xhtml" />
+        <p:staticMessage severity="warn" summary="#{msg['label.proxy.mode.client']}" detail="#{stepOneView.objUsuarioInfoProxy.strEmail}" rendered="#{stepOneView.objUsuarioInfoProxy!=null}" style="width: 100%; margin-top: 5px; margin-left: 2px; margin-right: 2px;"/>
+        <p:staticMessage severity="info" summary="#{msg['info']}" detail="#{msg['project.info']} #{stepOneView.objProyectoInfo.strDescNombre}" style="width: 100%; margin-top: 5px; margin-left: 2px; margin-right: 2px;"/>
+    </ui:define-->
+
+    <ui:define name="helpSteps">
+
+        <h:form id="formPrincipalProyecto">
+
+            <p:steps readonly="false" activeIndex="#{stepOneView.activeIndex}" >
+                <p:menuitem value="#{msg['step.1']}" actionListener="#{stepOneView.goToStep(1)}"/>
+                <p:menuitem value="#{msg['step.2']}" actionListener="#{stepOneView.goToStep(2)}"/>
+                <p:menuitem value="#{msg['step.3']}" actionListener="#{stepOneView.goToStep(3)}"/>
+                <p:menuitem value="#{msg['step.4']}" actionListener="#{stepOneView.goToStep(4)}"/>
+                <p:menuitem value="#{msg['step.5']}" actionListener="#{stepOneView.goToStep(5)}"/>
+                <p:menuitem value="#{msg['step.6']}" actionListener="#{stepOneView.goToStep(6)}"/>
+            </p:steps>
+            <p:spacer/>
+            <center>
+                <p:commandButton value="#{msg['back']}" type="submit" actionListener="#{stepOneView.backStep()}" update="formPrincipalProyecto" styleClass="ui-button-secondary" disabled="true" icon="pi pi-angle-left" />
+                <p:spacer/>
+                <p:commandButton value="#{msg['next']}" type="submit" actionListener="#{stepOneView.nextStep()}" update="formPrincipalProyecto" styleClass="ui-button-secondary" icon="pi pi-angle-right" />                   
+            </center>
+            <p:spacer/>
+
+        </h:form>   
+
+    </ui:define>
+
+    <ui:define name="content">
+        <div class="grid messages-demo">
+            <div class="col-12 lg:col-6">
+                <div class="card ui-fluid">
+                    <h5>#{msg['step1.title']}</h5>
+                    <h:form id="frmSex">
+                        <div class="field grid align-items-center">
+                            <p:outputLabel for="@next" value="#{msg['step1.sex.label']}" styleClass="col-fixed" />
+                            <div class="col-fixed">
+                                <p:toggleSwitch id="switchSexo" value="#{parametrosView.blSexo}" disabled="#{evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}">
+                                    <p:ajax listener="#{parametrosView.activarParametro(82)}" resetValues="true" update="frmSex,formRed,frmGlobal" />
+                                </p:toggleSwitch>
+                            </div>
+                            <div class="col">
+                                <p:inputText id="strSex" type="text" value="#{parametrosView.strSex}" 
+                                             disabled="#{!parametrosView.blSexo or evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}" 
+                                             maxlength="500" required="true" >
+                                    <f:validator validatorId="validarSex" />
+                                </p:inputText>
+                            </div>
+                            <div class="col-fixed">
+                                <p:commandButton type="submit" icon="pi pi-save" 
+                                                 disabled="#{!parametrosView.blSexo or evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}"
+                                                 update="frmSex,frmGlobal,formRed,frmResultado" actionListener="#{parametrosView.guardarPreferencia(82)}" />
+                            </div>
+                        </div>
+                    </h:form>
+                    <h:form id="frmRango">
+                        <div class="field grid align-items-center">
+                            <p:outputLabel for="@next" value="#{msg['step1.age.label']}" styleClass="col-fixed"  />
+                            <div class="col-fixed">
+                                <p:toggleSwitch value="#{parametrosView.blRangoEdad}" disabled="#{evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}" >
+                                    <p:ajax listener="#{parametrosView.activarParametro(83)}" resetValues="true" update="frmRango,frmGlobal,formRed" />
+                                </p:toggleSwitch>
+                            </div>
+                            <div class="col">
+                                <p:inputText id="strRangoEdad" type="text" value="#{parametrosView.strRangoEdad}" maxlength="500" 
+                                             disabled="#{!parametrosView.blRangoEdad or evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}" required="true" >
+                                    <f:validator validatorId="validarRango" />                                       
+                                </p:inputText>
+                            </div>
+                            <div class="col-fixed">
+                                <p:commandButton type="submit" icon="pi pi-save" 
+                                                 disabled="#{!parametrosView.blRangoEdad or evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}" 
+                                                 update="frmRango,frmGlobal,formRed,frmResultado" actionListener="#{parametrosView.guardarPreferencia(83)}" />
+                            </div>
+                        </div>
+                    </h:form>
+                    <h:form id="frmTiempoEmpresa">
+                        <div class="field grid align-items-center">
+                            <p:outputLabel for="@next" value="#{msg['step1.hiring.time']}"  styleClass="col-fixed" />
+                            <div class="col-fixed">
+                                <p:toggleSwitch value="#{parametrosView.blTiempoEmpresa}" disabled="#{evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}" >
+                                    <p:ajax listener="#{parametrosView.activarParametro(84)}" resetValues="true"  update="frmTiempoEmpresa,frmGlobal,formRed" />
+                                </p:toggleSwitch>
+                            </div>
+                            <div class="col">
+                                <p:inputText id="strRangoTiempo" value="#{parametrosView.strRangoTiempo}" maxlength="500" disabled="#{!parametrosView.blTiempoEmpresa or evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}" required="true" >
+                                    <f:validator validatorId="validarRango" />
+                                </p:inputText>
+                            </div>
+                            <div class="col-fixed">
+                                <p:commandButton type="submit" icon="pi pi-save" 
+                                                 disabled="#{!parametrosView.blTiempoEmpresa or evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}" 
+                                                 update="frmTiempoEmpresa,frmGlobal,formRed,frmResultado" actionListener="#{parametrosView.guardarPreferencia(84)}" />
+
+                            </div>
+                        </div>
+                    </h:form>
+                    <h:form id="frmNivelOcupacional">
+                        <div class="field grid align-items-center">
+                            <p:outputLabel for="@next" value="#{msg['step1.lvlOcu.label']}" styleClass="col-fixed"/>
+                            <div class="col-fixed">
+                                <p:toggleSwitch value="#{parametrosView.blNivelOcupacional}" disabled="#{evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}" >
+                                    <p:ajax listener="#{parametrosView.activarParametro(85)}" resetValues="true"  update="frmNivelOcupacional,frmGlobal,formRed" />
+                                </p:toggleSwitch>
+                            </div>
+                            <div class="col">
+                                <p:selectCheckboxMenu id="lstJob" value="#{parametrosView.selectedJob}" required="true"
+                                                      label="#{msg['please.select']}" 
+                                                      disabled="#{!parametrosView.blNivelOcupacional or evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}">
+                                    <f:selectItems value="#{parametrosView.job}" />
+                                </p:selectCheckboxMenu>
+                            </div>
+                            <div class="col-fixed">
+                                <p:commandButton type="submit" icon="pi pi-save"  disabled="#{!parametrosView.blNivelOcupacional or evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}" 
+                                                 update="frmNivelOcupacional,frmGlobal,formRed,frmResultado" actionListener="#{parametrosView.guardarPreferencia(85)}" />
+
+                            </div>
+                        </div>
+                    </h:form>
+                    <h:form id="frmAreaNegocio">
+                        <div class="field grid align-items-center">
+                            <p:outputLabel for="@next" value="#{msg['step1.area.label']}" styleClass="col-fixed"/>
+                            <div class="col-fixed">
+                                <p:toggleSwitch value="#{parametrosView.blAreaNegocio}" disabled="#{evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}" >
+                                    <p:ajax listener="#{parametrosView.activarParametro(86)}" resetValues="true"  update="frmAreaNegocio,frmGlobal,formRed" />
+                                </p:toggleSwitch>
+                            </div>
+                            <div class="col">
+                                <p:selectCheckboxMenu id="lstAreaNegocioP" value="#{parametrosView.selectedAreaNegocio}" required="true"
+                                                      label="#{msg['please.select']}"
+                                                      disabled="#{!parametrosView.blAreaNegocio or evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}">
+                                    <f:selectItems value="#{parametrosView.area}" />
+                                </p:selectCheckboxMenu>
+                            </div>
+                            <div class="col-fixed">
+                                <p:commandButton type="submit" icon="pi pi-save"  disabled="#{!parametrosView.blAreaNegocio or evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0?true:false}" 
+                                                 update="frmAreaNegocio,frmGlobal,formRed,frmResultado" actionListener="#{parametrosView.guardarPreferencia(86)}" />
+                            </div>
+                        </div>
+                    </h:form>
+                </div>
+
+            </div>
+
+            <div class="col-12 lg:col-6">
+                <div class="card ui-fluid">
+                    <h5>#{msg['step1.title2']}</h5>
+                    <h:form id="formRed">
+                        <div class="field grid align-items-center">
+                            <div class="col">
+                                <p:commandButton value="#{msg['step1.download.format']}" actionListener="#{evaluadosView.generaModeloAzanvado()}" immediate="true" ajax="false" icon="pi pi-download" styleClass="ui-button-warning" >
+                                    <p:fileDownload value="#{evaluadosView.xlsContentAvanzado}" />
+                                </p:commandButton>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <p:fileUpload widgetVar="archivoMasivoEvaluado" 
+                                          mode="advanced" skinSimple="true"
+                                          virusScan="true"
+                                          update="formRed,frmSex,frmRango,frmTiempoEmpresa,frmNivelOcupacional,frmAreaNegocio,frmResultado"
+                                          sizeLimit="4000000" 
+                                          invalidSizeMessage="#{msg['max.file.upload.error']}"
+                                          validateContentType="true" messageTemplate='{size}'  
+                                          allowTypes="/(\.|\/)(xlsx)$/"
+                                          label="#{msg['search']}" 
+                                          uploadLabel="#{msg['upload']}" global="false"
+                                          cancelLabel="#{msg['cancel']}"
+                                          listener="#{evaluadosView.leeExcelAvanzado}"
+                                          disabled="#{evaluadosView.lstRelacionBean.size()>0 or evaluadosView.lstEvaluado.size()>0 or evaluadosView.lstEvaluadores.size()>0}" 
+                                          />
+                        </div>
+                    </h:form>
+                </div>
+            </div>
+            <h:form id="frmResultado">
+                <c:if test="#{(evaluadosView.lstErrorAvan.size()>0) or
+                              (evaluadosView.lstAvanPersonas.size()>0 and evaluadosView.lstRelacionAvanzadas.size()>0) or
+                              (evaluadosView.lstAvanRelacion.size()>0 and evaluadosView.lstRelacionAvanzadas.size()>0) or
+                              (evaluadosView.lstRelacionAvanzadas.size()>0) or
+                              (evaluadosView.lstEvaluado.size()>0) or
+                              (evaluadosView.lstRelacionBean.size()>0) or
+                              (evaluadosView.lstRelacionesEvaluadoEvaluador.size()>0) or
+                              (evaluadosView.blCargarCorrectoAvan and evaluadosView.lstErrorAvan.size()==0) or
+                              (evaluadosView.lstEvaluado.size()>0 and evaluadosView.lstEvaluadores.size()>0)
+                            }">
+
+
+                    <div class="col-12 lg:col-12">
+                        <div class="card ui-fluid">
+                            <h5>#{msg['step1.title3']}</h5>
+
+                            <div class="field grid align-items-center">
+                                <div class="col">
+                                    <c:if test="#{evaluadosView.lstErrorAvan.size()>0}">
+                                        <p:staticMessage severity="error" summary="ERROR" 
+                                                         rendered="#{evaluadosView.lstErrorAvan.size()>0}"
+                                                         detail="#{msg['step1.detail.label']}" 
+                                                         style="width: 100%"/>
+
+                                        <!--h:panelGrid columns="4">
+                                            <p:commandButton value="#{msg['export.xls']}" styleClass="mr-2 mb-2">
+                                                <p:dataExporter type="xls" target="tblErrorAvan" fileName="#{msg['name.file.error.list.downloaded']}"/>
+                                            </p:commandButton>
+
+                                            <p:commandButton value="#{msg['export.xlsx']}" styleClass="mr-2 mb-2">
+                                                <p:dataExporter type="xlsxstream" target="tblErrorAvan" fileName="#{msg['name.file.error.list.downloaded']}"/>
+                                            </p:commandButton>
+
+                                            <p:commandButton value="#{msg['export.csv']}" styleClass="mr-2 mb-2">
+                                                <p:dataExporter type="csv" target="tblErrorAvan" fileName="#{msg['name.file.error.list.downloaded']}" />
+                                            </p:commandButton>
+
+                                            <p:commandButton value="#{msg['export.xml']}" styleClass="mr-2 mb-2">
+                                                <p:dataExporter type="xml" target="tblErrorAvan" fileName="#{msg['name.file.error.list.downloaded']}"/>
+                                            </p:commandButton>
+
+                                        </h:panelGrid-->
+
+                                        <p:dataTable 
+                                            id="tblErrorAvan"
+                                            widgetVar="tblErrorAvan"
+                                            rows="10"
+                                            paginator="true" 
+                                            var="err"
+                                            size="small"
+                                            stripedRows="true"
+                                            value="#{evaluadosView.lstErrorAvan}"
+                                            rowsPerPageTemplate="5,10,30,{ShowAll|'All'}"
+                                            paginatorPosition="both"
+                                            paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                            currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords}"
+                                            emptyMessage="#{msg['no.items']}"
+                                            rowIndexVar="index"
+                                            rendered="#{evaluadosView.lstErrorAvan.size()>0}">
+
+                                            <f:facet name="header">
+                                                <div class="customers-table-header">
+                                                    <span style="font-weight: bold; text-transform: uppercase;"> #{msg['step1.list.errors']}</span>
+                                                </div>
+                                            </f:facet>  
+
+                                            <!--f:facet name="footer">
+                                            #{msg['step1.errores.encontrados']} #{evaluadosView.lstErrorAvan.size()}
+                                        </f:facet-->
+
+                                            <p:column style="width: 20px;" headerText="#" exportHeaderValue="#{msg['number']}" >
+                                                <h:outputText 
+                                                    value="#{index + 1}" />
+                                            </p:column> 
+                                            <p:column headerText="#{msg['description']}">
+                                                <h:outputText value="#{err.strDesc}" />
+                                            </p:column>                      
+                                            <p:column headerText="#{msg['status']}" exportable="false">
+                                                <p:tag value="#{msg['step1.please.resolve']}" severity="danger" />
+                                            </p:column>
+
+                                        </p:dataTable>
+                                    </c:if>
+                                    <!-- 1 TEMP -->
+                                    <c:if test="#{evaluadosView.lstAvanRelacion.size()>0 and evaluadosView.lstRelacionAvanzadas.size()>0}">
+                                        <p:dataTable 
+                                            id="tblResultadoAvanzadoRelacion"
+                                            widgetVar="tblResultadoAvanzadoRelacion"
+                                            rows="10"
+                                            paginator="true" 
+                                            var="rel"
+                                            value="#{evaluadosView.lstAvanRelacion}"
+                                            paginatorPosition="both"
+                                            rowsPerPageTemplate="5,10,30,{ShowAll|'All'}"
+                                            resizableColumns="true"
+                                            editable="true"
+                                            editMode="cell"
+                                            editInitEvent="dblclick" 
+                                            stripedRows="true"
+                                            size="small"
+                                            sortMode="single"
+                                            rowIndexVar="index"
+                                            paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                            currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords}"
+                                            emptyMessage="#{msg['no.items']}"
+                                            rendered="#{evaluadosView.lstAvanRelacion.size()>0}"
+                                            >
+
+                                            <p:ajax event="cellEdit" listener="#{evaluadosView.actualizarRelacionTemporal}" update="@this,frmResultado:tblRelacionAvanzadas,frmGlobal"/>
+
+                                            <f:facet name="header">
+                                                <div class="customers-table-header">
+                                                    <span style="font-weight: bold; text-transform: uppercase;">#{msg['step1.list.relationships']}</span>
+                                                </div>
+                                            </f:facet>
+
+                                            <!--f:facet name="footer">
+                                            #{msg['step1.total.relationships']} #{evaluadosView.lstAvanRelacion.size()}
+                                        </f:facet-->
+                                            <p:column style="width: 15px;">
+                                                <f:facet name="header">
+                                                    <h:outputText value="#" />
+                                                </f:facet>
+                                                <h:outputText 
+                                                    value="#{index + 1}" />
+                                            </p:column> 
+                                            <p:column headerText="#{msg['relationship']}" sortBy="#{rel.strNombre}" sortOrder="asc" >
+                                                <h:outputText value="#{rel.strNombre}" />
+                                            </p:column>
+                                            <p:column headerText="#{msg['abbreviation']}">
+                                                <p:cellEditor>
+                                                    <f:facet name="output">
+                                                        <h:outputText value="#{rel.strAbreviatura}"  />
+                                                    </f:facet>
+                                                    <f:facet name="input">
+                                                        <p:inputText value="#{rel.strAbreviatura}" maxlength="3" style="width: 100%;" />
+                                                    </f:facet>
+                                                </p:cellEditor>
+                                            </p:column>
+                                            <p:column style="text-align: center" headerText="#{msg['assigned.color']}" >
+                                                <p:tag value="#{rel.strColor}" style=" width: 80px; height: 17px; background-color: #{rel.strColor};" />
+                                            </p:column>
+
+                                            <p:column style="text-align: center"  >
+                                                <p:colorPicker value="#{rel.strColor}"  >
+                                                    <p:ajax listener="#{evaluadosView.actualizaColorTemporal(rel)}" process="@this" update="@form"/>
+                                                </p:colorPicker>
+                                            </p:column>
+
+                                        </p:dataTable>
+                                    </c:if>
+                                    <!-- 2 TEMP -->
+                                    <c:if test="#{evaluadosView.lstAvanPersonas.size()>0 and evaluadosView.lstRelacionAvanzadas.size()>0}">
+                                        <p:dataTable 
+                                            id="tblResultadoAvanzadoPersonas"
+                                            widgetVar="tblResultadoAvanzadoPersonas"
+                                            rows="10"
+                                            paginator="true" 
+                                            var="reg"
+                                            size="small"
+                                            resizableColumns="true"
+                                            value="#{evaluadosView.lstAvanPersonas}"
+                                            rowsPerPageTemplate="5,10,30,{ShowAll|'All'}"
+                                            paginatorPosition="both"
+                                            stripedRows="true"
+                                            paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                            currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords}"
+                                            emptyMessage="#{msg['no.items']}" 
+                                            rowIndexVar="index" 
+                                            rendered="#{evaluadosView.lstAvanPersonas.size()>0}" >
+
+                                            <f:facet name="header">
+                                                <div class="customers-table-header">
+                                                    <span style="font-weight: bold; text-transform: uppercase;"> #{msg['step1.list.items.found']}</span>
+                                                </div>
+                                            </f:facet>
+
+                                            <!--f:facet name="footer">
+                                            #{msg['step1.total.items.found']} #{evaluadosView.lstAvanPersonas.size()}
+                                        </f:facet-->
+
+                                            <p:column style="width: 15px;">
+                                                <f:facet name="header" >
+                                                    <h:outputText value="#" />
+                                                </f:facet>
+                                                <h:outputText 
+                                                    value="#{index + 1}" />
+                                            </p:column>
+
+                                            <p:column headerText="#{msg['photo']}">
+                                                <p:graphicImage url="#{reg.paTxImgUrl}" height="75" width="75" class="classimg" rendered="#{reg.paTxImgUrl!=null}" />
+                                                <p:graphicImage value="/images/no-picture.png" height="75" width="75"  class="classimg" rendered="#{reg.paTxImgUrl==null}" />
+                                            </p:column>
+                                            <p:column headerText="#{msg['description']}">
+                                                <h:outputText value="#{reg.paTxDescripcion}" />
+                                            </p:column>
+                                            <p:column headerText="#{msg['role']}">
+                                                <h:outputText value="#{reg.paTxNombreCargo}" />
+                                            </p:column>                                 
+                                            <p:column headerText="#{msg['email']}">
+                                                <h:outputText value="#{reg.paTxCorreo}" />
+                                            </p:column>
+                                            <p:column headerText="#{msg['sex']}" rendered="#{evaluadosView.blHabilitarSexo}">
+                                                <h:outputText value="#{reg.paTxSexo}" />
+                                            </p:column>
+                                            <p:column headerText="#{msg['age']}" rendered="#{evaluadosView.blHabilitarEdad}">
+                                                <h:outputText value="#{reg.paNrEdad}" />
+                                            </p:column>
+                                            <p:column headerText="#{msg['hiring.time']}" rendered="#{evaluadosView.blHabilitarTiempoEmpresa}">
+                                                <h:outputText value="#{reg.paNrTiempoTrabajo}" />
+                                            </p:column>
+                                            <p:column headerText="#{msg['work.range']}" rendered="#{evaluadosView.blHabilitarNivelOcupacional}">
+                                                <h:outputText value="#{reg.paTxOcupacion}" />
+                                            </p:column>
+                                            <p:column headerText="#{msg['working.area']}" rendered="#{evaluadosView.blHabilitarAreaNegocio}">
+                                                <h:outputText value="#{reg.paTxAreaNegocio}" />
+                                            </p:column>
+                                            <p:column style="text-align: center;" headerText="#{msg['autoevaluate']}">
+                                                <p:selectBooleanCheckbox value="#{reg.paInAutoevaluar}" disabled="true" />
+                                            </p:column>
+
+                                        </p:dataTable>
+                                    </c:if>
+
+                                    <!-- 3 TEMP -->
+                                    <c:if test="#{evaluadosView.lstRelacionAvanzadas.size()>0}">
+                                        <p:dataTable 
+                                            id="tblRelacionAvanzadas"
+                                            widgetVar="tblRelacionAvanzadas"
+                                            rows="10"
+                                            rowsPerPageTemplate="5,10,30,{ShowAll|'All'}"
+                                            paginator="true" 
+                                            size="small"
+                                            var="red"
+                                            value="#{evaluadosView.lstRelacionAvanzadas}"
+                                            paginatorPosition="both"
+                                            resizableColumns="true"
+                                            stripedRows="true"
+                                            sortMode="single"
+                                            paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                            emptyMessage="#{msg['no.items']}" 
+                                            rendered="#{evaluadosView.lstRelacionAvanzadas.size()>0}" >
+
+                                            <f:facet name="header">
+                                                <div class="customers-table-header">
+                                                    <span style="font-weight: bold; text-transform: uppercase;">  #{msg['step1.list.network.found']}</span>
+                                                </div>
+                                            </f:facet>
+
+                                            <!--f:facet name="footer">
+                                            #{msg['step1.total.network.found']} #{evaluadosView.lstRelacionAvanzadas.size()}
+                                        </f:facet-->
+
+                                            <p:column headerText="#{msg['evaluated']}" sortBy="#{red.strEvaluado}" groupRow="true" sortOrder="asc" sortPriority="1" >
+                                                <h:outputText value="#{red.strEvaluadoDesc}" />
+                                                <br/>
+                                                <h:outputText value="#{red.strEvaluado}" class="p-text-light" />
+                                            </p:column>
+                                            <p:column headerText="#{msg['relationship']}" sortBy="#{red.strRelacionAbreviatura}" sortOrder="asc" sortPriority="2" >
+                                                <p:tag value="#{red.strRelacionAbreviatura}" style=" width: 80px; height: 17px; background-color: #{red.strRelacionColor};" />
+                                            </p:column>                                 
+                                            <p:column headerText="#{msg['evaluator']}" sortBy="#{red.strEvaluador}" sortOrder="asc" sortPriority="3" >
+                                                <h:outputText value="#{red.strEvaluadorDesc}" />
+                                                <br/>
+                                                <h:outputText value="#{red.strEvaluador}" class="p-text-light" />
+                                            </p:column>
+
+                                        </p:dataTable>
+                                    </c:if>
+
+                                    <!-- 1 -->
+                                    <c:if test="#{evaluadosView.lstRelacionBean.size()>0}">
+                                        <h5>#{msg['available.average.relationships']}</h5>
+                                        <p:toggleSwitch   id="switchPonderado" value="#{parametrosView.blPonderacionHabilitado}">
+                                            <p:ajax listener="#{parametrosView.activarParametro(87)}" resetValues="true" update="@form" />
+                                        </p:toggleSwitch>   
+                                        <p:staticMessage severity="#{evaluadosView.blTotalPonderado.doubleValue()==100.00?'info':'warn'}" 
+                                                         detail="#{evaluadosView.blTotalPonderado.doubleValue()==100?msg['average.relationships.total.ok']:msg['average.relationships.total.error']} #{evaluadosView.blTotalPonderado.doubleValue()}%" style="width: 100%; margin-top: 5px; margin-left: 2px; margin-right: 2px;"
+                                                         rendered="#{parametrosView.blPonderacionHabilitado}"/>
+                                        
+                                        <p:dataTable 
+                                            id="tblResultadoRelacion"
+                                            widgetVar="tblResultadoRelacion"
+                                            rows="10"
+                                            paginator="true" 
+                                            var="rel"
+                                            value="#{evaluadosView.lstRelacionBean}"
+                                            paginatorPosition="both"
+                                            editable="true"
+                                            editMode="cell"
+                                            editInitEvent="dblclick" 
+                                            stripedRows="true"
+                                            resizableColumns="true"
+                                            sortMode="single"
+                                            size="small"
+                                            rowIndexVar="index"
+                                            rowsPerPageTemplate="5,10,30,{ShowAll|'All'}"
+                                            paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                            currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords}"
+                                            emptyMessage="#{msg['no.items']}"
+                                            rendered="#{evaluadosView.lstRelacionBean.size()>0}"
+                                            >
+
+                                            <p:ajax event="cellEdit" listener="#{evaluadosView.actualizarRelacionDefinitivo}"  update="@this,frmResultado:tblRelacionesEvaluadoEvaluador,frmGlobal"/>
+
+                                            <f:facet name="header">
+                                                <div class="customers-table-header">
+                                                    <span style="font-weight: bold; text-transform: uppercase;"> #{msg['step1.list.relationships']}</span>
+                                                </div>
+                                            </f:facet>
+
+                                            <!--f:facet name="footer">
+                                            #{msg['step1.total.relationships']} #{evaluadosView.lstRelacionBean.size()}
+                                        </f:facet-->
+                                            <p:column style="width: 15px;">
+                                                <f:facet name="header">
+                                                    <h:outputText value="#" />
+                                                </f:facet>
+                                                <h:outputText 
+                                                    value="#{index + 1}" />
+                                            </p:column> 
+                                            <p:column headerText="#{msg['relationship']}" sortBy="#{rel.strNombre}" sortOrder="asc" >
+                                                <h:outputText value="#{rel.strNombre}" />
+                                            </p:column>
+                                            <p:column headerText="#{msg['abbreviation']}">
+                                                <p:cellEditor>
+                                                    <f:facet name="output">
+                                                        <h:outputText value="#{rel.strAbreviatura}"  />
+                                                    </f:facet>
+                                                    <f:facet name="input">
+                                                        <p:inputText value="#{rel.strAbreviatura}" maxlength="3" style="width: 100%;" />
+                                                    </f:facet>
+                                                </p:cellEditor>
+                                            </p:column>
+                                            <p:column style="text-align: center" headerText="#{msg['assigned.color']}" >
+                                                <p:tag value="#{rel.strColor}" style=" width: 80px; height: 17px; background-color: #{rel.strColor};" />
+                                            </p:column>
+                                            <p:column style="text-align: center"  >
+                                                <p:colorPicker value="#{rel.strColor}"   >
+                                                    <p:ajax listener="#{evaluadosView.actualizaColorDefinitivo(rel)}" process="@this" update="@form"/>
+                                                </p:colorPicker>
+                                            </p:column>
+                                            <p:column style="text-align: center" headerText="#{msg['signo.porcentaje']}" rendered="#{parametrosView.blPonderacionHabilitado}">
+                                                <p:inputNumber value="#{rel.dbPonderado}" minValue="0" maxValue="100" decimalPlaces="2"  symbol="%"
+                                                               symbolPosition="s" emptyValue="zero" >
+                                                    <p:ajax event="blur" update="formRed,frmResultado,frmGlobal" listener="#{evaluadosView.actualizaPonderado(rel)}" />
+                                                </p:inputNumber>
+
+                                            </p:column>
+
+                                        </p:dataTable>
+
+                                    </c:if>
+
+                                    <!-- 2 -->
+                                    <c:if test="#{evaluadosView.lstEvaluado.size()>0}">
+                                        <p:dataTable 
+                                            id="lstEvaluados"
+                                            var="reg"
+                                            widgetVar="lstEvaluados"
+                                            resizableColumns="true"
+                                            value="#{evaluadosView.lstEvaluado}" 
+                                            rows="10"
+                                            reflow="true"
+                                            rowsPerPageTemplate="5,10,{ShowAll|'All'}"
+                                            paginatorPosition="both"
+                                            stripedRows="true"
+                                            paginator="true" 
+                                            size="small"
+                                            paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                            emptyMessage="#{msg['no.items']}"
+                                            rowIndexVar="index"
+                                            >
+
+                                            <f:facet name="header">
+                                                <div class="customers-table-header">
+                                                    <span style="font-weight: bold; text-transform: uppercase;"> #{msg['step1.list.items.found']}</span>
+                                                </div>
+                                            </f:facet>
+
+                                            <p:column style="width: 15px;">
+                                                <f:facet name="header">
+                                                    <h:outputText value="#" />
+                                                </f:facet>
+                                                <h:outputText 
+                                                    value="#{index + 1}" />
+                                            </p:column> 
+                                            <p:column headerText="#{msg['photo']}" style="width: 80px;" > 
+                                                <p:graphicImage url="#{reg.paTxImgUrl}" height="75" width="75" class="classimg" rendered="#{reg.paTxImgUrl!=null}" />
+                                                <p:graphicImage value="/images/no-picture.png" height="75" width="75"  class="classimg" rendered="#{reg.paTxImgUrl==null}" />
+                                            </p:column>
+                                            <p:column headerText="#{msg['description']}" sortBy="#{reg.paTxDescripcion}">
+                                                <h:outputText value="#{reg.paTxDescripcion}" />
+                                            </p:column>                           
+                                            <p:column headerText="#{msg['email']}" sortBy="#{reg.paTxCorreo}">
+                                                <h:outputText value="#{reg.paTxCorreo}" />
+                                            </p:column>    
+                                            <p:column headerText="#{msg['role']}" sortBy="#{reg.paTxNombreCargo}">
+                                                <h:outputText value="#{reg.paTxNombreCargo}" />
+                                            </p:column>    
+                                            <p:column headerText="#{msg['sex']}" sortBy="#{reg.paTxSexo}" rendered="#{evaluadosView.blHabilitarSexo}" >
+                                                <h:outputText value="#{reg.paTxSexo}" />
+                                            </p:column>    
+                                            <p:column headerText="#{msg['age']}" sortBy="#{reg.paNrEdad}" rendered="#{evaluadosView.blHabilitarEdad}"  >
+                                                <h:outputText value="#{reg.paNrEdad}"  />
+                                            </p:column>   
+                                            <p:column headerText="#{msg['hiring.time']}" sortBy="#{reg.paNrTiempoTrabajo}" rendered="#{evaluadosView.blHabilitarTiempoEmpresa}" >
+                                                <h:outputText value="#{reg.paNrTiempoTrabajo}" />
+                                            </p:column>    
+                                            <p:column headerText="#{msg['work.range']}" sortBy="#{reg.paTxOcupacion}" rendered="#{evaluadosView.blHabilitarNivelOcupacional}">
+                                                <h:outputText value="#{reg.paTxOcupacion}" />
+                                            </p:column>  
+                                            <p:column headerText="#{msg['working.area']}" sortBy="#{reg.paTxAreaNegocio}" rendered="#{evaluadosView.blHabilitarAreaNegocio}" >
+                                                <h:outputText value="#{reg.paTxAreaNegocio}" />
+                                            </p:column>  
+                                            <p:column headerText="#{msg['autoevaluate']}">
+                                                <p:selectBooleanCheckbox value="#{reg.paInAutoevaluar}" disabled="true" />
+                                            </p:column>
+
+                                        </p:dataTable>
+                                    </c:if>
+
+
+
+                                    <!-- 3 -->
+                                    <c:if test="#{evaluadosView.lstRelacionesEvaluadoEvaluador.size()>0}">
+                                        <div class="p-field p-col-12 p-md-7">
+                                            <p:card >
+                                                <p:dataTable 
+                                                    id="tblRelacionesEvaluadoEvaluador"
+                                                    widgetVar="tblRelacionesEvaluadoEvaluador"
+                                                    rows="10"
+                                                    paginator="true" 
+                                                    var="red"
+                                                    size="small"
+                                                    value="#{evaluadosView.lstRelacionesEvaluadoEvaluador}"
+                                                    paginatorPosition="both"
+                                                    stripedRows="true"
+                                                    rowsPerPageTemplate="5,10,30,{ShowAll|'All'}"
+                                                    resizableColumns="true"
+                                                    sortMode="single"
+                                                    paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                    emptyMessage="#{msg['no.items']}" 
+                                                    rendered="#{evaluadosView.lstRelacionesEvaluadoEvaluador.size()>0}" >
+
+                                                    <f:facet name="header">
+                                                        <div class="customers-table-header">
+                                                            <span style="font-weight: bold; text-transform: uppercase;">#{msg['step1.list.network.found']}</span>
+                                                        </div>
+                                                    </f:facet>
+                                                    <!--f:facet name="footer">
+                                                    #{msg['step1.total.network.found']} #{evaluadosView.lstRelacionesEvaluadoEvaluador.size()}
+                                                </f:facet-->
+
+                                                    <p:column headerText="#{msg['evaluated']}" sortBy="#{red.strEvaluado}" groupRow="true" sortOrder="asc" sortPriority="1" >
+                                                        <h:outputText value="#{red.strEvaluadoDesc}" />
+                                                        <br/>
+                                                        <h:outputText value="#{red.strEvaluado}" class="p-text-light" />
+                                                    </p:column>
+                                                    <p:column headerText="#{msg['relationship']}" sortBy="#{red.strRelacionAbreviatura}" sortOrder="asc" sortPriority="2" >
+                                                        <p:tag value="#{red.strRelacionAbreviatura}" style=" width: 80px; height: 17px; background-color: #{red.strRelacionColor};" />
+                                                    </p:column>                                 
+                                                    <p:column headerText="#{msg['evaluator']}" sortBy="#{red.strEvaluador}" sortOrder="asc" sortPriority="3" >
+                                                        <h:outputText value="#{red.strEvaluadorDesc}" />
+                                                        <br/>
+                                                        <h:outputText value="#{red.strEvaluador}" class="p-text-light" />
+                                                    </p:column>
+
+                                                </p:dataTable>
+                                            </p:card>
+
+                                        </div>
+                                    </c:if>
+
+                                    <c:if test="#{evaluadosView.blCargarCorrectoAvan and evaluadosView.lstErrorAvan.size()==0}">
+                                        <p:commandButton value="#{msg['step1.save.participant.networks']}" 
+                                                         rendered="#{evaluadosView.blCargarCorrectoAvan}" 
+                                                         disabled="#{!evaluadosView.blCargarCorrectoAvan}" 
+                                                         actionListener="#{evaluadosView.cargarListaAvanzado()}"
+                                                         type="submit"
+                                                         style="width: 100%;" 
+                                                         update="formRed,frmSex,frmRango,frmTiempoEmpresa,frmNivelOcupacional,frmAreaNegocio,frmResultado,frmGlobal"
+                                                         icon="pi pi-save" /> 
+
+                                    </c:if>
+
+                                    <c:if test="#{evaluadosView.lstEvaluado.size()>0 and evaluadosView.lstEvaluadores.size()>0}">
+                                        <p:commandButton value="#{msg['step1.delete.participant.networks']}" 
+                                                         rendered="#{(evaluadosView.lstEvaluado.size()>0 and evaluadosView.lstEvaluadores.size()>0 
+                                                                     and
+                                                                     !(evaluadosView.intIdEstadoProyecto == 37 or evaluadosView.intIdEstadoProyecto == 34))}" 
+                                                         styleClass="ui-button-danger"
+                                                         actionListener="#{evaluadosView.eliminarCargar()}"
+                                                         type="submit"
+                                                         update="formRed,frmSex,frmRango,frmTiempoEmpresa,frmNivelOcupacional,frmAreaNegocio,frmResultado,frmGlobal"
+                                                         icon="pi pi-times">
+                                            <p:confirm header="#{msg['confirmation']}" message="#{msg['are.you.sure.delete.configuration']}" icon="pi pi-info-circle" />
+                                        </p:commandButton>
+
+                                    </c:if>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+                </c:if>
+            </h:form>
+        </div>
+
+        <h:form id="frmGlobal">
+            <p:growl widgetVar="growlGlobal" life="4000" showSummary="true" />
+        </h:form>
+
+    </ui:define>
+</ui:composition>
