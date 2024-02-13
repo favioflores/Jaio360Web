@@ -34,6 +34,7 @@
         <script>
             function skinRadarChart() {
                 Chart.defaults.startAngle = 36;
+                Chart.defaults.font.size = 12;
                 Chart.defaults.plugins.tooltip.cornerRadius = 1;
                 Chart.defaults.plugins.tooltip.enabled = true;
                 Chart.defaults.plugins.tooltip.mode = 'point';
@@ -84,7 +85,7 @@
                 <p:growl life="4000"  showDetail="false" />
                 <div class="col-12 md:col-12">
                     <div class="card ui-fluid">
-
+                        <p:linkButton outcome="dashboard.jsf" value="Regresar a la vista general" />
                         <h5>Datos del evaluado</h5>
                         <div class="field grid">
                             <p:outputLabel for="@next" value="#{msg['description']}" styleClass="col-fixed" />
@@ -135,6 +136,96 @@
 
                         <div class="field">
                             <p:barChart model="#{dashboardDetailView.barModelPrincipal}" style="width: 100%; height: 500px;"/>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 md:col-12">
+
+                    <div class="card ui-fluid">
+                        <h5>Items por debajo de lo requerido</h5>
+
+                        <div class="field">
+                            <p:dataView var="item" value="#{dashboardDetailView.lstItemsBelowRequired}" rows="10" paginator="true"
+                                        rowsPerPageTemplate="5,10,15,{ShowAll|'All'}"
+                                        paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                        paginatorPosition="both"
+                                        emptyMessage="#{msg['no.items']}" layout="list" 
+                                        listIcon="pi pi-bars">
+
+                                <p:dataViewListItem>
+                                    <div class="grid messages-demo">
+                                        <div class="col-12 md:col-12">
+                                            <div class="card ui-fluid">
+                                                <div class="field grid ">
+                                                    <div class="col-8 messages-demo">
+                                                        <h4>#{item.strQuestionDescription}</h4>
+                                                        <p:staticMessage severity="#{item.strColorResult=='2'?'error':item.strColorResult=='1'?'warn':'info'}" summary="#{item.strCategoryDescription.toUpperCase()}" display="text" 
+                                                                         style="font-size: 15px; margin: 0 0 0 0; width: 100%"/>
+                                                    </div>
+                                                    <div class="col-4" >
+                                                        <p:panelGrid  columns="0" layout="tabular" style=" width: 100%;" styleClass="showcase-text-align-center">
+                                                            <f:facet name="header">
+                                                                <p:row>
+                                                                    <p:column colspan="2">Puntaje requerido por pregunta</p:column>
+                                                                </p:row>
+                                                                <p:row>
+                                                                    <p:column>Mínimo</p:column>
+                                                                    <p:column>Máximo</p:column>
+                                                                </p:row>
+
+                                                            </f:facet>
+                                                            <p:row>
+                                                                <p:column style="text-align: center;">
+                                                                    <h4> #{item.bdScoreMinRequired.doubleValue()} </h4>
+                                                                </p:column>
+                                                                <p:column style="text-align: center;">
+                                                                    <h4> #{item.bdScoreRequired.doubleValue()} </h4>
+                                                                </p:column>
+                                                            </p:row>
+                                                            <p:row>
+                                                                <p:column colspan="2">
+                                                                    <p:dataTable  var="relation" value="#{item.lstResultByRelation}" size="small" >
+
+                                                                        <p:column headerText="Indicador" style="text-align: center;">
+                                                                            <p:badge value=" " severity="#{relation.strCustomColor}" styleClass="mr-2"></p:badge>
+                                                                        </p:column>
+                                                                        <p:column headerText="Relación" style="text-align: center;">
+                                                                            <h:outputText value="#{relation.strRelationDescription}" />
+                                                                        </p:column>
+                                                                        <!--p:column headerText="color">
+                                                                            <h:outputText value="#{relation.strCustomColor}" />
+                                                                        </p:column-->
+                                                                        <p:column headerText="Puntaje obtenido" style="text-align: center;">
+                                                                            <!--div style="
+                                                                            #{item.bdScoreMinRequired.doubleValue() eq item.bdScoreRequired.doubleValue()?'':
+                                                                              relation.bdScore.doubleValue()>=item.bdScoreRequired.doubleValue()?
+                                                                              'background: #6de86a;':
+                                                                              relation.bdScore.doubleValue()>=item.bdScoreMinRequired.doubleValue()?
+                                                                              'background: #faf688;':
+                                                                              'background: #ffa9a9;'}
+                                                                            margin: 0 0 0 0; width: 100%;">
+                                                                           
+                                                                           <h:outputText value="#{relation.bdScore.doubleValue()}" />
+                                                                       </div-->
+                                                                            <h:outputText value="#{relation.bdScore.doubleValue()}" />
+                                                                        </p:column>
+
+                                                                    </p:dataTable>
+                                                                </p:column>
+                                                            </p:row>
+                                                        </p:panelGrid>
+
+
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </p:dataViewListItem>
+                            </p:dataView>
+
                         </div>
                     </div>
                 </div>

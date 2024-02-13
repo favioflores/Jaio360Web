@@ -482,7 +482,7 @@ public class ResultadoDAO implements Serializable {
 
         return listaResultado;
     }
-    
+
     public List obtenerResultadoXCategoria(Integer idCategoria) throws HibernateException {
 
         List listaResultado = null;
@@ -1933,6 +1933,76 @@ public class ResultadoDAO implements Serializable {
             query.setInteger("est_red_eje", Constantes.INT_ET_ESTADO_EVALUADOR_EN_EJECUCION);
             query.setInteger("est_red_ter", Constantes.INT_ET_ESTADO_EVALUADOR_TERMINADO);
             query.setInteger("id_cuest", idCuestionario);
+
+            listaResultado = query.list();
+
+        } finally {
+            sesion.close();
+        }
+
+        return listaResultado;
+    }
+
+    public List getResultQuestionsByEvaluator(Integer idProyecto, Integer idParticipant) {
+
+        List listaResultado = null;
+
+        try {
+
+            iniciaOperacion();
+
+            Query query = sesion.createSQLQuery(
+                    "select "
+                    + "	tabla.CATEGORIA_ID, "
+                    + "	tabla.CAT_DESCRIPCION, "
+                    + "	tabla.PREC_ID, "
+                    + "	tabla.PREC_DESCRIPCION, "
+                    + "	tabla.RELACION, "
+                    + "	tabla.PRE_PUN_REQ, "
+                    + "	tabla.PRE_PUN_MIN, "
+                    + "	AVG(tabla.MEDIDA) "
+                    + "from "
+                    + "	( "
+                    + "	select "
+                    + "		CAT.CO_ID_COMPONENTE_PK as CATEGORIA_ID, "
+                    + "		CAT.CO_TX_DESCRIPCION as CAT_DESCRIPCION, "
+                    + "		COP.CO_ID_COMPONENTE_PK as PREC_ID, "
+                    + "		COP.CO_TX_DESCRIPCION as PREC_DESCRIPCION, "
+                    + "		IFNULL(REL.RE_TX_ABREVIATURA, 'AUTO') as RELACION, "
+                    + "		DM.DE_NU_ORDEN + 1 as MEDIDA, "
+                    + "		COP.CO_NR_PUNTAJE_REQUERIDO as PRE_PUN_REQ, "
+                    + "		COP.CO_NR_PUNTAJE_MINIMO_REQUERIDO as PRE_PUN_MIN "
+                    + "	from "
+                    + "		proyecto PO "
+                    + "	inner join resultado RES on "
+                    + "		RES.PO_ID_PROYECTO_FK = PO.PO_ID_PROYECTO_PK "
+                    + "	inner join detalle_metrica DM on "
+                    + "		DM.DE_ID_DETALLE_ESCALA_PK = RES.DE_ID_DETALLE_ESCALA_FK "
+                    + "	inner join componente COP on "
+                    + "		COP.CO_ID_COMPONENTE_PK = RES.CO_ID_COMPONENTE_FK "
+                    + "	inner join componente CAT on "
+                    + "		CAT.CO_ID_COMPONENTE_PK = COP.CO_ID_COMPONENTE_REF_FK "
+                    + "	left join relacion REL on "
+                    + "		REL.RE_ID_RELACION_PK = RES.RE_ID_RELACION_FK "
+                    + "	where "
+                    + "		PO.PO_ID_PROYECTO_PK = :idProyecto "
+                    + "		and COP.CO_ID_TIPO_COMPONENTE = 46 "
+                    + "		and RES.PA_ID_PARTICIPANTE_FK = :idParticipante "
+                    + " ) tabla "
+                    + "group by "
+                    + "	tabla.CATEGORIA_ID, "
+                    + "	tabla.CAT_DESCRIPCION, "
+                    + "	tabla.PREC_ID, "
+                    + "	tabla.PREC_DESCRIPCION, "
+                    + "	tabla.RELACION, "
+                    + "	tabla.PRE_PUN_REQ, "
+                    + "	tabla.PRE_PUN_MIN "
+                    + "order by "
+                    + "	tabla.PREC_ID, "
+                    + "	tabla.RELACION ");
+
+            query.setInteger("idProyecto", idProyecto);
+            query.setInteger("idParticipante", idParticipant);
 
             listaResultado = query.list();
 

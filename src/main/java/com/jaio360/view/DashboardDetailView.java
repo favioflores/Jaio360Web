@@ -8,6 +8,8 @@ import com.jaio360.dao.RelacionDAO;
 import com.jaio360.dao.ResultadoDAO;
 import com.jaio360.domain.Categorias;
 import com.jaio360.domain.Evaluado;
+import com.jaio360.domain.ItemBelowRequired;
+import com.jaio360.domain.ResultByRelation;
 import com.jaio360.orm.Componente;
 import com.jaio360.orm.Cuestionario;
 import com.jaio360.orm.Participante;
@@ -71,6 +73,8 @@ public class DashboardDetailView extends BaseView implements Serializable {
 
     private static final Logger log = Logger.getLogger(DashboardDetailView.class);
 
+    private ResultadoDAO objResultadoDAO;
+
     private List<Cuestionario> lstCuestionarios;
     private Cuestionario objCuestionario;
     private Participante objParticipante;
@@ -92,6 +96,16 @@ public class DashboardDetailView extends BaseView implements Serializable {
 
     //VISTAS
     private Boolean isCategoryViewActive;
+
+    private List<ItemBelowRequired> lstItemsBelowRequired;
+
+    public List<ItemBelowRequired> getLstItemsBelowRequired() {
+        return lstItemsBelowRequired;
+    }
+
+    public void setLstItemsBelowRequired(List<ItemBelowRequired> lstItemsBelowRequired) {
+        this.lstItemsBelowRequired = lstItemsBelowRequired;
+    }
 
     public Boolean getIsCategoryViewActive() {
         return isCategoryViewActive;
@@ -195,6 +209,10 @@ public class DashboardDetailView extends BaseView implements Serializable {
         return planAccion;
     }
 
+    public DashboardDetailView() {
+        objResultadoDAO = new ResultadoDAO();
+    }
+
     @PostConstruct
     public void init() {
 
@@ -212,6 +230,7 @@ public class DashboardDetailView extends BaseView implements Serializable {
             loadCategories();
             cargarRadarPrincipal(this.objParticipante);
             cargarBarrasSumarioXCategorias(this.objParticipante);
+            cargarItemsPorDebajoDeLoRequerido(this.objParticipante);
 
         } else {
             try {
@@ -272,7 +291,7 @@ public class DashboardDetailView extends BaseView implements Serializable {
         List<List<String>> labels = new ArrayList<>();
 
         for (Componente objComponente : lstCategorias) {
-            labels.add(new ArrayList(Arrays.asList(objComponente.getCoTxDescripcion())));
+            labels.add(new ArrayList(Arrays.asList(objComponente.getCoTxDescripcion().toUpperCase())));
         }
 
         data.setLabels(labels);
@@ -346,6 +365,7 @@ public class DashboardDetailView extends BaseView implements Serializable {
         RadialLinearAngleLines angleLines = new RadialLinearAngleLines();
         angleLines.setDisplay(true);
         angleLines.setLineWidth(0.5);
+
         angleLines.setColor("rgba(128, 128, 128, 0.2)");
         rScales.setAngleLines(angleLines);
 
@@ -410,7 +430,7 @@ public class DashboardDetailView extends BaseView implements Serializable {
             objComponente.setCoIdComponentePk(-1);
             objComponente.setCoTxDescripcion("General");
             this.lstCategorias.add(objComponente);
-            */
+             */
             this.lstCategorias.addAll(objComponenteDAO.listaComponenteProyectoTipo(Utilitarios.obtenerProyecto().getIntIdProyecto(), objCuestionario.getCuIdCuestionarioPk(), Constantes.INT_ET_TIPO_COMPONENTE_CATEGORIA, null));
         }
     }
@@ -447,8 +467,8 @@ public class DashboardDetailView extends BaseView implements Serializable {
         objRelacion.setReIdRelacionPk(-1);
         objRelacion.setReNuOrden(intMaxRango + 1);
         objRelacion.setReTxAbreviatura("REQ(*)");
-        objRelacion.setReTxDescripcion("REQUERIDO");
-        objRelacion.setReTxNombre("REQUERIDO");
+        objRelacion.setReTxDescripcion("MAX REQUERIDO POR CATEGORIA");
+        objRelacion.setReTxNombre("MAX REQUERIDO POR CATEGORIA");
         objRelacion.setReColor("#ff0000");
         mapRelaciones.put(objRelacion.getReTxAbreviatura(), objRelacion);
 
@@ -530,7 +550,7 @@ public class DashboardDetailView extends BaseView implements Serializable {
         List<String> labels = new ArrayList<>();
 
         for (Componente objComponente : lstCategorias) {
-            labels.add(objComponente.getCoTxDescripcion());
+            labels.add(objComponente.getCoTxDescripcion().toUpperCase());
         }
 
         data.setLabels(labels);
@@ -731,6 +751,127 @@ public class DashboardDetailView extends BaseView implements Serializable {
     public void goToDetailView() {
         try {
             FacesContext.getCurrentInstance().getExternalContext().redirect("dashboardDetail.jsf");
+        } catch (Exception ex) {
+            mostrarError(log, ex);
+        }
+    }
+
+    private void cargarItemsPorDebajoDeLoRequerido(Participante objParticipante) {
+        try {
+            this.lstItemsBelowRequired = new ArrayList<>();
+
+            List lstResultado = objResultadoDAO.getResultQuestionsByEvaluator(Utilitarios.obtenerProyecto().getIntIdProyecto(), objParticipante.getPaIdParticipantePk());
+
+            if (!lstResultado.isEmpty()) {
+                Iterator itLstResultado = lstResultado.iterator();
+
+                ItemBelowRequired objItemBelowRequired = null;
+                BigDecimal objRequiredScore;
+                BigDecimal objRequiredMinScore;
+                BigDecimal objScore;
+                boolean isLessThanRequired = false;
+                String strNewQuestion = "", strOldQuestion = "";
+                ResultByRelation objResultByRelation;
+                Integer lvlResult = 0;
+
+                while (itLstResultado.hasNext()) {
+
+                    Object[] objResult = (Object[]) itLstResultado.next();
+
+                    strNewQuestion = objResult[2].toString();
+                    objRequiredScore = new BigDecimal(objResult[5].toString());
+                    objRequiredMinScore = new BigDecimal(objResult[6].toString());
+                    objScore = new BigDecimal(objResult[7].toString());
+
+                    if(objResult[3].toString().equals("Toma las medidas necesarias para superar dificultades u obstáculos.")){
+                        System.out.println("com.jaio360.view.DashboardDetailView.cargarItemsPorDebajoDeLoRequerido()");
+                    }
+                    if (!strNewQuestion.equals(strOldQuestion)) {
+
+                        if (isLessThanRequired) {
+                            lvlResult = 0;
+                            this.lstItemsBelowRequired.add(objItemBelowRequired);
+                        }
+
+                        isLessThanRequired = false;
+
+                        switch (lvlResult) {
+                            case 0:
+                                if (objScore.doubleValue() < objRequiredScore.doubleValue()) {
+                                    lvlResult = 1;
+                                }
+                                if (objScore.doubleValue() < objRequiredMinScore.doubleValue()) {
+                                    lvlResult = 2;
+                                }
+                                break;
+                            case 1:
+                                if (objScore.doubleValue() < objRequiredMinScore.doubleValue()) {
+                                    lvlResult = 2;
+                                }
+                                break;
+                            case 2:
+                                break;
+                            default:
+                                break;
+                        }
+
+                        objItemBelowRequired = new ItemBelowRequired(
+                                objResult[3].toString(),
+                                objResult[1].toString(),
+                                objScore,
+                                BigDecimal.ZERO,//auto 
+                                objRequiredScore,
+                                objRequiredMinScore,
+                                lvlResult.toString(),
+                                new ArrayList<>());
+
+                        objResultByRelation = new ResultByRelation(objResult[4].toString(), 
+                                new BigDecimal(objResult[7].toString()), 
+                                objScore.doubleValue() < objRequiredMinScore.doubleValue() ? "danger" : 
+                                objScore.doubleValue() >= objRequiredScore.doubleValue() ? "success" : "warning");
+                        
+                        objItemBelowRequired.getLstResultByRelation().add(objResultByRelation);
+
+                    } else {
+                        
+                        switch (lvlResult) {
+                            case 0:
+                                if (objScore.doubleValue() < objRequiredScore.doubleValue()) {
+                                    lvlResult = 1;
+                                }
+                                if (objScore.doubleValue() < objRequiredMinScore.doubleValue()) {
+                                    lvlResult = 2;
+                                }
+                                break;
+                            case 1:
+                                if (objScore.doubleValue() < objRequiredMinScore.doubleValue()) {
+                                    lvlResult = 2;
+                                }
+                                break;
+                            case 2:
+                                break;
+                            default:
+                                break;
+                        }
+
+                        objItemBelowRequired.setStrColorResult(lvlResult.toString());
+                        objResultByRelation = new ResultByRelation(objResult[4].toString(), 
+                                new BigDecimal(objResult[7].toString()), 
+                                objScore.doubleValue() < objRequiredMinScore.doubleValue() ? "danger" : 
+                                objScore.doubleValue() >= objRequiredScore.doubleValue() ? "success" : "warning");
+                        objItemBelowRequired.getLstResultByRelation().add(objResultByRelation);
+
+                    }
+
+                    if (objScore.doubleValue() < objRequiredScore.doubleValue() || objScore.doubleValue() < objRequiredMinScore.doubleValue()) {
+                        isLessThanRequired = true;
+                    }
+
+                    strOldQuestion = strNewQuestion;
+                }
+
+            }
+
         } catch (Exception ex) {
             mostrarError(log, ex);
         }

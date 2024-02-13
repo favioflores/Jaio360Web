@@ -80,7 +80,7 @@
                                          var="cuestionario" 
                                          value="#{dashboardView.lstCuestionarios}" 
                                          rowKey="#{cuestionario.cuIdCuestionarioPk}" 
-                                         rows="5"
+                                         rows="10"
                                          paginator="true"
                                          size="small"
                                          stripedRows="false"
@@ -190,10 +190,10 @@
 
                                              #{evaluado.lstCategoryResult.get(columnIndex).bdScoreMinRequired.doubleValue() eq evaluado.lstCategoryResult.get(columnIndex).bdScoreRequired.doubleValue()?'':
                                                evaluado.lstCategoryResult.get(columnIndex).bdScoreResult.doubleValue()>=evaluado.lstCategoryResult.get(columnIndex).bdScoreRequired.doubleValue()?
-                                               'background: #D6FFD7;':
+                                               'background: #6de86a;':
                                                evaluado.lstCategoryResult.get(columnIndex).bdScoreResult.doubleValue()>=evaluado.lstCategoryResult.get(columnIndex).bdScoreMinRequired.doubleValue()?
-                                               'background: #FFFDCA;':
-                                               'background: #FCC1AA;'}
+                                               'background: #faf688;':
+                                               'background: #ffa9a9;'}
                                              margin: 0 0 0 0; width: 100%;">
                                             <h:outputLabel value="#{evaluado.lstCategoryResult.get(columnIndex).bdScoreResult.doubleValue()}" />
                                         </div>
