@@ -33,11 +33,11 @@ import org.primefaces.event.CellEditEvent;
  *
  * @author Favio
  */
-@ManagedBean(name = "listasPrincipalView")
+@ManagedBean(name = "archivedProjectView")
 @ViewScoped
-public class ListasPrincipalView extends BaseView implements Serializable {
+public class ArchivedProjectView extends BaseView implements Serializable {
 
-    private static Logger log = Logger.getLogger(ListasPrincipalView.class);
+    private static Logger log = Logger.getLogger(ArchivedProjectView.class);
 
     private static final long serialVersionUID = -1L;
 
@@ -296,7 +296,7 @@ public class ListasPrincipalView extends BaseView implements Serializable {
 
     
     
-    public ListasPrincipalView() {
+    public ArchivedProjectView() {
         this.lstProyectos = new ArrayList<>();
         this.lstRedes = new ArrayList<>();
         this.lstEvaluaciones = new ArrayList<>();
@@ -361,7 +361,7 @@ public class ListasPrincipalView extends BaseView implements Serializable {
 
         ProyectoDAO objProyectoDAO = new ProyectoDAO();
         List lstProyecto = objProyectoDAO.obtenListaProyectosPorUsuario(objUsuarioInfo.getIntUsuarioPk(), null,
-                blOcultos,
+                true,
                 txtDescripcion,
                 idTipoProyecto,
                 idEstadoProyecto,
@@ -492,13 +492,13 @@ public class ListasPrincipalView extends BaseView implements Serializable {
             ProyectoDAO objProyectoDAO = new ProyectoDAO();
             Proyecto objProyecto = objProyectoDAO.obtenProyecto(objProyectoInfo.getIntIdProyecto());
 
-            objProyecto.setPoInOculto(Boolean.TRUE);
+            objProyecto.setPoInOculto(Boolean.FALSE);
             objProyectoInfo.setBoOculto(true);
             lstProyectos.remove(objProyectoInfo);
 
             objProyectoDAO.actualizaProyecto(objProyecto);
 
-            mostrarAlertaInfo("adm.archived.project");
+            mostrarAlertaInfo("adm.unarchived.project");
 
         } catch (HibernateException e) {
             mostrarError(log, e);

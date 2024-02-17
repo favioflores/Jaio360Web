@@ -30,13 +30,11 @@ import javax.faces.model.SelectItem;
 import javax.faces.bean.ViewScoped;
 import javax.faces.bean.ManagedBean;
 
-
 import org.apache.log4j.Logger;
 import org.apache.commons.logging.LogFactory;
 
 @ManagedBean(name = "mantenimientoLicenciaView")
 @ViewScoped
-
 
 public class MantenimientoLicenciaView extends BaseView implements Serializable {
 
@@ -120,7 +118,6 @@ public class MantenimientoLicenciaView extends BaseView implements Serializable 
         this.lstUsuarioSaldo = lstUsuarioSaldo;
     }
 
-    
     @PostConstruct
     public void init() {
 
@@ -255,14 +252,20 @@ public class MantenimientoLicenciaView extends BaseView implements Serializable 
                     }
 
                     UsuarioSaldoBean objUsuarioSaldoBean = new UsuarioSaldoBean();
-                    objUsuarioSaldoBean.setIntTotalIndividual(objUsuarioSaldo.getUsNrTotalIndividual());
-                    objUsuarioSaldoBean.setIntTotalMasivo(objUsuarioSaldo.getUsNrTotalMasivo());
-                    objUsuarioSaldoBean.setIntDisponibleIndividual(objUsuarioSaldo.getUsNrDisponibleIndividual());
-                    objUsuarioSaldoBean.setIntDisponibleMasivo(objUsuarioSaldo.getUsNrDisponibleMasivo());
-                    objUsuarioSaldoBean.setIntReservadoIndividual(objUsuarioSaldo.getUsNrReservadoIndividual());
-                    objUsuarioSaldoBean.setIntReservadoMasivo(objUsuarioSaldo.getUsNrReservadoMasivo());
-                    objUsuarioSaldoBean.setIntUtilizadoIndividual(objUsuarioSaldo.getUsNrUsadoIndividual());
-                    objUsuarioSaldoBean.setIntUtilizadoMasivo(objUsuarioSaldo.getUsNrUsadoMasivo());
+                    objUsuarioSaldoBean.setStrTipoSaldo(msg("licencia.individual"));
+                    objUsuarioSaldoBean.setIntTotal(objUsuarioSaldo.getUsNrTotalIndividual());
+                    objUsuarioSaldoBean.setIntDisponible(objUsuarioSaldo.getUsNrDisponibleIndividual());
+                    objUsuarioSaldoBean.setIntReservado(objUsuarioSaldo.getUsNrReservadoIndividual());
+                    objUsuarioSaldoBean.setIntUtilizado(objUsuarioSaldo.getUsNrUsadoIndividual());
+
+                    lstUsuarioSaldo.add(objUsuarioSaldoBean);
+
+                    objUsuarioSaldoBean = new UsuarioSaldoBean();
+                    objUsuarioSaldoBean.setStrTipoSaldo(msg("licencia.masiva"));
+                    objUsuarioSaldoBean.setIntTotal(objUsuarioSaldo.getUsNrTotalMasivo());
+                    objUsuarioSaldoBean.setIntDisponible(objUsuarioSaldo.getUsNrDisponibleMasivo());
+                    objUsuarioSaldoBean.setIntReservado(objUsuarioSaldo.getUsNrReservadoMasivo());
+                    objUsuarioSaldoBean.setIntUtilizado(objUsuarioSaldo.getUsNrUsadoMasivo());
 
                     lstUsuarioSaldo.add(objUsuarioSaldoBean);
 

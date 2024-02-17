@@ -36,126 +36,100 @@
                 </h:form>
             </div>
 
-        
-                <div class="col-12 lg:col-6">
 
-                    <div class="card ui-fluid">
-                        <h5>#{msg['resumen.saldos.label']}</h5>
+            <div class="col-12 lg:col-6">
 
-                        <div class="field grid">
+                <div class="card ui-fluid">
+                    <h5>#{msg['resumen.saldos.label']}</h5>
 
-                            <div class="col">
-                                <p:dataTable 
-                                    id="lstUsuarioSaldo"
-                                    var="usuarioSaldo"
-                                    value="#{mantenimientoLicenciaAccountView.lstUsuarioSaldo}" 
-                                    rows="5"
-                                    size="small"
-                                    widgetVar="lstUsuarioSaldo"
-                                    emptyMessage="#{msg['no.items']}"
-                                    rowIndexVar="index"
-                                    >    
+                    <div class="field grid">
 
-                                    <p:columnGroup type="header">
-                                        <p:row>
-                                            <p:column colspan="4" headerText="#{msg['licencia.individual']}"/>
-                                            <p:column colspan="4" headerText="#{msg['licencia.masiva']}"/>
-                                        </p:row>
-                                        <p:row>
-                                            <p:column headerText="#{msg['total']}"/>
-                                            <p:column headerText="#{msg['disponible']}"/>
-                                            <p:column headerText="#{msg['reservado']}"/>
-                                            <p:column headerText="#{msg['utilizado']}"/>
-                                            <p:column headerText="#{msg['total']}"/>
-                                            <p:column headerText="#{msg['disponible']}"/>
-                                            <p:column headerText="#{msg['reservado']}"/>
-                                            <p:column headerText="#{msg['utilizado']}"/>
-                                        </p:row>
-                                    </p:columnGroup>
+                        <div class="col">
+                            <p:dataTable 
+                                id="lstUsuarioSaldo"
+                                var="usuarioSaldo"
+                                value="#{mantenimientoLicenciaAccountView.lstUsuarioSaldo}" 
+                                rows="5"
+                                reflow="true"
+                                size="small"
+                                widgetVar="lstUsuarioSaldo"
+                                emptyMessage="#{msg['no.items']}"
+                                rowIndexVar="index"
+                                >    
 
-                                    <p:column>
-                                        <h:outputText value="#{usuarioSaldo.intTotalIndividual}" />
-                                    </p:column>
-                                    <p:column>
-                                        <h:outputText value="#{usuarioSaldo.intDisponibleIndividual}" />
-                                    </p:column>
-                                    <p:column>
-                                        <h:outputText value="#{usuarioSaldo.intReservadoIndividual}" />
-                                    </p:column>
-                                    <p:column>
-                                        <h:outputText value="#{usuarioSaldo.intUtilizadoIndividual}" />
-                                    </p:column>
-                                    <p:column>
-                                        <h:outputText value="#{usuarioSaldo.intTotalMasivo}" />
-                                    </p:column>                            
-                                    <p:column>
-                                        <h:outputText value="#{usuarioSaldo.intDisponibleMasivo}" />
-                                    </p:column>
-                                    <p:column>
-                                        <h:outputText value="#{usuarioSaldo.intReservadoMasivo}" />
-                                    </p:column>
-                                    <p:column>
-                                        <h:outputText value="#{usuarioSaldo.intUtilizadoMasivo}" />
-                                    </p:column>
-
-                                </p:dataTable>
-                            </div>
+                                <p:column headerText="#{msg['license']}">
+                                    <h:outputText value="#{usuarioSaldo.strTipoSaldo}" />
+                                </p:column>
+                                <p:column headerText="#{msg['total']}">
+                                    <h:outputText value="#{usuarioSaldo.intTotal}" />
+                                </p:column>
+                                <p:column headerText="#{msg['disponible']}">
+                                    <h:outputText value="#{usuarioSaldo.intDisponible}" />
+                                </p:column>
+                                <p:column headerText="#{msg['reservado']}">
+                                    <h:outputText value="#{usuarioSaldo.intReservado}" />
+                                </p:column>
+                                <p:column headerText="#{msg['utilizado']}">
+                                    <h:outputText value="#{usuarioSaldo.intUtilizado}" />
+                                </p:column>
+                            </p:dataTable>
                         </div>
                     </div>
-
-
                 </div>
-                
-                
-                <div class="col-12 lg:col-6">
 
-                    <div class="card ui-fluid">
-                        <h5>#{msg['historial.movimiento.label']}</h5>
 
-                        <div class="field grid align-items-baseline">
+            </div>
 
-                            <div class="col">
-                                <p:dataTable 
-                                    id="lstContratos"
-                                    var="contrato"
-                                    value="#{mantenimientoLicenciaAccountView.lstMovimientos}" 
-                                    rows="5"
-                                    size="small"
-                                    paginator="true" 
-                                    paginatorPosition="both"
-                                    paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                    rowsPerPageTemplate="5,10,15"                                 
-                                    widgetVar="lstContratos"
-                                    emptyMessage="#{msg['no.items']}"
-                                    rowIndexVar="index"
-                                    >    
 
-                                    <p:column style="width: 40px;">
-                                        <f:facet name="header">
-                                            <h:outputText value="#" />
-                                        </f:facet>
-                                        <h:outputText 
-                                            value="#{index + 1}" />
-                                    </p:column> 
+            <div class="col-12 lg:col-6">
 
-                                    <p:column  headerText="#{msg['fecha.movimiento.label']}">
-                                        <h:outputText value="#{contrato.dtCreacion}" />
-                                    </p:column>
-                                    <p:column  headerText="#{msg['movimiento.label']}">
-                                        <h:outputText value="#{contrato.strDescMovimiento}" />
-                                    </p:column>
-                                    <p:column  headerText="#{msg['cantidad']}">
-                                        <h:outputText value="#{contrato.intCantidad}" />
-                                    </p:column>
+                <div class="card ui-fluid">
+                    <h5>#{msg['historial.movimiento.label']}</h5>
 
-                                </p:dataTable>
-                            </div>
+                    <div class="field grid align-items-baseline">
+
+                        <div class="col">
+                            <p:dataTable 
+                                id="lstContratos"
+                                var="contrato"
+                                value="#{mantenimientoLicenciaAccountView.lstMovimientos}" 
+                                rows="5"
+                                size="small"
+                                paginator="true" 
+                                paginatorPosition="both"
+                                paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                rowsPerPageTemplate="5,10,15"                                 
+                                widgetVar="lstContratos"
+                                emptyMessage="#{msg['no.items']}"
+                                rowIndexVar="index"
+                                >    
+
+                                <p:column style="width: 40px;">
+                                    <f:facet name="header">
+                                        <h:outputText value="#" />
+                                    </f:facet>
+                                    <h:outputText 
+                                        value="#{index + 1}" />
+                                </p:column> 
+
+                                <p:column  headerText="#{msg['fecha.movimiento.label']}">
+                                    <h:outputText value="#{contrato.dtCreacion}" />
+                                </p:column>
+                                <p:column  headerText="#{msg['movimiento.label']}">
+                                    <h:outputText value="#{contrato.strDescMovimiento}" />
+                                </p:column>
+                                <p:column  headerText="#{msg['cantidad']}">
+                                    <h:outputText value="#{contrato.intCantidad}" />
+                                </p:column>
+
+                            </p:dataTable>
                         </div>
                     </div>
-
-
                 </div>
-           
+
+
+            </div>
+
         </div>
 
 

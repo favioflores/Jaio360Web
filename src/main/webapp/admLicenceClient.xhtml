@@ -35,7 +35,7 @@
                 </h:form>
             </div>
 
-            <!--div class="col-12 md:col-4">
+            <div class="col-12 md:col-4">
                 <h:form id="formAgregarLicencia">
                     <div class="card ui-fluid">
                         <h5>#{msg['licencia.x.cliente']}</h5>
@@ -70,71 +70,39 @@
                         </div>
                     </div>
                 </h:form>
-            </div-->
+            </div>
 
-            <div class="col-12 md:col-6">
+            <div class="col-12 md:col-8">
                 <h:form id="formContratos">
                     <div class="card ui-fluid">
                         <h5>#{msg['resumen.saldos.label']}</h5>
                         <p:growl id="growl" showDetail="false" life="4000" />
                         <div class="field">
-                            <p:dataView
+                            <p:dataTable
                                 id="lstUsuarioSaldo"
                                 var="usuarioSaldo"
                                 value="#{mantenimientoLicenciaClienteView.lstUsuarioSaldo}" 
-                                rows="5" layout="list"
-                                gridIcon="pi pi-th-large" listIcon="pi pi-bars"
+                                reflow="true"
                                 widgetVar="lstUsuarioSaldo"
-                                
                                 emptyMessage="#{msg['no.items']}"
                                 >    
-                                <p:dataViewListItem>
-                                    <div class="product-list-item">
-                                        <div class="product-list-detail">
-                                            <div class="product-name">#{msg['total']}</div>
-                                            <div class="product-description">#{msg['licencia.individual']}</div>
-                                        </div>
-                                        <div class="product-list-action">
-                                            <h:outputText value="#{usuarioSaldo.intTotalIndividual}" styleClass="product-price">
-                                            </h:outputText>
-                                            <!--p:commandButton type="button" icon="pi pi-shopping-cart" value="Add to Cart" disabled="#{product.inventoryStatus == 'OUTOFSTOCK'}"/-->
-                                            <!--span class="product-badge status-#{product.inventoryStatus.name().toLowerCase()}">#{product.inventoryStatus.text}</span-->
-                                        </div>
-                                    </div>
-                                </p:dataViewListItem>
-                                <!--
-                                <p:column headerText="#{msg['licencia.individual']}">
-
-                                    <div class="grid">
-                                        <div class="col-4 md:col-2">
-                                            <div class="card ui-fluid">
-                                                <div class="col">
-                                                    <p:outputLabel value="#{msg['total']}"/>
-                                                </div>
-                                                <div class="col">
-                                                    <h:outputText value="#{usuarioSaldo.intTotalIndividual}" />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <p:outputLabel value="#{msg['disponible']}"/>
-                                    <h:outputText value="#{usuarioSaldo.intDisponibleIndividual}" />
-
-                                    <p:outputLabel value="#{msg['reservado']}"/>
-                                    <h:outputText value="#{usuarioSaldo.intReservadoIndividual}" />
-
-                                    <p:outputLabel value="#{msg['utilizado']}"/>
-                                    <h:outputText value="#{usuarioSaldo.intUtilizadoIndividual}" />
-
+                                <p:column headerText="#{msg['license']}">
+                                    #{usuarioSaldo.strTipoSaldo}
                                 </p:column>
-                                <p:column headerText="#{msg['licencia.masiva']}">
-                                    <h:outputText value="#{usuarioSaldo.intTotalMasivo}" />
-                                    <h:outputText value="#{usuarioSaldo.intDisponibleMasivo}" />
-                                    <h:outputText value="#{usuarioSaldo.intReservadoMasivo}" />
-                                    <h:outputText value="#{usuarioSaldo.intUtilizadoMasivo}" />
+                                <p:column headerText="#{msg['total']}">
+                                    #{usuarioSaldo.intTotal}
                                 </p:column>
-                                -->
-                            </p:dataView>
+                                <p:column headerText="#{msg['disponible']}">
+                                    #{usuarioSaldo.intDisponible}
+                                </p:column>
+                                <p:column headerText="#{msg['reservado']}">
+                                    #{usuarioSaldo.intReservado}
+                                </p:column>
+                                <p:column headerText="#{msg['utilizado']}">
+                                    #{usuarioSaldo.intUtilizado}
+                                </p:column>
+
+                            </p:dataTable>
                         </div>
                     </div>
                 </h:form>

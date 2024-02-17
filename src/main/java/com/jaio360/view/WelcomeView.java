@@ -85,7 +85,7 @@ public class WelcomeView extends BaseView implements Serializable {
 
     public void ingresaSistema() {
         try {
-            FacesContext.getCurrentInstance().getExternalContext().redirect("admProyectos.jsf");
+            FacesContext.getCurrentInstance().getExternalContext().redirect("admProjects.jsf");
         } catch (IOException ex) {
             mostrarError(log, ex);
         }
@@ -119,6 +119,8 @@ public class WelcomeView extends BaseView implements Serializable {
     public void sendFeedBack() {
 
         try {
+            
+            this.strFeedback = "";
 
             mostrarAlertaInfo("feedback.enviado");
 

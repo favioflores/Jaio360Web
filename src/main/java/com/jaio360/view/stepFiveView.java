@@ -54,7 +54,7 @@ public class stepFiveView extends BaseView implements Serializable {
             }
         } else {
             try {
-                FacesContext.getCurrentInstance().getExternalContext().redirect("admProyectos.jsf");
+                FacesContext.getCurrentInstance().getExternalContext().redirect("admProjects.jsf");
             } catch (Exception ex) {
                 log.error(ex);
             }

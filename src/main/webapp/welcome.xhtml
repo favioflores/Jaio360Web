@@ -126,11 +126,12 @@
                             </div>
                             <div class="field">
                                 <p:dataTable var="eva" value="#{welcomeView.lstEvaluaciones}"
-                                             rows="5"
+                                             rows="10"
                                              paginatorPosition="both"
-                                             stripedRows="true"
+                                             stripedRows="true" 
                                              paginator="true"  
                                              size="small"
+                                             rowsPerPageTemplate="5,10,30,{ShowAll|'All'}"
                                              paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                              emptyMessage="#{msg['no.items']}"
                                              rowIndexVar="index"

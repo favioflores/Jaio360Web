@@ -65,6 +65,7 @@ public class importarCuestionariosView extends BaseView implements Serializable 
     private Boolean processOk;
     private Boolean blExistPrevImport;
     private StreamedContent fileImport;
+    private StreamedContent fileImportSkills;
     private Integer intIdEstadoProyecto;
 
     public StreamedContent getFileImport() {
@@ -89,6 +90,29 @@ public class importarCuestionariosView extends BaseView implements Serializable 
         return fileImport;
     }
 
+    public StreamedContent getFileImportSkills() {
+        try {
+
+            ServletContext servletContext = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
+
+            String fullPath = servletContext.getRealPath(File.separator + "resources" + File.separator + "other" + File.separator + "ModeloDeCompetencias.xlsx");
+
+            InputStream stream = new FileInputStream(fullPath);
+
+            fileImportSkills = DefaultStreamedContent.builder()
+                    .name("ModeloDeCompetencias.xlsx")
+                    .contentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+                    .stream(() -> stream)
+                    .build();
+
+        } catch (Exception ex) {
+            mostrarError(log, ex);
+        }
+
+        return fileImportSkills;
+    }
+
+    
     public List<ElementoCuestionario> getLstElementoCuestionario() {
         return lstElementoCuestionario;
     }
@@ -107,6 +131,10 @@ public class importarCuestionariosView extends BaseView implements Serializable 
 
     public void setFileImport(StreamedContent fileImport) {
         this.fileImport = fileImport;
+    }
+
+    public void setFileImportSkills(StreamedContent fileImportSkills) {
+        this.fileImportSkills = fileImportSkills;
     }
 
     public String getStrCuestionario() {

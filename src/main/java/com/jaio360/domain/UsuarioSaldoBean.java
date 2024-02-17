@@ -5,14 +5,11 @@ import java.io.Serializable;
 public class UsuarioSaldoBean implements Serializable {
 
     private Integer intUsuario;
-    private Integer intTotalIndividual;
-    private Integer intDisponibleIndividual;
-    private Integer intReservadoIndividual;
-    private Integer intUtilizadoIndividual;
-    private Integer intTotalMasivo;
-    private Integer intDisponibleMasivo;
-    private Integer intReservadoMasivo;
-    private Integer intUtilizadoMasivo;
+    private String strTipoSaldo;
+    private Integer intTotal;
+    private Integer intDisponible;
+    private Integer intReservado;
+    private Integer intUtilizado;
 
     public Integer getIntUsuario() {
         return intUsuario;
@@ -22,68 +19,44 @@ public class UsuarioSaldoBean implements Serializable {
         this.intUsuario = intUsuario;
     }
 
-    public Integer getIntTotalIndividual() {
-        return intTotalIndividual;
+    public String getStrTipoSaldo() {
+        return strTipoSaldo;
     }
 
-    public void setIntTotalIndividual(Integer intTotalIndividual) {
-        this.intTotalIndividual = intTotalIndividual;
+    public void setStrTipoSaldo(String strTipoSaldo) {
+        this.strTipoSaldo = strTipoSaldo;
     }
 
-    public Integer getIntDisponibleIndividual() {
-        return intDisponibleIndividual;
+    public Integer getIntTotal() {
+        return intTotal;
     }
 
-    public void setIntDisponibleIndividual(Integer intDisponibleIndividual) {
-        this.intDisponibleIndividual = intDisponibleIndividual;
+    public void setIntTotal(Integer intTotal) {
+        this.intTotal = intTotal;
     }
 
-    public Integer getIntReservadoIndividual() {
-        return intReservadoIndividual;
+    public Integer getIntDisponible() {
+        return intDisponible;
     }
 
-    public void setIntReservadoIndividual(Integer intReservadoIndividual) {
-        this.intReservadoIndividual = intReservadoIndividual;
+    public void setIntDisponible(Integer intDisponible) {
+        this.intDisponible = intDisponible;
     }
 
-    public Integer getIntUtilizadoIndividual() {
-        return intUtilizadoIndividual;
+    public Integer getIntReservado() {
+        return intReservado;
     }
 
-    public void setIntUtilizadoIndividual(Integer intUtilizadoIndividual) {
-        this.intUtilizadoIndividual = intUtilizadoIndividual;
+    public void setIntReservado(Integer intReservado) {
+        this.intReservado = intReservado;
     }
 
-    public Integer getIntTotalMasivo() {
-        return intTotalMasivo;
+    public Integer getIntUtilizado() {
+        return intUtilizado;
     }
 
-    public void setIntTotalMasivo(Integer intTotalMasivo) {
-        this.intTotalMasivo = intTotalMasivo;
-    }
-
-    public Integer getIntDisponibleMasivo() {
-        return intDisponibleMasivo;
-    }
-
-    public void setIntDisponibleMasivo(Integer intDisponibleMasivo) {
-        this.intDisponibleMasivo = intDisponibleMasivo;
-    }
-
-    public Integer getIntReservadoMasivo() {
-        return intReservadoMasivo;
-    }
-
-    public void setIntReservadoMasivo(Integer intReservadoMasivo) {
-        this.intReservadoMasivo = intReservadoMasivo;
-    }
-
-    public Integer getIntUtilizadoMasivo() {
-        return intUtilizadoMasivo;
-    }
-
-    public void setIntUtilizadoMasivo(Integer intUtilizadoMasivo) {
-        this.intUtilizadoMasivo = intUtilizadoMasivo;
+    public void setIntUtilizado(Integer intUtilizado) {
+        this.intUtilizado = intUtilizado;
     }
 
 }

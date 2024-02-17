@@ -129,9 +129,7 @@ public class AuthFilter implements Filter {
                 || strUri.contains("/verifyAccount.jsf")
                 || strUri.contains("/resourceNotFound.jsf")
                 || strUri.contains("/help.jsf")
-                
                 || strUri.contains("/landing.jsf")
-                
                 || strUri.contains("/public/")
                 || strUri.contains("javax.faces.resource");
     }
