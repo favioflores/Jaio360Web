@@ -32,6 +32,7 @@
 
     <h:body styleClass="login-body">
         <h:form id="loginForm">
+            <p:radarChart model="#{dashboardDetailView.chartRadarPrincipal}"/>
             <div id="login-wrapper">
 
                 <div id="login-container">
@@ -51,7 +52,7 @@
                         </div>
                         <div class="col-12">
                             <div class="text-center">
-                                <p:captcha id="captcha" label="Captcha" language="#{msg['iniciar.captcha.lenguaje']}" /> 
+                                <!--p:captcha id="captcha" label="Captcha" language="#{msg['iniciar.captcha.lenguaje']}" /--> 
                             </div>
                         </div>
                         <!--div class="col-12 md:col-6">

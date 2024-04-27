@@ -25,7 +25,7 @@
 
         <div class="grid">
 
-            <div class="col-12 md:col-12">
+            <!--div class="col-12 md:col-12">
                 <h:form id="formUsuario">
                     <div class="card ui-fluid">
                         <h5>#{msg['adm.proyecto']}</h5>
@@ -79,12 +79,13 @@
                         </div>
                     </div>
                 </h:form>
-            </div>
+            </div-->
             <div class="col-12 md:col-12">
                 <h:form id="formMntCuenta">
                     <div class="card ui-fluid">
-                        <h5>#{msg['adm.proyecto']}</h5>
+                        <h5>#{msg['client.list']}</h5>
                         <p:growl id="growlMntCuenta" showDetail="false" life="4000" />
+
                         <div class="field">
                             <p:dataTable 
                                 id="idUsuarios"
@@ -107,7 +108,13 @@
                                 >    
 
                                 <f:facet name="header">
-                                    <div class="p-d-flex p-ai-center p-jc-between">
+
+                                    <div class="flex justify-content-between align-items-center">
+                                        <div>
+                                            <p:commandButton value="New" icon="pi pi-plus" actionListener="#{mantenimientoClienteView.resetFormUsuario()}" process="@this" update="formUsuario" oncomplete="PF('dlgAdd').show()" >
+                                                <!--p:resetInput target=":dialogs:manage-product-content" /-->
+                                            </p:commandButton>
+                                        </div>
                                         <div>
                                             <p:inputText id="globalFilter" onkeyup="PF('usu').filter();" style="width:300px" placeholder="#{msg['search']}"/>
                                         </div>
@@ -132,11 +139,11 @@
                                 <p:column headerText="#{msg['user.created']}" style="text-align: center;">                                   
                                     <h:outputText value="#{usu.strFechaRegistro}" />
                                 </p:column>
-                                
-                                <p:column headerText="#{msg['type.account']}" style="text-align: center;">
+                                -->
+                                <p:column headerText="#{msg['type.account']}" >
                                     <h:outputText value="#{usu.strTipoUsuario}" />
                                 </p:column>
-                                -->
+
                                 <p:column headerText="#{msg['state']}" >
                                     <p:tag  value="#{usu.strEstadoId==13?msg['complete.verification']:msg['pending.verification']}" 
                                             severity="#{usu.strEstadoId==13?'success':'danger'}" />
@@ -152,11 +159,11 @@
                                     /
                                     <p:commandLink  value="#{msg['delete']}" update="formMntCuenta" immediate="true" disabled="#{usu.strEstadoId==13}" actionListener="#{mantenimientoClienteView.eliminarCliente(usu)}"  />
                                     /
-                                    <p:commandLink update="formUsuario" value="#{msg['actualizar.usuario']}" immediate="true" process="@this" actionListener="#{mantenimientoClienteView.editarUsuario(usu)}" />
+                                    <p:commandLink  value="#{msg['actualizar.usuario']}" immediate="true" process="@this" actionListener="#{mantenimientoClienteView.editarUsuario(usu)}"  update="formEdit" oncomplete="PF('dlgEdit').show()"  />
                                     /
-                                    <p:commandLink  value="#{msg['change.password']}" update="formUsuario, formChangePassword" immediate="true" oncomplete="PF('dlgChangePassword').show()" actionListener="#{mantenimientoClienteView.changePassword(usu)}" />
+                                    <p:commandLink  value="#{msg['change.password']}" update="@this, formChangePassword" immediate="true" oncomplete="PF('dlgChangePassword').show()" actionListener="#{mantenimientoClienteView.changePassword(usu)}" disabled="#{!(usu.strEstadoId==13)}" />
                                     /
-                                    <p:commandLink  value="#{msg['mode.proxy']}" update="formUsuario, formProjectsClient" immediate="true" oncomplete="PF('dlgProjectsClient').show()" actionListener="#{mantenimientoClienteView.getListProjectClient(usu)}" />
+                                    <p:commandLink  value="#{msg['mode.proxy']}" update="@this, formProjectsClient" immediate="true" oncomplete="PF('dlgProjectsClient').show()" actionListener="#{mantenimientoClienteView.getListProjectClient(usu)}" disabled="#{!(usu.strEstadoId==13)}" />
 
 
                                 </p:column>
@@ -303,6 +310,120 @@
                             -->
 
                         </div>
+                    </div>
+                </div>
+            </h:form>
+        </p:dialog>   
+
+        <p:dialog widgetVar="dlgAdd" header="#{msg['client.information']}" 
+                  closable="true" hideEffect="drop" closeOnEscape="true" showEffect="drop" 
+                  modal="true"
+                  resizable="false" >
+
+            <h:form id="formUsuario">
+                <div class="card ui-fluid">
+
+                    <p:growl id="growlFormUduario" showDetail="false" life="4000" />
+                    <div class="field">
+                        <p:outputLabel for="@next" value="#{msg['email']}" />
+                        <p:inputText id="idMail" type="text" value="#{mantenimientoClienteView.usIdMail}" onchange="toLowerCase(this);" 
+                                     required="true" maxlength="100" disabled="#{mantenimientoClienteView.isEdit}" onblur="rcVerifyAccount()"
+                                     >
+                            <f:validator validatorId="validarCorreo" />
+                        </p:inputText>
+                    </div>
+                    <p:remoteCommand name="rcVerifyAccount" update="@form" autoRun="false"
+                                     actionListener="#{mantenimientoClienteView.verificarUsuario(true)}" process="@this,idMail,growlFormUduario" />
+
+                    <div class="field">
+                        <p:outputLabel for="@next" value="#{msg['company.name']}" />
+                        <p:inputText id="strRazonSocial" type="text" value="#{mantenimientoClienteView.usTxDescripcionEmpresa}" required="true" maxlength="100" disabled="#{!mantenimientoClienteView.blValidNewCustomer}" >
+                            <f:validator validatorId="validaTextoIngresado" />
+                        </p:inputText>
+                    </div>
+                    <div class="field">
+                        <p:outputLabel for="@next" value="#{msg['name.user']}" />
+                        <p:inputText id="strDescEmpresa" value="#{mantenimientoClienteView.usTxNombreRazonsocial}" required="true" maxlength="100" disabled="#{!mantenimientoClienteView.blValidNewCustomer}" >
+                            <f:validator validatorId="validaTextoIngresado" />
+                        </p:inputText>
+                    </div>
+                    <div class="field">
+                        <p:outputLabel for="@next" value="#{msg['country']}"  />
+                        <p:selectOneMenu id="idPais" value="#{mantenimientoClienteView.pais}" required="true" disabled="#{!mantenimientoClienteView.blValidNewCustomer}"
+                                         >
+                            <f:selectItem itemLabel="#{msg['please.select']}" itemValue="" />
+                            <f:selectItems value="#{mantenimientoClienteView.lstPaises}"  var="pais" itemLabel="#{pais.ubTxDescripcion}" itemValue="#{pais.ubIdUbigeoPk}" />
+                            <p:ajax update="idCiudad" listener="#{mantenimientoClienteView.poblarCiudades()}"/>
+                        </p:selectOneMenu>
+                    </div>
+                    <div class="field">
+                        <p:outputLabel for="@next" value="#{msg['city']}"/>
+                        <p:selectOneMenu id="idCiudad" value="#{mantenimientoClienteView.ciudad}" label="Ciudad" required="true" disabled="#{mantenimientoClienteView.pais==null?true:false or !mantenimientoClienteView.blValidNewCustomer}"  >
+                            <f:selectItem itemLabel="#{msg['please.select']}" itemValue="" />
+                            <f:selectItems value="#{mantenimientoClienteView.lstCiudades}"  var="ciudad" itemLabel="#{ciudad.ubTxDescripcion}" itemValue="#{ciudad.ubIdUbigeoPk}" />
+                        </p:selectOneMenu>
+                    </div>
+                    <div class="field">
+                        <p:commandButton value="#{msg['save']}" update="formUsuario,formMntCuenta" process="formUsuario" icon="pi pi-check" actionListener="#{mantenimientoClienteView.guardarUsuario}" disabled="#{!mantenimientoClienteView.blValidNewCustomer}" oncomplete="PF('dlgAdd').hide()" >
+                            <p:confirm header="#{msg['confirmation']}" message="#{msg['message.prev.save.client']}" icon="pi pi-info-circle" />
+                        </p:commandButton>
+                    </div>
+                    <div class="field">
+                        <p:commandButton value="#{msg['clean']}" update="formUsuario" immediate="true" process="@this" styleClass="ui-button-secondary" icon="pi pi-times" actionListener="#{mantenimientoClienteView.resetFormUsuario()}" disabled="#{!mantenimientoClienteView.blValidNewCustomer}" />
+                    </div>
+                </div>
+            </h:form>
+        </p:dialog>   
+
+        <p:dialog widgetVar="dlgEdit" header="#{msg['client.information']}" 
+                  closable="true" hideEffect="drop" closeOnEscape="true" showEffect="drop" 
+                  modal="true"
+                  resizable="false" >
+
+            <h:form id="formEdit">
+                <div class="card ui-fluid">
+
+                    <p:growl id="growlFormUduario" showDetail="false" life="4000" />
+                    <div class="field">
+                        <p:outputLabel for="@next" value="#{msg['email']}" />
+                        <p:inputText id="idMail" type="text" value="#{mantenimientoClienteView.usIdMail}" onchange="toLowerCase(this);" 
+                                     required="true" maxlength="100" disabled="#{mantenimientoClienteView.isEdit}" 
+                                     >
+                        </p:inputText>
+                    </div>
+
+                    <div class="field">
+                        <p:outputLabel for="@next" value="#{msg['name.user']}" />
+                        <p:inputText id="strDescEmpresa" value="#{mantenimientoClienteView.usTxNombreRazonsocial}" required="true" maxlength="100" >
+                            <f:validator validatorId="validaTextoIngresado" />
+                        </p:inputText>
+                    </div>
+                    <div class="field">
+                        <p:outputLabel for="@next" value="#{msg['company.name']}" />
+                        <p:inputText id="strRazonSocial" type="text" value="#{mantenimientoClienteView.usTxDescripcionEmpresa}" required="true" maxlength="100" >
+                            <f:validator validatorId="validaTextoIngresado" />
+                        </p:inputText>
+                    </div>
+                    <div class="field">
+                        <p:outputLabel for="@next" value="#{msg['country']}"  />
+                        <p:selectOneMenu id="idPais" value="#{mantenimientoClienteView.pais}" required="true"
+                                         >
+                            <f:selectItem itemLabel="#{msg['please.select']}" itemValue="" />
+                            <f:selectItems value="#{mantenimientoClienteView.lstPaises}"  var="pais" itemLabel="#{pais.ubTxDescripcion}" itemValue="#{pais.ubIdUbigeoPk}" />
+                            <p:ajax update="idCiudad" listener="#{mantenimientoClienteView.poblarCiudades()}"/>
+                        </p:selectOneMenu>
+                    </div>
+                    <div class="field">
+                        <p:outputLabel for="@next" value="#{msg['city']}"/>
+                        <p:selectOneMenu id="idCiudad" value="#{mantenimientoClienteView.ciudad}" label="Ciudad" required="true" disabled="#{mantenimientoClienteView.pais==null?true:false}"  >
+                            <f:selectItem itemLabel="#{msg['please.select']}" itemValue="" />
+                            <f:selectItems value="#{mantenimientoClienteView.lstCiudades}"  var="ciudad" itemLabel="#{ciudad.ubTxDescripcion}" itemValue="#{ciudad.ubIdUbigeoPk}" />
+                        </p:selectOneMenu>
+                    </div>
+                    <div class="field">
+                        <p:commandButton value="#{msg['save']}" update="formEdit,formMntCuenta" process="formEdit" icon="pi pi-check" actionListener="#{mantenimientoClienteView.actualizarUsuario}" oncomplete="PF('dlgEdit').hide()" >
+                            <p:confirm header="#{msg['confirmation']}" message="#{msg['are.you.sure.to.save']}" icon="pi pi-info-circle" />
+                        </p:commandButton>
                     </div>
                 </div>
             </h:form>

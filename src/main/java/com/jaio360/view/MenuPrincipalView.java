@@ -165,20 +165,10 @@ public class MenuPrincipalView extends BaseView implements Serializable {
 
             if (objUsuarioInfo.getManagingDirector()) {//MANAGING DIRECTOR
                 //Home
-                //DefaultSubMenu home = agregarMenu("", "pi pi-fw pi-home", MenuPrincipal);
-                //agregarItem(msg("ir.a.bienvenida"), "welcome.jsf", "", home);
                 agregarItem("", "welcome.jsf", "pi pi-fw pi-home", menuPrincipal, null);
 
                 List<MenuBean> lstMenuBean = new ArrayList<>();
                 lstMenuBean.add(new MenuBean("welcome.jsf", "pi pi-fw pi-home", msg("principal"), true, null, null));
-
-                //Proyectos
-                //DefaultSubMenu proyectos = agregarMenu(msg("projects"), "pi pi-fw pi-briefcase", menuPrincipal);
-                //agregarItem(msg("administrar.proyectos"), "admProjects.jsf", "", proyectos);
-                //MenuBean objMenuProyectos = new MenuBean(null, "pi pi-fw pi-briefcase", msg("projects"), false, new ArrayList<>(), null);
-                //objMenuProyectos.getObjLstMenuBean().add(new MenuBean("admProjects.jsf", null, msg("administrar.proyectos"), true, null, null));
-                //objMenuProyectos.getObjLstMenuBean().add(new MenuBean("admArchivedProjects.jsf", null, msg("administrar.proyectos"), true, null, null));
-                //lstMenuBean.add(objMenuProyectos);
 
                 //Datos de usuarios
                 DefaultSubMenu usuarios = agregarMenu(msg("my.account"), "pi pi-user", menuPrincipal);
@@ -188,34 +178,19 @@ public class MenuPrincipalView extends BaseView implements Serializable {
                 objMenuUsuarios.getObjLstMenuBean().add(new MenuBean("admProfile.jsf", null, msg("actualizar.mis.datos"), true, null, null));
                 objMenuUsuarios.getObjLstMenuBean().add(new MenuBean("admAllUsers.jsf", null, msg("actualizar.todos.usuarios"), true, null, null));
                 lstMenuBean.add(objMenuUsuarios);
-                //agregarItem(msg("balance.license"), "admBalanceClient.jsf", "", usuarios);
 
-                //DefaultSubMenu clients = agregarMenu(msg("clients"), "pi pi-users", menuPrincipal);
-                //agregarItem(msg("manage.my.clients"), "admClients.jsf", "", clients);
-                //agregarItem(msg("gestionar.licencias"), "admLicencias.jsf", "", clients);
-                //agregarItem(msg("manage.licences.clients"), "admLicenceClient.jsf", "", clients);
-                //User guide
-                //agregarItem(msg("user.guide"), "guidesForUsers.jsf", "pi pi-file-pdf", menuPrincipal, null);
-                //Upgrades
-                //agregarItem("", "upgrades.jsf", "pi pi-info-circle", menuPrincipal, null);
                 objMenuBean.setObjLstMenuBean(lstMenuBean);
 
             } else if (objUsuarioInfo.getCountryManager()) {//COUNTRY MANAGER
 
                 //Home
-                //DefaultSubMenu home = agregarMenu("", "pi pi-fw pi-home", menuPrincipal);
-                //agregarItem(msg("ir.a.bienvenida"), "welcome.jsf", "", home);
                 agregarItem("", "welcome.jsf", "pi pi-fw pi-home", menuPrincipal, null);
                 List<MenuBean> lstMenuBean = new ArrayList<>();
                 lstMenuBean.add(new MenuBean("welcome.jsf", "pi pi-fw pi-home", msg("principal"), true, null, null));
 
-                //Proyectos
-                //DefaultSubMenu proyectos = agregarMenu(msg("projects"), "pi pi-fw pi-briefcase", menuPrincipal);
-                //agregarItem(msg("administrar.proyectos"), "admProjects.jsf", "", proyectos);
                 //Datos de usuarios
                 DefaultSubMenu usuarios = agregarMenu(msg("my.account"), "pi pi-user", menuPrincipal);
                 agregarItem(msg("actualizar.mis.datos"), "admProfile.jsf", "", usuarios);
-                //agregarItem(msg("actualizar.todos.usuarios"), "admAllUsers.jsf", "", usuarios);
                 MenuBean objMenuUsuarios = new MenuBean(null, "pi pi-user", msg("my.account"), false, new ArrayList<>(), null);
                 objMenuUsuarios.getObjLstMenuBean().add(new MenuBean("admProfile.jsf", null, msg("actualizar.mis.datos"), true, null, null));
 
@@ -230,15 +205,12 @@ public class MenuPrincipalView extends BaseView implements Serializable {
                 //User guide
                 agregarItem(msg("user.guide"), "guidesForUsers.jsf", "pi pi-file-pdf", menuPrincipal, null);
                 lstMenuBean.add(new MenuBean("guidesForUsers.jsf", "pi pi-file-pdf", msg("user.guide"), true, null, null));
-                //Upgrades
-                //agregarItem("", "upgrades.jsf", "pi pi-info-circle", menuPrincipal, null);
 
                 objMenuBean.setObjLstMenuBean(lstMenuBean);
 
             } else if (objUsuarioInfo.getProjectManager()) {//PROJECT MANAGER
 
                 //Home
-                //DefaultSubMenu home = agregarItem("", "pi pi-fw pi-home", menuPrincipal);
                 agregarItem("", "welcome.jsf", "pi pi-fw pi-home", menuPrincipal, null);
 
                 List<MenuBean> lstMenuBean = new ArrayList<>();
@@ -256,23 +228,20 @@ public class MenuPrincipalView extends BaseView implements Serializable {
                 DefaultSubMenu user = agregarMenu(msg("my.account"), "pi pi-users", menuPrincipal);
                 agregarItem(msg("actualizar.mis.datos"), "admProfile.jsf", "", user);
                 agregarItem(msg("balance.license"), "admBalanceClient.jsf", "", user);
+                
                 MenuBean objMenuUsuarios = new MenuBean(null, "pi pi-users", msg("my.account"), false, new ArrayList<>(), null);
                 objMenuUsuarios.getObjLstMenuBean().add(new MenuBean("admProfile.jsf", null, msg("actualizar.mis.datos"), true, null, null));
-                objMenuUsuarios.getObjLstMenuBean().add(new MenuBean("admBalanceClient.jsf", null, msg("balance.license"), true, null, null));
+                //objMenuUsuarios.getObjLstMenuBean().add(new MenuBean("admBalanceClient.jsf", null, msg("balance.license"), true, null, null));
                 lstMenuBean.add(objMenuUsuarios);
 
                 //User guide
                 agregarItem(msg("user.guide"), "guidesForUsers.jsf", "pi pi-file-pdf", menuPrincipal, null);
                 lstMenuBean.add(new MenuBean("guidesForUsers.jsf", "pi pi-file-pdf", msg("user.guide"), true, null, null));
-                //Upgrades
-                //agregarItem("", "upgrades.jsf", "pi pi-cloud-upload", menuPrincipal, null);
 
                 objMenuBean.setObjLstMenuBean(lstMenuBean);
 
             } else {//USER EVALUATOR / EVALUATED
                 //Home
-                //DefaultSubMenu home = agregarMenu("", "pi pi-fw pi-home", menuPrincipal);
-                //agregarItem(msg("ir.a.bienvenida"), "welcome.jsf", "", home);
                 agregarItem("", "welcome.jsf", "pi pi-fw pi-home", menuPrincipal, null);
                 List<MenuBean> lstMenuBean = new ArrayList<>();
                 lstMenuBean.add(new MenuBean("welcome.jsf", "pi pi-fw pi-home", msg("principal"), true, null, null));
@@ -281,10 +250,6 @@ public class MenuPrincipalView extends BaseView implements Serializable {
                 agregarItem(msg("actualizar.mis.datos"), "admProfile.jsf", "", usuarios);
                 MenuBean objMenuUsuarios = new MenuBean(null, "pi pi-user", msg("my.account"), false, new ArrayList<>(), null);
                 objMenuUsuarios.getObjLstMenuBean().add(new MenuBean("admProfile.jsf", null, msg("actualizar.mis.datos"), true, null, null));
-                //Participant guide
-                //agregarItem(msg("user.guide"), "guidesForUsers.jsf", "pi pi-file-pdf", menuPrincipal, null);
-                //Upgrades
-                //agregarItem("", "upgrades.jsf", "pi pi-cloud-upload", menuPrincipal);
 
                 objMenuBean.setObjLstMenuBean(lstMenuBean);
             }

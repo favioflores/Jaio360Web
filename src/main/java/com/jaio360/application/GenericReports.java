@@ -642,7 +642,7 @@ public class GenericReports extends Thread implements Serializable {
             objRelacion.setReTxAbreviatura("AUTO");
             objRelacion.setReTxDescripcion("Autoevaluación");
             objRelacion.setReTxNombre("Autoevaluación");
-            objRelacion.setReColor("212324");
+            objRelacion.setReColor("#212324");
             objRelacion.setReDePonderacion(Constantes.PERCENT_100);
             mapRelaciones.put(objRelacion.getReTxAbreviatura(), objRelacion);
         }
@@ -653,7 +653,7 @@ public class GenericReports extends Thread implements Serializable {
         objRelacion.setReTxAbreviatura("PROM");
         objRelacion.setReTxDescripcion("Promedio");
         objRelacion.setReTxNombre("Promedio");
-        objRelacion.setReColor("494D4F");
+        objRelacion.setReColor("#494D4F");
         objRelacion.setReDePonderacion(Constantes.PERCENT_100);
         mapRelaciones.put(objRelacion.getReTxAbreviatura(), objRelacion);
 

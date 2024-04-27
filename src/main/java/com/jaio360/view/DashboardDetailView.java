@@ -373,29 +373,29 @@ public class DashboardDetailView extends BaseView implements Serializable {
         pointLabels.setFontSize(14);
         pointLabels.setFontStyle("300");
         pointLabels.setFontColor("rgba(204, 204, 204, 1)");
-        pointLabels.setFontFamily("Lato, sans-serif");
+        //pointLabels.setFontFamily("Lato, sans-serif");
 
+        
         RadialLinearTicks ticks = new RadialLinearTicks();
         ticks.setBeginAtZero(true);
-        //ticks.setMaxTicksLimit(intMaxRango);
         //ticks.setMin(0);
-        ticks.setMax(intMaxRango);
-        ticks.setStepSize(1);
-        ticks.setDisplay(true);
-        ticks.setFontSize(12);
-        ticks.setFontStyle("300");
-        ticks.setFontFamily("Lato, sans-serif");
-
-        rScales.setStartAngle(0);//
+        //ticks.setMax(intMaxRango + 1);
+        ticks.setStepSize(0.5);
+        //ticks.setDisplay(true);
+        //ticks.setFontSize(12);
+        //ticks.setFontStyle("300");
+        //ticks.setFontFamily("Lato, sans-serif");
+        
+        rScales.setStartAngle(0);
         rScales.setTicks(ticks);
         rScales.setPointLabels(pointLabels);
 
-        /*
+        
         Title title = new Title();
         title.setDisplay(true);
         title.setText("Sumario de Categoria");
         options.setTitle(title);
-         */
+        
         Elements elements = new Elements();
         ElementsLine elementsLine = new ElementsLine();
         elementsLine.setTension(0);

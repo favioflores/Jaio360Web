@@ -112,7 +112,6 @@ public class importarCuestionariosView extends BaseView implements Serializable 
         return fileImportSkills;
     }
 
-    
     public List<ElementoCuestionario> getLstElementoCuestionario() {
         return lstElementoCuestionario;
     }
@@ -642,17 +641,56 @@ public class importarCuestionariosView extends BaseView implements Serializable 
 
             if (Utilitarios.noEsNuloOVacio(event.getNewValue())) {
 
-                ComponenteDAO objComponenteDao = new ComponenteDAO();
-
-                Componente objComponente = objComponenteDao.obtenComponente(lstElementosDelCuestionarios.get(event.getRowIndex()).getIntComponente());
-                objComponente.setCoTxDescripcion(event.getNewValue().toString());
+                boolean hasError = false;
 
                 ComponenteDAO objComponenteDAO = new ComponenteDAO();
-                objComponenteDAO.actualizaComponente(objComponente);
 
-                lstElementosDelCuestionarios.get(event.getRowIndex()).setStrDato2(event.getNewValue().toString());
+                Componente objComponente = objComponenteDAO.obtenComponente(lstElementosDelCuestionarios.get(event.getRowIndex()).getIntComponente());
 
-                mostrarAlertaInfo("profile.updated.success");
+                DosDatos objDosDatos = lstElementosDelCuestionarios.get(event.getRowIndex());
+
+                if (event.getColumn().getHeaderText().equals(msg("description"))) {
+                    objDosDatos.setStrDato2(event.getNewValue().toString());
+                    if (objComponente != null) {
+                        objComponente.setCoTxDescripcion(event.getNewValue().toString());
+                    }
+                }
+
+                if (event.getColumn().getHeaderText().equals(msg("step2.score.min"))) {
+                    BigDecimal bdValor = new BigDecimal(event.getNewValue().toString());
+                    if (bdValor.doubleValue() >= objDosDatos.getBdScoreRequired().doubleValue()) {
+                        mostrarAlertaError("min.mayor.maximo");
+                        objDosDatos.setBdScoreMinRequired(new BigDecimal(event.getOldValue().toString()));
+                        hasError = true;
+                    } else {
+                        objDosDatos.setBdScoreMinRequired(new BigDecimal(event.getNewValue().toString()));
+                        if (objComponente != null) {
+                            objComponente.setCoNrPuntajeMinimoRequerido(bdValor);
+                        }
+                    }
+                }
+
+                if (event.getColumn().getHeaderText().equals(msg("step2.score.required"))) {
+                    BigDecimal bdValor = new BigDecimal(event.getNewValue().toString());
+                    if (bdValor.doubleValue() <= objDosDatos.getBdScoreMinRequired().doubleValue()) {
+                        mostrarAlertaError("max.menor.min");
+                        objDosDatos.setBdScoreMinRequired(new BigDecimal(event.getOldValue().toString()));
+                        hasError = true;
+                    } else {
+                        objDosDatos.setBdScoreRequired(new BigDecimal(event.getNewValue().toString()));
+                        if (objComponente != null) {
+                            objComponente.setCoNrPuntajeRequerido(bdValor);
+                        }
+                    }
+                }
+
+                if (objComponente != null) {
+                    objComponenteDAO.actualizaComponente(objComponente);
+                }
+
+                if (!hasError) {
+                    mostrarAlertaInfo("profile.updated.success");
+                }
 
             } else {
                 mostrarAlertaError(msg("adm.least.value"));

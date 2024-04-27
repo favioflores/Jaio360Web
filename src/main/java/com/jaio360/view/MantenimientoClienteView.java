@@ -39,10 +39,8 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.bean.ManagedBean;
 import javax.servlet.http.HttpSession;
 
-
 import org.apache.commons.lang.CharEncoding;
 import org.apache.log4j.Logger;
-import org.apache.commons.logging.LogFactory;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
@@ -93,6 +91,9 @@ public class MantenimientoClienteView extends BaseView implements Serializable {
     private ElementoDAO objElementoDAO = new ElementoDAO();
     private UsuarioDAO objUsuarioDAO = new UsuarioDAO();
 
+    private boolean blValidNewCustomer;
+    private boolean blIsRegistered;
+
     public List<UsuarioInfo> getLstUsuario() {
         return lstUsuario;
     }
@@ -115,6 +116,14 @@ public class MantenimientoClienteView extends BaseView implements Serializable {
 
     public void setUsuarioSeleccionado(UsuarioInfo usuarioSeleccionado) {
         this.usuarioSeleccionado = usuarioSeleccionado;
+    }
+
+    public boolean isBlValidNewCustomer() {
+        return blValidNewCustomer;
+    }
+
+    public void setBlValidNewCustomer(boolean blValidNewCustomer) {
+        this.blValidNewCustomer = blValidNewCustomer;
     }
 
     public String[] getTipoUsuario() {
@@ -349,7 +358,6 @@ public class MantenimientoClienteView extends BaseView implements Serializable {
         this.objUsuarioDAO = objUsuarioDAO;
     }
 
-    
     @PostConstruct
     public void init() {
 
@@ -358,6 +366,9 @@ public class MantenimientoClienteView extends BaseView implements Serializable {
         poblarTipoCuentas();
         poblarTipoDocumento();
         obtenerListaUsuarios();
+
+        blValidNewCustomer = false;
+        blIsRegistered = false;
 
         isEdit = false;
         tipoUsuario = new String[3];
@@ -479,9 +490,9 @@ public class MantenimientoClienteView extends BaseView implements Serializable {
 
             usIdMail = usIdMail.toLowerCase();
 
-            if (!isEdit) {
+            if (!blIsRegistered) {
 
-                boolean blValidAccount = verificarUsuario();
+                boolean blValidAccount = verificarUsuario(false);
 
                 if (blValidAccount) {
 
@@ -524,14 +535,24 @@ public class MantenimientoClienteView extends BaseView implements Serializable {
                 Usuario objUsuario = objUsuarioDAO.obtenUsuarioByEmail(usIdMail);
                 objUsuario.setUsTxNombreRazonsocial(usTxNombreRazonsocial);
                 objUsuario.setUsTxDescripcionEmpresa(usTxDescripcionEmpresa);
-                objUsuario.setUsIdTipoCuenta(usIdTipoCuenta);
+                objUsuario.setUsIdTipoCuenta(Constantes.INT_ET_TIPO_USUARIO_PROJECT_MANAGER);
+                objUsuario.setUsIdEstado(Constantes.INT_ET_ESTADO_USUARIO_BLOQUEADO);
+
                 Ubigeo objUbigeoCiudad = new Ubigeo();
                 objUbigeoCiudad.setUbIdUbigeoPk(ciudad);
                 objUsuario.setUbigeo(objUbigeoCiudad);
 
                 objUsuarioDAO.actualizaUsuario(objUsuario);
 
+                ManageUserRelation objManageUserRelation = new ManageUserRelation();
+                objManageUserRelation.setMaFeRegistro(new Date());
+                objManageUserRelation.setMaIsVerified(Boolean.FALSE);
+                renewToken(objManageUserRelation);
+                objManageUserRelation.setUsIdCuentaManagerPk(Utilitarios.obtenerUsuario().getIntUsuarioPk());
+                objManageUserRelation.setUsuario(objUsuario);
+
                 mostrarAlertaInfo("updated");
+                mostrarAlertaWarning("required.verification");
 
                 resetFormUsuario();
                 obtenerListaUsuarios();
@@ -543,7 +564,32 @@ public class MantenimientoClienteView extends BaseView implements Serializable {
 
     }
 
-    public boolean verificarUsuario() {
+    public void actualizarUsuario(ActionEvent event) {
+
+        try {
+
+            Usuario objUsuario = objUsuarioDAO.obtenUsuarioByEmail(usIdMail);
+            
+            objUsuario.setUsTxNombreRazonsocial(usTxNombreRazonsocial);
+            objUsuario.setUsTxDescripcionEmpresa(usTxDescripcionEmpresa);
+
+            Ubigeo objUbigeoCiudad = new Ubigeo();
+            objUbigeoCiudad.setUbIdUbigeoPk(ciudad);
+            objUsuario.setUbigeo(objUbigeoCiudad);
+
+            objUsuarioDAO.actualizaUsuario(objUsuario);
+
+            mostrarAlertaInfo("updated");
+
+            obtenerListaUsuarios();
+
+        } catch (Exception e) {
+            mostrarError(log, e);
+        }
+
+    }
+
+    public boolean verificarUsuario(boolean blAvailableAlerts) {
 
         boolean isValidAccount = false;
 
@@ -555,7 +601,9 @@ public class MantenimientoClienteView extends BaseView implements Serializable {
 
                 if (Utilitarios.obtenerUsuario().getStrEmail().equals(this.usIdMail)) {
 
-                    mostrarAlertaError("cannot.use.email.for.client");
+                    if (blAvailableAlerts) {
+                        mostrarAlertaError("cannot.use.email.for.client");
+                    }
                     this.isEdit = false;
                     isValidAccount = false;
 
@@ -565,39 +613,59 @@ public class MantenimientoClienteView extends BaseView implements Serializable {
 
                     if (objUsuario == null) { // NUEVO
 
-                        mostrarAlertaInfo("can.register.client");
+                        if (blAvailableAlerts) {
+                            mostrarAlertaInfo("can.register.client");
+                        }
 
                         this.isEdit = false;
                         isValidAccount = true;
+                        this.blIsRegistered = false;
 
                     } else if (objUsuario.getUsIdTipoCuenta().equals(Constantes.INT_ET_TIPO_USUARIO_COUNTRY_MANAGER)
                             || objUsuario.getUsIdTipoCuenta().equals(Constantes.INT_ET_TIPO_USUARIO_MANAGING_DIRECTOR)) {
 
-                        mostrarAlertaWarning("cannot.use.email.for.client");
+                        if (blAvailableAlerts) {
+                            mostrarAlertaWarning("cannot.use.email.for.client");
+                        }
 
                         isValidAccount = false;
 
                     } else { // YA EXISTE Y QUIERO ASIGNARLO COMO CLIENTE
 
-                        ManageUserRelation objManageUserRelation = objUsuarioDAO.verifyClientForVerification(this.usIdMail);
+                        List<ManageUserRelation> lstManageUserRelation = objUsuarioDAO.getRelations(objUsuario.getUsIdCuentaPk());
 
-                        if (objManageUserRelation == null) { // NO TIENE COUNTRY MANAGER
+                        if (lstManageUserRelation.isEmpty()) { // NO TIENE COUNTRY MANAGER
 
-                            mostrarAlertaError("cannot.use.email.for.client");
+                            if (objUsuario.getUsIdTipoCuenta().equals(Constantes.INT_ET_TIPO_USUARIO_PROJECT_MANAGER)
+                                    || objUsuario.getUsIdTipoCuenta().equals(Constantes.INT_ET_TIPO_USUARIO_EVALUATED_EVALUATOR)) {
 
-                            isValidAccount = false;
-                            /*
-                            mostrarAlertaWarning("can.use.email.for.client");
+                                if (blAvailableAlerts) {
+                                    mostrarAlertaWarning("can.use.email.for.client");
+                                }
 
-                            UsuarioInfo objUsuarioInfo = new UsuarioInfo(objUsuario, null, false);
+                                UsuarioInfo objUsuarioInfo = new UsuarioInfo(objUsuario, null, false);
 
-                            editarUsuario(objUsuarioInfo);
+                                editarUsuario(objUsuarioInfo);
 
-                            isValidAccount = true;
-                             */
+                                isValidAccount = true;
+
+                                this.blIsRegistered = true;
+
+                            } else {
+                                
+                                //Se requiere un flujo de aprobación para migrar la información existente del cliente al country manager
+                                if (blAvailableAlerts) {
+                                    mostrarAlertaError("cannot.use.email.for.client");
+                                }
+
+                                isValidAccount = false;
+                            }
+
                         } else {
 
-                            mostrarAlertaError("cannot.use.email.for.client");
+                            if (blAvailableAlerts) {
+                                mostrarAlertaError("cannot.use.email.for.client");
+                            }
 
                             isValidAccount = false;
                         }
@@ -606,6 +674,8 @@ public class MantenimientoClienteView extends BaseView implements Serializable {
                 }
 
             }
+
+            this.blValidNewCustomer = isValidAccount;
 
         } catch (HibernateException e) {
             mostrarError(log, e);
@@ -716,6 +786,7 @@ public class MantenimientoClienteView extends BaseView implements Serializable {
         this.strContraseniaNueva = null;
         this.strContraseniaReNueva = null;
         this.isEdit = false;
+        this.blValidNewCustomer = false;
 
     }
 

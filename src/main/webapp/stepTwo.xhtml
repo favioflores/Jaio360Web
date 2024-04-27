@@ -138,7 +138,7 @@
                                     <div>
                                     </div>
                                     <div>
-                                        <p:commandButton value="#{msg['export.xlsx']}" styleClass="mr-2 mb-2" >
+                                        <p:commandButton value="#{msg['export.xlsx']}" styleClass="mr-2 mb-2" rendered="#{importarCuestionariosView.lstErrores.size()>0}" >
                                             <p:dataExporter type="xlsxstream" target="tblLstErrores" fileName="#{msg['errors']}" visibleOnly="true"/>
                                         </p:commandButton>
                                     </div>
@@ -293,7 +293,7 @@
                                     currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords}"                                    
                                     emptyMessage="#{msg['no.items']}" >                 
 
-                                    <p:ajax event="cellEdit" update="@this,formCuestionario:growl" listener="#{importarCuestionariosView.onRowEdit}" />
+                                    <p:ajax event="cellEdit" update="@this,formCuestionario:growl" listener="#{importarCuestionariosView.onRowEdit}" rendered="#{importarCuestionariosView.blExistPrevImport}" />
                                     <!--p:ajax event="rowEditCancel" listener="#{importarCuestionariosView.onRowCancel}" /-->
 
                                     <f:facet name="header">
@@ -313,7 +313,7 @@
 
 
 
-                                    <p:column headerText="#{msg['description']}" >
+                                    <p:column headerText="#{msg['description']}" rendered="#{importarCuestionariosView.blExistPrevImport}"  >
                                         <p:cellEditor>
                                             <f:facet name="output">
                                                 <p:outputLabel value="#{cues.strDato2}"/>
@@ -323,11 +323,36 @@
                                             </f:facet>
                                         </p:cellEditor>
                                     </p:column>
+                                    <p:column headerText="#{msg['description']}" rendered="#{!importarCuestionariosView.blExistPrevImport}"  >
+                                        <p:outputLabel value="#{cues.strDato2}"/>
+                                    </p:column>
 
-                                    <p:column headerText="#{msg['step2.score.min']}" >
+                                    <p:column headerText="#{msg['step2.score.min']}" rendered="#{importarCuestionariosView.blExistPrevImport}" >
+                                        <p:cellEditor>
+                                            <f:facet name="output">
+                                                <p:outputLabel value="#{cues.bdScoreMinRequired.doubleValue()}"/>
+                                            </f:facet>
+                                            <f:facet name="input">
+                                                <p:inputNumber minValue="0" maxValue="#{crearCuestionarioView.intRangos}" decimalPlaces="2" value="#{cues.bdScoreMinRequired}" />
+                                            </f:facet>
+                                        </p:cellEditor>
+                                    </p:column>
+                                    <p:column headerText="#{msg['step2.score.min']}" rendered="#{!importarCuestionariosView.blExistPrevImport}" >
                                         <p:outputLabel value="#{cues.bdScoreMinRequired.doubleValue()}" />
                                     </p:column>
-                                    <p:column headerText="#{msg['step2.score.required']}" >
+
+
+                                    <p:column headerText="#{msg['step2.score.required']}" rendered="#{importarCuestionariosView.blExistPrevImport}"  >
+                                        <p:cellEditor>
+                                            <f:facet name="output">
+                                                <p:outputLabel value="#{cues.bdScoreRequired.doubleValue()}"/>
+                                            </f:facet>
+                                            <f:facet name="input">
+                                                <p:inputNumber minValue="0" maxValue="#{crearCuestionarioView.intRangos}" decimalPlaces="2" value="#{cues.bdScoreRequired}" />
+                                            </f:facet>
+                                        </p:cellEditor>
+                                    </p:column>
+                                    <p:column headerText="#{msg['step2.score.required']}" rendered="#{!importarCuestionariosView.blExistPrevImport}"  >
                                         <p:outputLabel value="#{cues.bdScoreRequired.doubleValue()}" />
                                     </p:column>
 
