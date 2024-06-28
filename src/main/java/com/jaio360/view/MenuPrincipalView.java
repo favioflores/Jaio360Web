@@ -173,10 +173,19 @@ public class MenuPrincipalView extends BaseView implements Serializable {
                 //Datos de usuarios
                 DefaultSubMenu usuarios = agregarMenu(msg("my.account"), "pi pi-user", menuPrincipal);
                 agregarItem(msg("actualizar.mis.datos"), "admProfile.jsf", "", usuarios);
-                agregarItem(msg("actualizar.todos.usuarios"), "admAllUsers.jsf", "", usuarios);
+
+                MenuBean objMenuClientes = new MenuBean(null, "pi pi-users", msg("clients"), false, new ArrayList<>(), null);
+                objMenuClientes.getObjLstMenuBean().add(new MenuBean("admAllUsers.jsf", null, msg("actualizar.todos.usuarios"), true, null, null));
+                lstMenuBean.add(objMenuClientes);
+
+                MenuBean objMenuFacturar = new MenuBean(null, "pi pi-users", msg("menu.facturar"), false, new ArrayList<>(), null);
+                objMenuFacturar.getObjLstMenuBean().add(new MenuBean("admProfile.jsf", null, msg("proceso.facturacion"), true, null, null));
+                objMenuFacturar.getObjLstMenuBean().add(new MenuBean("admProfile.jsf", null, msg("emision.de.facturacion"), true, null, null));
+                objMenuFacturar.getObjLstMenuBean().add(new MenuBean("admProfile.jsf", null, msg("monitoreo.facturacion"), true, null, null));
+                lstMenuBean.add(objMenuFacturar);
+
                 MenuBean objMenuUsuarios = new MenuBean(null, "pi pi-users", msg("my.account"), false, new ArrayList<>(), null);
                 objMenuUsuarios.getObjLstMenuBean().add(new MenuBean("admProfile.jsf", null, msg("actualizar.mis.datos"), true, null, null));
-                objMenuUsuarios.getObjLstMenuBean().add(new MenuBean("admAllUsers.jsf", null, msg("actualizar.todos.usuarios"), true, null, null));
                 lstMenuBean.add(objMenuUsuarios);
 
                 objMenuBean.setObjLstMenuBean(lstMenuBean);
@@ -228,7 +237,7 @@ public class MenuPrincipalView extends BaseView implements Serializable {
                 DefaultSubMenu user = agregarMenu(msg("my.account"), "pi pi-users", menuPrincipal);
                 agregarItem(msg("actualizar.mis.datos"), "admProfile.jsf", "", user);
                 agregarItem(msg("balance.license"), "admBalanceClient.jsf", "", user);
-                
+
                 MenuBean objMenuUsuarios = new MenuBean(null, "pi pi-users", msg("my.account"), false, new ArrayList<>(), null);
                 objMenuUsuarios.getObjLstMenuBean().add(new MenuBean("admProfile.jsf", null, msg("actualizar.mis.datos"), true, null, null));
                 //objMenuUsuarios.getObjLstMenuBean().add(new MenuBean("admBalanceClient.jsf", null, msg("balance.license"), true, null, null));

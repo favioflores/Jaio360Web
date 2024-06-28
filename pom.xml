@@ -522,7 +522,7 @@
         <dependency>
             <groupId>org.primefaces</groupId>
             <artifactId>primefaces</artifactId>
-            <version>13.0.7</version>
+            <version>13.0.3</version>
         </dependency>
         <dependency>
             <groupId>org.glassfish</groupId>
@@ -557,24 +557,27 @@
             </snapshots>
         </repository>
         <repository>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <id>central</id>
+            <name>Maven Repository Switchboard</name>
+            <url>https://repo1.maven.org/maven2</url>
+        </repository>
+        <repository>
             <id>jvnet-nexus-releases</id>
             <name>jvnet-nexus-releases</name>
-            <url>https://maven.java.net/content/repositories/releases/</url>
+            <url>http://maven.java.net/content/repositories/releases/</url>
         </repository>
         <repository>
             <id>repository.jboss.org</id>
             <name>JBoss Repository for Maven</name>
-            <url>http://repository.jboss.org/nexus/content/groups/public-jboss/</url>
+            <url>https://repository.jboss.org/nexus/content/groups/public-jboss/</url>
         </repository>
         <repository>
             <id>unknown-jars-temp-repo</id>
             <name>A temporary repository created by NetBeans for libraries and jars it could not identify. Please replace the dependencies in this repository with correct ones and delete this repository.</name>
             <url>file:${project.basedir}/lib</url>
-        </repository>
-        <repository>
-            <id>JTA</id>
-            <name>jta TEMP</name>
-            <url>http://java.sun.com/products/jta</url>
         </repository>
         <repository>
             <id>sonatype-nexus-snapshots</id>
